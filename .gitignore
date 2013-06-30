@@ -1,0 +1,10 @@
+_cache/
+_site/
+site.exe
+site.hi
+site.hs
+site.o
+site2.exe
+site2.hi
+site2.hs
+site2.o

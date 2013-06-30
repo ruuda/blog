@@ -1,0 +1,479 @@
+@charset 'UTF-8';
+
+@font-face
+{
+    font-family: 'Lato';
+    src: url('lato.woff') format('woff');
+    font-style: normal;
+    font-weight: 400;
+}
+
+@font-face
+{
+    font-family: 'Lato';
+    src: url('lato-bold.woff') format('woff');
+    font-style: normal;
+    font-weight: 700;
+}
+
+@font-face
+{
+    font-family: 'Lato';
+    src: url('lato-italic.woff') format('woff');
+    font-style: italic;
+    font-weight: 400;
+}
+
+@font-face
+{
+    font-family: 'Lato';
+    src: url('lato-black.woff') format('woff');
+    font-style: normal;
+    font-weight: 900;
+}
+
+@font-face
+{
+    font-family: 'Droid Sans Mono';
+    src: url('droid-sans-mono.woff') format('woff');
+    font-style: normal;
+    font-weight: normal;
+}
+
+@font-face
+{
+    font-family: 'Octocat';
+    src: url('octocat.woff') format('woff');
+    font-style: normal;
+    font-weight: normal;
+}
+    
+html, body, header, nav, article, section, footer, p, ul, li, code, h1, h2, h3
+{
+    margin: 0pt;
+    padding: 0pt;
+}
+
+body
+{
+    font-family: 'Lato', 'Georgia', serif;
+    font-size: 14pt;
+    background-color: #22211c;
+    background-image: url('noise.png');
+    overflow-x: hidden;
+    min-width: 30em;
+}
+
+h1, h2, h3
+{
+    font-weight: 900;
+}
+
+body > header, body > nav, body > article, body > section, body > footer
+{
+    max-width: 42em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header
+{
+    padding-top: 1em;
+    background-color: #f1f0ed;
+    background-image: url('noise.png');
+    padding-left: 3.5em;
+    padding-right: 3.5em;
+    margin-top: 2em;
+    border-top-left-radius: 0.15em;
+    border-top-right-radius: 0.15em;
+}
+
+header h1
+{
+    display: block;
+    font-size: 2.1em;
+    line-height: 1em;
+    padding: 0.333em;
+    padding-top: 0.5em;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 1.0em;
+    font-weight: 400;
+    color: #394e6f;
+}
+
+nav
+{
+    padding-left: 3.5em;
+    padding-right: 3.5em;
+    border-bottom: 0.2em solid #dddddd;
+}
+
+nav ul
+{
+    display: block;
+    list-style: none;
+    margin-left: -3.8em;
+    margin-right: -3.8em;
+    background-color: #97cb29;
+    height: 3em;
+    padding-left: 2.8em;
+    padding-right: 2.8em;
+    border-radius: 0.15em;
+    overflow: hidden;
+}
+
+nav ul li
+{
+    display: inline-block;
+}
+
+nav ul li a
+{
+    line-height: 2.5em;
+    display: block;
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.2em;
+    text-shadow: 0pt 1pt 0pt #567418;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+nav ul li a:hover
+{
+    text-shadow: 0pt 1.5pt 0pt #567418;
+    background-color: #84b324;
+}
+
+nav ul li a span#github:before
+{
+    font-family: 'Octocat';
+    font-weight: normal;
+    content: '\f20a';
+    padding-right: 0.5em;
+    line-height: 1em;
+}
+
+nav ul li#contact
+{
+    float: right;
+    margin-right: 0;
+    padding-right: 0;
+}
+
+body > article, body > section
+{         
+    background-color: #f1f0ed;
+    padding: 2.5em;
+    padding-left: 3.5em;
+    padding-right: 3.5em;
+    border-bottom: 1pt dashed #ac9f93;
+    background-image: url('noise.png');
+}
+
+body > article:last-of-type, body > section
+{
+    border-bottom: none;
+}
+
+article > time
+{
+    font-size: 0.9em;
+    color: #929172;
+}
+
+article h1
+{
+    font-size: 2.6em;
+    line-height: 1em;
+    margin-top: 0.2em;
+    padding-bottom: 0.5em;
+    margin-bottom: 0.5em;
+    border-bottom: 1pt dashed #ccd2c6;
+    font-weight: 900;
+    color: #001122;
+}
+
+article h1 a
+{
+    color: inherit;
+    text-decoration: none;
+}
+
+article h1 a:hover
+{
+    color: #394e6f;
+    text-decoration: underline;
+}
+
+article h2
+{
+    font-size: 1.6em;
+    line-height: 1em;
+    padding-top: 0.8em;
+    margin-top: 0.7em;
+    border-top: 1pt dashed #ccd2c6;
+    font-weight: 900;
+    color: #383825;
+}
+
+article h1 + h2
+{
+    border-top: none;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+article p, article ul, article ol, article blockquote
+{
+    line-height: 1.6em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    color: #524e43;
+}
+
+article > p:last-child
+{
+    margin-bottom: 0;
+}
+
+article p code, article ul code, article ol code
+{
+    background-color: #fafafa;
+    border: 1pt solid #ccd2c6;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+    padding-left: 0.35em;
+    padding-right: 0.35em;
+    border-radius: 0.2em;
+    font-family: 'Droid Sans Mono', 'Menlo', 'Consolas', 'Monaco', monospace;
+    font-size: 0.8em;
+    line-height: 1em;
+    color: #727760;
+}
+
+article p a, article ul a, article ol a
+{
+    color: #2974ab;
+}
+
+article a:hover, article ul a:hover, article ol a:hover
+{
+    color: #118eff;
+}
+
+article p a:visited, article ul a:visited, article ol a:visited
+{
+    color: #984e75;
+}
+
+article sup
+{
+    vertical-align: baseline;
+    position: relative;
+    bottom: 0.6em;
+    font-size: 0.8em;
+}
+
+article sub
+{
+    vertical-align: baseline;
+    position: relative;
+    top: 0.5em;
+    font-size: 0.8em;
+}
+
+article img
+{
+    width: 100%;
+    height: auto;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    display: block;
+    border-radius: 0.25em;
+}
+
+article pre > code
+{
+    white-space: pre;
+    display: block;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+    overflow: hidden;
+    overflow-x: auto;
+    padding: 0.8em;
+    border-radius: 0.3em;
+    font-family: 'Droid Sans Mono', 'Menlo', 'Consolas', 'Monaco', monospace;
+    font-size: 0.8em;
+    line-height: 1.3em;
+    background-color: #002b36;
+    color: #839496;
+    box-shadow: 1pt 2pt 1em #001317 inset;
+    background-image: url('noise.png');
+}
+
+article ol, article ul
+{
+    list-style-position: outside;
+    list-style: lower-roman;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+article ul
+{
+   list-style: none;
+}
+
+article ul li:before
+{
+   content: '• ';
+   display: inline-block;
+   font-size: 1em;
+   margin-left: -1.2em;
+   color: #84b324;
+   position: absolute;
+}
+ 
+article blockquote
+{
+    padding: 0;
+    margin: 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    background-color: #fafafa;
+    background-image: url('noise.png');
+    display: block;
+    overflow: hidden;
+    border-left: 0.5em solid #97cb29;
+    border-top-right-radius: 0.24em;
+    border-bottom-right-radius: 0.24em;
+}
+
+article blockquote > p
+{
+    font-size: 1.3em;
+    line-height: 1.4em;
+    margin: 0.5em;
+    margin-bottom: 0.4em;
+    margin-left: 1.2em;
+    padding: 0;
+    font-style: italic;
+    display: block;
+}
+
+article blockquote em, article blockquote code
+{
+    font-style: normal;
+}
+
+.archive h2
+{
+    margin-left: 4.2em;
+}
+
+.archive p time
+{
+    width: 6.5em;
+    display: inline-block;
+    text-align: right;
+}
+
+article > a
+{
+    line-height: 1.6em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    text-decoration: none;
+    color: #6f894b;
+}
+
+article > a:after
+{
+    content: ' »';
+}
+
+article > a:hover, body > section a:hover
+{
+    color: #99c934;
+}
+
+body > section
+{
+    border-top: 1pt dashed #ccd2c6;
+    background-color: #ecebe8;
+}
+
+body > section > ul
+{
+    display: table;
+    list-style: none;
+    width: 100%;
+}
+
+body > section > ul li
+{
+    display: table-cell;
+}
+
+body > section > ul li a
+{
+    color: #929172;
+    text-decoration: none;
+}
+
+body > section > ul li.next-page
+{
+    text-align: right;
+}
+
+
+body > section > ul li.previous-page a:before
+{
+    content: '« ';
+}
+
+body > section > ul li.next-page a:after
+{
+    content: ' »';
+}
+
+footer
+{
+    padding-left: 3.5em;
+    padding-right: 3.5em;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    background-color: #a09a8b;
+    color: #777262;
+    margin-bottom: 2em;
+    border-bottom-left-radius: 0.15em;
+    border-bottom-right-radius: 0.15em;
+}
+
+footer a
+{
+    color: #403d37;
+    text-decoration: none;
+}
+
+footer a:hover
+{
+    text-decoration: underline;
+    color: #2e2c27;
+}
+
+footer span
+{
+    font-size: 0.8em;
+    padding-right: 0.6em;
+    padding-left: 0.6em;
+    color: #5b574f;
+}
+
+footer span:first-child
+{
+    padding-left: 0;
+}

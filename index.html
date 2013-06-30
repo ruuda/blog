@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ruud van Asseldonk</title>
+        <link href="/style/style.css" rel="stylesheet" type="text/css"/>
+        <link href="/favicon.png" rel="icon" type="image/png" />
+        <link href="/feed.xml" rel="alternate" type="application/atom+xml"/>
+        <meta name="author" content="Ruud van Asseldonk"/>
+    </head>
+    <body>
+        <header>
+            <h1>Ruud van Asseldonk</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="/">Blog</a></li>
+                <li><a href="/archive">Archive</a></li>
+                <li><a href="https://github.com/ruud-v-a"><span id="github">Code</span></a>
+                <li id="contact"><a href="mailto:ruudva@veniogames.com" rel="author">Contact</a></li>
+            </ul>
+        </nav>
+
+            
+        <article itemscope>
+            <time datetime="2013-05-01T20:00:00+02:00"> 1 May, 2013</time>
+            <h1><a href="/2013/05/01/the-task-monad-in-csharp">The task monad in C#</a></h1>
+            
+            <p>Today I was trying to compose several asynchronous methods in C#.
+These methods all had one argument, and returned a <code>Task&lt;T&gt;</code>.
+The idea was very simple: the first method returns a <code>Task&lt;A&gt;</code>.
+The second method takes an <code>A</code> and returns a <code>Task&lt;B&gt;</code>.
+The third method takes a <code>B</code>, etc. As it turns out, there is no easy
+way to compose these methods in C#, even though there should be.</p>
+
+
+            <a href="/2013/05/01/the-task-monad-in-csharp">Read on</a>
+            
+        </article>
+    
+        <article itemscope>
+            <time datetime="2013-03-18T19:00:00+01:00">18 March, 2013</time>
+            <h1><a href="/2013/03/18/the-small-bang-theory-in-san-francisco">The Small Bang Theory in San Francisco</a></h1>
+            
+            <p>During the Game Developers Conference next week,
+the Dutch Game Garden will host <a href="http://dutchgamegarden.nl/indigo/editions/gdc2013">INDIGO @ GDC</a>.
+One of the games on display there, will be <em>The Small Bang Theory</em>,
+the award-winning game I and my team developed during the Global Game Jam 2012.
+If you happen to be in San Francisco between 25 and 30 March,
+be sure to drop by the Dutch Consulate!</p>
+
+            
+        </article>
+    
+        <article itemscope>
+            <time datetime="2012-09-23T13:00:00+02:00">23 September, 2012</time>
+            <h1><a href="/2012/09/23/geomancer-at-indigo">Geomancer at Indigo</a></h1>
+            
+            <p>During the past half year at <a href="http://made.nhtv.nl/">IGAD</a>,
+I and my team have built the game <em>Geomancer</em>,
+a chess-like game which is played by altering
+the game world. The game will be presented at the Dutch game festival
+<a href="http://dutchgamegarden.nl/indigo/editions/2012/geomancer/">Indigo</a>
+next week.</p>
+
+<p><img src="/images/geomancer-overview.png" alt="(an overview of Geomancer)" /></p>
+
+
+            <a href="/2012/09/23/geomancer-at-indigo">Read on</a>
+            
+        </article>
+    
+        <article itemscope>
+            <time datetime="2012-07-07T17:35:00+02:00"> 7 July, 2012</time>
+            <h1><a href="/2012/07/07/passphrase-entropy">Passphrase entropy</a></h1>
+            
+            <p>While I was researching passphrase entropy today, I made a shocking discovery.
+<em>Virtually any passphrase that a human can remember,
+does not have enough entropy to generate a strong cryptographic key.</em>
+Even though most modern encryption algorithms use key sizes of 128 or 256 bits,
+a comparatively &lsquo;strong&rsquo; passphrase has nowhere near this amount
+of entropy bits.</p>
+
+
+            <a href="/2012/07/07/passphrase-entropy">Read on</a>
+            
+        </article>
+    
+        <article itemscope>
+            <time datetime="2012-01-30T13:00:00+01:00">30 January, 2012</time>
+            <h1><a href="/2012/01/30/global-game-jam-2012">Global Game Jam 2012</a></h1>
+            
+            <p>Last weekend I participated in the <a href="http://globalgamejam.org">Global Game Jam</a>.
+In 48 hours, we made a game about a particle accelerator.
+With our game, <em>The Small Bang Theory</em>, we won the first prize of
+<a href="http://globalgamejam.org/sites/2012/ggjnl-nhtv-breda-university-applied-sciences">our location</a>,
+and we have a chance of winning the national prize as well.</p>
+
+<p><img src="/images/the-small-bang-theory.png" alt="(picture of the game)" /></p>
+
+<p>Due to a lack of artists, our team made a game which is all procedural.
+The graphics are procedural, and there are infinitely many levels.
+(Although you certainly deserve a honourable mention if you make it past level six &hellip;)
+The arcade-style game is available at
+<a href="http://globalgamejam.org/2012/small-bang-theory" title="The Small Bang Theory">the game jam site</a>.</p>
+
+            
+        </article>
+    
+    
+        <section>
+            <ul>
+            
+            <li class="previous-page"><a href="/page/2">Older posts</a></li>
+            
+            
+            </ul>
+        </section>
+    
+        <footer>
+            <span><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Copyleft</a> 2013 Ruud van Asseldonk</span>·<span>Powered by <a href="https://github.com/mojombo/jekyll">Jekyll</a></span>
+        </footer>
+    </body>
+</html>
