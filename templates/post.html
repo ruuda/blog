@@ -1,8 +1,13 @@
-<div class="info">
-    Posted on $date$
-    $if(author)$
-        by $author$
-    $endif$
-</div>
-
-$body$
+$partial("templates/top.html")$
+    <article itemscope>
+      <time datetime="$machinedate$" itemprop="datePublished">$humandate$</time>
+      <h1>$title$</h1>
+      $body$
+    </article>
+    <section>
+      <ul>
+        $if(previousPage)$<li class="previous-page"><a href="$previousPage$" title="Previous post: $previousTitle$" rel="prev">$previousTitle$</a></li>$endif$
+        $if(nextPage)$<li class="next-page"><a href="$nextPage$" title="Next post: $nextTitle$" rel="next">$nextTitle$</a></li>$endif$
+      </ul>
+    </section>
+$partial("templates/bottom.html")$

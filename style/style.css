@@ -62,6 +62,11 @@ body
     background-image: url('noise.png');
     overflow-x: hidden;
     min-width: 30em;
+
+    -moz-font-feature-settings: 'liga', 'kern';
+    -webkit-font-feature-settings: 'liga', 'kern';
+    -ms-font-feature-settings: 'liga', 'kern';
+    font-feature-settings: 'liga', 'kern';
 }
 
 h1, h2, h3
@@ -136,14 +141,14 @@ nav ul li a
     text-decoration: none;
     font-weight: 700;
     font-size: 1.2em;
-    text-shadow: 0pt 1pt 0pt #567418;
+    text-shadow: 0pt 0.08em 0pt #567418;
     padding-left: 1em;
     padding-right: 1em;
 }
 
 nav ul li a:hover
 {
-    text-shadow: 0pt 1.5pt 0pt #567418;
+    text-shadow: 0pt 0.13em 0pt #567418;
     background-color: #84b324;
 }
 
@@ -171,6 +176,7 @@ body > article, body > section
     padding-right: 3.5em;
     border-bottom: 1pt dashed #ac9f93;
     background-image: url('noise.png');
+    overflow: hidden;
 }
 
 body > article:last-of-type, body > section
@@ -314,6 +320,18 @@ article pre > code
     background-image: url('noise.png');
 }
 
+.sourceCode .kw                                   { color: #268bd2; } /* Keyword */
+.sourceCode .dt                                   { color: #859900; } /* Data type */
+.sourceCode .dv, .sourceCode .bn, .sourceCode .fl { color: #2aa198; } /* Decimal, base N, float */
+.sourceCode .ch                                   { color: #cb4b16; } /* Character */
+.sourceCode .st                                   { color: #b58900; } /* String */
+.sourceCode .co                                   { color: #586e75; } /* Comment */
+.sourceCode .ot                                   { color: #6c71c4; } /* Other */
+.sourceCode .al                                   { color: #cb4b16; } /* Alert */
+.sourceCode .fu                                   { color: #dc322f; } /* Function */
+.sourceCode .er                                   { color: #dc322f; } /* Error */
+.sourceCode .re                                   { } /* Region marker */
+
 article ol, article ul
 {
     list-style-position: outside;
@@ -367,6 +385,12 @@ article blockquote > p
 article blockquote em, article blockquote code
 {
     font-style: normal;
+}
+
+article hr
+{
+    border: 0 none;
+    border-top: 1pt dashed #ccd2c6;
 }
 
 .archive h2
@@ -468,8 +492,8 @@ footer a:hover
 footer span
 {
     font-size: 0.8em;
-    padding-right: 0.6em;
-    padding-left: 0.6em;
+    padding-right: 0.3em;
+    padding-left: 0.3em;
     color: #5b574f;
 }
 
@@ -477,3 +501,29 @@ footer span:first-child
 {
     padding-left: 0;
 }
+
+@media (max-width: 580px)
+{
+    body { min-width: 20em; }
+    header { margin-top: 0;  border-radius: 0; padding: 0.3em; padding-left: 1.5em; padding-right: 1.5em; }
+    footer { margin-bottom: 0; border-radius: 0; }
+    nav { padding: 0; }
+    nav ul { margin-left: 0; margin-right: 0; padding-left: 0.5em; padding-right: 0.5em; border-radius: 0; }
+    body > header, body > nav, body > article, body > section, body > footer { width: auto; margin-left: 0; margin-right: 0; }
+    body > article, body > section, body > footer { padding: 1.5em; }
+    article h1 { padding-bottom: 0.4em; margin-bottom: -0.2em; font-size: 2.2em; }
+    header h1 { padding: 0; padding-top: 0.4em; padding-bottom: 0.4em; }
+    .archive h1 + h2 { margin-top: 1em }
+    body > section > ul li { display: block; padding: 0; }
+    body > section > ul li.next-page { text-align: left; padding-top: 0.5em; }
+    body > section > ul li.next-page a:before { content: '» ' }
+    body > section > ul li.next-page a:after { content: '' }
+}
+
+@media (max-width: 580px) { body { font-size: 15px } }
+
+@media (max-width: 360px) { body { font-size: 13px } }
+
+@media (min-width: 1400px) { body { font-size: 20px } }
+
+@media (min-width: 1600px) { body { font-size: 22px } }

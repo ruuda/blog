@@ -1,0 +1,29 @@
+# MIME types
+AddType text/css .css
+AddType text/html .html
+AddType text/xml .xml
+AddType application/font-woff .woff
+
+# The feed is an atom feed
+<Files "feed.xml">
+	AddType application/atom+xml .xml
+</Files>
+
+# Set the correct encodings and language
+DefaultLanguage en-GB
+AddDefaultCharset UTF-8
+AddCharset UTF-8 .html
+AddCharset UTF-8 .css
+AddCharset UTF-8 .xml
+
+# Security options
+Options -MultiViews -Indexes
+
+# Trailing slash
+RewriteEngine On
+RewriteBase /
+DirectorySlash Off
+
+RewriteRule ^(.*)\/$ $1 [R=301,L]
+
+RewriteRule ^([\w\d\/-]+)$ $1/index.html [L,T=text/html]

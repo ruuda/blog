@@ -1,7 +1,20 @@
-<ul>
+$partial("templates/top.html")$
     $for(posts)$
-        <li>
-            <a href="$url$">$title$</a> - $date$
-        </li>
+    <article itemscope>
+      <time datetime="$machinedate$" itemprop="datePublished">$humandate$</time>
+      <h1><a href="$url$">$title$</a></h1>
+      $if(teaser)$
+      $teaser$
+      <a href="$url$">Read on</a>
+      $else$
+      $body$
+      $endif$
+    </article>
     $endfor$
-</ul>
+    <section>
+      <ul>
+        $if(older)$<li class="previous-page"><a href="$older$" rel="prev">Older posts</a></li>$endif$
+        $if(newer)$<li class="next-page"><a href="$newer$" rel="next">Newer posts</a></li>$endif$
+      </ul>
+    </section>
+$partial("templates/bottom.html")$
