@@ -1,10 +1,10 @@
 $partial("templates/top.html")$
     <article class="archive">
-    	<h1>Blog archive</h1>
-    	$for(years)$
-    	<h2>$year$</h2>
-    	$for(posts)$
-    	<p itemscope><time datetime="$machinedate$" itemprop="datePublished">$archivedate$</time> · <a href="$url$">$title$</a></p>
+      <h1>Blog archive</h1>
+      $for(years)$
+      <h2>$year$</h2>
+      $for(posts)$
+      <p itemscope><time datetime="$machinedate$" itemprop="datePublished">$archivedate$</time> · <a href="$url$">$title$</a></p>
       $endfor$
       $endfor$
     </article>
