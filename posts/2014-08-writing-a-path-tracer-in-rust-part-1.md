@@ -17,3 +17,4 @@ Porting specifics:
 - I still find the Egyptian brackets a bit awkward, but it is mostly a matter of preference, and I think I will get used to it.
 - It seems to be impossible to have multiple implementations of `Mul<T, U>`. I encountered this when trying to allow scalar multiplication for vectors on both sides.
   With some help from IRC (they were really quick), I found a workaround, but it does not solve the problem in all cases.
+  Note that this essentially requires overloading based on traits, if it would be solved in a generic manner.
