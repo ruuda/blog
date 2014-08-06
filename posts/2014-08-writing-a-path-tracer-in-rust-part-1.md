@@ -18,3 +18,8 @@ Porting specifics:
 - It seems to be impossible to have multiple implementations of `Mul<T, U>`. I encountered this when trying to allow scalar multiplication for vectors on both sides.
   With some help from IRC (they were really quick), I found a workaround, but it does not solve the problem in all cases.
   Note that this essentially requires overloading based on traits, if it would be solved in a generic manner.
+- The module structure and file layout can be a bit confusing. I had `vector3.rs` and `quaternion.rs`.
+  Then `quaternion.rs` requires `vector3.rs`. To resolve, I had to add use statements to `main.rs`.
+  Being used to C# this does not really make sense, but if you treat `mod` declarations as C++ `#includes`,
+  and if you are aware that `main.rs` is the only file that matters to the compiler,
+  then it does make sense.
