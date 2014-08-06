@@ -14,3 +14,4 @@ date: 2014-08-01 21:00
 Porting specifics:
 - Cargo is really, really nice. Easy to set up, and then just `cargo run` after writing some code.
 - The compiler has mostly helpful error messages. Lots of warnings, which is good as well.
+- I still find the Egyptian brackets a bit awkward, but it is mostly a matter of preference, and I think I will get used to it.
