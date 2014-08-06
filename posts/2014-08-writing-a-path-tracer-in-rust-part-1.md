@@ -15,3 +15,5 @@ Porting specifics:
 - Cargo is really, really nice. Easy to set up, and then just `cargo run` after writing some code.
 - The compiler has mostly helpful error messages. Lots of warnings, which is good as well.
 - I still find the Egyptian brackets a bit awkward, but it is mostly a matter of preference, and I think I will get used to it.
+- It seems to be impossible to have multiple implementations of `Mul<T, U>`. I encountered this when trying to allow scalar multiplication for vectors on both sides.
+  With some help from IRC (they were really quick), I found a workaround, but it does not solve the problem in all cases.
