@@ -23,3 +23,4 @@ Porting specifics:
   Being used to C# this does not really make sense, but if you treat `mod` declarations as C++ `#includes`,
   and if you are aware that `main.rs` is the only file that matters to the compiler,
   then it does make sense.
+- Having to use method call syntax for mathematical functions feels weird. Is there an other way?
