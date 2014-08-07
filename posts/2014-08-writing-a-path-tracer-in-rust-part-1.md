@@ -25,3 +25,8 @@ Porting specifics:
   then it does make sense.
 - Having to use method call syntax for mathematical functions feels weird. Is there an other way?
 - I _really_ dislike the Egyptian brackets! They make everything look unbalanced. :(
+- If structs use Pascal casing, but files use lower case, how should I name the file and mod for `MonteCarloUnit`?
+  The standard library itself is inconsistent. Libcollections has `TreeMap` in `treemap.rs`, but `PriorityQueue` in `priority_queue.rs`.
+  I will use snake case for filenames and module names then, it seems nicer.
+  (The casing conventions in Rust are a bit unfortunate in my opinion; the problem occurs for functions that contain a type in the name as well.
+  Furthermore, primitive types do not use Pascal case ...)
