@@ -30,3 +30,7 @@ Porting specifics:
   I will use snake case for filenames and module names then, it seems nicer.
   (The casing conventions in Rust are a bit unfortunate in my opinion; the problem occurs for functions that contain a type in the name as well.
   Furthermore, primitive types do not use Pascal case ...)
+- The `MonteCarloUnit` became a mod with free functions, because Rust has a task-local rng, which is nice.
+  However, the syntax for generating numbers in a closed interval is a bit convoluted.
+  Sure, the fancy type system allows you to write `rand::random::<Closed01<f32>>()`,
+  but is that really better than having multiple methods like `random::half_open::<f32>()` and `random::closed::<f32>()`?
