@@ -24,3 +24,4 @@ Porting specifics:
   and if you are aware that `main.rs` is the only file that matters to the compiler,
   then it does make sense.
 - Having to use method call syntax for mathematical functions feels weird. Is there an other way?
+- I _really_ dislike the Egyptian brackets! They make everything look unbalanced. :(
