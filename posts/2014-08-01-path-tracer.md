@@ -34,3 +34,6 @@ Porting specifics:
   However, the syntax for generating numbers in a closed interval is a bit convoluted.
   Sure, the fancy type system allows you to write `rand::random::<Closed01<f32>>()`,
   but is that really better than having multiple methods like `random::half_open::<f32>()` and `random::closed::<f32>()`?
+- I just ran `cargo run` on a fresh clone on Arch. It was _fast_.
+  Like, compiled and run _instantly_!
+  Running it with `time` tells me it took only 0.42 seconds. I should test it on Windows, but it not nearly that fast, I think.
