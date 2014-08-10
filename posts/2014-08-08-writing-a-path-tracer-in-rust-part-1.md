@@ -4,8 +4,9 @@ date: 2014-08-10 22:30
 ---
 
 It must have been almost a year ago that I first heared about [Rust][rust].
-Posts about Rust would appear on [/r/programming][reddit] now and then.
-The language caught my attention for several reasons.
+Posts about the language would appear on [/r/programming][reddit] now and then,
+and the language caught my attention.
+Rust got me excited for serveral reasons:
 
 - One of the key points of Rust is a very powerful way to do deterministic resource management.
   This is a weak point of the languages that I use most often (C++ and C# nowadays).
@@ -22,7 +23,8 @@ I was charmed by this new language.
 I followed the development for a while,
 but I never got around to actually writing some code --- until now.
 As an exercise, I decided to port [Luculentus][luculentus] to Rust.
-Luculentus is a proof of concept spectral path tracer that I wrote in C++ for a graphics programming course.
+Luculentus is a proof of concept spectral path tracer that I wrote for a graphics programming course.
+It is written in C++.
 I expect that porting it will allow me to learn many aspects of Rust.
 You can follow the development of the port at [GitHub][robigo-luculenta].
 
