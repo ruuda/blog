@@ -37,3 +37,4 @@ Porting specifics:
 - I just ran `cargo run` on a fresh clone on Arch. It was _fast_.
   Like, compiled and run _instantly_!
   Running it with `time` tells me it took only 0.42 seconds. I should test it on Windows, but it not nearly that fast, I think.
+- The method call syntax on numbers still feels unnatural. I guess it takes time to get used to it. Maybe it will be even better than the regular way.
