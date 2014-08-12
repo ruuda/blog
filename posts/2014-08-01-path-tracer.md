@@ -43,3 +43,5 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
   Now it is `intersect(&self, ray: &Ray) -> Option<Intersection>`. Much better!
 - I should compare the occurrences of `mut` in Rust and `const` in C++. I think it makes sense to have immutability by default.
 - Automatic dereferencing is nice. I rarely have to dereference anything manually, even though references are all over the place.
+- Tuples are nice as well. `GetIntersections` on `Sphere` would return a boolean, and it had two out parameters.
+  Now it returns `Option<(f32, f32)>`. Much better!
