@@ -45,3 +45,5 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
 - Automatic dereferencing is nice. I rarely have to dereference anything manually, even though references are all over the place.
 - Tuples are nice as well. `GetIntersections` on `Sphere` would return a boolean, and it had two out parameters.
   Now it returns `Option<(f32, f32)>`. Much better!
+- I have not been using `Option` to replace `null` so far, but to replace out parameters.
+  That has more to do with my C++ coding style though, I think.
