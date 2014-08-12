@@ -47,3 +47,7 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
   Now it returns `Option<(f32, f32)>`. Much better!
 - I have not been using `Option` to replace `null` so far, but to replace out parameters.
   That has more to do with my C++ coding style though, I think.
+- The per-module visibility system makes sense. Better than private/protetcted/public. It is like `internal` in C#.
+  In C#, internal feels like a hack because there are objects everywhere,
+  but with structs, traits and functions in Rust, it feels very natural.
+  E.g. I can define helper functions that are not exposed outside of the module.
