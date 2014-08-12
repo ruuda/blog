@@ -42,12 +42,13 @@ Apparently, there is [not going to be][issue45] support for `cargo.toml` either.
 Style
 -----
 The official Rust style is to use [Egyptian brackets][egypt].
-I do not like that, it feels unbalanced to me.
-It is a matter of preference though, so I will have to get used to it.
+Though I prefer balanced brackets,
+it is a matter of taste,
+so I will have to get used to it.
 
 The official casing rules are Pascal casing for types, and lowercase with underscores (snake case) for most other things.
-Again, this is a matter of taste, but I do find it an odd combination.
-It also leads to problems when a type is part of a function name, or when you have a file or module for every type.
+Again, this is a matter of preference, but I do find it an odd combination.
+It also leads to problems when a type is part of a function name, or when you name modules after a type.
 The standard library itself has `TreeMap` in `treemap.rs`, but `PriorityQueue` in `priority_queue.rs`.
 I chose to use snake case for my filenames.
 
@@ -61,7 +62,7 @@ It might even be better when multiple functions are nested, because the parenthe
 Modules
 -------
 Rust uses modules, which are like namespaces.
-The compiler compiles only one file, and it might look for other files when modules are declared but not defined.
+The compiler compiles only one file, and it might look for other files when modules are declared.
 For example, I have `Vector3` in `src/vector3.rs`, which will become the `vector3` module.
 In `main.rs`, you declare `mod vector3;`, and that will expand to `mod vector3 { contents }`, with the contents of `vector3.rs`.
 This is very much like `#include` in C, and it surprised me at first.
@@ -69,14 +70,15 @@ The `Vector3` type is used in many other modules such as `ray`, so at first I th
 However, that declares the module `::ray::vector3`.
 The proper thing to do, is to declare both the `vector3` and the `ray` module in `main.rs`,
 and then the module `::vector3` is available in `ray.rs`.
-If you realise that module declarations work in this `#include` kind of way, it makes sense.
+If you keep in mind that module declarations work in this `#include` kind of way, it makes sense.
 
 Being used to the C# system, where all files are considered for name resolution,
-it does feel like a step backwards though.
+it does feel like a step backwards.
 I do not want to have to declare `vector3` in `main.rs`: it is a dependency of most other modules, but main does not use it directly.
 Changing things in `main.rs` changes the behaviour of `ray.rs`,
 even though I feel like `main` should depend on `ray`,
 not the other way around.
+At this point, files interact in a [complex][complex] way.
 I might have missed something though, so please let me know if there is a better way.
 
 Generally, my first impressions are positive.
@@ -85,6 +87,8 @@ When things do not work as I expected, the IRC channel is very helpful.
 Next time I will discuss more of the type system:
 operator overloading with traits, and the `Option` type.
 I will also discuss more of the internals of the path tracer.
+
+[complex]: http://www.infoq.com/presentations/Simple-Made-Easy
 
 ---
 
