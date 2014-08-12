@@ -32,10 +32,12 @@ Windows is slightly slower, at 1.16 seconds.
 One downside of Cargo is that it only looks for `Cargo.toml`,
 and I dislike having uppercase characters in my filenames.
 At least `make` accepts `makefile` as well.
+Apparently, there is [not going to be][issue45] support for `cargo.toml` either.
 
-[cargo]: http://crates.io
-[cabal]: http://www.haskell.org/cabal/
-[toml]:  https://github.com/toml-lang/toml
+[cargo]:   http://crates.io
+[cabal]:   http://www.haskell.org/cabal/
+[toml]:    https://github.com/toml-lang/toml
+[issue45]: https://github.com/rust-lang/cargo/issues/45
 
 Style
 -----
