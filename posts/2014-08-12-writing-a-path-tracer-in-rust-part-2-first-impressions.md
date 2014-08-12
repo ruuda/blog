@@ -23,7 +23,7 @@ Setting up a project with Cargo is as easy as writing a four-line [toml][toml] f
 Then you just do `cargo run`, and it compiles everything, and then runs the program.
 The compiler produces mostly helpful error messages, much better than the C++ template hell.
 Compiling and running is extremely fast (at this point, at least).
-For the few source files I have, it takes 0.42 seconds to compile and run on Linux.
+For the few source files I have, it takes 0.46 seconds to compile and run on Linux.
 That feels like compilation is _instant_.
 Windows is slightly slower, at 1.16 seconds.
 
