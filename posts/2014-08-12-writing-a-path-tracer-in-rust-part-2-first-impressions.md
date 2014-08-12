@@ -3,16 +3,17 @@ title: Writing a path tracer in Rust, part 2: first impressions
 date: 2014-08-12 11:35
 ---
 
-As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to Rust.
+As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to [Rust][rust].
 You can follow the port on [GitHub][robigo-luculenta].
 After porting a few files, these are my first impressions of Rust.
 
-[luculentus]: https://github.com/ruud-v-a/luculentus
+[rust]:             http://rust-lang.org
+[luculentus]:       https://github.com/ruud-v-a/luculentus
 [robigo-luculenta]: https://github.com/ruud-v-a/robigo-luculenta
 
 Tools
 -----
-Installing [Rust][rust] and [Cargo][cargo] was not too hard.
+Installing Rust and [Cargo][cargo] was not too hard.
 With the installer, it even works on Windows without having to go through all the MSYS hassle.
 The Windows version is 32-bit though.
 
@@ -26,14 +27,15 @@ For the few source files I have, it takes 0.42 seconds to compile and run on Lin
 That feels like compilation is _instant_.
 Windows is slightly slower, at 1.16 seconds.
 
+<!--more-->
+
 One downside of Cargo is that it only looks for `Cargo.toml`,
 and I dislike having uppercase characters in my filenames.
 At least `make` accepts `makefile` as well.
 
-[rust]:  http://rust-lang.org
 [cargo]: http://crates.io
 [cabal]: http://www.haskell.org/cabal/
-[toml]]: https://github.com/toml-lang/toml
+[toml]:  https://github.com/toml-lang/toml
 
 Style
 -----
