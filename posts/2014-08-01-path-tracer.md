@@ -5,27 +5,27 @@ date: 2014-08-01 21:00
 
 - Papercuts and major design flaws in languages like C++ and C#.
 - Rust appears to solve the flaws that I find most important.
-- Wanted to try Rust for a very long time.
-- Porting Luculentus to Rust.
-- Also updating Luculentus codebase from 2012 (when C++11 was not widely available) to use idiomatic C++11.
+x Wanted to try Rust for a very long time.
+x Porting Luculentus to Rust.
+x Also updating Luculentus codebase from 2012 (when C++11 was not widely available) to use idiomatic C++11.
 - Destructors in C++ code should be gone.
 - Conclusion? Performance comparison?
 
 Porting specifics:
-- Cargo is really, really nice. Easy to set up, and then just `cargo run` after writing some code.
-- The compiler has mostly helpful error messages. Lots of warnings, which is good as well.
-- I still find the Egyptian brackets a bit awkward, but it is mostly a matter of preference, and I think I will get used to it.
+x Cargo is really, really nice. Easy to set up, and then just `cargo run` after writing some code.
+x The compiler has mostly helpful error messages. Lots of warnings, which is good as well.
+x I still find the Egyptian brackets a bit awkward, but it is mostly a matter of preference, and I think I will get used to it.
 - It seems to be impossible to have multiple implementations of `Mul<T, U>`. I encountered this when trying to allow scalar multiplication for vectors on both sides.
   With some help from IRC (they were really quick), I found a workaround, but it does not solve the problem in all cases.
   Note that this essentially requires overloading based on traits, if it would be solved in a generic manner.
-- The module structure and file layout can be a bit confusing. I had `vector3.rs` and `quaternion.rs`.
+x The module structure and file layout can be a bit confusing. I had `vector3.rs` and `quaternion.rs`.
   Then `quaternion.rs` requires `vector3.rs`. To resolve, I had to add use statements to `main.rs`.
   Being used to C# this does not really make sense, but if you treat `mod` declarations as C++ `#includes`,
   and if you are aware that `main.rs` is the only file that matters to the compiler,
   then it does make sense.
-- Having to use method call syntax for mathematical functions feels weird. Is there an other way?
-- I _really_ dislike the Egyptian brackets! They make everything look unbalanced. :(
-- If structs use Pascal casing, but files use lower case, how should I name the file and mod for `MonteCarloUnit`?
+x Having to use method call syntax for mathematical functions feels weird. Is there an other way?
+x I _really_ dislike the Egyptian brackets! They make everything look unbalanced. :(
+x If structs use Pascal casing, but files use lower case, how should I name the file and mod for `MonteCarloUnit`?
   The standard library itself is inconsistent. Libcollections has `TreeMap` in `treemap.rs`, but `PriorityQueue` in `priority_queue.rs`.
   I will use snake case for filenames and module names then, it seems nicer.
   (The casing conventions in Rust are a bit unfortunate in my opinion; the problem occurs for functions that contain a type in the name as well.
@@ -34,11 +34,11 @@ Porting specifics:
   However, the syntax for generating numbers in a closed interval is a bit convoluted.
   Sure, the fancy type system allows you to write `rand::random::<Closed01<f32>>()`,
   but is that really better than having multiple methods like `random::half_open::<f32>()` and `random::closed::<f32>()`?
-- I just ran `cargo run` on a fresh clone on Arch. It was _fast_.
+x I just ran `cargo run` on a fresh clone on Arch. It was _fast_.
   Like, compiled and run _instantly_!
   Running it with `time` tells me it took only 0.42 seconds. I should test it on Windows, but it not nearly that fast, I think.
   Edit: on Windows, it now runs in 1.16 seconds (after a clean), though there is more code at this point (3b893bfdc728e9bc2b56c6e96345ea5aed75e4ea).
-- The method call syntax on numbers still feels unnatural. I guess it takes time to get used to it. Maybe it will be even better than the regular way.
+x The method call syntax on numbers still feels unnatural. I guess it takes time to get used to it. Maybe it will be even better than the regular way.
 - The `Intersect` method on `Surface` previously returned a boolean, and it had an out parameter.
   Now it is `intersect(&self, ray: &Ray) -> Option<Intersection>`. Much better!
 - I should compare the occurrences of `mut` in Rust and `const` in C++. I think it makes sense to have immutability by default.
