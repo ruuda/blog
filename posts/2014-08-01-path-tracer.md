@@ -51,3 +51,4 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
   In C#, internal feels like a hack because there are objects everywhere,
   but with structs, traits and functions in Rust, it feels very natural.
   E.g. I can define helper functions that are not exposed outside of the module.
+- I should compare compilation times for C++ and Rust when it is done.
