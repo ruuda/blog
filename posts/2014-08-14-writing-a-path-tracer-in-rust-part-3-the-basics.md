@@ -136,6 +136,95 @@ Multiplication is a `mul` call on the left hand side, so we would have to implem
 Unfortuntely, the compiler allows only one implementation of `Mul` for a type, regardless of the type parameters for `Mul`.
 Because regular multiplication of two `f32`s implements `Mul` already, we cannot implement it for `Vector3` any more.
 
+Quaternions
+-----------
+Luculentus uses quaternions to represent rotations.
+Most of the `Quaternion` implementation is similar to that of `Vector3`, but with four components instead of three.
+(In fact, quaternions form a vector space, so they _are_ vectors.)
+The interesting thing is that quaternions support quaternion multiplication as well as scalar multiplication.
+
+In C++, we can simply implement them both:
+
+```cpp
+inline Quaternion operator*(const Quaternion q, const float f)
+{
+    Quaternion prod = { q.x * f, q.y * f, q.z * f, q.w * f };
+    return prod;
+}
+
+inline Quaternion operator*(const Quaternion a, const Quaternion b)
+{
+    Quaternion prod =
+    {
+        a.w * b.x  +  a.x * b.w  +  a.y * b.z  -  a.z * b.y,
+        a.w * b.y  -  a.x * b.z  +  a.y * b.w  +  a.z * b.x,
+        a.w * b.z  +  a.x * b.y  -  a.y * b.x  +  a.z * b.w,
+        a.w * b.w  -  a.x * b.x  -  a.y * b.y  -  a.z * b.z
+    };
+    return prod;
+}
+```
+
+As we saw before, we cannot implement `Mul` twice in Rust.
+Luckily, the IRC channel was very helpful, and there is a solution.
+The trick is to define a trait for “things that can be the right-hand side of multiplication with a quaternion”:
+
+```rust
+trait MulQuaternion {
+    fn mul(&self, lhs: &Quaternion) -> Quaternion;
+}
+```
+
+Then we can implement `Mul` where the right-hand side must implement `MulQuaternion`:
+
+```rust
+impl<T: MulQuaternion> Mul<T, Quaternion> for Quaternion {
+    fn mul(&self, other: &T) -> Quaternion {
+        other.mul(self)
+    }
+}
+```
+
+Finally, we can implement `MulQuaternion` for `f32` as well as `Quaternion` itself:
+
+```rust
+impl MulQuaternion for f32 {
+    fn mul(&self, lhs: &Quaternion) -> Quaternion {
+        Quaternion {
+            x: lhs.x * *self,
+            y: lhs.y * *self,
+            z: lhs.z * *self,
+            w: lhs.w * *self
+        }
+    }
+}
+
+impl MulQuaternion for Quaternion {
+    fn mul(&self, lhs: &Quaternion) -> Quaternion {
+        Quaternion {
+            x: lhs.w * self.x + lhs.x * self.w + lhs.y * self.z - lhs.z * self.y,
+            y: lhs.w * self.y - lhs.x * self.z + lhs.y * self.w + lhs.z * self.x,
+            z: lhs.w * self.z + lhs.x * self.y - lhs.y * self.x + lhs.z * self.w,
+            w: lhs.w * self.w - lhs.x * self.x - lhs.y * self.y - lhs.z * self.z
+        }
+    }
+}
+```
+
+It feels a bit weird, because the second argument is the left-hand side of the multiplication.
+Like with `Vector3`, I think it is impossible to implement scalar multiplication with the scalar on the left.
+Please let me know if I am wrong!
+There is [an RFC][rfc] for multidispatch in traits.
+If it gets accepted, it will allow multiple implementations of `Add` and `Mul` for the same type.
+The correct one would be selected based on the types of the operands (or method arguments in general).
+That would certainly simplify the quaternion code, and it would allow scalar multiplication with the scalar on the left.
+
+[rfc]: https://github.com/rust-lang/rfcs/pull/195
+
+Next time I will discuss more of the type system,
+and there will finally be rays!
+I will also discuss more of the internals of the path tracer.
+
 ---
 
 Discuss this post on [reddit][reddit].
