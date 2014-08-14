@@ -100,7 +100,7 @@ impl Add<Vector3, Vector3> for Vector3 {
 }
 ```
 
-Overloading * for scalar multiplication in C++ is straightforward: we just change the types.
+Overloading * for scalar multiplication in C++ is similar to addition:
 
 ```cpp
 inline Vector3 operator*(const Vector3 a, const float f)
@@ -126,7 +126,7 @@ impl Mul<f32, Vector3> for Vector3 {
 
 This looks a bit awkward, because `f` must be dereferenced:
 the `Mul` trait dictates that that `mul` takes its arguments by reference.
-Note `self` is automatically dereferenced in `self.x`, there is no `->` like in C++.
+Note that `self` is automatically dereferenced in `self.x`, there is no `->` like in C++.
 
 So now we can wite things like `v * f` where `v` is a vector and `f` a scalar.
 Can we also implement `f * v`?
@@ -143,7 +143,7 @@ Most of the `Quaternion` implementation is similar to that of `Vector3`, but wit
 (In fact, quaternions form a vector space, so they _are_ vectors.)
 The interesting thing is that quaternions support quaternion multiplication as well as scalar multiplication.
 
-In C++, we can simply implement them both:
+In C++, we can implement them both:
 
 ```cpp
 inline Quaternion operator*(const Quaternion q, const float f)
