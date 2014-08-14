@@ -56,3 +56,7 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
 - The `Object` type, which had three pointers, one of which would always be null, became an enum with two variants, for now.
   Edit: no, it actually the `MaterialBox` became an enum variant.
 - Using `x as T` for casting is _much_ nicer than C++ `static_cast<T>(x)`.
+- I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
+  Unfortunately, a macro cannot expand to multiple statements, issue #10681.
+  The workaround I used, is to make a the macro return a tuple.
+  Also, macros do not capture their environment, and I need to enable the feature from `main.rs`, it does not work on a per-file basis. (I think.)
