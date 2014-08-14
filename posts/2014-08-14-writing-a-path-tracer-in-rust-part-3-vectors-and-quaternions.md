@@ -215,7 +215,7 @@ It feels a bit weird, because the second argument is the left-hand side of the m
 Like with `Vector3`, I think it is impossible to implement scalar multiplication with the scalar on the left.
 Please let me know if I am wrong!
 There is [an RFC][rfc] for multidispatch in traits.
-If it gets accepted, it will allow multiple implementations of `Add` and `Mul` for the same type.
+If it gets accepted, it might allow multiple implementations of `Add` and `Mul` for the same type.
 The correct one would be selected based on the types of the operands (or method arguments in general).
 That would certainly simplify the quaternion code, and it would allow scalar multiplication with the scalar on the left.
 
