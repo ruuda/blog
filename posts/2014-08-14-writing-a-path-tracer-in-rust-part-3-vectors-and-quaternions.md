@@ -1,5 +1,5 @@
 ---
-title: Writing a path tracer in Rust, part 3: the basics
+title: Writing a path tracer in Rust, part 3: vectors and quaternions
 date: 2014-08-14 21:08
 ---
 
@@ -229,4 +229,4 @@ I will also discuss more of the internals of the path tracer.
 
 Discuss this post on [reddit][reddit].
 
-[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/14/writing-a-path-tracer-in-rust-part-3-the-basics
+[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/14/writing-a-path-tracer-in-rust-part-3-vectors-and-quaternions
