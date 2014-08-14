@@ -86,9 +86,7 @@ The `mod` declarations are more like a project file, they tell the compiler whic
 
 So far, translating C++ to Rust has been a pleasant experience.
 When things do not work as I expected, the IRC channel is very helpful.
-Next time I will discuss more of the type system:
-operator overloading with traits, and the `Option` type.
-I will also discuss more of the internals of the path tracer.
+Next time I will discuss operator overloading with traits.
 
 [complex]: http://www.infoq.com/presentations/Simple-Made-Easy
 
