@@ -55,3 +55,4 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
 - I should compare compilation times for C++ and Rust when it is done.
 - The `Object` type, which had three pointers, one of which would always be null, became an enum with two variants, for now.
   Edit: no, it actually the `MaterialBox` became an enum variant.
+- Using `x as T` for casting is _much_ nicer than C++ `static_cast<T>(x)`.
