@@ -60,3 +60,6 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
   Unfortunately, a macro cannot expand to multiple statements, issue #10681.
   The workaround I used, is to make a the macro return a tuple.
   Also, macros do not capture their environment, and I need to enable the feature from `main.rs`, it does not work on a per-file basis. (I think.)
+- Dead code warnings are nice, but they seem to be transitive, so now I get three pages of dead code warnings,
+  while really only a few top-level functions are not used (yet).
+  The warnings can be disabled with `#![allow(dead_code)]` in `main.rs`.
