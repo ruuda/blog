@@ -54,3 +54,4 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
   E.g. I can define helper functions that are not exposed outside of the module.
 - I should compare compilation times for C++ and Rust when it is done.
 - The `Object` type, which had three pointers, one of which would always be null, became an enum with two variants, for now.
+  Edit: no, it actually the `MaterialBox` became an enum variant.
