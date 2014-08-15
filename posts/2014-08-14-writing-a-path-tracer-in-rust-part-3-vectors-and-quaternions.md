@@ -29,14 +29,14 @@ struct Vector3
 };
 ```
 
-There are also methods `Magnitude` and `Normalise` that I omitted here.
+There are also `Magnitude` and `Normalise` methods that I omitted here.
 C++ allows initialization like this:
 
 ```cpp
 Vector3 v = { 1.0f, 0.0f, 0.0f };
 ```
 
-The vector in Rust is very similar:
+The vector in Rust is similar:
 
 ```rust
 pub struct Vector3 {
@@ -85,8 +85,10 @@ inline Vector3 operator+(const Vector3 a, const Vector3 b)
 }
 ```
 
-In Rust, overloading `+` involves implementing the `Add` trait.
+In Rust, overloading + involves implementing the `Add` trait.
 Traits are like interfaces in C#.
+`Add` takes two generic parameters: the type of the right-hand side, and the type of the result.
+Both are `Vector3` in this case.
 
 ```rust
 impl Add<Vector3, Vector3> for Vector3 {
@@ -110,7 +112,7 @@ inline Vector3 operator*(const Vector3 a, const float f)
 }
 ```
 
-In Rust, the `Mul` trait takes two type parameters just like `Add`: the type of the right-hand side, and the type of the result.
+In Rust, the `Mul` trait takes two type parameters as well: the type of the right-hand side, and the type of the result.
 
 ```rust
 impl Mul<f32, Vector3> for Vector3 {
@@ -128,7 +130,7 @@ This looks a bit awkward, because `f` must be dereferenced:
 the `Mul` trait dictates that that `mul` takes its arguments by reference.
 Note that `self` is automatically dereferenced in `self.x`, there is no `->` like in C++.
 
-So now we can wite things like `v * f` where `v` is a vector and `f` a scalar.
+Now we can wite things like `v * f` where `v` is a vector and `f` a scalar.
 Can we also implement `f * v`?
 In C++ it is straightforward, just switch the arguments.
 In Rust, I think it cannot be done at this point.
@@ -141,7 +143,7 @@ Quaternions
 Luculentus uses quaternions to represent rotations.
 Most of the `Quaternion` implementation is similar to that of `Vector3`, but with four components instead of three.
 (In fact, quaternions form a vector space, so they _are_ vectors.)
-The interesting thing is that quaternions support quaternion multiplication as well as scalar multiplication.
+The interesting thing is that quaternions support quaternion multiplication in addition to scalar multiplication.
 
 In C++, we can implement them both:
 
