@@ -1,6 +1,6 @@
 ---
-title: Writing a path tracer in Rust, part 3: vectors and quaternions
-date: 2014-08-14 21:08
+title: Writing a path tracer in Rust, part 3: operators
+date: 2014-08-15 12:00
 ---
 
 As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to [Rust][rust].
@@ -229,6 +229,6 @@ I will also discuss more of the internals of the path tracer.
 
 ---
 
-Discuss this post on [reddit][reddit].
+Discuss this post on [Reddit][reddit].
 
-[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/14/writing-a-path-tracer-in-rust-part-3-vectors-and-quaternions
+[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/15/writing-a-path-tracer-in-rust-part-3-operators
