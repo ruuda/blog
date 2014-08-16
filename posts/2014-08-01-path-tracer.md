@@ -66,3 +66,9 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
 - The cryptic error messages are back:
       error: type `core::iter::Map<'_,&[f32],f32,core::slice::Chunks<'_,f32>>` does not implement any method in scope named `sum`
       error: binary operation `/` cannot be applied to type `core::iter::Map<'_,f32,f32,core::iter::Map<'_,&[f32],f32,core::slice::Chunks<'_,f32>>>`
+- Iterators have no extra layer of indirection like C# has (`IEnumerable.GetEnumerator`).
+  This means that it is harder to re-use a `map`.
+  It is possible to do an intermediate `collect`, but in this case, I think the computation is cheaper than the memory acces (thought I did not measure).
+  When using `collect().iter()`, the iterator now returns references instead of values.
+- Iterators _do_ make it a lot more convenient to implement `TonemapUnit::FindExposure`, even with the flaw mentioned above.
+  More functional, less loops. Like LINQ in C#.
