@@ -63,3 +63,6 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
 - Dead code warnings are nice, but they seem to be transitive, so now I get three pages of dead code warnings,
   while really only a few top-level functions are not used (yet).
   The warnings can be disabled with `#![allow(dead_code)]` in `main.rs`.
+- The cryptic error messages are back:
+      error: type `core::iter::Map<'_,&[f32],f32,core::slice::Chunks<'_,f32>>` does not implement any method in scope named `sum`
+      error: binary operation `/` cannot be applied to type `core::iter::Map<'_,f32,f32,core::iter::Map<'_,&[f32],f32,core::slice::Chunks<'_,f32>>>`
