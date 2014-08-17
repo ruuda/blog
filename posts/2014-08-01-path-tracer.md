@@ -72,3 +72,4 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
   When using `collect().iter()`, the iterator now returns references instead of values.
 - Iterators _do_ make it a lot more convenient to implement `TonemapUnit::FindExposure`, even with the flaw mentioned above.
   More functional, less loops. Like LINQ in C#.
+- The operator `+=` cannot be overloaded. Apparently the compiler does not replace it with a load, +, store. That is a shame.
