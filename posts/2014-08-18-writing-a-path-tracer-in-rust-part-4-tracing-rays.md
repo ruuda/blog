@@ -44,18 +44,27 @@ pub struct Ray {
 <!--more-->
 
 Now we need something to intersect a ray with: a surface.
-In C++, a surface is defined as follows:
+In C++, the intersection and surface are defined as follows:
 
 ```cpp
-class Surface
+struct Intersection
 {
-    public:
+    Vector3 position;
+    Vector3 normal;
+    Vector3 tangent;
+    float distance;
+};
+
+struct Surface
+{
     virtual bool Intersect(const Ray ray,
                            Intersection& intersection) const = 0;
 };
 ```
-
-An abstract base class with an `Intersect` method.
+Intersection contains details about the surface at the intersection,
+and the distance along the ray.
+The distance is later used to pick the closest intersection.
+A surface is just an abstract base class with an `Intersect` method.
 The method takes an intersection by reference.
 If the surface was intersected, it returns `true` and the intersection is filled with the details.
 If the ray did not intersect the surface, it returns `false`.
@@ -63,9 +72,16 @@ An other approach would be to return an `Intersection*`, and return null when th
 This would involve a heap allocation, so I opted for the first approach.
 
 Rust has a cleaner way to handle optional values: the `Option` type.
-A surface in Rust is defined like this:
+The intersection and surface in Rust is defined like this:
 
 ```rust
+pub struct Intersection {
+    pub position: Vector3,
+    pub normal: Vector3,
+    pub tangent: Vector3,
+    pub distance: f32
+}
+
 pub trait Surface {
     fn intersect(&self, ray: &Ray) -> Option<Intersection>;
 }
@@ -74,30 +90,31 @@ pub trait Surface {
 Whereas in C++, surface classes derive from `Surface`, in Rust they implement a trait.
 The `intersect` method returns some intersection if there was one, or `None` if nothing was intersected.
 I find this to be a more natural approach than an out argument.
+Note that even though this is like returning a pointer that might be null in C++,
+there is no heap allocation involved here.
 
 Materials
 ---------
 Now we can intersect surfaces, but there is an other part to path tracing.
 When a surface is intersected, the material at that point determines how the light path continues.
-In C++, all materials derive from this class:
+In C++, all non-emissive materials derive from `Material`:
 
 ```cpp
-class Material
+struct Material
 {
-    public:
     virtual Ray GetNewRay(const Ray incomingRay,
                           const Intersection intersection,
                           MonteCarloUnit& monteCarloUnit) const = 0;
 };
 ```
 
-The material takes the incoming ray and intersection details (which include the surface normal),
+The material takes the incoming ray and intersection details,
 and produces a new ray.
 This method need not be deterministic, so a Monte Carlo unit is provided as well,
-which contains a random number generator.
+which is a wrapper around a random number generator.
 Every thread has its own Monte Carlo unit, so there is no race for random numbers.
 
-In Rust, material is a trait:
+In Rust, `Material` is a trait:
 
 ```rust
 pub trait Material {
@@ -141,7 +158,8 @@ and either the material or emissive material must be non-null.
 It works, but the compiler does not prevent you from creating an invalid object
 that contains no material, or both a reflective and emissive material.
 It could be improved a bit by using a tagged union, but for this simple case, two pointers suffice.
-Also, it would be more idiomatic to use a unique_ptr or shared_ptr instead of the raw pointers nowadays.
+Nowadays it would be more idiomatic to use a `unique_ptr` or `shared_ptr` instead of the raw pointers.
+I would like to update that some day.
 In Rust, valid objects can be enforced statically:
 
 ```rust
