@@ -78,3 +78,6 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
   I like that.
 - However, I am having trouble with coupled ownership and mutability now.
   I want to share an immutable object between tasks ... how do I do it?
+  Edit: after a journey through several designs, I now have a better solution.
+  This kind of thing really forces you to think about what should go where,
+  and in the end, I think it leads to a better design.
