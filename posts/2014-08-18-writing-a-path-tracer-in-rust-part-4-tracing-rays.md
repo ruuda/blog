@@ -55,14 +55,14 @@ class Surface
 };
 ```
 
-A virtual base class with an `Intersect` method.
+An abstract base class with an `Intersect` method.
 The method takes an intersection by reference.
 If the surface was intersected, it returns `true` and the intersection is filled with the details.
 If the ray did not intersect the surface, it returns `false`.
-An other approach would be to return an `Intersection*`, and return `null` when there is no intersection.
+An other approach would be to return an `Intersection*`, and return null when there is no intersection.
 This would involve a heap allocation, so I opted for the first approach.
 
-Rust has a much cleaner way to handle optional values: the `Option` type.
+Rust has a cleaner way to handle optional values: the `Option` type.
 A surface in Rust is defined like this:
 
 ```rust
@@ -72,13 +72,13 @@ pub trait Surface {
 ```
 
 Whereas in C++, surface classes derive from `Surface`, in Rust they implement a trait.
-The `intersect` method returns some intersection if there was one, or `None` if nothing was intersected,
-a much more natural approach than an out argument.
+The `intersect` method returns some intersection if there was one, or `None` if nothing was intersected.
+I find this to be a more natural approach than an out argument.
 
 Materials
 ---------
 Now we can intersect surfaces, but there is an other part to path tracing.
-When a surface is intersected, the material at that point determines how the ray bounces.
+When a surface is intersected, the material at that point determines how the light path continues.
 In C++, all materials derive from this class:
 
 ```cpp
@@ -93,9 +93,9 @@ class Material
 
 The material takes the incoming ray and intersection details (which include the surface normal),
 and produces a new ray.
-This function need not be deterministic, so a Monte Carlo unit is provided as well,
+This method need not be deterministic, so a Monte Carlo unit is provided as well,
 which contains a random number generator.
-Every thread has its own monte carlo unit, so there is no race for random numbers.
+Every thread has its own Monte Carlo unit, so there is no race for random numbers.
 
 In Rust, material is a trait:
 
@@ -156,10 +156,10 @@ pub struct Object {
 }
 ```
 
-Enums in Rust are much more than glorified integers: they enable [sum types][sumtype].
-There is no way to assign both a reflective and emissive material to an Object now,
+Enums in Rust are more than glorified integers: they enable [sum types][sumtype].
+There is no way to assign both a reflective and emissive material to an object now,
 and because Rust does not have null pointers,
-there is also no way to assign no material to an Object.
+there is also no way to assign _no_ material to an object.
 Much better than the C++ version!
 
 The `Box` is like a `unique_ptr` in C++.
