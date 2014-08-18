@@ -76,3 +76,5 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
 - All these lifetimes and borrowing really make you consider ownership. I think this is a good thing.
   All other languages have it as well, but it is mostly implicit, and you can violate the contract. Rust enforces it statically.
   I like that.
+- However, I am having trouble with coupled ownership and mutability now.
+  I want to share an immutable object between tasks ... how do I do it?
