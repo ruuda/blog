@@ -73,3 +73,6 @@ x The method call syntax on numbers still feels unnatural. I guess it takes time
 - Iterators _do_ make it a lot more convenient to implement `TonemapUnit::FindExposure`, even with the flaw mentioned above.
   More functional, less loops. Like LINQ in C#.
 - The operator `+=` cannot be overloaded. Apparently the compiler does not replace it with a load, +, store. That is a shame.
+- All these lifetimes and borrowing really make you consider ownership. I think this is a good thing.
+  All other languages have it as well, but it is mostly implicit, and you can violate the contract. Rust enforces it statically.
+  I like that.
