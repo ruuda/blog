@@ -1,6 +1,6 @@
 ---
 title: Writing a path tracer in Rust, part 4: tracing rays
-date: 2014-08-18 13:00
+date: 2014-08-19 13:00
 ---
 
 As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to [Rust][rust].
@@ -274,4 +274,4 @@ Next time I will discuss multithreading and the task system in Luculentus.
 
 Discuss this post on [Reddit][reddit].
 
-[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/18/writing-a-path-tracer-in-rust-part-4-tracing-rays
+[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/19/writing-a-path-tracer-in-rust-part-4-tracing-rays
