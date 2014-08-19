@@ -187,9 +187,86 @@ The value in the `Box` could have any type, provided that it implements the righ
 
 [sumtype]: https://en.wikipedia.org/wiki/Algebraic_data_type
 
+We now have everything to build and intersect a scene.
+Luculentus is a simple proof-of-concept path tracer,
+so there is no data structure for fast scene intersection.
+The scene is just a vector of objects, and to intersect it,
+we intersect all objects, and return the closest intersection.
+
+Putting it together
+-------------------
+Given a ray, we can find the intensity of light along the ray:
+
+```cpp
+Ray ray = camera.GetRay(monteCarloUnit);
+float intensity = 1.0f;
+do
+{
+    Intersection intersection;
+    const Object* object = scene->Intersect(ray, intersection);
+
+    if (!object) return 0.0f;
+
+    if (!object->material)
+    {
+        // If material is null, emissiveMaterial is not null.
+        return intensity *
+            object->emissiveMaterial->GetIntensity(ray.wavelength);
+    }
+
+    ray = object->material->GetNewRay(ray, intersection, monteCarloUnit);
+    intensity *= ray.probability;
+}
+while (...)
+```
+
+We intersect a ray with the scene.
+If nothing was hit, the light intensity is zero --- a black background.
+For an outdoor scene, we could compute the intensity based on a sky spectrum.
+If an object was intersected, and its `material` pointer is null,
+its `emissiveMaterial` pointer must not be null --- a light source.
+The final intensity is the intensity of the light source reduced by the effects of previous bounces.
+If the `material` pointer was not null,
+we ask the material to generate a ray that continues the path.
+The loop continues with a probability that decreases with every intersection.
+Paths with a low intensity also have a higher chance of being terminated.
+If the loop terminates, the intensity is just zero.
+
+The Rust version uses pattern matching instead of null pointers:
+
+```rust
+let mut ray = camera.get_ray();
+let mut intensity = 1.0f32;
+loop {
+    match scene.intersect(&ray) {
+        None => return 0.0,
+        Some((intersection, object)) => {
+            match object.material {
+                Emissive(ref mat) => {
+                    return intensity * mat.get_intensity(ray.wavelength);
+                },
+                Reflective(ref mat) => {
+                    ray = mat.get_new_ray(&ray, &intersection);
+                    intensity = intensity * ray.probability;
+                }
+            }
+        }
+    }
+
+    if ... { break; }
+}
+```
+
+I find the C++ version more aesthetically pleasing and readable in this case.
+The `Emissive` and `Reflective` enum variants contain a `Box` with the material.
+If we were to match on that, it would move the box into the match variable.
+Here we do not want to take ownership of the material,
+so by matching with `ref`, the `mat` variables will borrow the material instead.
+
 For the cases in this post, the types in Rust and C++ are very similar.
-However, Rust provides much more compile-time safety: it prevents you from constructing invalid objects.
-It can do this because of the more advanced type system.
+However, Rust has a more advanced type system, with several benefits:
+it prevents you from constructing invalid objects,
+and it forces you to consider every case.
 Next time I will discuss multithreading and the task system in Luculentus.
 
 ---
