@@ -15,7 +15,7 @@ Porting specifics:
 x Cargo is really, really nice. Easy to set up, and then just `cargo run` after writing some code.
 x The compiler has mostly helpful error messages. Lots of warnings, which is good as well.
 x I still find the Egyptian brackets a bit awkward, but it is mostly a matter of preference, and I think I will get used to it.
-- It seems to be impossible to have multiple implementations of `Mul<T, U>`. I encountered this when trying to allow scalar multiplication for vectors on both sides.
+x It seems to be impossible to have multiple implementations of `Mul<T, U>`. I encountered this when trying to allow scalar multiplication for vectors on both sides.
   With some help from IRC (they were really quick), I found a workaround, but it does not solve the problem in all cases.
   Note that this essentially requires overloading based on traits, if it would be solved in a generic manner.
 x The module structure and file layout can be a bit confusing. I had `vector3.rs` and `quaternion.rs`.
@@ -40,26 +40,27 @@ x I just ran `cargo run` on a fresh clone on Arch. It was _fast_.
   Edit: on Windows, it now runs in 1.16 seconds (after a clean), though there is more code at this point (3b893bfdc728e9bc2b56c6e96345ea5aed75e4ea).
   Edit2: on Arch, the same commit runs in 0.46 seconds.
 x The method call syntax on numbers still feels unnatural. I guess it takes time to get used to it. Maybe it will be even better than the regular way.
-- The `Intersect` method on `Surface` previously returned a boolean, and it had an out parameter.
+x The `Intersect` method on `Surface` previously returned a boolean, and it had an out parameter.
   Now it is `intersect(&self, ray: &Ray) -> Option<Intersection>`. Much better!
 - I should compare the occurrences of `mut` in Rust and `const` in C++. I think it makes sense to have immutability by default.
 - Automatic dereferencing is nice. I rarely have to dereference anything manually, even though references are all over the place.
 - Tuples are nice as well. `GetIntersections` on `Sphere` would return a boolean, and it had two out parameters.
   Now it returns `Option<(f32, f32)>`. Much better!
-- I have not been using `Option` to replace `null` so far, but to replace out parameters.
+x I have not been using `Option` to replace `null` so far, but to replace out parameters.
   That has more to do with my C++ coding style though, I think.
 - The per-module visibility system makes sense. Better than private/protetcted/public. It is like `internal` in C#.
   In C#, internal feels like a hack because there are objects everywhere,
   but with structs, traits and functions in Rust, it feels very natural.
   E.g. I can define helper functions that are not exposed outside of the module.
 - I should compare compilation times for C++ and Rust when it is done.
-- The `Object` type, which had three pointers, one of which would always be null, became an enum with two variants, for now.
+x The `Object` type, which had three pointers, one of which would always be null, became an enum with two variants, for now.
   Edit: no, it actually the `MaterialBox` became an enum variant.
 - Using `x as T` for casting is _much_ nicer than C++ `static_cast<T>(x)`.
-- I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
+x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
   Unfortunately, a macro cannot expand to multiple statements, issue #10681.
   The workaround I used, is to make a the macro return a tuple.
   Also, macros do not capture their environment, and I need to enable the feature from `main.rs`, it does not work on a per-file basis. (I think.)
+  Edit: chainging from `[f32]` to `[Vector3]` made this problem obsolete.
 - Dead code warnings are nice, but they seem to be transitive, so now I get three pages of dead code warnings,
   while really only a few top-level functions are not used (yet).
   The warnings can be disabled with `#![allow(dead_code)]` in `main.rs`.
