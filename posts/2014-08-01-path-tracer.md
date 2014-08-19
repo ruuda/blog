@@ -82,3 +82,5 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
   Edit: after a journey through several designs, I now have a better solution.
   This kind of thing really forces you to think about what should go where,
   and in the end, I think it leads to a better design.
+- I just pattern matched a `Box<X>` as `ref mut`. The function that I want to pass it to expects a `&mut X`.
+  So I did `&mut **x`, which feels extremely dirty. Is there a better way?
