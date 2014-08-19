@@ -14,8 +14,7 @@ and I will highlight some of the differences between C++ and Rust.
 
 Rays
 ----
-Last time I promised there would be rays.
-In C++, they look like this:
+Last time I promised there would be rays, so here they are:
 
 ```cpp
 struct Ray
@@ -61,7 +60,7 @@ struct Surface
                            Intersection& intersection) const = 0;
 };
 ```
-Intersection contains details about the surface at the intersection,
+An `Intersection` contains details about the surface at the intersection,
 and the distance along the ray.
 The distance is later used to pick the closest intersection.
 A surface is just an abstract base class with an `Intersect` method.
@@ -72,7 +71,7 @@ An other approach would be to return an `Intersection*`, and return null when th
 This would involve a heap allocation, so I opted for the first approach.
 
 Rust has a cleaner way to handle optional values: the `Option` type.
-The intersection and surface in Rust is defined like this:
+The intersection and surface in Rust are defined like this:
 
 ```rust
 pub struct Intersection {
@@ -158,8 +157,8 @@ and either the material or emissive material must be non-null.
 It works, but the compiler does not prevent you from creating an invalid object
 that contains no material, or both a reflective and emissive material.
 It could be improved a bit by using a tagged union, but for this simple case, two pointers suffice.
-Nowadays it would be more idiomatic to use a `unique_ptr` or `shared_ptr` instead of the raw pointers.
-I would like to update that some day.
+(Nowadays it would be more idiomatic to use a `unique_ptr` or `shared_ptr` instead of the raw pointers.
+I would like to update that some day.)
 In Rust, valid objects can be enforced statically:
 
 ```rust
@@ -195,7 +194,9 @@ we intersect all objects, and return the closest intersection.
 
 Putting it together
 -------------------
-Given a ray, we can find the intensity of light along the ray:
+Given a ray, we would like to simulate a light path (from the camera backwards),
+until a light source is hit.
+Then we can compute the intensity of light along this path.
 
 ```cpp
 Ray ray = camera.GetRay(monteCarloUnit);
@@ -222,13 +223,13 @@ while (...)
 
 We intersect a ray with the scene.
 If nothing was hit, the light intensity is zero --- a black background.
-For an outdoor scene, we could compute the intensity based on a sky spectrum.
 If an object was intersected, and its `material` pointer is null,
-its `emissiveMaterial` pointer must not be null --- a light source.
+its `emissiveMaterial` is not null by assumption, so the object is a light source.
 The final intensity is the intensity of the light source reduced by the effects of previous bounces.
 If the `material` pointer was not null,
 we ask the material to generate a ray that continues the path.
 The loop continues with a probability that decreases with every intersection.
+For simplicity, I omitted the details in the code.
 Paths with a low intensity also have a higher chance of being terminated.
 If the loop terminates, the intensity is just zero.
 
@@ -257,7 +258,7 @@ loop {
 }
 ```
 
-I find the C++ version more aesthetically pleasing and readable in this case.
+I find the C++ version more aesthetically pleasing and readable.
 The `Emissive` and `Reflective` enum variants contain a `Box` with the material.
 If we were to match on that, it would move the box into the match variable.
 Here we do not want to take ownership of the material,
