@@ -84,3 +84,7 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
   and in the end, I think it leads to a better design.
 - I just pattern matched a `Box<X>` as `ref mut`. The function that I want to pass it to expects a `&mut X`.
   So I did `&mut **x`, which feels extremely dirty. Is there a better way?
+- The `Mutex` approach is really nice. Lock it and you get back the object in a wrapper,
+  and when it goes out of scope, it unlocks.
+  I think a very powerful feature is the `Deref` trait, which allows for something similar to extension methods in C#.
+  (Now I think of it, you should be able to do this in C++ as well!)
