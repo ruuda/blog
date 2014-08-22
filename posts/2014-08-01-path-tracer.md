@@ -98,3 +98,4 @@ Benchmarks
 ----------
 Luculentus, msvc110, win64, regular: 0.20 +- 0.01 batches/sec.
 Luculentus, msvc110, win64, PGO:     0.21 +- 0.01 batches/sec.
+Robigo,     rustc 08-22, win32, O3:  0.20 +- 0.01 batches/sec.
