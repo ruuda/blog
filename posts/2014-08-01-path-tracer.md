@@ -91,3 +91,4 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
 - Having `new` as a function in the `impl` is great, because it makes `new` not special in any way,
   and you can have multiple “constructors” where none is the preferred one.
   This removes the need for things like static factory methods in C#.
+- I do like the method syntax for mathematical functions. I really do.
