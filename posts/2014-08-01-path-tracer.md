@@ -88,3 +88,6 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
   and when it goes out of scope, it unlocks.
   I think a very powerful feature is the `Deref` trait, which allows for something similar to extension methods in C#.
   (Now I think of it, you should be able to do this in C++ as well!)
+- Having `new` as a function in the `impl` is great, because it makes `new` not special in any way,
+  and you can have multiple “constructors” where none is the preferred one.
+  This removes the need for things like static factory methods in C#.
