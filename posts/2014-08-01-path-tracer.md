@@ -92,3 +92,4 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
   and you can have multiple “constructors” where none is the preferred one.
   This removes the need for things like static factory methods in C#.
 - I do like the method syntax for mathematical functions. I really do.
+- Not being able to use `min` and `max` on `f32` because `f32` is only partially ordered is correct, but inconvenient.
