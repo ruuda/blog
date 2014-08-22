@@ -96,9 +96,10 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
 
 Benchmarks
 ----------
-Luculentus, msvc110, win64, regular: 0.20 +- 0.01 batches/sec.
-Luculentus, msvc110, win64, PGO:     0.21 +- 0.01 batches/sec.
-Luculentus, clang 3.4.2, Arch64, O3:     0.277 += 0.01 batches/sec.
-Luculentus, gcc 4.8, Arch64, O4:     0.310 +- 0.001 batches/sec.
-Robigo,     rustc 08-22, win32, O3:  0.20 +- 0.01 batches/sec.
-Robigo,     rustc 08-21, Arch64, O3: 0.31 += 0.01 batches/sec.
+Luculentus, msvc110, win64, regular:          0.20  +- 0.01  batches/sec.
+Luculentus, msvc110, win64, PGO:              0.21  +- 0.01  batches/sec.
+Luculentus, clang 3.4.2, Arch64, O3:          0.278 += 0.01  batches/sec.
+Luculentus, gcc 4.9, Arch64, O4:              0.310 +- 0.001 batches/sec.
+Luculentus, gcc 4.9, Arch64, O4+march=native: 0.318 +- 0.01  batches/sec.
+Robigo,     rustc 08-22, win32, O3:           0.20  +- 0.01  batches/sec.
+Robigo,     rustc 08-21, Arch64, O3:          0.31  += 0.01  batches/sec.
