@@ -93,3 +93,8 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
   This removes the need for things like static factory methods in C#.
 - I do like the method syntax for mathematical functions. I really do.
 - Not being able to use `min` and `max` on `f32` because `f32` is only partially ordered is correct, but inconvenient.
+
+Benchmarks
+----------
+Luculentus, msvc110, win64, regular: 0.20 +- 0.01 batches/sec.
+Luculentus, msvc110, win64, PGO:     0.21 +- 0.01 batches/sec.
