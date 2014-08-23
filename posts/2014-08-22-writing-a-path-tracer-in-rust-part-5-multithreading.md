@@ -17,10 +17,10 @@ Units
 There are several things that a spectral path tracer must do,
 and tracing rays is only one of them.
 Eventually, the intensities of all the light paths have to be converted into an image.
-In Luculentus, this is a multi-stage process, and every stage has its own _unit_ that performs the work.
+In Luculentus, this is a multi-stage process, and every stage has its own unit that performs the work.
 
 - A **trace unit** generates random camera rays and computes their intensities.
-  It stores the results (which are called _mapped photons_) in an internal buffer.
+  It stores the results (which are called mapped photons) in an internal buffer.
 - A **plot unit** converts the buffer to an image in the [CIE XYZ][ciexyz] colour space.
   It stores this image in an internal buffer.
 - The **gather unit** accumulates the buffers of plot units into a single image,
@@ -29,10 +29,13 @@ In Luculentus, this is a multi-stage process, and every stage has its own _unit_
   and converts the image from CIE XYZ to the sRGB colour space.
   This is the final image.
 
-Rendering is a continuous process.
+Path tracing is an incremental process.
 Rays are generated at random, and the more rays are rendered, the better the image will be.
-Therefore there are multiple trace units and plot units which are recycled in a loop:
-the trace unit traces some rays, the plot unit plots them, and then the trace unit can be re-used.
+Therefore multiple trace units and plot units are recycled in a loop:
+the trace unit traces some rays, the plot unit plots them,
+and the process continues.
+To watch the result evolve,
+the tonemap unit periodically generates an image.
 
 [ciexyz]:  https://en.wikipedia.org/wiki/CIE_XYZ
 
@@ -97,8 +100,8 @@ but this required lifetime annotations everywhere:
 
 ```rust
 pub struct TraceUnit<'s> {
-  scene: &'s Scene,
-  ...
+    scene: &'s Scene,
+    ...
 }
 ```
 
@@ -107,12 +110,12 @@ an explicit lifetime must always be specified.
 There are no dangling pointers in Rust.
 The compiler can ensure that because it knows the lifetime of the pointee, which is part of the type.
 The type `&'s Scene` is a pointer to a `Scene` that is valid for the lifetime `'s`.
-As you can see, `TraceUnit` now has a lifetime parameter.
+As you can see, `TraceUnit` now requires a lifetime parameter.
 This is infectious, in the way that `const` is in C++: now everything that owns a `TraceUnit`
-also takes a lifetime parameter, and suddenly there were lifetimes everywhere.
+also takes a lifetime parameter, and suddenly there are lifetimes everywhere.
 
-I struggeld some more with this, stumbling from compiler error to error.
-Rusts really forces you to get ownership right, and I think in the end it also led to a better design.
+I struggeld some more with this, stumbling from compiler error to compiler error.
+Rusts forces you to get ownership right, and I think in the end it also led to a better design.
 I finally settled for the `render` method taking a pointer to the scene.
 This moves burden of ownership to the caller of `render`.
 As there can be various threads rendering, every thread has its own `Arc<Scene>`.
@@ -122,21 +125,24 @@ and it will be deleted when there are no more arcs pointing to it.
 
 One caveat here is that to use `Scene` with `Arc`, it has to implement the traits `Send` and `Sync`.
 These traits cannot be implemented manually, only by the compiler.
-The compiler enforces thread-safety at compile time.
+A struct is `Send` and `Sync` if all its members are.
+This way, the compiler enforces thread-safety at compile time.
+However, `Scene` initially was not `Send` and `Sync`,
+because it contains objects that contain a `Box<Surface>`.
+A type implementing `Surface` need not implement `Send` or `Sync`,
+so the box could not be proven thread-safe,
+and therefore the scene could not be proven thread safe.
+The resulution (thanks to the IRC channel again!) was to explicitly require the contents of the box
+to be `Send` and `Sync`:
 
----
+```rust
+pub struct Object {
+    pub surface: Box<Surface + Sync + Send>,
+    pub material: MaterialBox
+}
+```
 
-Altough the C++ and Rust snippets in this post are very much alike,
-there is a big difference:
-the Rust code is guaranteed to be memory safe and thread safe.
-The C++ code _may_ be memory safe and thread safe, but it need not be.
-If your design was safe in the first place, these guarantees come at little extra cost.
-However, the compiler refuses to compile anything that might be unsafe.
-This forces you to think your design through up front.
-You cannot just write some code and go and fix the memory leaks later on.
-The errors do point out valid problems in your code, and I think this guides you to the correct solution.
-With Rust, I spent more time fixing compiler errors than I spent debugging runtime errors.
-This is something that does not show in the final code.
+`MaterialBox` was also updated accordingly, and then everything compiled just fine.
 
 Plot units
 ----------
@@ -150,4 +156,18 @@ The unit then loops trough all the photons in the buffer of the trace unit.
 A lookup table is used to convert a wavelength into a CIE XYZ tristimulus value.
 Two such tables exist: CIE 1931 and CIE 1964.
 Luculentus implements them both, but I only ported the 1931 one.
+
+---
+
+Altough the C++ and Rust snippets in this post are very much alike,
+there is a big difference:
+the Rust code is guaranteed to be memory safe and thread safe.
+The C++ code _may_ be memory safe and thread safe, but it need not be.
+If your design was safe in the first place, these guarantees come at little extra cost.
+However, the compiler refuses to compile anything that might be unsafe.
+This forces you to think your design through up front.
+You cannot just write some code and go and fix the memory leaks later on.
+The compiler errors do point out valid problems in your code, and I think this guides you to the correct solution.
+With Rust, I spent more time fixing compiler errors than I spent debugging runtime errors.
+This is something that does not show in the final code.
 
