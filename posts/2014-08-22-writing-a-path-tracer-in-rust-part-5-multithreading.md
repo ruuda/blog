@@ -111,34 +111,32 @@ As you can see, `TraceUnit` now has a lifetime parameter.
 This is infectious, in the way that `const` is in C++: now everything that owns a `TraceUnit`
 also takes a lifetime parameter, and suddenly there were lifetimes everywhere.
 
-My next try was a reference-counted pointer.
-There is no single owner, and the scene is deleted when there are no more pointers pointing to it:
+I struggeld some more with this, stumbling from compiler error to error.
+Rusts really forces you to get ownership right, and I think in the end it also led to a better design.
+I finally settled for the `render` method taking a pointer to the scene.
+This moves burden of ownership to the caller of `render`.
+As there can be various threads rendering, every thread has its own `Arc<Scene>`.
+`Arc` is an atomically reference-counted pointer.
+This allows the scene to be shared among threads,
+and it will be deleted when there are no more arcs pointing to it.
 
-```rust
-pub struct TraceUnit {
-  scene: Rc<Scene>,
-  ...
-}
-```
+One caveat here is that to use `Scene` with `Arc`, it has to implement the traits `Send` and `Sync`.
+These traits cannot be implemented manually, only by the compiler.
+The compiler enforces thread-safety at compile time.
 
-This made the code a lot cleaner by not having the lifetimes everywhere.
-It works for single-threaded code, but when multiple threads are involved
+---
 
-TODO
-
-Passing the scene to the `render` method is cleaner in that sense.
-However, I still wanted to share the same scene among all rendering threads.
-
-
-In the C++ version, every trace unit has a pointer to the scene.
-The scene is constructed once and it is immutable afterwards,
-so it can be safely read from multiple threads.
-It is only deleted after all trace units have stopped rendering.
-I failed to write that in Rust (if you know how, please let me know),
-so in Rust, every worker thread has its own copy of the scene,
-and it is passed explicitly to the trace unit.
-
-[
+Altough the C++ and Rust snippets in this post are very much alike,
+there is a big difference:
+the Rust code is guaranteed to be memory safe and thread safe.
+The C++ code _may_ be memory safe and thread safe, but it need not be.
+If your design was safe in the first place, these guarantees come at little extra cost.
+However, the compiler refuses to compile anything that might be unsafe.
+This forces you to think your design through up front.
+You cannot just write some code and go and fix the memory leaks later on.
+The errors do point out valid problems in your code, and I think this guides you to the correct solution.
+With Rust, I spent more time fixing compiler errors than I spent debugging runtime errors.
+This is something that does not show in the final code.
 
 Plot units
 ----------
