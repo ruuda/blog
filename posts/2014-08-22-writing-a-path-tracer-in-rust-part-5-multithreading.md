@@ -147,16 +147,45 @@ pub struct Object {
 
 Plot units
 ----------
-The next thing to do is convert the wavelength to a colour, and plot a pixel to the canvas.
-This is done by a _plot unit_.
-Luculentus uses the [CIE XYZ][ciexyz] colour space internally, because it is a linear colour space.
+The next thing to do is to convert the ray intensities to a colour, and plot a pixel to the canvas.
+This is done by a plot unit.
+Luculentus uses the CIE XYZ colour space internally, because it is a linear colour space.
 This means that it is safe to treat colours as vectors, and add them together.
 (This is not valid in e.g. sRGB.)
 The plot unit has an internal canvas that starts out black.
-The unit then loops trough all the photons in the buffer of the trace unit.
+The unit then loops trough all mapped photons that were stored by a trace unit.
 A lookup table is used to convert a wavelength into a CIE XYZ tristimulus value.
-Two such tables exist: CIE 1931 and CIE 1964.
-Luculentus implements them both, but I only ported the 1931 one.
+Two such tables exist: CIE 1931 and CIE 1964, the CIE standard observers.
+Luculentus can use either one, but I only ported the 1931 observer.
+
+In C++:
+
+```cpp
+void PlotUnit::Plot(const TraceUnit& traceUnit)
+{
+    for (auto photon : traceUnit.mappedPhotons)
+    {
+        Vector3 cie = Cie1931::GetTristimulus(photon.wavelength);
+        PlotPixel(photon.x, photon.y, cie * photon.probability);
+    }
+}
+```
+
+The Rust version is almost identical:
+
+```rust
+pub fn plot(&mut self, photons: &[MappedPhoton]) {
+    for ref photon in photons.iter() {
+        let cie = ::cie1931::get_tristimulus(photon.wavelength);
+        self.plot_pixel(photon.x, photon.y, cie * photon.probability);
+    }
+}
+```
+
+It takes a slice of mapped photons instead of the entire unit,
+which is a bit nicer because it does not ask for more than it needs.
+This could be done in C++ as well, but it would needlessly complicate the code.
+`PlotPixel` plots the tristimulus value anti-aliased to the canvas.
 
 ---
 
