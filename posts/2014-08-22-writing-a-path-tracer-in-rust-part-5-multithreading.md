@@ -1,5 +1,5 @@
 ---
-title: Writing a path tracer in Rust, part 5: multithreading
+title: Writing a path tracer in Rust, part 5: tonemapping
 date: 2014-08-22 11:40
 ---
 
@@ -12,17 +12,42 @@ and I will highlight some of the differences between C++ and Rust.
 [luculentus]:       https://github.com/ruud-v-a/luculentus
 [robigo-luculenta]: https://github.com/ruud-v-a/robigo-luculenta
 
+Units
+-----
+There are several things that a spectral path tracer must do,
+and tracing rays is only one of them.
+Eventually, the intensities of all the light paths have to be converted into an image.
+In Luculentus, this is a multi-stage process, and every stage has its own _unit_ that performs the work.
+
+- A **trace unit** generates random camera rays and computes their intensities.
+  It stores the results (which are called _mapped photons_) in an internal buffer.
+- A **plot unit** converts the buffer to an image in the [CIE XYZ][ciexyz] colour space.
+  It stores this image in an internal buffer.
+- The **gather unit** accumulates the buffers of plot units into a single image,
+  still in the CIE XYZ colour space.
+- The **tonemap unit** determines the correct exposure for the image,
+  and converts the image from CIE XYZ to the sRGB colour space.
+  This is the final image.
+
+Rendering is a continuous process.
+Rays are generated at random, and the more rays are rendered, the better the image will be.
+Therefore there are multiple trace units and plot units which are recycled in a loop:
+the trace unit traces some rays, the plot unit plots them, and then the trace unit can be re-used.
+
+[ciexyz]:  https://en.wikipedia.org/wiki/CIE_XYZ
+
+<!--more-->
+
 Trace units
 -----------
-There are multiple things that a spectral path tracer must do,
-and tracing rays is only one of them.
-In Luculentus, these tasks have _units_ associated with them.
-The first unit is the _trace unit_.
-It chooses a wavelength in the visible spectrum and a point on the screen at random.
+The trace unit chooses a wavelength in the visible spectrum and a point on the screen at random.
 The camera converts these into a ray.
-In the previous post I outlined how materials and surfaces are then used to determine the intensity of the given ray.
+In the [previous post][prev] I outlined how materials and surfaces
+are then used to determine the intensity of the given ray.
 The trace units does this a fixed number of times, and stores the screen position,
-wavelength, and intensity in a buffer.
+wavelength, and intensity (together a _mapped photon_) in a buffer.
+
+[prev]: /2014/08/19/writing-a-path-tracer-in-rust-part-4-tracing-rays
 
 In C++, it is done as follows:
 
@@ -42,7 +67,12 @@ void TraceUnit::Render()
 }
 ```
 
-TODO: discuss at random afterwards?
+Hidden in this piece of code, is that `TraceUnit` has a pointer to the scene
+that is used by `RenderCameraRay`.
+The scene is initialised once when the program starts, and it is immutable afterwards.
+Because only reads are required to intersect the scene,
+multiple threads can render the same scene simultaneously.
+The scene is only deleted after all rendering has stopped.
 
 In Rust, the main trace loop looks like this:
 
@@ -61,6 +91,45 @@ pub fn render(&mut self, scene: &Scene) {
 }
 ```
 
+I struggled a lot with who should own the scene in Rust.
+At first, the `TraceUnit` had a pointer to the scene just like the C++ version,
+but this required lifetime annotations everywhere:
+
+```rust
+pub struct TraceUnit<'s> {
+  scene: &'s Scene,
+  ...
+}
+```
+
+When you store a pointer in a struct in Rust,
+an explicit lifetime must always be specified.
+There are no dangling pointers in Rust.
+The compiler can ensure that because it knows the lifetime of the pointee, which is part of the type.
+The type `&'s Scene` is a pointer to a `Scene` that is valid for the lifetime `'s`.
+As you can see, `TraceUnit` now has a lifetime parameter.
+This is infectious, in the way that `const` is in C++: now everything that owns a `TraceUnit`
+also takes a lifetime parameter, and suddenly there were lifetimes everywhere.
+
+My next try was a reference-counted pointer.
+There is no single owner, and the scene is deleted when there are no more pointers pointing to it:
+
+```rust
+pub struct TraceUnit {
+  scene: Rc<Scene>,
+  ...
+}
+```
+
+This made the code a lot cleaner by not having the lifetimes everywhere.
+It works for single-threaded code, but when multiple threads are involved
+
+TODO
+
+Passing the scene to the `render` method is cleaner in that sense.
+However, I still wanted to share the same scene among all rendering threads.
+
+
 In the C++ version, every trace unit has a pointer to the scene.
 The scene is constructed once and it is immutable afterwards,
 so it can be safely read from multiple threads.
@@ -68,6 +137,8 @@ It is only deleted after all trace units have stopped rendering.
 I failed to write that in Rust (if you know how, please let me know),
 so in Rust, every worker thread has its own copy of the scene,
 and it is passed explicitly to the trace unit.
+
+[
 
 Plot units
 ----------
@@ -82,4 +153,3 @@ A lookup table is used to convert a wavelength into a CIE XYZ tristimulus value.
 Two such tables exist: CIE 1931 and CIE 1964.
 Luculentus implements them both, but I only ported the 1931 one.
 
-[ciexyz]:  https://en.wikipedia.org/wiki/CIE_XYZ
