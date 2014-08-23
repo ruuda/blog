@@ -26,7 +26,7 @@ In Luculentus, this is a multi-stage process, and every stage has its own unit t
 - The **gather unit** accumulates the buffers of plot units into a single image,
   still in the CIE XYZ colour space.
 - The **tonemap unit** determines the correct exposure for the image,
-  and converts the image from CIE XYZ to the sRGB colour space.
+  and converts the image from CIE XYZ to the [sRGB][srgb] colour space.
   This is the final image.
 
 Path tracing is an incremental process.
@@ -38,6 +38,7 @@ To watch the result evolve,
 the tonemap unit periodically generates an image.
 
 [ciexyz]:  https://en.wikipedia.org/wiki/CIE_XYZ
+[srgb]:    https://en.wikipedia.org/wiki/SRGB
 
 <!--more-->
 
