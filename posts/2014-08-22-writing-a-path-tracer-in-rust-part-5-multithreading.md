@@ -308,3 +308,5 @@ and I think this guides you to the correct solution.
 With Rust, I spent more time fixing compiler errors than I spent debugging runtime errors.
 This is something that does not show in the final code.
 
+Next time I will discuss how these units work together to utilise all available computing power,
+and I will elaborate on multithreading.
