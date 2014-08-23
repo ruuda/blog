@@ -187,6 +187,61 @@ which is a bit nicer because it does not ask for more than it needs.
 This could be done in C++ as well, but it would needlessly complicate the code.
 `PlotPixel` plots the tristimulus value anti-aliased to the canvas.
 
+The tonemap unit
+----------------
+The gather simply accumulates the buffers which is not that interesting,
+so I'll jump straight to the tonemap unit.
+The tonemapping algorithm in Luculentus is just a toy algorithm.
+It is by no means physically correct, but it does produce a nice image.
+
+The first step is to determine the average lightness and standard deviation of the image.
+This will make the exposure appear constant regardless of the scene or number of rays traced.
+In the CIE XYZ colour space, the Y component represents lightness,
+so we can just take the mean Y component.
+The maximum lightness is one standard deviation above average.
+Anything lighter will saturate.
+
+```cpp
+float TonemapUnit::FindExposure(const GatherUnit& gatherUnit) const
+{
+    float n = static_cast<float>(imageWidth * imageHeight);
+    auto& tristimuli = gatherUnit.tristimulusBuffer;
+
+    float mean = std::accumulate(tristimuli.begin(), tristimuli.end(), 0.0f,
+                 [](float a, Vector3 cie) { return a + cie.y; }) / n;
+
+    float sqrMean = std::accumulate(tristimuli.begin(), tristimuli.end(), 0.0f,
+                    [](float a, Vector3 cie) { return a + cie.y * cie.y; }) / n;
+    float variance = sqrMean - mean * mean;
+
+    return mean + std::sqrt(variance);
+}
+```
+
+Although C++ is not generally considered a functional language,
+`std::accumulate` has been part of the standard library since well before C++11.
+The Rust version is again similar.
+There is no need to use `fold` (Rust’s version of `accumulate`),
+because Rust has `map` and `sum`:
+
+```rust
+fn find_exposure(&self, tristimuli: &[Vector3]) -> f32 {
+    let n = (self.image_width * self.image_height) as f32;
+
+    let mean = tristimuli.iter().map(|cie| cie.y).sum() / n;
+
+    let sqr_mean = tristimuli.iter().map(|cie| cie.y * cie.y).sum() / n;
+    let variance = sqr_mean - mean * mean;
+
+    mean + variance.sqrt()
+}
+```
+
+Rust is more concise here, mainly due to the simpler lambda syntax.
+Brackets are optional, the argument types are inferred, and return is implicit as always in Rust.
+Also, I am starting to like this method call syntax for mathematical functions!
+
+
 ---
 
 Altough the C++ and Rust snippets in this post are very much alike,
