@@ -241,6 +241,57 @@ Rust is more concise here, mainly due to the simpler lambda syntax.
 Brackets are optional, the argument types are inferred, and return is implicit as always in Rust.
 Also, I am starting to like this method call syntax for mathematical functions!
 
+The tristimulus values are scaled by the exposure just computed.
+Then we take the logarithm to simulate the light response of film,
+and finally we transform CIE XYZ to sRGB,
+and clamp the components to the range [0, 1].
+The CIE XYZ to sRGB tranformation is just a matrix multiplication followed by the sRGB gamma function,
+which is not very interesting.
+What _is_ interesting, is the loop itself.
+The source is a buffer of `Vector3`, but the destination is a buffer of bytes,
+where every pixel takes three bytes.
+
+In C++, we use a regular loop to iterate over all pixels:
+
+```cpp
+void TonemapUnit::Tonemap(const GatherUnit& gatherUnit)
+{
+    float maxIntensity = FindExposure(gatherUnit);
+
+    for (int i = 0; i < imageWidth * imageHeight; i++)
+    {
+        Vector3 cie = gatherUnit.tristimulusBuffer[i];
+
+        // < Convert to sRGB >
+
+        rgbBuffer[i * 3 + 0] = static_cast<std::uint8_t>(r * 255);
+        rgbBuffer[i * 3 + 1] = static_cast<std::uint8_t>(g * 255);
+        rgbBuffer[i * 3 + 2] = static_cast<std::uint8_t>(b * 255);
+    }
+}
+```
+
+Rust has some neat features that make this more convenient.
+By using `mut_chunks`, we can iterate over chunks of three bytes.
+Then we can zip every chunk with the corresponding tristimulus:
+
+```rust
+pub fn tonemap(&mut self, tristimuli: &[Vector3]) {
+    let max_intensity = self.find_exposure(tristimuli);
+    let buffer = self.rgb_buffer.as_mut_slice().mut_chunks(3);
+
+    for (px, cie) in buffer.zip(tristimuli.iter()) {
+        // < Convert to sRGB >
+
+        px[0] = (r * 255.0) as u8;
+        px[1] = (g * 255.0) as u8;
+        px[2] = (b * 255.0) as u8;
+    }
+}
+```
+
+I also like Rust’s cast.
+It is less intrusive than the C++ one.
 
 ---
 
@@ -252,7 +303,8 @@ If your design was safe in the first place, these guarantees come at little extr
 However, the compiler refuses to compile anything that might be unsafe.
 This forces you to think your design through up front.
 You cannot just write some code and go and fix the memory leaks later on.
-The compiler errors do point out valid problems in your code, and I think this guides you to the correct solution.
+The compiler errors do point out valid problems in your code,
+and I think this guides you to the correct solution.
 With Rust, I spent more time fixing compiler errors than I spent debugging runtime errors.
 This is something that does not show in the final code.
 
