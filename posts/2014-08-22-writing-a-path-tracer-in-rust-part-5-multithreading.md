@@ -1,11 +1,11 @@
 ---
 title: Writing a path tracer in Rust, part 5: tonemapping
-date: 2014-08-22 11:40
+date: 2014-08-24 12:01
 ---
 
 As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to [Rust][rust].
 You can follow the port on [GitHub][robigo-luculenta].
-This post will outline how work is distributed among cores,
+This post will outline how an image is generated from rays,
 and I will highlight some of the differences between C++ and Rust.
 
 [rust]:             http://rust-lang.org
@@ -17,12 +17,13 @@ Units
 There are several things that a spectral path tracer must do,
 and tracing rays is only one of them.
 Eventually, the intensities of all the light paths have to be converted into an image.
-In Luculentus, this is a multi-stage process, and every stage has its own unit that performs the work.
+In Luculentus, this is a multi-stage process, and every stage has its own _unit_ that performs the work.
 
 - A **trace unit** generates random camera rays and computes their intensities.
-  It stores the results (which are called mapped photons) in an internal buffer.
+  It stores the results in an internal buffer.
 - A **plot unit** converts the buffer to an image in the [CIE XYZ][ciexyz] colour space.
   It stores this image in an internal buffer.
+  This buffer is cleared after use.
 - The **gather unit** accumulates the buffers of plot units into a single image,
   still in the CIE XYZ colour space.
 - The **tonemap unit** determines the correct exposure for the image,
@@ -107,7 +108,7 @@ pub struct TraceUnit<'s> {
 ```
 
 When you store a pointer in a struct in Rust,
-an explicit lifetime must always be specified.
+you have to specify for how long the pointer is valid.
 There are no dangling pointers in Rust.
 The compiler can ensure that because it knows the lifetime of the pointee, which is part of the type.
 The type `&'s Scene` is a pointer to a `Scene` that is valid for the lifetime `'s`.
@@ -130,15 +131,15 @@ A struct is `Send` and `Sync` if all its members are.
 This way, the compiler enforces thread-safety at compile time.
 However, `Scene` initially was not `Send` and `Sync`,
 because it contains objects that contain a `Box<Surface>`.
-A type implementing `Surface` need not implement `Send` or `Sync`,
+A type implementing the `Surface` trait need not implement `Send` or `Sync`,
 so the box could not be proven thread-safe,
 and therefore the scene could not be proven thread safe.
-The resulution (thanks to the IRC channel again!) was to explicitly require the contents of the box
+The resolution (thanks to the IRC channel again!) was to explicitly require the contents of the box
 to be `Send` and `Sync`:
 
 ```rust
 pub struct Object {
-    pub surface: Box<Surface + Sync + Send>,
+    pub surface: Box<Surface + Send + Sync>,
     pub material: MaterialBox
 }
 ```
@@ -184,12 +185,12 @@ pub fn plot(&mut self, photons: &[MappedPhoton]) {
 
 It takes a slice of mapped photons instead of the entire unit,
 which is a bit nicer because it does not ask for more than it needs.
-This could be done in C++ as well, but it would needlessly complicate the code.
+This could be done in C++ as well, but that would needlessly complicate the code.
 `PlotPixel` plots the tristimulus value anti-aliased to the canvas.
 
 The tonemap unit
 ----------------
-The gather simply accumulates the buffers which is not that interesting,
+The gather simply accumulates buffers which is not that interesting,
 so I'll jump straight to the tonemap unit.
 The tonemapping algorithm in Luculentus is just a toy algorithm.
 It is by no means physically correct, but it does produce a nice image.
@@ -198,7 +199,7 @@ The first step is to determine the average lightness and standard deviation of t
 This will make the exposure appear constant regardless of the scene or number of rays traced.
 In the CIE XYZ colour space, the Y component represents lightness,
 so we can just take the mean Y component.
-The maximum lightness is one standard deviation above average.
+The desired maximum lightness is one standard deviation above average.
 Anything lighter will saturate.
 
 ```cpp
@@ -306,7 +307,15 @@ You cannot just write some code and go and fix the memory leaks later on.
 The compiler errors do point out valid problems in your code,
 and I think this guides you to the correct solution.
 With Rust, I spent more time fixing compiler errors than I spent debugging runtime errors.
+In C++, it tends to be the other way around.
 This is something that does not show in the final code.
 
 Next time I will discuss how these units work together to utilise all available computing power,
 and I will elaborate on multithreading.
+
+---
+
+Discuss this post on [Reddit][reddit].
+Rust 0.12.0-pre-nightly was used in this post.
+
+[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/24/writing-a-path-tracer-in-rust-part-5-tonemapping
