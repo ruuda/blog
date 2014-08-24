@@ -84,6 +84,8 @@ The `use mod::Type` syntax _is_ similar to `using` directives in C#.
 (Though in C# it is more common to use an entire namespace, not the individual types.)
 The `mod` declarations are more like a project file, they tell the compiler which files to consider.
 
+---
+
 So far, translating C++ to Rust has been a pleasant experience.
 When things do not work as I expected, the IRC channel is very helpful.
 Next time I will discuss operator overloading with traits.
