@@ -264,6 +264,8 @@ If we were to match on that, it would move the box into the match variable.
 Here we do not want to take ownership of the material,
 so by matching with `ref`, the `mat` variables will borrow the material instead.
 
+---
+
 For the cases in this post, the types in Rust and C++ are very similar.
 However, Rust has a more advanced type system, with several benefits:
 it prevents you from constructing invalid objects,
@@ -273,5 +275,6 @@ Next time I will discuss multithreading and the task system in Luculentus.
 ---
 
 Discuss this post on [Reddit][reddit].
+Rust 0.12.0-pre-nightly was used in this post.
 
 [reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/19/writing-a-path-tracer-in-rust-part-4-tracing-rays

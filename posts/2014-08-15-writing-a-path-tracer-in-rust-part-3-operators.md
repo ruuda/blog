@@ -223,6 +223,8 @@ That would certainly simplify the quaternion code, and it would allow scalar mul
 
 [rfc]: https://github.com/rust-lang/rfcs/pull/195
 
+---
+
 Next time I will discuss more of the type system,
 and there will finally be rays!
 I will also discuss more of the internals of the path tracer.
@@ -230,5 +232,6 @@ I will also discuss more of the internals of the path tracer.
 ---
 
 Discuss this post on [Reddit][reddit].
+Rust 0.12.0-pre-nightly was used in this post.
 
 [reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/15/writing-a-path-tracer-in-rust-part-3-operators
