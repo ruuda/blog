@@ -275,5 +275,6 @@ Next time I will discuss multithreading and the task system in Luculentus.
 ---
 
 Discuss this post on [Reddit][reddit].
+Rust 0.12.0-pre-nightly was used in this post.
 
 [reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/19/writing-a-path-tracer-in-rust-part-4-tracing-rays

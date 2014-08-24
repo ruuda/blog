@@ -232,5 +232,6 @@ I will also discuss more of the internals of the path tracer.
 ---
 
 Discuss this post on [Reddit][reddit].
+Rust 0.12.0-pre-nightly was used in this post.
 
 [reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/15/writing-a-path-tracer-in-rust-part-3-operators

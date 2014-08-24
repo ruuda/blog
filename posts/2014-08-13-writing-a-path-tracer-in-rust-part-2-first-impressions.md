@@ -95,5 +95,6 @@ Next time I will discuss operator overloading with traits.
 ---
 
 Discuss this post on [Reddit][reddit].
+Rust 0.12.0-pre-nightly was used in this post.
 
 [reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/13/writing-a-path-tracer-in-rust-part-2-first-impressions
