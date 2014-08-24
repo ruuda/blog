@@ -30,7 +30,7 @@ x If structs use Pascal casing, but files use lower case, how should I name the 
   I will use snake case for filenames and module names then, it seems nicer.
   (The casing conventions in Rust are a bit unfortunate in my opinion; the problem occurs for functions that contain a type in the name as well.
   Furthermore, primitive types do not use Pascal case ...)
-- The `MonteCarloUnit` became a mod with free functions, because Rust has a task-local rng, which is nice.
+? The `MonteCarloUnit` became a mod with free functions, because Rust has a task-local rng, which is nice.
   However, the syntax for generating numbers in a closed interval is a bit convoluted.
   Sure, the fancy type system allows you to write `rand::random::<Closed01<f32>>()`,
   but is that really better than having multiple methods like `random::half_open::<f32>()` and `random::closed::<f32>()`?
@@ -55,7 +55,7 @@ x I have not been using `Option` to replace `null` so far, but to replace out pa
 - I should compare compilation times for C++ and Rust when it is done.
 x The `Object` type, which had three pointers, one of which would always be null, became an enum with two variants, for now.
   Edit: no, it actually the `MaterialBox` became an enum variant.
-- Using `x as T` for casting is _much_ nicer than C++ `static_cast<T>(x)`.
+x Using `x as T` for casting is _much_ nicer than C++ `static_cast<T>(x)`.
 x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
   Unfortunately, a macro cannot expand to multiple statements, issue #10681.
   The workaround I used, is to make a the macro return a tuple.
@@ -67,17 +67,19 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
 - The cryptic error messages are back:
       error: type `core::iter::Map<'_,&[f32],f32,core::slice::Chunks<'_,f32>>` does not implement any method in scope named `sum`
       error: binary operation `/` cannot be applied to type `core::iter::Map<'_,f32,f32,core::iter::Map<'_,&[f32],f32,core::slice::Chunks<'_,f32>>>`
-- Iterators have no extra layer of indirection like C# has (`IEnumerable.GetEnumerator`).
+? Iterators have no extra layer of indirection like C# has (`IEnumerable.GetEnumerator`).
   This means that it is harder to re-use a `map`.
   It is possible to do an intermediate `collect`, but in this case, I think the computation is cheaper than the memory acces (thought I did not measure).
   When using `collect().iter()`, the iterator now returns references instead of values.
-- Iterators _do_ make it a lot more convenient to implement `TonemapUnit::FindExposure`, even with the flaw mentioned above.
+x Iterators _do_ make it a lot more convenient to implement `TonemapUnit::FindExposure`, even with the flaw mentioned above.
   More functional, less loops. Like LINQ in C#.
+  On the other hand, C++ has std::accumulate.
 - The operator `+=` cannot be overloaded. Apparently the compiler does not replace it with a load, +, store. That is a shame.
-- All these lifetimes and borrowing really make you consider ownership. I think this is a good thing.
+x All these lifetimes and borrowing really make you consider ownership. I think this is a good thing.
   All other languages have it as well, but it is mostly implicit, and you can violate the contract. Rust enforces it statically.
   I like that.
-- However, I am having trouble with coupled ownership and mutability now.
+- Emphasize that for conclusion!
+x However, I am having trouble with coupled ownership and mutability now.
   I want to share an immutable object between tasks ... how do I do it?
   Edit: after a journey through several designs, I now have a better solution.
   This kind of thing really forces you to think about what should go where,
@@ -91,8 +93,10 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
 - Having `new` as a function in the `impl` is great, because it makes `new` not special in any way,
   and you can have multiple “constructors” where none is the preferred one.
   This removes the need for things like static factory methods in C#.
-- I do like the method syntax for mathematical functions. I really do.
-- Not being able to use `min` and `max` on `f32` because `f32` is only partially ordered is correct, but inconvenient.
+x I do like the method syntax for mathematical functions. I really do.
+x Not being able to use `min` and `max` on `f32` because `f32` is only partially ordered is correct, but inconvenient.
+  Edit: I was just looking in the wrong places.
+  Still, it can be a bit confusing.
 
 Benchmarks
 ----------
