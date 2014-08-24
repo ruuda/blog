@@ -270,7 +270,7 @@ For the cases in this post, the types in Rust and C++ are very similar.
 However, Rust has a more advanced type system, with several benefits:
 it prevents you from constructing invalid objects,
 and it forces you to consider every case.
-Next time I will discuss multithreading and the task system in Luculentus.
+Next time I will discuss how ray intensities are converted into an image.
 
 ---
 
