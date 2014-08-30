@@ -15,25 +15,33 @@ and I will highlight some of the differences between C++ and Rust.
 Parallelism
 -----------
 Luculentus is a simple path tracer.
-It does not use advanced algorithms like [Metropolis light transport][mlt].
-There is no [_k_-d tree][kdtree] to speed up scene intersection.
-Using a better algorithm would be the best way to increase performance, but at the cost of complexity.
-One way to get more performance at little extra complexity,
-is to use multithreading.
+It does not use advanced algorithms like [Metropolis light transport][mlt],
+and tere is no [_k_-d tree][kdtree] to speed up scene intersection.
+Using better algorithms would be the best way to increase performance, at the cost of complexity.
+One way to get more performance with little extra complexity,
+is to just throw more computing power at the problem.
 
 [mlt]:    https://en.wikipedia.org/wiki/Metropolis_light_transport
 [kdtree]: https://en.wikipedia.org/wiki/K-d_tree
 
-Often, multithreading is _not_ a simple way to boost performance.
-Synchronisation of shared state is difficult to deal with,
-and even more difficult to deal with without introducing a bottleneck.
-Rusts enforces thread-safety at compile time,
-which eliminates an entire category of bugs that are difficult to debug.
-*** meh where am I going? ***
+The path tracing process so far has been pretty straightforward:
+generate some random rays,
+determine their contribution to the final image,
+mix the contribution with earlier contributions,
+and convert that to an image that a monitor can display.
+The first three steps are performed in a loop,
+and once in a while the fourth step is performed to visualise the current render state.
 
-Luckily, path tracing can be parallelised easily.
-The only state that the path tracer has, is the internal buffer in the gather unit.
-*** I should revisit this an other time. ***
+This process can be parallelised without much synchronisation.
+Threads can do the loops in parallel.
+Only access to the buffer in which all contributions are accumulated, needs to be synchronised.
+Something also needs to ensure that an image is generated periodically.
+
+<!--more-->
+
+The task scheduler
+------------------
+The task scheduler determines what threads should do next when they run out of work.
 
 ---
 
