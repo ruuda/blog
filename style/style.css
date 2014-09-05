@@ -416,7 +416,7 @@ article > a
 
 article > a:after
 {
-    content: ' »';
+    content: '\00a0»';
 }
 
 article > a:hover, body > section a:hover
@@ -456,12 +456,12 @@ body > section > ul li.next-page
 
 body > section > ul li.previous-page a:before
 {
-    content: '« ';
+    content: '«\00a0';
 }
 
 body > section > ul li.next-page a:after
 {
-    content: ' »';
+    content: '\00a0»';
 }
 
 footer
