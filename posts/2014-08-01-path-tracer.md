@@ -97,6 +97,8 @@ x I do like the method syntax for mathematical functions. I really do.
 x Not being able to use `min` and `max` on `f32` because `f32` is only partially ordered is correct, but inconvenient.
   Edit: I was just looking in the wrong places.
   Still, it can be a bit confusing.
+- There were some method deprecated during development, that I had to replace.
+  `filtered` on `Option` was removed due to “insufficient usage”. I liked it though.
 
 Benchmarks
 ----------
