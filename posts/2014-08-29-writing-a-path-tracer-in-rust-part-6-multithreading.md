@@ -17,7 +17,7 @@ Parallelism
 Luculentus is a simple path tracer.
 It does not use advanced algorithms like [Metropolis light transport][mlt],
 and tere is no [_k_-d tree][kdtree] to speed up scene intersection.
-Using better algorithms would allow for the biggest performance gain, at the cost of complexity.
+The path tracer could be made significantly faster, at the cost of more complex algorithms.
 An other way to get more performance with little extra complexity,
 is to just throw more computing power at the problem.
 
@@ -25,14 +25,16 @@ is to just throw more computing power at the problem.
 [kdtree]: https://en.wikipedia.org/wiki/K-d_tree
 
 The path tracing process so far has been pretty straightforward:
-generate some random rays,
-determine their contribution to the final image,
-mix the contribution with earlier contributions,
-and convert that to an image that a monitor can display.
+
+1. Generate and trace some random rays.
+2. Determine their contribution to the final image.
+3. Mix the contribution with earlier contributions.
+4. Convert that to an image that a monitor can display.
+
 The first three steps are performed in a loop,
 and once in a while the fourth step is performed to visualise the current render state.
 
-This process can be parallelised without much synchronisation.
+This process can be parallelised with little synchronisation.
 Threads can do the loops in parallel.
 Only access to the buffer in which all contributions are accumulated, needs to be synchronised.
 To track progress, something still needs to ensure that an image is generated periodically.
@@ -52,7 +54,7 @@ The trace task for example, has one associated trace unit.
 The plot task has one associated plot unit, and multiple trace units to plot.
 The task scheduler maintains two queues for trace units:
 a queue of units ready to trace,
-and a queue of units that must be plottd before they can be re-used.
+and a queue of units that must be plotted before they can be re-used.
 When a trace task is completed, the corresponding unit is put in the ‘done’ queue, waiting to be plotted.
 When a plot task is completed, all corresponding trace units are put in the ‘available’ queue again.
 There is also a queue of plot units,
@@ -80,13 +82,12 @@ class TaskScheduler
     bool gatherUnitAvailable;
     bool tonemapUnitAvailable;
 
-    // TODO: should these be unique_ptrs?
-    std::vector<std::shared_ptr<TraceUnit>> traceUnits;
-    std::vector<std::shared_ptr<PlotUnit>> plotUnits;
-    std::shared_ptr<GatherUnit> gatherUnit;
-    std::shared_ptr<TonemapUnit> tonemapUnit;
+    std::vector<TraceUnit> traceUnits;
+    std::vector<PlotUnit> plotUnits;
+    std::unique_ptr<GatherUnit> gatherUnit;
+    std::unique_ptr<TonemapUnit> tonemapUnit;
 
-    Task GetNewTask(const Task completeTask);
+    Task GetNewTask(const Task completedTask);
 
     ...
 };
@@ -117,7 +118,7 @@ struct Task
 ```
 
 If the implementation of the task scheduler is correct,
-it will never hand out the same index to more tha one worker thread,
+it will never hand out the same index to more than one worker thread,
 and if the implementation of the worker threads is correct,
 they will not access units at indices other than the indices in the current task.
 However, the compiler does not prevent us from writing incorrect code, which might lead to races.
