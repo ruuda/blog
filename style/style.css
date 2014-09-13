@@ -335,14 +335,9 @@ article pre > code
 article ol, article ul
 {
     list-style-position: outside;
-    list-style: lower-roman;
+    list-style: none;
     margin-left: 0;
     padding-left: 0;
-}
-
-article ul
-{
-   list-style: none;
 }
 
 article ul li:before
@@ -353,6 +348,20 @@ article ul li:before
    margin-left: -1.2em;
    color: #84b324;
    position: absolute;
+}
+
+article ol li
+{
+    counter-increment: listcounter;
+}
+
+article ol li:before
+{
+    content: counter(listcounter) " ";
+    font-weight: 700;
+    margin-left: -1.2em;
+    color: #84b324;
+    position: absolute;
 }
  
 article blockquote
