@@ -49,7 +49,7 @@ The trace unit chooses a wavelength in the visible spectrum and a point on the s
 The camera converts these into a ray.
 In the [previous post][prev] I outlined how materials and surfaces
 are then used to determine the intensity of the given ray.
-The trace units does this a fixed number of times, and stores the screen position,
+The trace unit does this a fixed number of times, and stores the screen position,
 wavelength, and intensity (together a _mapped photon_) in a buffer.
 
 [prev]: /2014/08/19/writing-a-path-tracer-in-rust-part-4-tracing-rays
@@ -190,7 +190,7 @@ This could be done in C++ as well, but that would needlessly complicate the code
 
 The tonemap unit
 ----------------
-The gather simply accumulates buffers which is not that interesting,
+The gather unit simply accumulates buffers which is not that interesting,
 so I'll jump straight to the tonemap unit.
 The tonemapping algorithm in Luculentus is just a toy algorithm.
 It is by no means physically correct, but it does produce a nice image.
