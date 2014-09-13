@@ -152,7 +152,6 @@ pub struct TaskScheduler {
     done_plot_units: RingBuf<Box<PlotUnit>>,
     gather_unit: Option<Box<GatherUnit>>,
     tonemap_unit: Option<Box<TonemapUnit>>,
-
     ...
 }
 
@@ -179,14 +178,14 @@ The units themselves are constructed on the heap, and they are never moved.
 
 These benefits of ownership are not unique to Rust:
 the C++ version could have used `unique_ptr` (the equivalent of `Box`).
-Instead of having one task type, it could be a base class with a virtual `Execute` method.
+Instead of having one task type, it could have been a base class with a virtual `Execute` method.
 This would allow for a version that is just as type-safe as the Rust version,
 but it would be more cumbersome to write.
 
 Executing Tasks
 ---------------
 The C++ version dispatches on the task type.
-The functions that actually perform the work are expected not to access units that are not associated with the task,
+The methods that actually perform the work are expected not to access units that are not associated with the task,
 but the compiler does not prevent us from writing code that does that.
 
 ```cpp
@@ -205,21 +204,27 @@ void Raytracer::ExecuteTask(const Task task)
 
 If we forget to handle a case, the code would still compile fine, though most compilers would issue a warning.
 In Rust, the dispatch is more involved, because it simultaneously extracts the units from the task.
-This way, the functions that perform the work can only access the units associated with the task.
+This way, the functions that perform the work can only access the intended units.
 
 ```rust
-fn execute_task(task: &mut Task, scene: &Scene, img_tx: &mut Sender<Image>) {
+fn execute_task(task: &mut Task,
+                scene: &Scene,
+                img_tx: &mut Sender<Image>) {
     match *task {
         Sleep =>
             App::execute_sleep_task(),
+
         Trace(ref mut trace_unit) =>
-           App::execute_trace_task(scene, &mut **trace_unit),
+            App::execute_trace_task(scene, &mut **trace_unit),
+
         Plot(ref mut plot_unit, ref mut units) =>
             App::execute_plot_task(&mut **plot_unit,
                                    units.as_mut_slice()),
+
         Gather(ref mut gather_unit, ref mut units) =>
             App::execute_gather_task(&mut **gather_unit,
                                      units.as_mut_slice()),
+
         Tonemap(ref mut tonemap_unit, ref mut gather_unit) =>
            App::execute_tonemap_task(img_tx, &mut **tonemap_unit,
                                      &mut **gather_unit)
@@ -232,7 +237,7 @@ I talked about scene ownership in the [previous post][prev], and this is where i
 The sender is not important for now.
 Rust will force the match to be exhaustive, so there is no way to forget a case.
 Managing ownership does get messy here.
-Matching the box in the the task would move ownership, but we only want to borrow it for now.
+Matching the box in the the task would move ownership, but we only want to borrow it.
 That is what `ref` does.
 We also want to mutate the contents of the box, because e.g. tracing modifies the unit, so we match with `ref mut`.
 But then we have a `&mut Box<TraceUnit>`, and the function takes a `&mut TraceUnit`.
