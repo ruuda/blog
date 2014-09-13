@@ -73,8 +73,6 @@ Whether the gather unit and tonemap unit are available is indicated by a simple 
 ```cpp
 class TaskScheduler
 {
-    ...
-
     std::queue<int> availableTraceUnits;
     std::queue<int> doneTraceUnits;
     std::queue<int> availablePlotUnits;
@@ -125,14 +123,133 @@ However, the compiler does not prevent us from writing incorrect code, which mig
 There is an alternative approach,
 where `Task` would store pointers to the units.
 Because the units have distinct types, there would have to be several fields on a task,
-and most of them would be unused.
-(They could be combined in a union.)
+or there would have to be distinct task types.
 That would be more like the Rust approach,
 which is as follows:
 
 ```rust
-TODO
+pub enum Task {
+    Sleep,
+    Trace(Box<TraceUnit>),
+    Plot(Box<PlotUnit>, Vec<Box<TraceUnit>>),
+    Gather(Box<GatherUnit>, Vec<Box<PlotUnit>>),
+    Tonemap(Box<TonemapUnit>, Box<GatherUnit>)
+}
 ```
+
+Enums in Rust can have members.
+This way, the invariants of the type can be better expressed:
+in C++, the `unit` and `otherUnits` fields can be accessed even if the type is `Sleep`.
+In that case, the values are undefined.
+In Rust, these fields simply do not exist for a `Sleep` task.
+The task scheduler is implemented like this:
+
+```rust
+pub struct TaskScheduler {
+    available_trace_units: RingBuf<Box<TraceUnit>>,
+    done_trace_units: RingBuf<Box<TraceUnit>>,
+    available_plot_units: RingBuf<Box<PlotUnit>>,
+    done_plot_units: RingBuf<Box<PlotUnit>>,
+    gather_unit: Option<Box<GatherUnit>>,
+    tonemap_unit: Option<Box<TonemapUnit>>,
+
+    ...
+}
+
+impl TaskScheduler {
+    pub fn get_new_task(&mut self, completed_task: Task) -> Task;
+    ...
+}
+```
+
+When writing the C++ version, I never really thought about ownership.
+The task scheduler owns the units, and the queues and tasks refer to the units by index.
+In Rust, the actual units are passed around.
+When a trace task is created, a trace unit is taken from `available_trace_units` queue, and it is moved into the task.
+The task now owns the unit, and and it is _gone_ from the task scheduler.
+This way, it is impossible for the task scheduler to hand out the same unit to different worker threads.
+When the worker thread requests a new task, it returns the completed task — including units — back to the task scheduler,
+which will place it in the done queue.
+The gather unit and tonemap unit are handled in a similar way:
+when they are handed out in a task,
+the variables will be `None` until the units are returned.
+The compiler can enforce this: `Tonemap` needs two boxes, and boxes can only be moved, not cloned.
+Note that passing the units around is not inefficient, because only the boxes are moved, and a box is just a pointer.
+The units themselves are constructed on the heap, and they are never moved.
+
+These benefits of ownership are not unique to Rust:
+the C++ version could have used `unique_ptr` (the equivalent of `Box`).
+Instead of having one task type, it could be a base class with a virtual `Execute` method.
+This would allow for a version that is just as type-safe as the Rust version,
+but it would be more cumbersome to write.
+
+Executing Tasks
+---------------
+The C++ version dispatches on the task type.
+The functions that actually perform the work are expected not to access units that are not associated with the task,
+but the compiler does not prevent us from writing code that does that.
+
+```cpp
+void Raytracer::ExecuteTask(const Task task)
+{
+    switch (task.type)
+    {
+        case Task::Sleep:   ExecuteSleepTask(task);   break;
+        case Task::Trace:   ExecuteTraceTask(task);   break;
+        case Task::Plot:    ExecutePlotTask(task);    break;
+        case Task::Gather:  ExecuteGatherTask(task);  break;
+        case Task::Tonemap: ExecuteTonemapTask(task); break;
+    }
+}
+```
+
+If we forget to handle a case, the code would still compile fine, though most compilers would issue a warning.
+In Rust, the dispatch is more involved, because it simultaneously extracts the units from the task.
+This way, the functions that perform the work can only access the units associated with the task.
+
+```rust
+fn execute_task(task: &mut Task, scene: &Scene, img_tx: &mut Sender<Image>) {
+    match *task {
+        Sleep =>
+            App::execute_sleep_task(),
+        Trace(ref mut trace_unit) =>
+           App::execute_trace_task(scene, &mut **trace_unit),
+        Plot(ref mut plot_unit, ref mut units) =>
+            App::execute_plot_task(&mut **plot_unit,
+                                   units.as_mut_slice()),
+        Gather(ref mut gather_unit, ref mut units) =>
+            App::execute_gather_task(&mut **gather_unit,
+                                     units.as_mut_slice()),
+        Tonemap(ref mut tonemap_unit, ref mut gather_unit) =>
+           App::execute_tonemap_task(img_tx, &mut **tonemap_unit,
+                                     &mut **gather_unit)
+    }
+}
+```
+
+The `execute_task` method takes a `Scene` and `Sender<Image>`.
+I talked about scene ownership in the [previous post][prev], and this is where it shows up.
+The sender is not important for now.
+Rust will force the match to be exhaustive, so there is no way to forget a case.
+Managing ownership does get messy here.
+Matching the box in the the task would move ownership, but we only want to borrow it for now.
+That is what `ref` does.
+We also want to mutate the contents of the box, because e.g. tracing modifies the unit, so we match with `ref mut`.
+But then we have a `&mut Box<TraceUnit>`, and the function takes a `&mut TraceUnit`.
+Dereferencing once yields a `Box<TraceUnit>`, and dereferencing a second time yields a `TraceUnit`.
+The we must borrow it again, mutably, because the function expects a reference.
+That is what `&mut **` is for.
+It works, but it feels awkward.
+
+Synchronisation
+---------------
+TODO
+
+The `Sender<Image>` allows the tonemap function to send the result to the main thread for saving.
+Robigo Luculenta is a command-line application, and the rendered images are saved periodically.
+In Luculentus, they are displayed in a graphical user interface, which must be controlled from a single thread.
+I wanted to mimick this in Rust, so only the main thread is allowed to save images.
+The tonemapping function then sends the result via `img_tx` to the main task.
 
 ---
 
