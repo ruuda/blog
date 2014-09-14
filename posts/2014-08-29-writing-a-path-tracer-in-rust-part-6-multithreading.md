@@ -248,13 +248,113 @@ It works, but it feels awkward.
 
 Synchronisation
 ---------------
-TODO
+There are only two points in the program that need synchronisation:
+displaying the image in the user interface,
+and retrieving a new task from the task scheduler.
+Thread-safety of the task scheduler ensures that access to the units is thread-safe.
+The only public method of the task scheduler is `GetNewTask`, so that is the only place where synchronisation is required.
+In C++, this is done by using a mutex inside the method:
 
-The `Sender<Image>` allows the tonemap function to send the result to the main thread for saving.
-Robigo Luculenta is a command-line application, and the rendered images are saved periodically.
-In Luculentus, they are displayed in a graphical user interface, which must be controlled from a single thread.
-I wanted to mimick this in Rust, so only the main thread is allowed to save images.
-The tonemapping function then sends the result via `img_tx` to the main task.
+```cpp
+Task TaskScheduler::GetNewTask(const Task completedTask)
+{
+    std::unique_lock<std::mutex> lock(mutex);
+
+    ...
+}
+```
+
+The lock is held while `lock` is in scope,
+which is already a big advantage over manally acquiring and releasing the lock.
+In Rust, the entire task scheduler is protected by a mutex.
+The unusual thing about Rust’s mutex, is that it _owns_ the object it protects,
+and the only way to get access to the object, is by acquiring the lock:
+
+```rust
+let ts = TaskScheduler::new(concurrency, image_width, image_height);
+let task_scheduler = Arc::new(Mutex::new(ts));
+
+...
+
+task = task_scheduler.lock().get_new_task(task);
+```
+
+The mutex is put inside an arc, because it must be shared among threads.
+Calling `lock()` on the mutex creates a mutex guard object,
+similar to the C++ `unique_lock`.
+It releases the lock when it goes out of scope.
+However, now the only way to access the protected object is via the mutex guard.
+This can be done by simply treating the mutex guard as the actual object, because it implements `Deref`.
+This is similar to overriding `operator->` in C++.
+(Remember that there is no distinction between `.` and `->` in Rust.)
+The Rust mutex enforces that all access to the protected object is synchronised,
+whereas in C++ you can forget to acquire the lock.
+I think that a similar mutex could be built in C++,
+but the one in the standard library just does not work that way.
+
+The other part to synchronisation is displaying an image in the user interface.
+Luculentus uses gtkmm for its interface, which only allows the UI to be updated from a designated UI thread.
+The program uses a gtk-specific dispatcher,
+to which callbacks are registered when the program starts.
+The worker thread then informs the dispatcher that a new image is ready,
+and the UI event loop will execute the callback on the UI thread,
+and display the image.
+
+Rust uses channels for communication between threads.
+There are two ends to a channel: a sending part, and a receiving part.
+Rogigo Luculenta does not have a graphical user interface, it saves the rendered image to a file.
+The worker thread could do that, but I wanted to do it form a designated thread, analogous to the UI thread in Luculentus.
+The worker thread then puts the rendered image on the channel,
+and an other thread waits for images, and writes them out.
+This is what `img_tx` in `execute_task` is for: it is the sending part of the channel.
+
+```rust
+fn execute_tonemap_task(img_tx: &mut Sender<Image>,
+                        tonemap_unit: &mut TonemapUnit,
+                        gather_unit: &mut GatherUnit) {
+    tonemap_unit.tonemap(gather_unit.tristimulus_buffer.as_slice());
+
+    let img = tonemap_unit.rgb_buffer.clone();
+    img_tx.send(img);
+}
+```
+
+After the main thread has started the worker threads,
+it will go in a receive loop,
+and write out an image using [LodePNG][lodepng] when it receives one:
+
+```rust
+loop {
+    let img = images.recv();
+
+    match lodepng::encode24_file(&Path::new("output.png"),
+                                 img.as_slice(),
+                                 width as u32, height as u32) {
+        Ok(_) => println!("wrote image to output.png"),
+        Err(reason) => println!("failed to write output png: {}", reason)
+    }
+}
+```
+
+The call to `recv` will block until a new image is available.
+
+[lodepng]: https://github.com/pornel/lodepng-rust
+
+---
+
+Ownership in Rust is a powerful tool.
+It enables synchronisation primitives that are impossible to misuse.
+Multithreading in Rust differs from C++ in the same way that memory management does:
+it is impossible to get it wrong,
+but it does require some careful thought to get to a point where the code compiles.
+I like channels, because they are [value-oriented instead of place-oriented][values].
+
+[values]: http://www.infoq.com/presentations/Value-Values
+
+This concludes my port of the Luculentus spectral path tracer.
+Next time I will summarise the process,
+and I will compare the performance of the two versions,
+which might surprise you.
 
 ---
 
