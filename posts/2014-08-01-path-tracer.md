@@ -99,6 +99,10 @@ x Not being able to use `min` and `max` on `f32` because `f32` is only partially
   Still, it can be a bit confusing.
 - Luculentus update: when it is done, there should only be one place where raw pointers are used.
   Also, _all_ destructors will be gone.
+- Emphasise that both languages enable safe programming,
+  but in C++ it is opt-in, and it is easy to forget to opt-in,
+  and in fact, all previous, common patterns (pointers cough cough) are not safe.
+  In Rust, you have to very explicitly opt out. Much better.
 
 Benchmarks
 ----------
