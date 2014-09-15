@@ -6,6 +6,7 @@ date: 2014-08-28 21:43
 As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to [Rust][rust].
 You can follow the port on [GitHub][robigo-luculenta].
 This post will outline how work is distributed among cores,
+how synchronisation is handled,
 and I will highlight some of the differences between C++ and Rust.
 
 [rust]:             http://rust-lang.org
@@ -33,7 +34,6 @@ The path tracing process so far has been pretty straightforward:
 
 The first three steps are performed in a loop,
 and once in a while the fourth step is performed to visualise the current render state.
-
 This process can be parallelised with little synchronisation.
 Threads can do the loops in parallel.
 Only access to the buffer in which all contributions are accumulated, needs to be synchronised.
@@ -46,7 +46,8 @@ The task scheduler
 The task scheduler is responsible for determining what threads should do.
 The program starts a number of worker threads,
 and each thread asks the task scheduler for a task.
-After performing the task, it will ask the task scheduler for a new one, etc.
+After performing the task, it will ask the task scheduler for a new one,
+and this will continue until the program stops.
 
 The task scheduler owns a collection of units, which are described in the [previous post][prev].
 Each task can have units associated with it.
@@ -73,19 +74,21 @@ Whether the gather unit and tonemap unit are available is indicated by a simple 
 ```cpp
 class TaskScheduler
 {
-    std::queue<int> availableTraceUnits;
-    std::queue<int> doneTraceUnits;
-    std::queue<int> availablePlotUnits;
-    std::queue<int> donePlotUnits;
-    bool gatherUnitAvailable;
-    bool tonemapUnitAvailable;
+    private:
+      std::queue<int> availableTraceUnits;
+      std::queue<int> doneTraceUnits;
+      std::queue<int> availablePlotUnits;
+      std::queue<int> donePlotUnits;
+      bool gatherUnitAvailable;
+      bool tonemapUnitAvailable;
 
-    std::vector<TraceUnit> traceUnits;
-    std::vector<PlotUnit> plotUnits;
-    std::unique_ptr<GatherUnit> gatherUnit;
-    std::unique_ptr<TonemapUnit> tonemapUnit;
+    public:
+      std::vector<TraceUnit> traceUnits;
+      std::vector<PlotUnit> plotUnits;
+      std::unique_ptr<GatherUnit> gatherUnit;
+      std::unique_ptr<TonemapUnit> tonemapUnit;
 
-    Task GetNewTask(const Task completedTask);
+      Task GetNewTask(const Task completedTask);
 
     ...
 };
@@ -232,7 +235,7 @@ fn execute_task(task: &mut Task,
 }
 ```
 
-The `execute_task` method takes a `Scene` and `Sender<Image>`.
+In addition to the task, `execute_task` takes a `Scene` and `Sender<Image>`.
 I talked about scene ownership in the [previous post][prev], and this is where it shows up.
 The sender is not important for now.
 Rust will force the match to be exhaustive, so there is no way to forget a case.
@@ -244,7 +247,7 @@ But then we have a `&mut Box<TraceUnit>`, and the function takes a `&mut TraceUn
 Dereferencing once yields a `Box<TraceUnit>`, and dereferencing a second time yields a `TraceUnit`.
 The we must borrow it again, mutably, because the function expects a reference.
 That is what `&mut **` is for.
-It works, but it feels awkward.
+It makes sense, but it feels awkward.
 
 Synchronisation
 ---------------
@@ -252,8 +255,9 @@ There are only two points in the program that need synchronisation:
 displaying the image in the user interface,
 and retrieving a new task from the task scheduler.
 Thread-safety of the task scheduler ensures that access to the units is thread-safe.
-The only public method of the task scheduler is `GetNewTask`, so that is the only place where synchronisation is required.
-In C++, this is done by using a mutex inside the method:
+The only public method of the task scheduler is `GetNewTask`,
+so that is the only place where synchronisation is required.
+In C++, this is done by locking a mutex inside the method:
 
 ```cpp
 Task TaskScheduler::GetNewTask(const Task completedTask)
@@ -262,6 +266,10 @@ Task TaskScheduler::GetNewTask(const Task completedTask)
 
     ...
 }
+```
+
+```cpp
+task = taskScheduler.GetNewTask(task);
 ```
 
 The lock is held while `lock` is in scope,
@@ -273,9 +281,9 @@ and the only way to get access to the object, is by acquiring the lock:
 ```rust
 let ts = TaskScheduler::new(concurrency, image_width, image_height);
 let task_scheduler = Arc::new(Mutex::new(ts));
+```
 
-...
-
+```rust
 task = task_scheduler.lock().get_new_task(task);
 ```
 
@@ -300,11 +308,12 @@ The worker thread then informs the dispatcher that a new image is ready,
 and the UI event loop will execute the callback on the UI thread,
 and display the image.
 
+Rogigo Luculenta does not have a graphical user interface.
+It saves the rendered image to a file.
+The worker thread could do that,
+but I wanted to do it form a designated thread, analogous to the UI thread in Luculentus.
 Rust uses channels for communication between threads.
-There are two ends to a channel: a sending part, and a receiving part.
-Rogigo Luculenta does not have a graphical user interface, it saves the rendered image to a file.
-The worker thread could do that, but I wanted to do it form a designated thread, analogous to the UI thread in Luculentus.
-The worker thread then puts the rendered image on the channel,
+The worker thread puts the rendered image on the channel,
 and an other thread waits for images, and writes them out.
 This is what `img_tx` in `execute_task` is for: it is the sending part of the channel.
 
@@ -347,13 +356,19 @@ It enables synchronisation primitives that are impossible to misuse.
 Multithreading in Rust differs from C++ in the same way that memory management does:
 it is impossible to get it wrong,
 but it does require some careful thought to get to a point where the code compiles.
-I like channels, because they are [value-oriented instead of place-oriented][values].
+C++ and Rust have different ways of sending data across threads.
+I like the channel approach, because channels are [value-oriented][values].
+There are no channels in the C++ standard library,
+so there it must be done via shared memory, which is place-oriented.
+The tools that enable safe concurrent programming are there in both languages.
+In C++, you can choose to use them.
+In Rust, safety is enforced by default.
 
 [values]: http://www.infoq.com/presentations/Value-Values
 
 This concludes my port of the Luculentus spectral path tracer.
 Next time I will summarise the process,
-and I will compare the performance of the two versions,
+and I will compare the performance of the two versions ---
 which might surprise you.
 
 ---
