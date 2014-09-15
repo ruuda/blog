@@ -146,9 +146,9 @@ In C++, this is done as follows:
 ```cpp
 struct Object
 {
-    Surface* surface;
-    Material* material;
-    EmissiveMaterial* emissiveMaterial;
+    std::shared_ptr<Surface> surface;
+    std::shared_ptr<Material> material;
+    std::shared_ptr<EmissiveMaterial> emissiveMaterial;
 };
 ```
 
@@ -157,8 +157,6 @@ and either the material or emissive material must be non-null.
 It works, but the compiler does not prevent you from creating an invalid object
 that contains no material, or both a reflective and emissive material.
 It could be improved a bit by using a tagged union, but for this simple case, two pointers suffice.
-(Nowadays it would be more idiomatic to use a `unique_ptr` or `shared_ptr` instead of the raw pointers.
-I would like to update that some day.)
 In Rust, valid objects can be enforced statically:
 
 ```rust
