@@ -145,6 +145,8 @@ This way, the invariants of the type can be better expressed:
 in C++, the `unit` and `otherUnits` fields can be accessed even if the type is `Sleep`.
 In that case, the values are undefined.
 In Rust, these fields simply do not exist for a `Sleep` task.
+The enum members are unnamed.
+The only way to access them is via pattern matching.
 The task scheduler is implemented like this:
 
 ```rust
@@ -170,8 +172,8 @@ In Rust, the actual units are passed around.
 When a trace task is created, a trace unit is taken from `available_trace_units` queue, and it is moved into the task.
 The task now owns the unit, and and it is _gone_ from the task scheduler.
 This way, it is impossible for the task scheduler to hand out the same unit to different worker threads.
-When the worker thread requests a new task, it returns the completed task — including units — back to the task scheduler,
-which will place it in the done queue.
+When the worker thread requests a new task, it returns the completed task back to the task scheduler,
+which will place its units in the done queue.
 The gather unit and tonemap unit are handled in a similar way:
 when they are handed out in a task,
 the variables will be `None` until the units are returned.
@@ -304,8 +306,9 @@ The other part to synchronisation is displaying an image in the user interface.
 Luculentus uses gtkmm for its interface, which only allows the UI to be updated from a designated UI thread.
 The program uses a gtk-specific dispatcher,
 to which callbacks are registered when the program starts.
-The worker thread then informs the dispatcher that a new image is ready,
-and the UI event loop will execute the callback on the UI thread,
+When an image is ready, the worker thread puts it in a shared memory location,
+and informs the dispatcher of the new image.
+The UI event loop will execute the callback on the UI thread,
 and display the image.
 
 Rogigo Luculenta does not have a graphical user interface.
@@ -346,15 +349,22 @@ loop {
 ```
 
 The call to `recv` will block until a new image is available.
+Rust is more [honest][honest] than C++.
+The fact that writing to a file might fail,
+is reflected in the return type of `encode24_file`.
+This forces you to consider failure,
+whereas in C++ you can happily pretend that exceptions do not exists,
+and the code will compile just fine.
 
 [lodepng]: https://github.com/pornel/lodepng-rust
+[honest]:  https://channel9.msdn.com/Shows/Going+Deep/Erik-Meijer-Functional-Programming
 
 ---
 
 Ownership in Rust is a powerful tool.
 It enables synchronisation primitives that are impossible to misuse.
-Multithreading in Rust differs from C++ in the same way that memory management does:
-it is impossible to get it wrong,
+Multithreading in Rust differs from C++ much in the same way that memory management does:
+it is impossible to write something unsafe,
 but it does require some careful thought to get to a point where the code compiles.
 C++ and Rust have different ways of sending data across threads.
 I like the channel approach, because channels are [value-oriented][values].
