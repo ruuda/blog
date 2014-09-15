@@ -1,6 +1,6 @@
 ---
 title: Writing a path tracer in Rust, part 6: multithreading
-date: 2014-08-28 21:43
+date: 2014-09-15 19:04
 ---
 
 As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to [Rust][rust].
@@ -376,4 +376,4 @@ which might surprise you.
 Discuss this post on [Reddit][reddit].
 Rust 0.12.0-pre-nightly was used in this post.
 
-[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/08/29/writing-a-path-tracer-in-rust-part-6-multithreading
+[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/09/15/writing-a-path-tracer-in-rust-part-6-multithreading
