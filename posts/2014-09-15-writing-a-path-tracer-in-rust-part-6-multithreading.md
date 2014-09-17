@@ -17,9 +17,9 @@ Parallelism
 -----------
 Luculentus is a simple path tracer.
 It does not use advanced algorithms like [Metropolis light transport][mlt],
-and tere is no [_k_-d tree][kdtree] to speed up scene intersection.
+and there is no [_k_-d tree][kdtree] to speed up scene intersection.
 The path tracer could be made significantly faster, at the cost of more complex algorithms.
-An other way to get more performance with little extra complexity,
+Another way to get more performance with little extra complexity,
 is to just throw more computing power at the problem.
 
 [mlt]:    https://en.wikipedia.org/wiki/Metropolis_light_transport
