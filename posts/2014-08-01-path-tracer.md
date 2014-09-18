@@ -112,4 +112,4 @@ Luculentus, clang 3.4.2, Arch64, O3:          0.278   +- 0.01    batches/sec.
 Luculentus, gcc 4.9, Arch64, O4:              0.310   +- 0.001   batches/sec.
 Luculentus, gcc 4.9, Arch64, O4+march=native: 0.318   +- 0.01    batches/sec.
 Robigo,     rustc 08-22, win32, O3:           0.189   +- 0.001   batches/sec.
-Robigo,     rustc 08-21, Arch64, O3:          0.3203  +- 0.0003  batches/sec.
+Robigo,     rustc 08-21, Arch64, O3:          0.3200  +- 0.003   batches/sec.
