@@ -83,7 +83,7 @@ In Rust, the main trace loop looks like this:
 
 ```rust
 pub fn render(&mut self, scene: &Scene) {
-    for mapped_photon in self.mapped_photons.mut_iter() {
+    for mapped_photon in self.mapped_photons.iter_mut() {
         let wavelength = ::monte_carlo::get_wavelength();
         let x = ::monte_carlo::get_bi_unit();
         let y = ::monte_carlo::get_bi_unit() / self.aspect_ratio;
