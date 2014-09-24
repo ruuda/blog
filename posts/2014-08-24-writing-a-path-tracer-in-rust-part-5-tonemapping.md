@@ -273,13 +273,13 @@ void TonemapUnit::Tonemap(const GatherUnit& gatherUnit)
 ```
 
 Rust has some neat features that make this more convenient.
-By using `mut_chunks`, we can iterate over chunks of three bytes.
+By using `chunks_mut`, we can iterate over chunks of three bytes.
 Then we can zip every chunk with the corresponding tristimulus:
 
 ```rust
 pub fn tonemap(&mut self, tristimuli: &[Vector3]) {
     let max_intensity = self.find_exposure(tristimuli);
-    let buffer = self.rgb_buffer.as_mut_slice().mut_chunks(3);
+    let buffer = self.rgb_buffer.as_mut_slice().chunks_mut(3);
 
     for (px, cie) in buffer.zip(tristimuli.iter()) {
         // < Convert to sRGB >
