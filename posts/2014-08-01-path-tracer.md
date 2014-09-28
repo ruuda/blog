@@ -99,13 +99,19 @@ x Not being able to use `min` and `max` on `f32` because `f32` is only partially
   Still, it can be a bit confusing.
 - There were some method deprecated during development, that I had to replace.
   `filtered` on `Option` was removed due to “insufficient usage”. I liked it though.
+- Luculentus update: when it is done, there should only be one place where raw pointers are used.
+  Also, _all_ destructors will be gone.
+- Emphasise that both languages enable safe programming,
+  but in C++ it is opt-in, and it is easy to forget to opt-in,
+  and in fact, all previous, common patterns (pointers cough cough) are not safe.
+  In Rust, you have to very explicitly opt out. Much better.
 
 Benchmarks
 ----------
-Luculentus, msvc110, win64, regular:          0.20  +- 0.01  batches/sec.
-Luculentus, msvc110, win64, PGO:              0.21  +- 0.01  batches/sec.
-Luculentus, clang 3.4.2, Arch64, O3:          0.278 += 0.01  batches/sec.
-Luculentus, gcc 4.9, Arch64, O4:              0.310 +- 0.001 batches/sec.
-Luculentus, gcc 4.9, Arch64, O4+march=native: 0.318 +- 0.01  batches/sec.
-Robigo,     rustc 08-22, win32, O3:           0.189 +- 0.001 batches/sec.
-Robigo,     rustc 08-21, Arch64, O3:          0.31  += 0.01  batches/sec.
+Luculentus, msvc110, win64, regular:          0.20    +- 0.01      batches/sec.
+Luculentus, msvc110, win64, PGO:              0.21    +- 0.01      batches/sec.
+Luculentus, clang 3.5.0, Arch64, O3:          0.30168 +- 0.0543232 batches/sec.
+Luculentus, gcc 4.9, Arch64, O4:              0.310   +- 0.001     batches/sec.
+Luculentus, gcc 4.9, Arch64, O4+march=native: 0.318   +- 0.01      batches/sec.
+Robigo,     rustc 08-22, win32, O3:           0.189   +- 0.001     batches/sec.
+Robigo,     rustc 09-25, Arch64, release:     0.32285 +- 0.013364  batches/sec.
