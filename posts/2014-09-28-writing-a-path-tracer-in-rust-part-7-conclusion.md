@@ -6,7 +6,7 @@ date: 2014-09-28 18:42
 As a learning exercise, I have ported the [Luculentus][luculentus] spectral path tracer to [Rust][rust].
 The result is available on [GitHub][robigo-luculenta].
 In the process, I have also refreshed Luculentus a bit, updating it to modern C++.
-You can read the details in the previous posts.
+You can about read the details in the previous posts.
 In this post, I want to outline the process, and compare the final versions.
 
 [rust]:             http://rust-lang.org
@@ -18,10 +18,26 @@ Getting started with Rust
 - Downloading/installing, rough at first, easy now.
 - IRC channel is helpful.
 - Online reference is helpful.
+- Use MinGW32 build, then it works.
 - Fast changing language, various functions deprecated during development.
 
 Ownership
 ---------
+If I had to describe Rust in one word, it would be _ownership_.
+In most languages, ownership is implicit.
+When a function returns a pointer in C++, are you responsible for deleting it?
+BLAH.
+It may seem that garbage collection is a good solution to the problem.
+It is not, because it only deals with memory.
+Then you need an other way to free non-memory resources like a file handle,
+and all ownership problems are back.
+For example, the garbage collector in C# prevents use-after-free,
+but there is nothing that prevents use-after-dispose.
+`ObjectDisposedException` is just an access violation in disguise.
+
+Rust _does_ prevent usage of a resource after is has been freed.
+BLAH now I talk about lifetimes, not ownership.
+
 - Single most important thing in Rust (as I see it).
 - Ownership is often implicit, which means it is prone to human error.
   Rust makes it explicit, eliminating the errors.
