@@ -2,7 +2,7 @@
 
 import Data.Monoid ((<>))
 import GHC.IO.Encoding
-import Hakyll hiding (buildPaginate, pandocCompiler)
+import Hakyll hiding (pandocCompiler)
 import Site.Archive
 import Site.Configuration
 import Site.Index
@@ -38,16 +38,16 @@ main = do
 
     match "templates/*" $ compile templateCompiler
 
-    match "posts/*.md" $ do
+    paginate <- buildPaginate "posts/*.md"
+    paginateRules paginate $ \i _ -> do
       route dateRoute
       compile $ do
-        pages <- buildPaginate "posts/*.md"
-        let ctx = paginatePostsContext pages <> siteContext
+        let ctx = paginatePostsContext paginate i <> siteContext
         pandocCompiler
           >>= saveSnapshot "content"
           >>= loadAndApplyTemplate "templates/post.html" ctx
           >>= stripIndexSuffix
-    
+
     postIndex "posts/*.md" 5 fullContext
 
     create ["archive/index.html"] $ do
