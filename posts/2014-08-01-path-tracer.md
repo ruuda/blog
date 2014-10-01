@@ -111,5 +111,6 @@ Benchmarks
 Luculentus, msvc110, win64, regular:          0.234073 +- 0.0272448 batches/sec.
 Luculentus, clang 3.5.0, Arch64, O3:          0.30168  +- 0.0543232 batches/sec.
 Luculentus, gcc 4.9.1, Arch64, O4:            0.32717  +- 0.0645398 batches/sec.
+Luculentus, gcc 4.9.1, Arch64, O4 + PGO:      0.352281 +- 0.0380804 batches/sec.
 Robigo,     rustc 09-23, Win64, release:      0.227769 +- 0.013041  batches/sec.
 Robigo,     rustc 09-25, Arch64, release:     0.32285  +- 0.013364  batches/sec.
