@@ -29,7 +29,7 @@ Compiling the generator:
 ```bash
 $ cabal update
 $ cabal sandbox init
-$ cabal install
+$ cabal install -j
 ```
 
 Compiling the site:
