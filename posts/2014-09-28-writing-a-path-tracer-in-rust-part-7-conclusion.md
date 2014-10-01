@@ -185,8 +185,36 @@ only two thirds the size of the C++ version.
 
 Performance
 -----------
-- Table here
-- Revisit compilation speed (reference earlier post).
+I added basic performance counters to Luculentus and Robigo Luculenta.
+It counts the number of trace tasks completed per second.
+These are the results:
+
+| Compiler              | Platform       | Performance |
+|-----------------------|----------------|-------------|
+| GCC 4.9.1             | Arch Linux x64 | 0.33 ± 0.06 |
+| GCC 4.9.1*            | Arch Linux x64 | 0.35 ± 0.04 |
+| Clang 3.5.0           | Arch Linux x64 | 0.30 ± 0.05 |
+| msvc 110              | Windows 7 x64  | 0.23 ± 0.03 |
+| rustc 0.12 2014-09-23 | Windows 7 x64  | 0.23 ± 0.01 |
+| rustc 0.12 2014-09-25 | Arch Linux x64 | 0.32 ± 0.01 |
+
+Optimisation levels were set as high as possible everywhere.
+GCC with the asterisk uses profile-guided optimisation.
+I also tried that with msvc, but there was virtually no difference.
+The only conclusion I can draw from this,
+is that you should probably not use Windows if you want performance.
+
+In my first post I noted that rustc compiles extremely fast,
+but there was very little code at that point.
+After the port, these are the compile times in seconds:
+
+| Compiler              | Time         |
+|-----------------------|--------------|
+| GCC 4.9.1             | 17.3  ± 0.5  |
+| Clang 3.5.0           | 13.39 ± 0.03 |
+| rustc 0.12 2014-09-26 |  7.31 ± 0.05 |
+
+No instant compilation any more, but still much better than C++.
 
 Conclusion
 ----------
