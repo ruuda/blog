@@ -3,54 +3,48 @@ module Site.Pagination (buildPaginate, paginatePostsContext) where
 import qualified Data.Map as M
 import           Data.Monoid ((<>), mconcat)
 import qualified Data.Set as S
-import           Hakyll hiding (buildPaginate)
+import qualified Data.Traversable as T
+import           Control.Monad (join, liftM)
+import           Hakyll hiding (getMetadata)
 import           Site.Meta
-import           Text.Printf (printf)
 
--- Re-define relpage, because it is not exported.
-type RelPage = PageNumber -> PageNumber -> PageNumber -> Maybe PageNumber
+-- Taken from the source, because it is not exported.
+paginateNumPages :: Paginate -> Int
+paginateNumPages = M.size . paginateMap
 
--- Custom pagination with metadata extraction.
-paginateMetadataField :: Paginate -> String -> RelPage -> String -> Context a
-paginateMetadataField pag fieldName relPage key = field fieldName $ \item ->
-  let identifier = itemIdentifier item
-  in case M.lookup identifier (paginatePlaces pag) of
-     Nothing  -> fail $ printf
-       "Hakyll.Web.Paginate: there is no page %s in paginator map."
-       (show identifier)
-     Just pos -> case relPage 1 pos nPages of
-       Nothing   -> fail "Hakyll.Web.Paginate: No page here."
-       Just pos' -> do
-         let nextId = paginateMakeId pag pos'
-         getMetadataField' nextId key
-  where
-    nPages = M.size (paginatePages pag)
+-- Taken from the source, because it is not exported.
+paginatePage :: Paginate -> PageNumber -> Maybe Identifier
+paginatePage pag pageNumber
+ | pageNumber < 1 = Nothing
+ | pageNumber > (paginateNumPages pag) = Nothing
+ | otherwise = Just $ paginateMakeId pag pageNumber
+
+getMetadata :: MonadMetadata m
+            => Paginate -> PageNumber -> String -> m (Maybe String)
+getMetadata pag i key = liftM join $ T.sequence $ do
+  ident <- paginatePage pag i
+  return $ getMetadataField ident key
 
 -- Context that has title fields extracted from metadata.
-paginateMetadataContext :: Paginate -> Context a
-paginateMetadataContext pag = mconcat
-  [ paginateMetadataField pag "nextTitle"
-      (\_ c l -> if c >= l then Nothing else Just (c + 1)) "title"
-  , paginateMetadataField pag "previousTitle"
-      (\f c _ -> if c <= f then Nothing else Just (c - 1)) "title"
+paginateMetadataContext :: Paginate -> PageNumber -> Context a
+paginateMetadataContext pag i = mconcat
+  [ field "nextTitle"     $ \_ -> fmap (maybe "" id) $ getMetadata pag (i + 1) "title"
+  , field "previousTitle" $ \_ -> fmap (maybe "" id) $ getMetadata pag (i - 1) "title"
   ]
 
-paginatePostsContext :: Paginate -> Context String
-paginatePostsContext pages = postContext <>
-                             paginateContext pages <>
-                             paginateMetadataContext pages
+paginatePostsContext :: Paginate -> PageNumber -> Context String
+paginatePostsContext pages i = postContext <>
+                               paginateContext pages i <>
+                               paginateMetadataContext pages i
 
 -- Pagination that takes drafts into account, adapted from the original source.
 buildPaginate :: MonadMetadata m => Pattern -> m Paginate
 buildPaginate pattern = do
-    idents <- filterDrafts =<< getMatches pattern
-    let pagPages  = M.fromList $ zip [1 ..] (map return idents)
-        pagPlaces = M.fromList $ zip idents [1 ..]
-        makeId pn = case M.lookup pn pagPages of
-            Just [id'] -> id'
-            _          -> error $
-                "Hakyll.Web.Paginate.buildPaginate': " ++
-                "invalid page number: " ++ show pn
-
-    return $ Paginate pagPages pagPlaces makeId
-        (PatternDependency pattern (S.fromList idents))
+  ids      <- filterDrafts =<< getMatches pattern
+  idGroups <- return $ fmap (\x -> [x]) ids -- Just one page per post.
+  let idsSet = S.fromList ids
+  return Paginate
+    { paginateMap        = M.fromList (zip [1 ..] idGroups)
+    , paginateMakeId     = \i -> ids !! (i-1) -- Page url is just the post url.
+    , paginateDependency = PatternDependency pattern idsSet
+    }

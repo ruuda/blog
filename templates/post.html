@@ -6,8 +6,8 @@ $partial("templates/top.html")$
     </article>
     <section>
       <ul>
-        $if(previousPage)$<li class="previous-page"><a href="$previousPage$" title="Previous post: $previousTitle$" rel="prev">$previousTitle$</a></li>$endif$
-        $if(nextPage)$<li class="next-page"><a href="$nextPage$" title="Next post: $nextTitle$" rel="next">$nextTitle$</a></li>$endif$
+        $if(previousPageUrl)$<li class="previous-page"><a href="$previousPageUrl$" title="Previous post: $previousTitle$" rel="prev">$previousTitle$</a></li>$endif$
+        $if(nextPageUrl)$<li class="next-page"><a href="$nextPageUrl$" title="Next post: $nextTitle$" rel="next">$nextTitle$</a></li>$endif$
       </ul>
     </section>
 $partial("templates/bottom.html")$
