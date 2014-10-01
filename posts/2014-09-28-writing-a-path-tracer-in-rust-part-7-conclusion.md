@@ -130,9 +130,38 @@ and even then, old APIs will be around for a long time.
 - Count number of pointers before/after.
 - Should be only one place that relies on raw pointers.
 
+In the end, I am convinced that it is possible to write safe code in C++ as well as in Rust.
+You have to be more careful in C++,
+and the compiler does not guide you as much,
+but it can be done.
 
 Rust vs C++
 -----------
+A nice thing about Rust is that it can start from scratch,
+and learn from the mistakes of earlier languages.
+C++11 is a lot better than the version before it,
+but it only _adds_ features,
+and every new feature cannot break old code.
+One point where this shows is syntax.
+In Rust, types go after the name, and a return type comes after the argument list,
+which is the sensible thing to do.
+Rust’s lambda syntax is more concise, and there is less repetition.
+(I still cannot get used to the Egyption brackets though.
+They look **wrong** to me.)
+
+Another area where I think Rust made the right choice, is mutability.
+In Rust, everything is immutable by default, whereas in C++ everything is mutable by default.
+The Luculentus codebase has 535 occurences of `const` at the moment of writing.
+Robigo Luculenta has only 97 occurences of `mut`.
+Of course there is more duplication in C++,
+but this still suggests that immutable is a more sensible default.
+The Rust compiler warns about variables that need not be mutable, which is nice.
+
+If I compare the number of non-whitespace source characters,
+the C++ version has 108981 characters — excluding the CIE1964 files that I did not port,
+whereas the Rust version has 73603 characters,
+only two thirds the size of the C++ version.
+
 - Still don’t like Egyptian brackets. (I’ll fork `rust fmt` when it is available to fix it ;-)
 - Safety not unique to Rust per se.
 - Big difference: safety is opt-in, nothing guiding you to correct usage.
