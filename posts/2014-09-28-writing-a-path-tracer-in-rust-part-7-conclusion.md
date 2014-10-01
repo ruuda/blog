@@ -48,16 +48,33 @@ and I am confident that Rust 1.0 will be a great language.
 Ownership
 ---------
 If I had to describe Rust in one word, it would be _ownership_.
-In most languages, ownership is implicit.
-When a function returns a pointer in C++, are you responsible for deleting it?
-BLAH.
-It may seem that garbage collection is a good solution to the problem.
-It is not, because it only deals with memory.
+For me, this is the one thing that sets Rust apart from other languages.
+In most languages, ownership is implicit,
+and this leads to several kinds of errors.
+When a function returns a pointer in C++, who is responsible for deleting it?
+Can you answer that question without consulting the documentation?
+And even if you know the answer, it is still possible to forget a delete,
+or accidentally delete twice.
+
+This problem is not specific to pointers though, it is a problem with resources in general.
+It may seem that garbage collection is a good solution,
+but it is not, because it only deals with memory.
 Then you need an other way to free non-memory resources like a file handle,
 and all ownership problems are back.
-For example, the garbage collector in C# prevents use-after-free,
-but there is nothing that prevents use-after-dispose.
-`ObjectDisposedException` is just an access violation in disguise.
+For example, the garbage collector in C# prevents use after free,
+but there is nothing that prevents use after _dispose_.
+Is an `ObjectDisposedException` that much better than an access violation?
+
+Use after free is realy a problem with _lifetimes_:
+an object or pointer is still around,
+while the resource has already been freed.
+[RAII][raii] solves this problem,
+but this only works if you go all the way.
+If you have a raw pointer to an RAII object in C++, you can still forget to delete it.
+
+HOW DO I UNIFY LIFETIMES AND OWNERSHIP?
+
+[raii]: https://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization
 
 Rust _does_ prevent usage of a resource after is has been freed.
 BLAH now I talk about lifetimes, not ownership.
@@ -69,6 +86,45 @@ BLAH now I talk about lifetimes, not ownership.
 
 Updating Luculentus
 -------------------
+The benefits of RAII are not specific to Rust.
+It is perfectly possible to write similar code in modern C++,
+which is arguably a very different language than pre-2011 C++.
+When I wrote Luculentus, C++11 was only partially supported.
+There were lots of raw pointers that are nowadays not necessary.
+I have replaced most raw pointers in Luculentus with `shared_ptr` or `unique_ptr`,
+and arrays with vectors.
+As a consequence, _all_ manual destructors are now gone.
+(There were six previously.)
+Before, there were eleven delete statements.
+Now there are zero.
+All memory management has become automatic.
+Apart from the arguments to main, there is only one place left that uses raw pointers.
+
+Porting the path tracer to Rust also improved its design.
+If your resource management is wrong, it is invalid in Rust.
+In C++ you can get away with e.g. dereferencing the first element of a vector,
+and when the vector goes out of scope, the pointer will be invalid.
+The code is valid C++ though.
+Rust does not allow shortcuts like that,
+and for me it has opened my eyes to an area that I was not fully aware of before.
+Even when working in other languages,
+if a construct would be illegal in Rust,
+there probably is a better way.
+
+This demonstrates that it _is_ possible to write safe code in C++.
+You _do_ get safe, automatic memory management with virtually no overhead.
+The only caveat is that you must choose to leverage it.
+You could use a `unique_ptr`, but you could just as well use a raw pointer.
+All the dangerous tools of the ‘old’ C++ are still there,
+and you can mix them with modern C++ if you like.
+Of course there is value in having old code compile (Bjarne calls it a [feature][feature]),
+but I would prefer to not implicitly mix two quite different paradigms,
+and keep all the past design mistakes around.
+It takes some time to unlearn using `new` and `delete`,
+and even then, old APIs will be around for a long time.
+
+[feature]: http://channel9.msdn.com/Events/GoingNative/2013/Opening-Keynote-Bjarne-Stroustrup
+
 - Luculentus can benefit from ownership as well, much improvement in C++11.
 - Destructors are gone.
 - Count number of pointers before/after.
