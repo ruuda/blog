@@ -232,7 +232,7 @@ article h1 + h2
     padding-top: 0;
 }
 
-article p, article ul, article ol, article blockquote
+article p, article ul, article ol, article blockquote, article table
 {
     line-height: 1.6em;
     margin-top: 1em;
@@ -394,6 +394,16 @@ article blockquote > p
 article blockquote em, article blockquote code
 {
     font-style: normal;
+}
+
+thead
+{
+    font-weight: 700;
+}
+
+td
+{
+    padding-right: 1.5em;
 }
 
 article hr
