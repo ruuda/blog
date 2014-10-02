@@ -109,6 +109,7 @@ x Not being able to use `min` and `max` on `f32` because `f32` is only partially
 Benchmarks
 ----------
 Luculentus, msvc110, win64, regular:          0.234073 +- 0.0272448 batches/sec.
+Luculentus, msvc110, win64, PGO               0.233568 +- 0.019358  batches/sec.
 Luculentus, clang 3.5.0, Arch64, O3:          0.30168  +- 0.0543232 batches/sec.
 Luculentus, gcc 4.9.1, Arch64, O4:            0.32717  +- 0.0645398 batches/sec.
 Luculentus, gcc 4.9.1, Arch64, O4 + PGO:      0.352281 +- 0.0380804 batches/sec.
