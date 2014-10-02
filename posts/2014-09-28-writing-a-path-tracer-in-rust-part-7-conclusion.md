@@ -158,8 +158,8 @@ but this still suggests that immutable is a more sensible default.
 The Rust compiler warns about variables that need not be mutable, which is nice.
 
 If I compare the number of non-whitespace source characters,
-the C++ version has 108981 characters — excluding the CIE1964 files that I did not port,
-whereas the Rust version has 73603 characters,
+the C++ version has 108&#x202f;981 characters — excluding the CIE 1964 files that I did not port,
+whereas the Rust version has 73&#x202f;603 characters,
 only two thirds the size of the C++ version.
 
 - Still don’t like Egyptian brackets. (I’ll fork `rust fmt` when it is available to fix it ;-)
