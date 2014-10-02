@@ -195,12 +195,12 @@ These are the results:
 | GCC 4.9.1*            | Arch Linux x64 | 0.35 ± 0.04 |
 | Clang 3.5.0           | Arch Linux x64 | 0.30 ± 0.05 |
 | msvc 110              | Windows 7 x64  | 0.23 ± 0.03 |
+| msvc 110*             | Windows 7 x64  | 0.23 ± 0.02 |
 | rustc 0.12 2014-09-23 | Windows 7 x64  | 0.23 ± 0.01 |
 | rustc 0.12 2014-09-25 | Arch Linux x64 | 0.32 ± 0.01 |
 
 Optimisation levels were set as high as possible everywhere.
-GCC with the asterisk uses profile-guided optimisation.
-I also tried that with msvc, but there was virtually no difference.
+The compilers with asterisk used profile-guided optimisation.
 The only conclusion I can draw from this,
 is that you should probably not use Windows if you want performance.
 
