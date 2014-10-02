@@ -212,6 +212,7 @@ After the port, these are the compile times in seconds:
 |-----------------------|--------------|
 | GCC 4.9.1             | 17.3  ± 0.5  |
 | Clang 3.5.0           | 13.39 ± 0.03 |
+| msvc 110              | 20.4  ± 0.3  |
 | rustc 0.12 2014-09-26 |  7.31 ± 0.05 |
 
 No instant compilation any more, but still much better than C++.
