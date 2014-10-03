@@ -204,7 +204,8 @@ The compilers with asterisk used profile-guided optimisation.
 The only conclusion I can draw from this,
 is that you should probably not use Windows if you want performance.
 
-In my first post I noted that rustc compiles extremely fast,
+In the second part of this series,
+I noted that rustc compiles extremely fast,
 but there was very little code at that point.
 After the port, these are the compile times in seconds:
 
