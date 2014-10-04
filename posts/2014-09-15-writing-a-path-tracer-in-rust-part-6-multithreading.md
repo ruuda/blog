@@ -223,12 +223,10 @@ fn execute_task(task: &mut Task,
             App::execute_trace_task(scene, &mut **trace_unit),
 
         Plot(ref mut plot_unit, ref mut units) =>
-            App::execute_plot_task(&mut **plot_unit,
-                                   units.as_mut_slice()),
+            App::execute_plot_task(&mut **plot_unit, units[mut]),
 
         Gather(ref mut gather_unit, ref mut units) =>
-            App::execute_gather_task(&mut **gather_unit,
-                                     units.as_mut_slice()),
+            App::execute_gather_task(&mut **gather_unit, units[mut]),
 
         Tonemap(ref mut tonemap_unit, ref mut gather_unit) =>
            App::execute_tonemap_task(img_tx, &mut **tonemap_unit,
@@ -324,7 +322,7 @@ This is what `img_tx` in `execute_task` is for: it is the sending part of the ch
 fn execute_tonemap_task(img_tx: &mut Sender<Image>,
                         tonemap_unit: &mut TonemapUnit,
                         gather_unit: &mut GatherUnit) {
-    tonemap_unit.tonemap(gather_unit.tristimulus_buffer.as_slice());
+    tonemap_unit.tonemap(gather_unit.tristimulus_buffer[]);
 
     let img = tonemap_unit.rgb_buffer.clone();
     img_tx.send(img);
@@ -339,8 +337,7 @@ and write out an image using [LodePNG][lodepng] when it receives one:
 loop {
     let img = images.recv();
 
-    match lodepng::encode24_file(&Path::new("output.png"),
-                                 img.as_slice(),
+    match lodepng::encode24_file(&Path::new("output.png"), img[],
                                  width as u32, height as u32) {
         Ok(_) => println!("wrote image to output.png"),
         Err(reason) => println!("failed to write output png: {}", reason)
