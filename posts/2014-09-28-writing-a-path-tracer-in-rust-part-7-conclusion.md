@@ -13,11 +13,23 @@ In this post, I want to outline the process, and compare the final versions.
 [luculentus]:       https://github.com/ruud-v-a/luculentus
 [robigo-luculenta]: https://github.com/ruud-v-a/robigo-luculenta
 
+Eyecandy
+--------
+First of all, the output of the path tracer!
+The scene is hard-coded, and it looks like this:
+
+[TODO: add image]
+
+If you want to play with it,
+take a look at `set_up_scene` in [app.rs][apprs].
+
+[apprs]: https://github.com/ruud-v-a/robigo-luculenta/blob/master/src/app.rs
+
 Getting started with Rust
 -------------------------
 To install Rust on a GNU/Linux system, all you need to do is run `rustup.sh`,
 and you can get started within minutes.
-On Windows it is more difficult.
+On Windows, installation is more involved.
 First you need to install mingw-builds,
 but the [wiki page][winwikipage] with instructions is a bit hidden.
 Once you have that set up, the installer works fine.
@@ -38,10 +50,10 @@ so an answer from the experts is not uncommon.
 
 At this point, Rust is a fast moving target.
 During the porting process, a handful of functions has been deprecated,
-some functions have been renamed,
-and even some syntax has changed.
+functions have been renamed,
+and even bits of syntax have changed.
 Some people describe Rust today as a different language than it was a year ago,
-but I have not been using it long enough to say anything about that.
+but I have not been using it for long enough to say anything about that.
 Ultimately all changes should make the language better and more consistent,
 and I am confident that Rust 1.0 will be a great language.
 
@@ -102,7 +114,7 @@ Apart from the arguments to main, there is only one place left that uses raw poi
 
 Porting the path tracer to Rust also improved its design.
 If your resource management is wrong, it is invalid in Rust.
-In C++ you can get away with e.g. dereferencing the first element of a vector,
+In C++ you can get away with e.g. taking the address of the first element of a vector,
 and when the vector goes out of scope, the pointer will be invalid.
 The code is valid C++ though.
 Rust does not allow shortcuts like that,
@@ -111,7 +123,7 @@ Even when working in other languages,
 if a construct would be illegal in Rust,
 there probably is a better way.
 
-This demonstrates that it _is_ possible to write safe code in C++.
+The update demonstrates that it _is_ possible to write safe code in C++.
 You _do_ get safe, automatic memory management with virtually no overhead.
 The only caveat is that you must choose to leverage it.
 You could use a `unique_ptr`, but you could just as well use a raw pointer.
@@ -119,9 +131,9 @@ All the dangerous tools of the ‘old’ C++ are still there,
 and you can mix them with modern C++ if you like.
 Of course there is value in having old code compile (Bjarne calls it a [feature][feature]),
 but I would prefer to not implicitly mix two quite different paradigms,
-and keep all the past design mistakes around.
+or keep all the past design mistakes around.
 It takes some time to unlearn using `new` and `delete`,
-and even then, old APIs will be around for a long time.
+and even then, old APIs will be with us for a long time.
 
 [feature]: http://channel9.msdn.com/Events/GoingNative/2013/Opening-Keynote-Bjarne-Stroustrup
 
@@ -158,8 +170,8 @@ but this still suggests that immutable is a more sensible default.
 The Rust compiler warns about variables that need not be mutable, which is nice.
 
 If I compare the number of non-whitespace source characters,
-the C++ version has 108&#x202f;981 characters — excluding the CIE 1964 files that I did not port,
-whereas the Rust version has 73&#x202f;603 characters,
+the C++ version has roughly 109 thousand characters — excluding the CIE 1964 files that I did not port,
+whereas the Rust version has roughly 74 thousand characters,
 only two thirds the size of the C++ version.
 
 - Still don’t like Egyptian brackets. (I’ll fork `rust fmt` when it is available to fix it ;-)
@@ -201,7 +213,7 @@ rustc 0.12 2014-09-25  Arch Linux x64  0.32 ± 0.01
 
 Optimisation levels were set as high as possible everywhere.
 The compilers with asterisk used profile-guided optimisation.
-The only conclusion I can draw from this,
+The only conclusion I can draw from this data,
 is that you should probably not use Windows if you want performance.
 
 In the second part of this series,
