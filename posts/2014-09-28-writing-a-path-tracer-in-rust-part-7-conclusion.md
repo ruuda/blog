@@ -67,28 +67,42 @@ Can you answer that question without consulting the documentation?
 And even if you know the answer, it is still possible to forget a delete,
 or accidentally delete twice.
 
-This problem is not specific to pointers though, it is a problem with resources in general.
+This problem is not specific to pointers though,
+it is a problem with resources in general.
 It may seem that garbage collection is a good solution,
-but it is not, because it only deals with memory.
+but it only deals with memory.
 Then you need an other way to free non-memory resources like a file handle,
 and all ownership problems are back.
 For example, the garbage collector in C# prevents use after free,
 but there is nothing that prevents use after _dispose_.
 Is an `ObjectDisposedException` that much better than an access violation?
 
-Use after free is realy a problem with _lifetimes_:
-an object or pointer is still around,
-while the resource has already been freed.
-[RAII][raii] solves this problem,
-but this only works if you go all the way.
-If you have a raw pointer to an RAII object in C++, you can still forget to delete it.
-
-HOW DO I UNIFY LIFETIMES AND OWNERSHIP?
+Use after free is ultimately a problem with _lifetimes_,
+and they are very important concep in Rust as well,
+but ultimately it is ownership that drives it all.
+A resource goes out of scope when it has no owner any more,
+and at that point it is freed.
+The lifetime of a resource is tied to the lifetime of an object representing the resource.
+This is known as [RAII][raii],
+and in combination with ownership,
+it is a very powerful construct in Rust.
+Because there is a single owner,
+a resource will be freed exactly **once**,
+and it is impossible to access a freed resource.
+It means zero overhead, deterministic, _resource_ management, not just memory management.
 
 [raii]: https://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization
 
-Rust _does_ prevent usage of a resource after is has been freed.
-BLAH now I talk about lifetimes, not ownership.
+A static type system prevents runtime type errors that can occur in a dynamically typed language,
+but it has to be more strict at compile time.
+Rust’s ownership system prevents runtime errors that can occur due to incorrect resource management,
+but it has to be even more strict at compile time.
+The rigorous approach to ownership makes it harder to write correct code,
+but if the compiler refuses to compile your code,
+there often is a real problem in it,
+which would go unnoticed in other languages.
+Rust forces you to consider ownership,
+and this guides you towards a better design.
 
 - Single most important thing in Rust (as I see it).
 - Ownership is often implicit, which means it is prone to human error.
@@ -97,7 +111,7 @@ BLAH now I talk about lifetimes, not ownership.
 
 Updating Luculentus
 -------------------
-The benefits of RAII are not specific to Rust.
+The benefits of ownership are not specific to Rust.
 It is perfectly possible to write similar code in modern C++,
 which is arguably a very different language than pre-2011 C++.
 When I wrote Luculentus, C++11 was only partially supported.
@@ -231,6 +245,15 @@ No instant compilation any more, but still much better than C++.
 
 Conclusion
 ----------
+Blah blah blah.
+
+Ownership is often implicit in other languages,
+which means it is prone to human error.
+Rust makes it explicit, eliminating these errors.
+
+Blah blah blah.
+
+
 - Both languages enable safe programming, I think, but opt-in/out.
 - “Functional” things like immutable by default, pattern matching, `map`, `filter`, `Option` are nice.
 - Takes more thought before code compiles, but less runtime errors (no segfaults!)
