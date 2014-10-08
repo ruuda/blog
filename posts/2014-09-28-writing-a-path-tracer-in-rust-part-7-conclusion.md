@@ -27,16 +27,15 @@ take a look at `set_up_scene` in [app.rs][apprs].
 
 Getting started with Rust
 -------------------------
-To install Rust on a GNU/Linux system, all you need to do is run `rustup.sh`,
+To install Rust on a GNU/Linux system, all you need to do is run [`rustup.sh`][install],
 and you can get started within minutes.
-On Windows, installation is more involved.
-First you need to install mingw-builds,
-but the [wiki page][winwikipage] with instructions is a bit hidden.
-Once you have that set up, the installer works fine.
+On Windows, you need to install [mingw-builds][winwikipage].
+Once you have that set up, the [installer][install] works fine.
 You need to download [Cargo][cargo] separately.
 When I started the port there was no 64-bit version yet,
 but it has since been added.
 
+[install]:     http://www.rust-lang.org/install.html
 [winwikipage]: https://github.com/rust-lang/rust/wiki/Using-Rust-on-Windows
 [cargo]:       http://crates.io/
 
