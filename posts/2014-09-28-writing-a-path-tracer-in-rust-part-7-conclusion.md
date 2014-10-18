@@ -183,11 +183,6 @@ the C++ version has roughly 109 thousand characters — excluding the CIE 1964 f
 whereas the Rust version has roughly 74 thousand characters,
 roughly two thirds the size of the C++ version.
 
-- Having `new` as a function is great, because it is not special any more.
-  Will cut this I think, limit scope of the article.
-- No immutable (persistent) collections in the standard library though.
-  But there is less need for them, because you can share without worrying.
-
 C++ is notorious for its cryptic error messages
 when a template expansion does not work out.
 Rust’s errors are mostly comprehensible,
@@ -214,7 +209,8 @@ rustc 0.12 2014-09-23  Windows 7 x64   0.23 ± 0.01
 Optimisation levels were set as high as possible everywhere.
 The compilers with asterisk used profile-guided optimisation.
 The only conclusion I can draw from this,
-is that you should probably not use Windows if you want performance.
+is that you should probably not use Windows if you want performance
+from CPU-bound applications.
 
 In the second post in this series,
 I noted that rustc compiles extremely fast,
@@ -232,22 +228,19 @@ No instant compilation any more, but still much better than C++.
 
 Conclusion
 ----------
-Blah blah blah.
-
+Learning Rust was a fun experience.
+I like the language, and it lead to a few insights
+that could improve the original code as well.
 Ownership is often implicit in other languages,
 which means it is prone to human error.
 Rust makes it explicit, eliminating these errors.
-
-Blah blah blah.
-
-
-- Both languages enable safe programming, I think, but opt-in/out.
-- Big difference: safety is opt-in, nothing guiding you to correct usage.
-- “Functional” things like immutable by default, pattern matching, `map`, `filter`, `Option` are nice.
-- Takes more thought before code compiles, but less runtime errors (no segfaults!)
-- Ownership leads to better design.
-- Not written enough code to do a good comparison, but still …
-- I'd choose Rust for my next project.
+Safety is not an opt-in, it is the default.
+Rust is definitely more on the ‘stability’ side of the spectrum
+than the ‘rapid development’ side.
+I have written not nearly enough code in Rust to make a fair judgement,
+but so far, Rust’s advantages outweigh the minor annoyances.
+If I could choose between C++ and Rust for my next project,
+I would choose Rust.
 
 ---
 
