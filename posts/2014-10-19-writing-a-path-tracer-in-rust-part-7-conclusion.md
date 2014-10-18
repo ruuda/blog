@@ -41,11 +41,12 @@ It was much easier to get this working than e.g. [Scala][scala] with [sbt][sbt].
 [sbt]:         http://www.scala-sbt.org/
 
 I have found the Rust community to be very nice.
-When I did not know what to do, the IRC channel helped me out,
+When I did not know what to do, the [IRC channel][irc] helped me out,
 and the [subreddit][r/rust] was very useful as well.
 The core team is around there as well,
 so an answer from the experts is not uncommon.
 
+[irc]:    irc://irc.mozilla.org/rust
 [r/rust]: http://www.reddit.com/r/rust
 
 At this point, Rust is a fast moving target.
