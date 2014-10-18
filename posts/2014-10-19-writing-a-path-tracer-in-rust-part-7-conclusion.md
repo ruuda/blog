@@ -63,10 +63,10 @@ If I had to describe Rust in one word, it would be _ownership_.
 For me, this is the one thing that sets Rust apart from other languages.
 In most languages, ownership is implicit,
 and this leads to several kinds of errors.
-When a function returns a pointer in C, who is responsible for deleting it?
+When a function returns a pointer in C, who is responsible for freeing it?
 Can you answer that question without consulting the documentation?
-And even if you know the answer, it is still possible to forget a delete,
-or accidentally delete twice.
+And even if you know the answer, it is still possible to forget a free,
+or accidentally free twice.
 
 This problem is not specific to pointers though,
 it is a problem with resources in general.
@@ -78,7 +78,7 @@ For example, the garbage collector in C# prevents use after free,
 but there is nothing that prevents use after _dispose_.
 Is an `ObjectDisposedException` that much better than an access violation?
 
-Use after free is ultimately a problem with _lifetimes_,
+Use after free is a problem with _lifetimes_,
 and they are very important concep in Rust as well,
 but ultimately it is ownership that drives it all.
 A resource goes out of scope when it has no owner any more,
