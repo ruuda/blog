@@ -32,11 +32,13 @@ Getting started with Rust
 You can install the [Rust compiler][install]
 and [Cargo][cargo] within minutes nowadays,
 even on Windows.
-It was much easier to get this working than e.g. Scala with sbt.
+It was much easier to get this working than e.g. [Scala][scala] with [sbt][sbt].
 
 [install]:     http://www.rust-lang.org/install.html
 [winwikipage]: https://github.com/rust-lang/rust/wiki/Using-Rust-on-Windows
 [cargo]:       http://crates.io/
+[scala]:       http://scala-lang.org/
+[sbt]:         http://www.scala-sbt.org/
 
 I have found the Rust community to be very nice.
 When I did not know what to do, the IRC channel helped me out,
