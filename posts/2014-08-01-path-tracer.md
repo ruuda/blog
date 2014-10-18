@@ -42,17 +42,17 @@ x I just ran `cargo run` on a fresh clone on Arch. It was _fast_.
 x The method call syntax on numbers still feels unnatural. I guess it takes time to get used to it. Maybe it will be even better than the regular way.
 x The `Intersect` method on `Surface` previously returned a boolean, and it had an out parameter.
   Now it is `intersect(&self, ray: &Ray) -> Option<Intersection>`. Much better!
-- I should compare the occurrences of `mut` in Rust and `const` in C++. I think it makes sense to have immutability by default.
-- Automatic dereferencing is nice. I rarely have to dereference anything manually, even though references are all over the place.
-- Tuples are nice as well. `GetIntersections` on `Sphere` would return a boolean, and it had two out parameters.
+x I should compare the occurrences of `mut` in Rust and `const` in C++. I think it makes sense to have immutability by default.
+o Automatic dereferencing is nice. I rarely have to dereference anything manually, even though references are all over the place.
+o Tuples are nice as well. `GetIntersections` on `Sphere` would return a boolean, and it had two out parameters.
   Now it returns `Option<(f32, f32)>`. Much better!
 x I have not been using `Option` to replace `null` so far, but to replace out parameters.
   That has more to do with my C++ coding style though, I think.
-- The per-module visibility system makes sense. Better than private/protetcted/public. It is like `internal` in C#.
+o The per-module visibility system makes sense. Better than private/protetcted/public. It is like `internal` in C#.
   In C#, internal feels like a hack because there are objects everywhere,
   but with structs, traits and functions in Rust, it feels very natural.
   E.g. I can define helper functions that are not exposed outside of the module.
-- I should compare compilation times for C++ and Rust when it is done.
+x I should compare compilation times for C++ and Rust when it is done.
 x The `Object` type, which had three pointers, one of which would always be null, became an enum with two variants, for now.
   Edit: no, it actually the `MaterialBox` became an enum variant.
 x Using `x as T` for casting is _much_ nicer than C++ `static_cast<T>(x)`.
@@ -61,10 +61,10 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
   The workaround I used, is to make a the macro return a tuple.
   Also, macros do not capture their environment, and I need to enable the feature from `main.rs`, it does not work on a per-file basis. (I think.)
   Edit: chainging from `[f32]` to `[Vector3]` made this problem obsolete.
-- Dead code warnings are nice, but they seem to be transitive, so now I get three pages of dead code warnings,
+o Dead code warnings are nice, but they seem to be transitive, so now I get three pages of dead code warnings,
   while really only a few top-level functions are not used (yet).
   The warnings can be disabled with `#![allow(dead_code)]` in `main.rs`.
-- The cryptic error messages are back:
+x The cryptic error messages are back:
       error: type `core::iter::Map<'_,&[f32],f32,core::slice::Chunks<'_,f32>>` does not implement any method in scope named `sum`
       error: binary operation `/` cannot be applied to type `core::iter::Map<'_,f32,f32,core::iter::Map<'_,&[f32],f32,core::slice::Chunks<'_,f32>>>`
 ? Iterators have no extra layer of indirection like C# has (`IEnumerable.GetEnumerator`).
@@ -74,11 +74,11 @@ x I wanted to use macros to avoid repetition in `PlotUnit` buffer setting.
 x Iterators _do_ make it a lot more convenient to implement `TonemapUnit::FindExposure`, even with the flaw mentioned above.
   More functional, less loops. Like LINQ in C#.
   On the other hand, C++ has std::accumulate.
-- The operator `+=` cannot be overloaded. Apparently the compiler does not replace it with a load, +, store. That is a shame.
+o The operator `+=` cannot be overloaded. Apparently the compiler does not replace it with a load, +, store. That is a shame.
 x All these lifetimes and borrowing really make you consider ownership. I think this is a good thing.
   All other languages have it as well, but it is mostly implicit, and you can violate the contract. Rust enforces it statically.
   I like that.
-- Emphasize that for conclusion!
+x Emphasize that for conclusion!
 x However, I am having trouble with coupled ownership and mutability now.
   I want to share an immutable object between tasks ... how do I do it?
   Edit: after a journey through several designs, I now have a better solution.
@@ -90,18 +90,18 @@ x The `Mutex` approach is really nice. Lock it and you get back the object in a 
   and when it goes out of scope, it unlocks.
   I think a very powerful feature is the `Deref` trait, which allows for something similar to extension methods in C#.
   (Now I think of it, you should be able to do this in C++ as well!)
-- Having `new` as a function in the `impl` is great, because it makes `new` not special in any way,
+o Having `new` as a function in the `impl` is great, because it makes `new` not special in any way,
   and you can have multiple “constructors” where none is the preferred one.
   This removes the need for things like static factory methods in C#.
 x I do like the method syntax for mathematical functions. I really do.
 x Not being able to use `min` and `max` on `f32` because `f32` is only partially ordered is correct, but inconvenient.
   Edit: I was just looking in the wrong places.
   Still, it can be a bit confusing.
-- There were some method deprecated during development, that I had to replace.
+x There were some method deprecated during development, that I had to replace.
   `filtered` on `Option` was removed due to “insufficient usage”. I liked it though.
-- Luculentus update: when it is done, there should only be one place where raw pointers are used.
+x Luculentus update: when it is done, there should only be one place where raw pointers are used.
   Also, _all_ destructors will be gone.
-- Emphasise that both languages enable safe programming,
+x Emphasise that both languages enable safe programming,
   but in C++ it is opt-in, and it is easy to forget to opt-in,
   and in fact, all previous, common patterns (pointers cough cough) are not safe.
   In Rust, you have to very explicitly opt out. Much better.
