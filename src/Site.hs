@@ -48,6 +48,15 @@ main = do
           >>= loadAndApplyTemplate "templates/post.html" ctx
           >>= stripIndexSuffix
 
+    -- Drafts are not included by the paginate above, handle them manually.
+    match "posts/*.md" $ do
+      route dateRoute
+      compile $ do
+        pandocCompiler
+          >>= saveSnapshot "content"
+          >>= loadAndApplyTemplate "templates/post.html" (postContext <> siteContext)
+          >>= stripIndexSuffix
+
     postIndex "posts/*.md" 5 fullContext
 
     create ["archive/index.html"] $ do
