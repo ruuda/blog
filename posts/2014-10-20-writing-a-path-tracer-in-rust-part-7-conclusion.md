@@ -57,6 +57,8 @@ but I have not been using it long enough to experience that.
 Ultimately all changes should make the language better and more consistent,
 and I am confident that Rust 1.0 will be a great language.
 
+<!--more-->
+
 Ownership
 ---------
 If I had to describe Rust in one word, it would be _ownership_.
