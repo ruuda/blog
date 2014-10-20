@@ -7,7 +7,7 @@ As a learning exercise,
 I have ported the [Luculentus][luculentus] spectral path tracer to [Rust][rust].
 The result is available on [GitHub][robigo-luculenta].
 In the process, I have also refreshed Luculentus a bit, updating it to modern C++.
-You can about read the details in the previous posts.
+You can read about the details in the previous posts.
 In this post, I want to outline the process, and compare the final versions.
 
 [rust]:             http://rust-lang.org
@@ -114,7 +114,7 @@ it also eliminates room for errors.
 
 Porting the path tracer to Rust improved its design.
 If your resource management is wrong, it is invalid in Rust.
-In C++ you can get away with e.g. taking the address of the first element of a vector,
+In C++ you can get away with e.g. taking the address of an element of a vector,
 and when the vector goes out of scope, the pointer will be invalid.
 The code is valid C++ though.
 Rust does not allow shortcuts like that,
