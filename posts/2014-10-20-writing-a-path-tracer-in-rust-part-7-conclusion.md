@@ -77,24 +77,8 @@ and all problems reappear.
 For example, the garbage collector in C# prevents use after free,
 but there is nothing that prevents use after _dispose_.
 Is an `ObjectDisposedException` that much better than an access violation?
-
-Use after free is a problem with _lifetimes_,
-and they are very important concep in Rust as well,
-but ultimately it is ownership that drives it all.
-A resource goes out of scope when it has no owner any more,
-and at that point it is freed.
-The lifetime of a resource is tied to
-the lifetime of an object representing the resource.
-This is known as [RAII][raii],
-and in combination with ownership,
-it is a very powerful construct in Rust.
-Because there is a single owner,
-a resource will be freed exactly **once**,
-and it is impossible to access a freed resource.
-It means zero overhead, deterministic, _resource management_,
-not just memory management.
-
-[raii]: https://en.wikipedia.org/wiki/Resource_Acquisition_Is_Initialization
+Due to explicit lifetimes and ownership,
+Rust does not have these kind of errors.
 
 A static type system prevents runtime type errors
 that can occur in a dynamically typed language,
@@ -102,7 +86,7 @@ but it has to be more strict at compile time.
 Rust’s ownership prevents runtime errors that can occur
 due to incorrect resource management,
 but it has to be even more strict at compile time.
-The rigorous approach to ownership makes it harder to write correct code,
+The rigorous approach to ownership makes it harder to write valid code,
 but if the compiler refuses to compile your code,
 there often is a real problem in it,
 which would go unnoticed in languages where ownership is implicit.
@@ -120,13 +104,13 @@ I have replaced most raw pointers in Luculentus with `shared_ptr` or `unique_ptr
 and arrays with vectors.
 As a consequence, **all** manual destructors are now gone.
 (There were six previously.)
-Before, there were eleven `delete` statements.
+Before, there were eleven delete statements.
 Now there are zero.
 All memory management has become automatic.
 This not only makes the code more concise,
 it also eliminates room for errors.
 
-Porting the path tracer to Rust also improved its design.
+Porting the path tracer to Rust improved its design.
 If your resource management is wrong, it is invalid in Rust.
 In C++ you can get away with e.g. taking the address of the first element of a vector,
 and when the vector goes out of scope, the pointer will be invalid.
@@ -137,7 +121,7 @@ Even when working in other languages,
 if a construct would be illegal in Rust,
 there probably is a better way.
 
-The update demonstrates that it _is_ possible to write safe code in modern C++.
+Still, the update demonstrates that it _is_ possible to write safe code in modern C++.
 You _do_ get safe, automatic memory management with virtually no overhead.
 The only caveat is that you must choose to leverage it.
 You could use a `unique_ptr`, but you could just as well use a raw pointer.
@@ -161,14 +145,14 @@ A fresh start
 -------------
 A nice thing about Rust is that it can start from scratch,
 and learn from the mistakes of earlier languages.
-C++11 is a lot better than the version before it,
+C++11 is a lot better than its predecessor,
 but it only _adds_ features,
 and every new feature cannot break old code.
 One point where this shows is syntax.
 In Rust, types go after the name, and a return type comes after the argument list,
 which is the sensible thing to do.
 Rust’s lambda syntax is more concise, and there is less repetition.
-I still cannot get used to the Egyption brackets though.
+I still cannot get used to the Egyptian brackets though.
 They look **wrong** to me.
 
 Another area where I think Rust made the right choice, is mutability.
@@ -182,9 +166,10 @@ Also, the Rust compiler warns about variables that need not be mutable,
 which is nice.
 
 If I compare the number of non-whitespace source characters,
-the C++ version has roughly 109 thousand characters — excluding the CIE 1964 files that I did not port,
-whereas the Rust version has roughly 74 thousand characters,
-roughly two thirds the size of the C++ version.
+the C++ version has roughly 109 thousand characters
+— excluding the CIE 1964 files that I did not port
+— whereas the Rust version has roughly 74 thousand characters,
+about two thirds the size of the C++ version.
 
 C++ is notorious for its cryptic error messages
 when a template expansion does not work out.
@@ -232,7 +217,7 @@ No instant compilation any more, but still much better than C++.
 Conclusion
 ----------
 Learning Rust was a fun experience.
-I like the language, and it lead to a few insights
+I like the language, and the port lead to a few insights
 that could improve the original code as well.
 Ownership is often implicit in other languages,
 which means it is prone to human error.
