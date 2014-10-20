@@ -80,7 +80,7 @@ For example, the garbage collector in C# prevents use after free,
 but there is nothing that prevents use after _dispose_.
 Is an `ObjectDisposedException` that much better than an access violation?
 Due to explicit lifetimes and ownership,
-Rust does not have these kind of errors.
+Rust does not have these kinds of errors.
 
 A static type system prevents runtime type errors
 that can occur in a dynamically typed language,
@@ -137,12 +137,6 @@ and even then, old APIs will be with us for a long time.
 
 [feature]: http://channel9.msdn.com/Events/GoingNative/2013/Opening-Keynote-Bjarne-Stroustrup
 
-In the end, I am convinced that it is possible to write safe code in C++
-as well as in Rust.
-You have to be more careful in C++,
-and the compiler does not guide you as much,
-but it can be done.
-
 A fresh start
 -------------
 A nice thing about Rust is that it can start from scratch,
@@ -155,7 +149,7 @@ In Rust, types go after the name, and a return type comes after the argument lis
 which is the sensible thing to do.
 Rust’s lambda syntax is more concise, and there is less repetition.
 I still cannot get used to the Egyptian brackets though.
-They look **wrong** to me.
+They look wrong to me.
 
 Another area where I think Rust made the right choice, is mutability.
 In Rust, everything is immutable by default,
@@ -167,6 +161,8 @@ but this still suggests that immutable is a more sensible default.
 Also, the Rust compiler warns about variables that need not be mutable,
 which is nice.
 
+Although syntax is to some extent a matter of preference,
+there are quantitative measures as well.
 If I compare the number of non-whitespace source characters,
 the C++ version has roughly 109 thousand characters
 — excluding the CIE 1964 files that I did not port
@@ -225,7 +221,7 @@ Ownership is often implicit in other languages,
 which means it is prone to human error.
 Rust makes it explicit, eliminating these errors.
 Safety is not an opt-in, it is the default.
-Rust is definitely more on the ‘stability’ side of the spectrum
+This puts Rust definitely more on the ‘stability’ side of the spectrum
 than the ‘rapid development’ side.
 I have written not nearly enough code in Rust to make a fair judgement,
 but so far, Rust’s advantages outweigh the minor annoyances.
