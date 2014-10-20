@@ -19,7 +19,7 @@ Eyecandy
 First of all, the output of the path tracer!
 The scene is hard-coded, and it looks like this:
 
-[TODO: add image]
+![the output of Robigo Luculenta](/images/robigo-luculenta.png)
 
 If you want to play with it,
 take a look at `set_up_scene` in [app.rs][apprs].
