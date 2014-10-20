@@ -1,7 +1,6 @@
 ---
 title: Writing a path tracer in Rust, part 7: conclusion
-date: 2014-10-19 22:00
-draft: true
+date: 2014-10-20 16:47
 ---
 
 As a learning exercise,
@@ -250,4 +249,4 @@ I would choose Rust.
 
 Discuss this post on [Reddit][reddit].
 
-[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/10/19/writing-a-path-tracer-in-rust-part-7-conclusion
+[reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/10/20/writing-a-path-tracer-in-rust-part-7-conclusion
