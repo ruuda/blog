@@ -42,3 +42,9 @@
 - This project is pretty interesting again; Robigo Luculenta had little IO and
   no real chance of failure outside of IO. Decoding flac is heavy on IO and it
   can fail at almost any point, so it is good to get to see this side of Rust.
+- There is a disadvantage to `Result` though: there is no context by default,
+  so by the time you actually handle the error, you might have no idea where
+  it originated from. There is no attached call stack (by default). Exceptions
+  suffer from the same problem in theory, but in C# they have call stacks, and
+  when they are synchronous, you can break on them.
+- I do miss a debugger, but not that much.
