@@ -48,3 +48,7 @@
   suffer from the same problem in theory, but in C# they have call stacks, and
   when they are synchronous, you can break on them.
 - I do miss a debugger, but not that much.
+- This monadic `try!` is awesome, because you can use it anywhere.
+  Conceptually, it is no different from C#'s `await`. Would an `await!` macro
+  be possible for Rust? C# has a lot of compiler magic going on to do it,
+  can Rust do it with macros?
