@@ -16,5 +16,5 @@ feedConfig = FeedConfiguration
   , feedDescription = "Ruud van Asseldonk’s blog"
   , feedAuthorName  = "Ruud van Asseldonk"
   , feedAuthorEmail = "ruudva@veniogames.com"
-  , feedRoot        = "http://ruudvanasseldonk.com/"
+  , feedRoot        = "https://ruudvanasseldonk.com/"
   }

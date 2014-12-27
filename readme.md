@@ -9,7 +9,7 @@ year and pagination of the index. Drafts are supported by setting `draft: true`
 in the front matter, and math is supported by setting `math: true`. The
 JavaScript for rendering math is only included on pages that actually use math.
 
-[ruudva]: http://ruudvanasseldonk.com
+[ruudva]: https://ruudvanasseldonk.com
 [hakyll]: http://jaspervdj.be/hakyll/
 [jekyll]: http://jekyllrb.com/
 

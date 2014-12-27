@@ -1,7 +1,7 @@
 name:                site
 version:             2.1.0
 synopsis:            My personal Hakyll site
-homepage:            http://ruudvanasseldonk.com
+homepage:            https://ruudvanasseldonk.com
 license:             GPL
 license-file:        licence
 author:              Ruud van Asseldonk
