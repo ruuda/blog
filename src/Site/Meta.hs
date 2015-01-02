@@ -33,12 +33,16 @@ filterDraftItems = filterM (isNotDraft . itemIdentifier)
 -- This is how the site is generated, but links should not have the index.html suffix.
 stripIndexSuffix :: Item String -> Compiler (Item String)
 stripIndexSuffix = return . fmap (withUrls stripSuffix)
-  where idx = "/index.html"
-        shouldStrip url = ("/" `isPrefixOf` url) && (idx `isSuffixOf` url)
+  where idx             = "/index.html"
+        domain          = "https://ruudvanasseldonk.com/"
+        domainidx       = "https://ruudvanasseldonk.com/index.html"
+        shouldStrip url = (("/" `isPrefixOf` url) || (domain `isPrefixOf` url)) &&
+                          (idx `isSuffixOf` url)
         stripSuffix url
-          | url == idx      = "/"
-          | shouldStrip url = reverse $ drop (length idx) $ reverse url
-          | otherwise       = url
+          | url == idx       = "/"
+          | url == domainidx = domain
+          | shouldStrip url  = reverse $ drop (length idx) $ reverse url
+          | otherwise        = url
 
 -- Route a post to a directory which is based on the post date.
 dateRoute :: Routes
