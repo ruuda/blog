@@ -11,4 +11,6 @@ The only way to really stop agencies from listening in on you, is to make it imp
 Use encryption, and encrypt _all_ of your internet traffic.
 Encryption should be the default.
 
-As of today, my site is available over a secure connection.
+As of today, my site is available over a [secure connection][secure].
+
+[secure]: https://ruudvanasseldonk.com/
