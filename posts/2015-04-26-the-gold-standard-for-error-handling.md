@@ -30,6 +30,7 @@ Pros:
 
 - Control flow focuses on the “happy path” (à la Meijer)
 - Separation between good type and failure type
+- Good support for debugging, can provide stack trace information
 
 Cons:
 
@@ -59,6 +60,7 @@ Cons:
 
 - Naively leads to nasty control flow
   But monads and `try!` allow best of both worlds
+- Can miss context (e.g. stack trace), harder to pinpoint origin
 
 Crash + supervisor
 ------------------
