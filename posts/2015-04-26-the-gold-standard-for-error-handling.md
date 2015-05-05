@@ -48,6 +48,14 @@ Cons:
   Java checked exceptions seem good but do not work in practice?
   Relates to easy forget to catch
 
+Personally dislike exceptions because they are a hole in the type systems. This
+is not a problem inherent to exceptions, but it is to every implementation that
+I am aware of. The second reason is that (in C#) there is no distinction
+between recoverable and unrecoverable exceptions. Possible to catch
+`OutOfMemoryException`. On the other hand, situations that are not exceptional
+(a dropped network connection, for example) may throw and incur the performance
+penalty.
+
 Sum types
 ---------
 Pros:
