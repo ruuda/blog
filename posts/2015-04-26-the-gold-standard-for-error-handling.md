@@ -69,6 +69,8 @@ Cons:
 - Naively leads to nasty control flow
   But monads and `try!` allow best of both worlds
 - Can miss context (e.g. stack trace), harder to pinpoint origin
+  Especially if one error type is used in multiple places, when its origin is
+  not unique, can be hard to debug
 
 Crash + supervisor
 ------------------
