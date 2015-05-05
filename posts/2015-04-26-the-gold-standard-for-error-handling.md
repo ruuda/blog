@@ -71,6 +71,8 @@ Cons:
 - Can miss context (e.g. stack trace), harder to pinpoint origin
   Especially if one error type is used in multiple places, when its origin is
   not unique, can be hard to debug
+  Although in Rust, could use file and line number macro to add the context
+  info, and expose only in debug build, for example.
 
 Crash + supervisor
 ------------------
