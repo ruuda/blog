@@ -1,6 +1,6 @@
 module Site.Archive (archiveContext) where
 
-import Control.Applicative ((<$>), empty)
+import Control.Applicative (empty)
 import Data.Function (on)
 import Data.List (groupBy)
 import Data.Monoid ((<>))
@@ -37,7 +37,7 @@ archiveContext pattern =
   listField "years" (year <> posts) (groupedArchives pattern)
   where
     year  = field "year" (return . show . fst . itemBody)
-    posts = Context $ \k i ->
+    posts = Context $ \k _ i ->
               if k == "posts"
                 then return $ ListField (postContext <> defaultContext) (snd . itemBody $ i)
                 else empty
