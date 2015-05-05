@@ -7,9 +7,9 @@ import Data.List (sortBy)
 import Data.Maybe (catMaybes, isJust)
 import Data.Monoid ((<>), mconcat)
 import Data.Ord (comparing)
+import Data.Time.Format (defaultTimeLocale)
 import Hakyll
 import Site.Meta
-import System.Locale (defaultTimeLocale)
 
 chunksOf :: Int -> [a] -> [[a]]
 chunksOf _ [] = []
