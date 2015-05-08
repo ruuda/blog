@@ -73,6 +73,8 @@ Cons:
   not unique, can be hard to debug
   Although in Rust, could use file and line number macro to add the context
   info, and expose only in debug build, for example.
+  In practice, this is a real disadvantage.
+  I suffer from this when building Claxon, for example.
 
 Crash + supervisor
 ------------------
