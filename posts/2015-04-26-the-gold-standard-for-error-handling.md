@@ -75,6 +75,9 @@ Cons:
   info, and expose only in debug build, for example.
   In practice, this is a real disadvantage.
   I suffer from this when building Claxon, for example.
+  Another problem, is when using `unwrap`, it is not clear _which_ unwrap
+  panicked, but when using `.ok().expect()` you lose the error message. How to
+  resolve? If let err?
 
 Crash + supervisor
 ------------------
