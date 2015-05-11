@@ -78,6 +78,14 @@ Cons:
   Another problem, is when using `unwrap`, it is not clear _which_ unwrap
   panicked, but when using `.ok().expect()` you lose the error message. How to
   resolve? If let err?
+  That is -- which unwrap in the method, if there are multiple.
+
+  This is also biting me with Hound now. Errors propagate upwards perfectly,
+  but this also means they only surface at the last moment. There is no
+  opportunity to break at the root of the problem,
+  which is possible with exceptions. On the other hand, this is partially a
+  tooling problem. Maybe it should be possible to break when a method returns
+  an `Err` somewhere.
 
 Crash + supervisor
 ------------------
