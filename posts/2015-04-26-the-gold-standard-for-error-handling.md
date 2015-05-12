@@ -14,9 +14,9 @@ When I first learned about monadic error handling (the `Either` type in Haskell)
 I was delighted.
 Obviously this was the right approach to error handling, elegant and effective.
 
-Then Rust came along, and I immediately fell in love with it.
+Along came Rust, and I immediately fell in love with it.
 It appeared to do everything right that C# did wrong.
-Not only did it not have null (an entire class of problems … gone),
+Not only did it feature the absence of null (an entire class of problems … gone),
 it also had unrecoverable failure (now called panic),
 and monadic error handling for the cases where errors are not exceptional.
 
@@ -33,6 +33,118 @@ but there are downsides too.
 
 [claxon]: https://github.com/ruud-v-a/claxon
 [hound]:  https://github.com/ruud-v-a/claxon
+
+Who throws what?
+----------------
+The biggest problem, in my opinion, is that exceptions are an escape hatch in the type system.
+As Erik Meijer likes to call it --- they make a type system [dishonest][meijer2008].
+At least, in C# they do.
+Some languages in theory implement exceptions in a more honest manner,
+but they have the same problem in practice.
+
+[meijer2008]: https://channel9.msdn.com/Shows/Going+Deep/Erik-Meijer-Functional-Programming
+
+The consequence, when you want to write robust software in C#,
+is that you constantly have to keep an [MSDN][msdn] tab open.
+Can this function throw?
+Should I catch a `PathTooLongException` here?
+And this is only for library functions, which are well-documented.
+Imagine dealing with a third-party library,
+or function calls a few layers deep:
+at a certain point, you have to assume _everything may throw_.
+
+[msdn]: https://msdn.microsoft.com/en-us/library/gg145045.aspx
+[getfullpath]: https://msdn.microsoft.com/en-us/library/system.io.path.getfullpath.aspx
+
+Algebraic types solve this issue in a surprisingly clean way.
+I will use Rust as an example here,
+but the same machinery is available in many more languages,
+such as Scala and Haskell.
+Consider the following method in C#:
+
+```csharp
+class NoPredecessorException : Exception { }
+
+uint Predecessor(uint x)
+{
+  if (x == 0)
+  {
+    throw new NoPredecessorException();
+  }
+  else
+  {
+    return x - 1;
+  }
+}
+```
+
+The Rust equivalent would be the following:
+
+```rust
+struct NoPredecessor;
+
+fn predecessor(x: u32) -> Result<u32, NoPredecessor> {
+    if x == 0 {
+        Err(NoPredecessor)
+    } else {
+        Ok(x - 1)
+    }
+}
+```
+
+(Is this a bad example because it has only a single variant?)
+Instead of returning `u32`, the function returns a `Result`,
+which is either `Ok(x)` where `x` is an `u32`,
+or `Err(NoPredecessor)`.
+
+The function may be called in two scenarios:
+either we deal with the problem at the call site,
+or we escalate the problem. (And here I suddenly switched from ‘I’ to ‘we’.)
+The default in C# is to escalate.
+If you don’t catch the exception,
+it will continue to unwind stack frames until it encounters a handler.
+Handling can be done with a simple catch.
+For example, we could implement a [Kelvin versioning][kelvinversioning] scheme
+like so:
+
+```csharp
+string NextVersionString(uint currentVersion)
+{
+  return Predecessor(currentVersion).ToString();
+}
+
+void PrintNextVersion(uint currentVersion)
+{
+  try
+  {
+    Console.WriteLine("The next version is {0}.", Predecessor(currentVersion));
+  }
+  catch (NoPredecessorException)
+  {
+    Console.WriteLine("It is impossible to release a new version.");
+  }
+}
+```
+
+One of the problems with escalating by default,
+is that it is easy to ignore failure.
+Blah rant about easy to forget.
+In contrast, the Rust compiler refuses to compile the following function:
+
+```rust
+fn next_version_string(current_version: u32) -> String {
+    use std::string::ToString;
+    u32::to_string(&predecessor(current_version))
+}
+```
+
+“Error: mismatched types,” it says.
+“Expected `&u32`, found `&Result<u32, NoPredecessor>`.”
+
+Blah the match, show `try!` etc.
+(Uses Rust 1.1.0-nightly, by the way.)
+
+[kelvinversioning]: http://doc.urbit.org/community/articles/martian-computing/
 
 For error handling/of error handling?
 Few options:
