@@ -2,6 +2,38 @@
 title: The gold standard for error handling
 date: 2015-04-26 22:04
 ---
+
+"Good introduction here".
+
+In C#, the standard way to do error handling is with exceptions.
+I have written a lot of code in C# that deals with exceptions,
+and it is a pain to do it correctly.
+Apart from null, it might very well be the biggest design mistake of the language.
+(Something about recoverable vs unrecoverable?)
+When I first learned about monadic error handling (the `Either` type in Haskell),
+I was delighted.
+Obviously this was the right approach to error handling, elegant and effective.
+
+Then Rust came along, and I immediately fell in love with it.
+It appeared to do everything right that C# did wrong.
+Not only did it not have null (an entire class of problems … gone),
+it also had unrecoverable failure (now called panic),
+and monadic error handling for the cases where errors are not exceptional.
+
+Fast forward a few months.
+I am working on a [decoder for the FLAC codec][claxon] in Rust,
+and a [library that handles WAV files][hound] to verify it.
+Things can fail at several levels:
+apart from IO errors, there is the issue of ill-formed data and program errors.
+(Program errors? API abuse/misuse? Runtime errors? What is a good word for that?)
+Aside from a few toy programs in Scala and Haskell,
+it is the first serious project where I get to use monadic error handling.
+Mostly it is a breeze,
+but there are downsides too.
+
+[claxon]: https://github.com/ruud-v-a/claxon
+[hound]:  https://github.com/ruud-v-a/claxon
+
 For error handling/of error handling?
 Few options:
 
