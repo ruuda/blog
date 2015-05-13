@@ -17,7 +17,7 @@ Obviously this was the right approach to error handling, elegant and effective.
 Along came Rust, and I immediately fell in love with it.
 It appeared to do everything right that C# did wrong.
 Not only did it feature the absence of null (an entire class of problems … gone),
-it also had unrecoverable failure (now called panic),
+it also had unrecoverable failures (now called panics),
 and monadic error handling for the cases where errors are not exceptional.
 
 Fast forward a few months.
@@ -40,7 +40,7 @@ The biggest problem, in my opinion, is that exceptions are an escape hatch in th
 As Erik Meijer likes to call it --- they make a type system [dishonest][meijer2008].
 At least, in C# they do.
 Some languages in theory implement exceptions in a more honest manner,
-but they have the same problem in practice.
+but they suffer from the same problem in practice.
 
 [meijer2008]: https://channel9.msdn.com/Shows/Going+Deep/Erik-Meijer-Functional-Programming
 
@@ -50,7 +50,7 @@ Can this function throw?
 Should I catch a `PathTooLongException` here?
 And this is only for library functions, which are well-documented.
 Imagine dealing with a third-party library,
-or function calls a few layers deep:
+or function calls a few layers deep in your own application:
 at a certain point, you have to assume _everything may throw_.
 
 [msdn]: https://msdn.microsoft.com/en-us/library/gg145045.aspx
