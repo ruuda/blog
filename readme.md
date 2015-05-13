@@ -1,7 +1,10 @@
 Personal Site
 =============
+
 This is the source code for [my personal site][ruudva].
 It is written in Haskell and uses the [Hakyll][hakyll] static site generator.
+
+[![Build Status][ci-img]][ci]
 
 My site was previously a [Jekyll][jekyll] site, and this is a port that tries
 to generate exactly the same site. This includes an archive that groups by
@@ -11,6 +14,8 @@ JavaScript for rendering math is only included on pages that actually use math.
 
 [ruudva]: https://ruudvanasseldonk.com
 [hakyll]: http://jaspervdj.be/hakyll/
+[ci-img]: https://travis-ci.org/ruud-v-a/ruudvanasseldonk.com.svg
+[ci]:     https://travis-ci.org/ruud-v-a/ruudvanasseldonk.com
 [jekyll]: http://jekyllrb.com/
 
 Licence

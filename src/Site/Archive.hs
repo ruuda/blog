@@ -1,14 +1,14 @@
 module Site.Archive (archiveContext) where
 
-import Control.Applicative ((<$>), empty)
+import Control.Applicative (empty)
 import Data.Function (on)
 import Data.List (groupBy)
 import Data.Monoid ((<>))
 import Data.Time.Calendar
 import Data.Time.Clock
+import Data.Time.Format
 import Hakyll
 import Site.Meta
-import System.Locale (defaultTimeLocale)
 
 -- The code below is inspired by code from Jorge Israel Peña’s site which is BSD-licensed.
 -- https://github.com/blaenk/blaenk.github.io/blob/b22edf5c9ce4f9f1a5b429c3e565da8c13a12d2e/src/Site/Contexts.hs
@@ -37,7 +37,7 @@ archiveContext pattern =
   listField "years" (year <> posts) (groupedArchives pattern)
   where
     year  = field "year" (return . show . fst . itemBody)
-    posts = Context $ \k i ->
+    posts = Context $ \k _ i ->
               if k == "posts"
                 then return $ ListField (postContext <> defaultContext) (snd . itemBody $ i)
                 else empty

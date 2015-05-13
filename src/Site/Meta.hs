@@ -17,7 +17,6 @@ import           Data.Time.Clock
 import           Data.Time.Format
 import           Hakyll
 import           System.FilePath.Posix (takeFileName, dropExtension)
-import           System.Locale (defaultTimeLocale)
 
 isNotDraft :: MonadMetadata m => Identifier -> m Bool
 isNotDraft identifier = liftM (/= Just "true") (getMetadataField identifier "draft")
