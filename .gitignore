@@ -11,3 +11,6 @@ cabal.sandbox.config
 *.TMP
 *.swp
 *.swo
+
+# Vagrant boxes
+.vagrant/
