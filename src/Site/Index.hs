@@ -5,7 +5,7 @@ module Site.Index (postIndex) where
 import Control.Monad (forM, forM_, liftM)
 import Data.List (sortBy)
 import Data.Maybe (catMaybes, isJust)
-import Data.Monoid ((<>), mconcat)
+import Data.Monoid ((<>))
 import Data.Ord (comparing)
 import Data.Time.Format (defaultTimeLocale)
 import Hakyll

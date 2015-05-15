@@ -49,7 +49,7 @@ dateRoute = metadataRoute (\md ->
   -- Extract date from metadata, and format it as yyyy/mm/dd.
   -- Also extract the slug from the original file, and append it.
   let dateString = fromMaybe "2000-01-01" $ M.lookup "date" md
-      date       = readTime defaultTimeLocale "%Y-%m-%d %H:%M" dateString :: UTCTime
+      date       = parseTimeOrError False defaultTimeLocale "%Y-%m-%d %H:%M" dateString :: UTCTime
       datePath   = formatTime defaultTimeLocale "%Y/%m/%d" date
       dropDate   = dropWhile $ \c -> isDigit c || (c == '-')
       slug       = dropDate . dropExtension . takeFileName . toFilePath
