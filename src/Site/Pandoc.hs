@@ -1,7 +1,7 @@
 module Site.Pandoc (pandocCompiler) where
 
 import Data.Set (insert, delete)
-import Hakyll hiding (pandocCompiler)
+import Hakyll hiding (pandocCompiler, pandocCompilerWith)
 import Text.Pandoc.Options
 
 pandocReaderOptions :: ReaderOptions
@@ -22,6 +22,19 @@ pandocWriterOptions = def
     writerHighlight      = True,
     writerHTMLMathMethod = MathML Nothing
   }
+
+-- Pandoc cannot handle CRLF on systems that use LF line endings, so we
+-- remove the CR before feeding things into Pandoc.
+removeCr :: String -> String
+removeCr = filter (/= '\r')
+
+getBodyWithoutCr :: Compiler (Item String)
+getBodyWithoutCr = fmap (fmap removeCr) getResourceBody
+
+pandocCompilerWith :: ReaderOptions -> WriterOptions -> Compiler (Item String)
+pandocCompilerWith ropt wopt =
+  cached "Hakyll.Web.Pandoc.pandocCompilerWith" $
+    writePandocWith wopt <$> (readPandocWith ropt =<< getBodyWithoutCr)
 
 pandocCompiler :: Compiler (Item String)
 pandocCompiler = pandocCompilerWith pandocReaderOptions pandocWriterOptions
