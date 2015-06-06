@@ -10,6 +10,7 @@ Vagrant.configure("2") do |config|
                 cabal install -j --force-reinstalls"
     s.privileged = false
   end
+  config.vm.network "forwarded_port", guest: 8000, host: 8000
   config.vm.provider "virtualbox" do |v|
     v.memory = 4096
     v.cpus = 6
