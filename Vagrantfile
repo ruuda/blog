@@ -1,16 +1,10 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/vivid64"
+  config.vm.box = "ogarcia/archlinux-201504-x64"
   config.vm.provision :shell do |s|
-    s.inline = "add-apt-repository --yes ppa:hvr/ghc &&\
-                apt-get update &&\
-                apt-get install --yes cabal-install-1.22 ghc-7.10.2 libz-dev"
+    s.inline = "pacman -S --noconfirm ghc cabal-install"
   end
   config.vm.provision :shell do |s|
-    s.inline = "PATH=\"$PATH:/opt/ghc/7.10.2/bin\" &&\
-                PATH=\"$PATH:/opt/cabal/1.22/bin\" &&\
-                echo 'PATH=\"$PATH:/opt/ghc/7.10.2/bin\"' >> /home/vagrant/.profile &&\
-                echo 'PATH=\"$PATH:/opt/cabal/1.22/bin\"' >> /home/vagrant/.profile &&\
-                cd /vagrant &&\
+    s.inline = "cd /vagrant &&\
                 cabal update &&\
                 cabal sandbox init &&\
                 cabal install -j --force-reinstalls"
