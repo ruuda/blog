@@ -104,8 +104,7 @@ either we deal with the problem at the call site,
 or we escalate the problem. (And here I suddenly switched from ‘I’ to ‘we’.)
 The default in C# is to escalate.
 If you don’t catch the exception,
-it will continue to unwind stack frames until it encounters a handler.
-Handling can be done with a simple catch.
+it will continue to unwind stack frames until it encounters a handler, a catch.
 For example, we could implement a [Kelvin versioning][kelvinversioning] scheme
 like so:
 
@@ -129,8 +128,12 @@ void PrintNextVersion(uint currentVersion)
 ```
 
 One of the problems with escalating by default,
-is that it is easy to ignore failure.
-Blah rant about easy to forget.
+is that it is easy to forget to handle a case.
+Without the try/catch block,
+the code would compile fine.
+If there is no try/catch block,
+is that because the programmer forgot to handle the exception,
+or is it not handled intentionally?
 In contrast, the Rust compiler refuses to compile the following function:
 
 ```rust
@@ -142,6 +145,21 @@ fn next_version_string(current_version: u32) -> String {
 
 “Error: mismatched types,” it says.
 “Expected `&u32`, found `&Result<u32, NoPredecessor>`.”
+The compiler forces us (and now I do it again?) to handle the error here.
+`to_string` can only be called if `predecessor` was succesful.
+However, at this point we are not in a position to handle the error,
+it must be escalated.
+Rust forces us to be honest by changing the return type to `Result<String, NoPredecessor>`.
+Then we can write
+
+```rust
+fn next_version_string(current_version: u32) -> Result<String, NoPredecessor> {
+    use std::string::ToString;
+    u32::to_string(&try!(predecessor(current_version)));
+}
+```
+
+Blah
 
 Blah the match, show `try!` etc.
 (Uses Rust 1.1.0-nightly, by the way.)
