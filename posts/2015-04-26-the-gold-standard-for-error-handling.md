@@ -5,8 +5,8 @@ date: 2015-04-26 22:04
 
 "Good introduction here".
 
-In C#, the standard way to do error handling is with exceptions.
-I have written a lot of code in C# that deals with exceptions,
+In C#, the standard way to do error handling is by using exceptions.
+I have written plenty of code in C# that deals with exceptions,
 and it is a pain to do it correctly.
 Apart from null, it might very well be the biggest design mistake of the language.
 (Something about recoverable vs unrecoverable?)
@@ -20,7 +20,7 @@ Not only did it feature the absence of null (an entire class of problems … gon
 it also had unrecoverable failures (now called panics),
 and monadic error handling for the cases where errors are not exceptional.
 
-Fast forward a few months.
+Fast forward a year.
 I am working on a [decoder for the FLAC codec][claxon] in Rust,
 and a [library that handles WAV files][hound] to verify it.
 Things can fail at several levels:
@@ -36,7 +36,8 @@ but there are downsides too.
 
 Who throws what?
 ----------------
-The biggest problem, in my opinion, is that exceptions are an escape hatch in the type system.
+The biggest problem with exceptions, in my opinion,
+is that they are an escape hatch in the type system.
 As Erik Meijer likes to call it --- they make a type system [dishonest][meijer2008].
 At least, in C# they do.
 Some languages in theory implement exceptions in a more honest manner,
@@ -48,24 +49,25 @@ The consequence, when you want to write robust software in C#,
 is that you constantly have to keep an [MSDN][msdn] tab open.
 Can this function throw?
 Should I catch a `PathTooLongException` here?
-And this is only for library functions, which are well-documented.
+And this is only for library functions, which are well-documented!
 Imagine dealing with a third-party library,
 or function calls a few layers deep in your own application:
+(Am I suggesting my own application is not documented very well?)
 at a certain point, you have to assume _everything may throw_.
 
 [msdn]: https://msdn.microsoft.com/en-us/library/gg145045.aspx
 [getfullpath]: https://msdn.microsoft.com/en-us/library/system.io.path.getfullpath.aspx
 
-Algebraic types solve this issue in a surprisingly clean way.
+Algebraic data types solve this issue in a surprisingly clean way.
 I will use Rust as an example here,
 but the same machinery is available in many more languages,
-such as Scala and Haskell.
+such as Scala, Haskell, and maybe even [a future version of C#][csharppattern].
 Consider the following method in C#:
 
 ```csharp
 class NoPredecessorException : Exception { }
 
-uint Predecessor(uint x)
+static uint Predecessor(uint x)
 {
   if (x == 0)
   {
@@ -144,6 +146,7 @@ fn next_version_string(current_version: u32) -> String {
 Blah the match, show `try!` etc.
 (Uses Rust 1.1.0-nightly, by the way.)
 
+[csharppattern]:    https://github.com/dotnet/roslyn/issues/206
 [kelvinversioning]: http://doc.urbit.org/community/articles/martian-computing/
 
 For error handling/of error handling?
