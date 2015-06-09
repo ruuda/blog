@@ -21,8 +21,8 @@ it also had unrecoverable failures (now called panics),
 and monadic error handling for the cases where errors are not exceptional.
 
 Fast forward a year.
-I am working on a [decoder for the FLAC codec][claxon] in Rust,
-and a [library that handles WAV files][hound] to verify it.
+I am working on a [decoder][claxon] for the FLAC codec in Rust,
+and a [library][hound] that handles WAV files to verify it.
 Things can fail at several levels:
 apart from IO errors, there is the issue of ill-formed data and program errors.
 (Program errors? API abuse/misuse? Runtime errors? What is a good word for that?)
@@ -64,7 +64,7 @@ but the same machinery is available in many more languages,
 such as Scala, Haskell, and maybe even [a future version of C#][csharppattern].
 Consider the following method in C#:
 
-```csharp
+```cs
 class NoPredecessorException : Exception { }
 
 static uint Predecessor(uint x)
@@ -108,13 +108,13 @@ it will continue to unwind stack frames until it encounters a handler, a catch.
 For example, we could implement a [Kelvin versioning][kelvinversioning] scheme
 like so:
 
-```csharp
+```cs
 string NextVersionString(uint currentVersion)
 {
   return Predecessor(currentVersion).ToString();
 }
 
-void PrintNextVersion(uint currentVersion)
+void SuggestNextVersion(uint currentVersion)
 {
   try
   {
@@ -128,10 +128,10 @@ void PrintNextVersion(uint currentVersion)
 ```
 
 One of the problems with escalating by default,
-is that it is easy to forget to handle a case.
+is that it is easy to forget to handle an exception.
 Without the try/catch block,
-the code would compile fine.
-If there is no try/catch block,
+the code would compile fine,
+and if there is no try/catch block,
 is that because the programmer forgot to handle the exception,
 or is it not handled intentionally?
 In contrast, the Rust compiler refuses to compile the following function:
