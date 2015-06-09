@@ -1,7 +1,7 @@
 module Site.Pagination (buildPaginate, paginatePostsContext) where
 
 import qualified Data.Map as M
-import           Data.Monoid ((<>), mconcat)
+import           Data.Monoid ((<>))
 import qualified Data.Set as S
 import qualified Data.Traversable as T
 import           Control.Monad (join, liftM)

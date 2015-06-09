@@ -7,7 +7,9 @@ ignoreFile' ".htaccess" = False
 ignoreFile' path        = ignoreFile defaultConfiguration path
 
 config :: Configuration
-config = defaultConfiguration { ignoreFile = ignoreFile' }
+config = defaultConfiguration { ignoreFile = ignoreFile'
+                              , previewHost = "0.0.0.0"
+                              }
 
 -- Details for the atom feed.
 feedConfig :: FeedConfiguration
