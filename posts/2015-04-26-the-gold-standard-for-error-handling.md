@@ -65,9 +65,37 @@ Suppose we want to implement a [Kelvin versioning][kelvinversioning] scheme,
 where the user can enter a new version to be released.
 We first parse the input into a number,
 and then check that this is a valid version to release.
-We will report three kinds of error:
+If it is, we return the parsed number, otherwise we report an error.
 
-In C#, we could implement this as follows:
+Conceptually, this is a simple task.
+If we disregard proper exception handling for a moment,
+we could implement it like this in C#:
+
+```cs
+class InvalidVersionException : Exception { }
+
+static uint CheckNextVersion(List<uint> previousVersions, string versionString)
+{
+  var version = uint.Parse(versionString);
+  if (version <= previousVersions.Min()) return version;
+  throw new InvalidVersionException();
+}
+```
+
+Even though we called only two library functions,
+the method may throw five different exceptions!
+(Disregarding things like `OutOfMemoryException` and `ThreadAbortException`.)
+This is completely implicit though,
+the only way to find out is to inspect the method and consult the documentation.
+To keep things under control,
+we will ensure that the method throws one of these exceptions:
+
+ - `ParseException` if the number could not be parsed into a 32-bit unsigned integer.
+ - `InvalidVersionException` if it is illegal to release this version due to a previous release with a lower version numer.
+ - `NewReleaseImpossibleException` if it is illegal to ever release a new version.
+
+Properly handling all exceptions,
+we get:
 
 ```cs
 class ParseException : Exception { }
