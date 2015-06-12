@@ -1,5 +1,5 @@
 ---
-title: The gold standard for error handling
+title: Exceptional results: error handling with C# and Rust
 date: 2015-04-26 22:04
 ---
 
@@ -34,8 +34,8 @@ but there are downsides too.
 [claxon]: https://github.com/ruud-v-a/claxon
 [hound]:  https://github.com/ruud-v-a/claxon
 
-Who throws what?
-----------------
+Liar, liar!
+-----------
 The biggest problem with exceptions, in my opinion,
 is that they are an escape hatch in the type system.
 As Erik Meijer likes to call it --- they make a type system [dishonest][meijer2008].
@@ -47,11 +47,11 @@ but they suffer from the same problem in practice.
 
 The consequence, when you want to write robust software in C#,
 is that you have to keep an [MSDN][msdn] tab open at all times.
-Can this function throw?
+Can this method throw?
 Should I catch a `PathTooLongException` here?
 And while the .NET framework is documented to remarkable detail,
 this is rarely the case for third-party libraries or in-house code.
-At a certain point, you have to assume _everything may throw_.
+At a certain point, you just have to assume _everything may throw_.
 
 [msdn]: https://msdn.microsoft.com/en-us/library/gg145045.aspx
 [getfullpath]: https://msdn.microsoft.com/en-us/library/system.io.path.getfullpath.aspx
@@ -150,7 +150,7 @@ so we must be honest with the return type.
 If a method in C# has return type `T` and throws an exception of type `E`,
 the Rust return type would be `Result<T, E>`.
 A result value can either be `Ok(T)` or `Err(E)`.
-Let’s give it a try:
+Let’s give that a try:
 
 ```rust
 pub struct InvalidVersionError;
@@ -171,11 +171,12 @@ pub fn check_next_version(previous_versions: &[u32],
 Uh oh.
 “Binary operation `<=` cannot be applied to `Result<u32, ParseIntError>`.”
 While a parse method returning an integer is perfectly fine in C#,
-there is no place for such lies in an honest language.
+there is no place for such blatant lies in an honest language.
 Parsing can fail,
 so `parse` does not return an `u32`, it returns a `Result`.
 Where you can ignore the problem in C#,
 Rust forces us to consider all cases.
+
 To fix the error,
 we first need a way to return either `ParseError` or `InvalidVersionError` from the function.
 `Result` has only one error type,
@@ -283,7 +284,7 @@ catch (OverflowException) { throw new ParseException(); }
 
 would simplify to what we started with:
 
-```
+```cs
 var version = uint.Parse(versionString);
 ```
 
