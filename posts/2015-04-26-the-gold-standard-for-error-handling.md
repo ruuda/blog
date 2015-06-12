@@ -212,12 +212,13 @@ With the dishonest type system of C#,
 this edge case is easy to forget,
 and the app could have crashed in production on an `InvalidOperationException`.
 Rust prevents these bugs at compile time.
-Let’s fix this,
-and add a distinct error for `NewReleaseImpossible` as well.
-Getting the types right will allow us to drop the `::<u32>` part from `parse` too.
+
+While we fix this,
+let’s add a distinct error for `NewReleaseImpossible` as well.
+Furthermore, getting the types right will allow us to drop the `::<u32>` part from `parse`.
 Type inference in Rust is much more advanced than the simple `var` in C#:
 because `version` is compared with `min` a few lines later,
-the compiler can infer that `version` must be a `u32` just like `min`.
+the compiler is able to infer that `version` must be a `u32` just like `min`.
 This is great when you get the types right,
 but it can lead to less comprehensible compiler errors when you get it wrong.
 
@@ -253,9 +254,9 @@ This version compiles,
 and I would say it is about as verbose as the C# version apart from the lack of null checks.
 (Rust’s type sytem is honest. It does not have null.)
 The difference between C# and Rust here is not so much in the version with proper error handling,
-it is in the version without proper error handling:
+it is in the version without:
 the Rust compiler refused to compile it,
-wherease the C# version crashed at runtime.
+whereas the C# version crashed at runtime.
 
 Error propagation
 -----------------
@@ -266,7 +267,7 @@ lies in _not_ handling them.
 They automatically propagate up the call stack,
 until a handler is encountered.
 
-Suppose that instead of throwing our custom `ParseException` type,
+Suppose that instead of throwing our custom `ParseException`,
 we would be fine with the method throwing `FormatException` or `OverflowException`.
 Then this:
 
@@ -291,7 +292,7 @@ If our function returned `Result<u32, ParseIntError>`,
 we could just return the error,
 but this is not the case.
 We need a way to convert a `ParseIntError` into `Error::ParseError` automatically.
-The way to do this, is by implementing `From<ParseIntError>` for `Error`:
+The way to do this, is by implementing `From` for `Error`:
 
 ```rust
 use std::num::ParseIntError;
@@ -303,10 +304,9 @@ impl From<ParseIntError> for Error {
 }
 ```
 
-By using `_` as argument, we throw away the error data.
-It is possible to make `Error::ParseError` wrap the original error instead,
+We ignore the actual error data, as indicated by the `_`.
+It is possible to make `ParseError` wrap the original error instead,
 but in this post I (WE?) will keep it simple.
-
 Instead of this:
 
 ```rust
@@ -323,7 +323,7 @@ let version = try!(version_string.parse());
 ```
 
 It is almost as concise as the C# version,
-but the error handling is explicit here.
+but error handling is explicit here.
 The `try!` macro expands to the same match statement that we wrote manually before,
 calling `From::from` on the error value to convert it into the desired type.
 From the `try!` macro it is immediately clear that error handling is going on here,
