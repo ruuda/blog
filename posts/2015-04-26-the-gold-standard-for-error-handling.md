@@ -74,7 +74,7 @@ After 0K has been released, it is impossible to ever release a new version.
 
 Our goal is to write a function that takes a list of previously released versions
 and a user-provided version string,
-and returns the parsed number or reports an error otherwise.
+which then returns the parsed number or reports an error.
 Conceptually, this is a simple task.
 If we disregard proper exception handling for a moment,
 we could implement it like this in C#:
@@ -214,6 +214,12 @@ and the app could have crashed in production on an `InvalidOperationException`.
 Rust prevents these bugs at compile time.
 Let’s fix this,
 and add a distinct error for `NewReleaseImpossible` as well.
+Getting the types right will allow us to drop the `::<u32>` part from `parse` too.
+Type inference in Rust is much more advanced than the simple `var` in C#:
+because `version` is compared with `min` a few lines later,
+the compiler can infer that `version` must be a `u32` just like `min`.
+This is great when you get the types right,
+but it can lead to less comprehensible compiler errors when you get it wrong.
 
 ```rust
 pub enum Error {
@@ -225,7 +231,7 @@ pub enum Error {
 pub fn check_next_version(previous_versions: &[u32],
                           version_string: &str)
                           -> Result<u32, Error> {
-    let version = match version_string.parse::<u32>() {
+    let version = match version_string.parse() {
         Ok(n) => n,
         Err(_) => return Err(Error::ParseError)
     };
@@ -246,7 +252,83 @@ pub fn check_next_version(previous_versions: &[u32],
 This version compiles,
 and I would say it is about as verbose as the C# version apart from the lack of null checks.
 (Rust’s type sytem is honest. It does not have null.)
+The difference between C# and Rust here is not so much in the version with proper error handling,
+it is in the version without proper error handling:
+the Rust compiler refused to compile it,
+wherease the C# version crashed at runtime.
 
+Error propagation
+-----------------
+The comparison above is not entirely fair.
+In the example, we handled _all_ exceptions.
+The true power of exceptions though,
+lies in _not_ handling them.
+They automatically propagate up the call stack,
+until a handler is encountered.
+
+Suppose that instead of throwing our custom `ParseException` type,
+we would be fine with the method throwing `FormatException` or `OverflowException`.
+Then this:
+
+```cs
+uint version;
+try
+{
+  version = uint.Parse(versionString);
+}
+catch (FormatException) { throw new ParseException(); }
+catch (OverflowException) { throw new ParseException(); }
+```
+
+would simplify to what we started with:
+
+```
+var version = uint.Parse(versionString);
+```
+
+How would we go about that in Rust?
+If our function returned `Result<u32, ParseIntError>`,
+we could just return the error,
+but this is not the case.
+We need a way to convert a `ParseIntError` into `Error::ParseError` automatically.
+The way to do this, is by implementing `From<ParseIntError>` for `Error`:
+
+```rust
+use std::num::ParseIntError;
+
+impl From<ParseIntError> for Error {
+   fn from(_: ParseIntError) -> Error {
+       Error::ParseError
+   }
+}
+```
+
+By using `_` as argument, we throw away the error data.
+It is possible to make `Error::ParseError` wrap the original error instead,
+but in this post I (WE?) will keep it simple.
+
+Instead of this:
+
+```rust
+let version = match version_string.parse() {
+    Ok(n) => n,
+    Err(_) => return Err(Error::ParseError)
+};
+```
+
+we can now write this:
+
+```rust
+let version = try!(version_string.parse());
+```
+
+It is almost as concise as the C# version,
+but the error handling is explicit here.
+The `try!` macro expands to the same match statement that we wrote manually before,
+calling `From::from` on the error value to convert it into the desired type.
+From the `try!` macro it is immediately clear that error handling is going on here,
+and that control flow may exit the function at this point.
+In C# this is implicit.
 
 For error handling/of error handling?
 Few options:
