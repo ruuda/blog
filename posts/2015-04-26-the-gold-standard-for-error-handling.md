@@ -57,24 +57,48 @@ At a certain point, you have to assume _everything may throw_.
 [getfullpath]: https://msdn.microsoft.com/en-us/library/system.io.path.getfullpath.aspx
 
 Algebraic data types solve this issue in a surprisingly clean way.
-I will use Rust as an example here,
-but the same machinery is available in many more languages,
-such as Scala, Haskell, and maybe even [a future version of C#][csharppattern].
-Consider the following method in C#:
+They are available in many languages,
+such as Haskell, Rust, Scala, and maybe even [a future version of C#][csharppattern],
+but in this post I will use Rust.
+
+Suppose we want to implement a [Kelvin versioning][kelvinversioning] scheme,
+where the user can enter a new version to be released.
+We first parse the input into a number,
+and then check that this is a valid version to release.
+We will report three kinds of error:
+
+In C#, we could implement this as follows:
 
 ```cs
-class NoPredecessorException : Exception { }
+class ParseException : Exception { }
+class InvalidVersionException : Exception { }
+class NewReleaseImpossibleException : Exception { }
 
-static uint Predecessor(uint x)
+static uint CheckNextVersion(List<uint> previousVersions, string versionString)
 {
-  if (x == 0)
+  if (previousVersions == null) throw new ArgumentNullException("previousVersions");
+  if (versionString == null) throw new ArgumentNullException("versionString");
+
+  uint version;
+  try
   {
-    throw new NoPredecessorException();
+    version = uint.Parse(versionString);
   }
-  else
+  catch (FormatException) { throw new ParseException(); }
+  catch (OverflowException) { throw new ParseException(); }
+  // ArgumentNullException cannot occur because we validated the argument before.
+
+  try
   {
-    return x - 1;
+    var min = previousVersions.Min();
+
+    if (min == 0) throw new NewReleaseImpossibleException();
+    else if (min <= version) throw new InvalidVersionException();
+    else return version;
   }
+  // If the list is empty there is no minimum. Initially, any version is fine.
+  catch (InvalidOperationException) { return version; }
+  // ArgumentNullException cannot occur because we validated the argument before.
 }
 ```
 
