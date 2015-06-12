@@ -68,7 +68,7 @@ and then check that this is a valid version to release.
 If it is, we return the parsed number, otherwise we report an error.
 
 [csharppattern]:    https://github.com/dotnet/roslyn/issues/206
-[kelvinversioning]: http://doc.urbit.org/community/articles/martian-computing/
+[kelvinversioning]: https://moronlab.blogspot.com/2010/01/urbit-functional-programming-from.html
 
 Conceptually, this is a simple task.
 If we disregard proper exception handling for a moment,
