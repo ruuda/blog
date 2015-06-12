@@ -67,14 +67,18 @@ We first parse the input into a number,
 and then check that this is a valid version to release.
 If it is, we return the parsed number, otherwise we report an error.
 
+[csharppattern]:    https://github.com/dotnet/roslyn/issues/206
+[kelvinversioning]: http://doc.urbit.org/community/articles/martian-computing/
+
 Conceptually, this is a simple task.
 If we disregard proper exception handling for a moment,
 we could implement it like this in C#:
 
 ```cs
-class InvalidVersionException : Exception { }
+public class InvalidVersionException : Exception { }
 
-static uint CheckNextVersion(List<uint> previousVersions, string versionString)
+public static uint CheckNextVersion(IEnumerable<uint> previousVersions,
+                                    string versionString)
 {
   var version = uint.Parse(versionString);
   if (version <= previousVersions.Min()) return version;
@@ -98,11 +102,12 @@ Properly handling all exceptions,
 we get:
 
 ```cs
-class ParseException : Exception { }
-class InvalidVersionException : Exception { }
-class NewReleaseImpossibleException : Exception { }
+public class ParseException : Exception { }
+public class InvalidVersionException : Exception { }
+public class NewReleaseImpossibleException : Exception { }
 
-static uint CheckNextVersion(List<uint> previousVersions, string versionString)
+public static uint CheckNextVersion(IEnumerable<uint> previousVersions,
+                                    string versionString)
 {
   if (previousVersions == null) throw new ArgumentNullException("previousVersions");
   if (versionString == null) throw new ArgumentNullException("versionString");
@@ -130,92 +135,106 @@ static uint CheckNextVersion(List<uint> previousVersions, string versionString)
 }
 ```
 
-The Rust equivalent would be the following:
+Code analysis is still not happy.
+In particular it wants us to change the one-line exception definitions
+into 23-line beasts with four constructors,
+but in this post I (WE?) would like to keep it brief.
+
+Rust has an honest type system,
+so we must be honest with the return type.
+If a method in C# has return type `T` or throws an exception of type `E`,
+the Rust equivalent would be `Result<T, E>`.
+A result value can either be `Ok(T)` or `Err(E)`.
+Let’s try it:
 
 ```rust
-struct NoPredecessor;
+pub struct InvalidVersionError;
 
-fn predecessor(x: u32) -> Result<u32, NoPredecessor> {
-    if x == 0 {
-        Err(NoPredecessor)
+pub fn check_next_version(previous_versions: &[u32],
+                          version_string: &str)
+                          -> Result<u32, InvalidVersionError> {
+    let version = version_string.parse::<u32>();
+    if version <= previous_versions.iter().cloned().min() {
+        Ok(version)
     } else {
-        Ok(x - 1)
+        Err(InvalidVersionError)
     }
 }
 ```
 
-(Is this a bad example because it has only a single variant?)
-Instead of returning `u32`, the function returns a `Result`,
-which is either `Ok(x)` where `x` is an `u32`,
-or `Err(NoPredecessor)`.
-
-The function may be called in two scenarios:
-either we deal with the problem at the call site,
-or we escalate the problem. (And here I suddenly switched from ‘I’ to ‘we’.)
-The default in C# is to escalate.
-If you don’t catch the exception,
-it will continue to unwind stack frames until it encounters a handler, a catch.
-For example, we could implement a [Kelvin versioning][kelvinversioning] scheme
-like so:
-
-```cs
-string NextVersionString(uint currentVersion)
-{
-  return Predecessor(currentVersion).ToString();
-}
-
-void SuggestNextVersion(uint currentVersion)
-{
-  try
-  {
-    Console.WriteLine("The next version is {0}.", Predecessor(currentVersion));
-  }
-  catch (NoPredecessorException)
-  {
-    Console.WriteLine("It is impossible to release a new version.");
-  }
-}
-```
-
-One of the problems with escalating by default,
-is that it is easy to forget to handle an exception.
-Without the try/catch block,
-the code would compile fine,
-and if there is no try/catch block,
-is that because the programmer forgot to handle the exception,
-or is it not handled intentionally?
-In contrast, the Rust compiler refuses to compile the following function:
+“Error” it says!
+Uh oh.
+“Binary operation `<=` cannot be applied to `Result<u32, ParseIntError>`.”
+While a parse method returning an integer is perfectly fine in C#,
+there is no place for such a method in an honest language.
+`parse` does not return an `u32`, it returns a `Result`.
+Where you can ignore the problem in C#,
+Rust forces us to consider all cases.
+To fix this, we first need a way to return either `ParseError` or `InvalidVersionError` from the function.
+`Result` has only one error type,
+so we must combine `ParseError` and `InvalidVersionError` into one type: a sum type,
+called enum in Rust.
+Let’s try again:
 
 ```rust
-fn next_version_string(current_version: u32) -> String {
-    use std::string::ToString;
-    u32::to_string(&predecessor(current_version))
+enum Error {
+    ParseError,
+    InvalidVersion
+}
+
+pub fn check_next_version(previous_versions: &[u32],
+                          version_string: &str)
+                          -> Result<u32, Error> {
+    let version = match version_string.parse::<u32>() {
+        Ok(n) => n,
+        Err(_) => return Err(Error::ParseError)
+    };
+    if version <= previous_versions.iter().cloned().min() {
+        Ok(version)
+    } else {
+        Err(Error::InvalidVersion)
+    }
 }
 ```
 
-“Error: mismatched types,” it says.
-“Expected `&u32`, found `&Result<u32, NoPredecessor>`.”
-The compiler forces us (and now I do it again?) to handle the error here.
-`to_string` can only be called if `predecessor` was succesful.
-However, at this point we are not in a position to handle the error,
-it must be escalated.
-Rust forces us to be honest by changing the return type to `Result<String, NoPredecessor>`.
-Then we can write
+“Error” again, right after the `<=`.
+Ouch.
+“Mismatched types: expected `u32`, found `Option<u32>`.
+The compiler is telling us that an empty set has no minimum.
+With the dishonest type system of C#,
+this edge case is easy to forget,
+and the app could have crashed in production on an `InvalidOperationException`.
+Rust prevents these bugs at compile time.
+Let’s fix this,
+and add a distinct error for `NewReleaseImpossible` as well.
 
 ```rust
-fn next_version_string(current_version: u32) -> Result<String, NoPredecessor> {
-    use std::string::ToString;
-    u32::to_string(&try!(predecessor(current_version)));
+pub enum Error {
+    ParseError,
+    InvalidVersion,
+    NewReleaseImpossible
+}
+
+pub fn check_next_version(previous_versions: &[u32],
+                          version_string: &str)
+                          -> Result<u32, Error> {
+    let version = match version_string.parse::<u32>() {
+        Ok(n) => n,
+        Err(_) => return Err(Error::ParseError)
+    };
+    if let Some(min) = previous_versions.iter().cloned().min() {
+        if version <= min {
+            Ok(version)
+        } else if min == 0 {
+            Err(Error::NewReleaseImpossible)
+        } else {
+            Err(Error::InvalidVersion)
+        }
+    } else {
+        Ok(version) // Initially, any version is fine.
+    }
 }
 ```
-
-Blah
-
-Blah the match, show `try!` etc.
-(Uses Rust 1.1.0-nightly, by the way.)
-
-[csharppattern]:    https://github.com/dotnet/roslyn/issues/206
-[kelvinversioning]: http://doc.urbit.org/community/articles/martian-computing/
 
 For error handling/of error handling?
 Few options:
