@@ -46,14 +46,12 @@ but they suffer from the same problem in practice.
 [meijer2008]: https://channel9.msdn.com/Shows/Going+Deep/Erik-Meijer-Functional-Programming
 
 The consequence, when you want to write robust software in C#,
-is that you constantly have to keep an [MSDN][msdn] tab open.
+is that you have to keep an [MSDN][msdn] tab open at all times.
 Can this function throw?
 Should I catch a `PathTooLongException` here?
-And this is only for library functions, which are well-documented!
-Imagine dealing with a third-party library,
-or function calls a few layers deep in your own application:
-(Am I suggesting my own application is not documented very well?)
-at a certain point, you have to assume _everything may throw_.
+And while the .NET framework is documented to remarkable detail,
+this is rarely the case for third-party libraries or in-house code.
+At a certain point, you have to assume _everything may throw_.
 
 [msdn]: https://msdn.microsoft.com/en-us/library/gg145045.aspx
 [getfullpath]: https://msdn.microsoft.com/en-us/library/system.io.path.getfullpath.aspx
