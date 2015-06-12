@@ -61,15 +61,20 @@ They are available in many languages,
 such as Haskell, Rust, Scala, and maybe even [a future version of C#][csharppattern],
 but in this post I will use Rust.
 
-Suppose we want to implement a [Kelvin versioning][kelvinversioning] scheme,
-where the user can enter a new version to be released.
-We first parse the input into a number,
-and then check that this is a valid version to release.
-If it is, we return the parsed number, otherwise we report an error.
+[csharppattern]: https://github.com/dotnet/roslyn/issues/206
 
-[csharppattern]:    https://github.com/dotnet/roslyn/issues/206
+An example: Kelvin versioning
+-----------------------------
+Suppose we want to implement a [Kelvin versioning][kelvinversioning] scheme.
+Kelvin versions are nonnegative integers
+that _decrease_ with every release.
+After 0K has been released, it is impossible to ever release a new version.
+
 [kelvinversioning]: https://moronlab.blogspot.com/2010/01/urbit-functional-programming-from.html
 
+Our goal is to write a function that takes a list of previously released versions
+and a user-provided version string,
+and returns the parsed number or reports an error otherwise.
 Conceptually, this is a simple task.
 If we disregard proper exception handling for a moment,
 we could implement it like this in C#:
@@ -99,7 +104,7 @@ we will ensure that the method throws one of these exceptions:
  - `NewReleaseImpossibleException` if it is illegal to ever release a new version.
 
 Properly handling all exceptions,
-we get:
+we get the following:
 
 ```cs
 public class ParseException : Exception { }
@@ -135,17 +140,17 @@ public static uint CheckNextVersion(IEnumerable<uint> previousVersions,
 }
 ```
 
-Code analysis is still not happy.
-In particular it wants us to change the one-line exception definitions
+Code analysis is still very unhappy about this.
+In particular it wants us to change the exception definition oneliners
 into 23-line beasts with four constructors,
 but in this post I (WE?) would like to keep it brief.
 
 Rust has an honest type system,
 so we must be honest with the return type.
-If a method in C# has return type `T` or throws an exception of type `E`,
-the Rust equivalent would be `Result<T, E>`.
+If a method in C# has return type `T` and throws an exception of type `E`,
+the Rust return type would be `Result<T, E>`.
 A result value can either be `Ok(T)` or `Err(E)`.
-Let’s try it:
+Let’s give it a try:
 
 ```rust
 pub struct InvalidVersionError;
@@ -162,15 +167,17 @@ pub fn check_next_version(previous_versions: &[u32],
 }
 ```
 
-“Error” it says!
+“Error,” the compiler says!
 Uh oh.
 “Binary operation `<=` cannot be applied to `Result<u32, ParseIntError>`.”
 While a parse method returning an integer is perfectly fine in C#,
-there is no place for such a method in an honest language.
-`parse` does not return an `u32`, it returns a `Result`.
+there is no place for such lies in an honest language.
+Parsing can fail,
+so `parse` does not return an `u32`, it returns a `Result`.
 Where you can ignore the problem in C#,
 Rust forces us to consider all cases.
-To fix this, we first need a way to return either `ParseError` or `InvalidVersionError` from the function.
+To fix the error,
+we first need a way to return either `ParseError` or `InvalidVersionError` from the function.
 `Result` has only one error type,
 so we must combine `ParseError` and `InvalidVersionError` into one type: a sum type,
 called enum in Rust.
@@ -235,6 +242,11 @@ pub fn check_next_version(previous_versions: &[u32],
     }
 }
 ```
+
+This version compiles,
+and I would say it is about as verbose as the C# version apart from the lack of null checks.
+(Rust’s type sytem is honest. It does not have null.)
+
 
 For error handling/of error handling?
 Few options:
