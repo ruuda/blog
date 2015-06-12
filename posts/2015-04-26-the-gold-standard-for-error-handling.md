@@ -331,6 +331,34 @@ From the `try!` macro it is immediately clear that error handling is going on he
 and that control flow may exit the function at this point.
 In C# this is implicit.
 
+If the errors that may occur in a method all have the same type,
+or when `From` is implemented on the return type for the corresponding errors,
+error propagation with `try!` is as simple as with exceptions.
+For example, concatenating two files is as simple as this:
+
+```rust
+use std::fs::File;
+use std::io;
+use std::io::Read;
+
+fn cat(first: &mut File, second: &mut File) -> Result<Vec<u8>, io::Error> {
+    let mut buffer = Vec::new();
+    try!(first.read_to_end(&mut buffer));
+    try!(second.read_to_end(&mut buffer));
+    Ok(buffer)
+}
+```
+
+Apart from `try!`,
+there are also methods like `map` and `and_then` (the monad ‘bind’ operation)
+for the more functionally inclined.
+
+The downside
+------------
+It seems as though monadic error handling (DID I INTRODUCE THE TERM BEFORE?) is
+the solution to all problems.
+Blah and then complain about debuggability.
+
 For error handling/of error handling?
 Few options:
 
