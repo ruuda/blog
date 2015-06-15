@@ -150,7 +150,7 @@ public static uint CheckNextVersion(IEnumerable<uint> previousVersions,
 Code analysis is still very unhappy about this.
 In particular it wants us to change the exception definition oneliners
 into 23-line beasts with four constructors,
-but in this post I (WE?) would like to keep it brief.
+but in this post I would like to keep it brief.
 
 Rust has an honest type system,
 so we must be honest with the return type.
@@ -180,15 +180,14 @@ Uh oh.
 While a parse method returning an integer is perfectly fine in C#,
 there is no place for such blatant lies in an honest language.
 Parsing can fail,
-so `parse` does not return an `u32`, it returns a `Result`.
+so `parse` does not return a `u32`, it returns a `Result`.
 Where you can ignore the problem in C#,
 Rust forces us to consider all cases.
 
 To fix the error,
 we first need a way to return either `ParseError` or `InvalidVersionError` from the function.
 `Result` has only one error type,
-so we must combine `ParseError` and `InvalidVersionError` into one type: a sum type,
-called enum in Rust.
+so we need a single type that can be either of the two errors: an enum.
 Let’s try again:
 
 ```rust
@@ -223,12 +222,12 @@ Rust prevents these bugs at compile time.
 
 While we fix this,
 let’s add a distinct error for `NewReleaseImpossible` as well.
-Furthermore, getting the types right will allow us to drop the `::<u32>` part from `parse`.
-Type inference in Rust is much more advanced than the simple `var` in C#:
-because `version` is compared with `min` a few lines later,
+Additionally, getting the types right will allow us to drop the `::<u32>` part from `parse`.
+Type inference in Rust is much more advanced than the simple `var` in C#.
+Because `version` is compared with `min` a few lines later,
 the compiler is able to infer that `version` must be a `u32` just like `min`.
 This is great when you get the types right,
-but it can lead to less comprehensible compiler errors when you get it wrong.
+but it can lead to less comprehensible compiler errors when you get them wrong.
 
 ```rust
 pub enum Error {
@@ -314,7 +313,7 @@ impl From<ParseIntError> for Error {
 
 We ignore the actual error data, as indicated by the `_`.
 It is possible to make `ParseError` wrap the original error instead,
-but in this post I (WE?) will keep it simple.
+but in this post I will keep it simple.
 Instead of this:
 
 ```rust
@@ -339,7 +338,7 @@ and that control flow may exit the function at this point.
 In C# this is implicit.
 
 If the errors that may occur in a method all have the same type,
-or when `From` is implemented on the return type for the corresponding errors,
+or when `From` is implemented for the error type,
 error propagation with `try!` is as simple as with exceptions.
 For example, concatenating two files is as simple as this:
 
