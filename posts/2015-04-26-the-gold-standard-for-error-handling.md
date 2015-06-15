@@ -15,21 +15,27 @@ I was delighted.
 Obviously this was the right approach to error handling, elegant and effective.
 
 Along came Rust, and I immediately fell in love with it.
-It appeared to do everything right that C# did wrong.
+It appeared to do everything right that annoyed me about C#.
 Not only did it feature the absence of null (an entire class of problems … gone),
 it also had unrecoverable failures (now called panics),
 and monadic error handling for the cases where errors are not exceptional.
 
 Fast forward a year.
-I am working on a [decoder][claxon] for the FLAC codec in Rust,
-and a [library][hound] that handles WAV files to verify it.
-Things can fail at several levels:
-apart from IO errors, there is the issue of ill-formed data and program errors.
-(Program errors? API abuse/misuse? Runtime errors? What is a good word for that?)
-Aside from a few toy programs in Scala and Haskell,
-it is the first serious project where I get to use monadic error handling.
-Mostly it is a breeze,
-but there are downsides too.
+[Claxon][claxon] --- my Rust-only decoder for the FLAC codec ---
+decoded its entire test suite correctly for the first time a week ago.
+With [Hound][hound], a Rust library for handling WAV files,
+I could verify the output against the reference decoder.
+When dealing with these binary formats,
+things can fail at several levels:
+apart from IO errors,
+there are the issues of ill-formed data and incorrect usage of the library
+(e.g. writing an odd number of samples to a stereo stream).
+I had not used monadic error handling before,
+aside from a few toy programs in Scala and Haskell.
+Claxon and Hound are my first serious projects
+where I get to see how my expectations hold up.
+Mostly, monadic error handling is a breeze,
+but it has its downsides too.
 
 [claxon]: https://github.com/ruud-v-a/claxon
 [hound]:  https://github.com/ruud-v-a/claxon
