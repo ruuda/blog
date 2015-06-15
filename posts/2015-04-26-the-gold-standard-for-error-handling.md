@@ -398,7 +398,22 @@ The `try!` macro could push its location in the source file before it propagates
 This would attach traceroute-like information to an error in debug mode,
 and the release build would be every bit as efficient.
 Nevertheless, Rust is a young language,
-and I am not aware of any feature like these today.
+and I am not aware of any features like these today.
+
+Conclusion
+----------
+Exceptions and results are two ways to do error handling,
+both with their advantages and disadvantages.
+The big downside of exceptions,
+is that handling them
+can be --- and _will be_ --- ignored or forgotten.
+This leads to crashes on edge cases,
+crashes that may only be discovered in the field.
+A proper type system like Rust’s can prevent these errors at compile time.
+Monadic error handling with algebraic data types is a powerful tool,
+but the debugging story is currently not optimal in Rust.
+
+
 
 For error handling/of error handling?
 Few options:
