@@ -42,9 +42,9 @@ but it has its downsides too.
 
 Liar, liar!
 -----------
-The biggest problem with exceptions, in my opinion,
+The issue with exceptions, in my opinion,
 is that they are an escape hatch in the type system.
-As Erik Meijer likes to call it --- they make a type system [dishonest][meijer2008].
+As Erik Meijer likes to call it, they make a type system [dishonest][meijer2008].
 At least, in C# they do.
 Some languages in theory implement exceptions in a more honest manner,
 but they suffer from the same problem in practice.
@@ -57,7 +57,7 @@ Can this method throw?
 Should I catch a `PathTooLongException` here?
 And while the .NET framework is documented to remarkable detail,
 this is rarely the case for third-party libraries or in-house code.
-At a certain point, you just have to assume _everything may throw_.
+At the bottom of the call stack, you just have to assume _everything may throw_.
 
 [msdn]: https://msdn.microsoft.com/en-us/library/gg145045.aspx
 [getfullpath]: https://msdn.microsoft.com/en-us/library/system.io.path.getfullpath.aspx
@@ -98,15 +98,16 @@ public static uint CheckNextVersion(IEnumerable<uint> previousVersions,
 ```
 
 Even though we called only two library functions,
-the method may throw five different exceptions!
+the method may throw no less than five different exceptions!
 (Disregarding things like `OutOfMemoryException` and `ThreadAbortException`.)
-This is completely implicit though,
-the only way to find out is to inspect the method and consult the documentation.
+This is completely implicit though.
+The only way to find out is to inspect the method and consult the documentation.
 To keep things under control,
 we will ensure that the method throws one of these exceptions:
 
  - `ParseException` if the number could not be parsed into a 32-bit unsigned integer.
- - `InvalidVersionException` if it is illegal to release this version due to a previous release with a lower version numer.
+ - `InvalidVersionException` if it is illegal to release this version
+   due to a previous release with a lower or equal version number.
  - `NewReleaseImpossibleException` if it is illegal to ever release a new version.
 
 Properly handling all exceptions,
