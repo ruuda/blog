@@ -3,25 +3,23 @@ title: Exceptional results: error handling with C# and Rust
 date: 2015-04-26 22:04
 ---
 
-"Good introduction here".
-
 In C#, the standard way to do error handling is by using exceptions.
-I have written plenty of code in C# that deals with exceptions,
+I have written plenty of code in that deals with exceptions,
 and it is a pain to do it correctly.
-Apart from null, it might very well be the biggest design mistake of the language.
-(Something about recoverable vs unrecoverable?)
-When I first learned about monadic error handling (the `Either` type in Haskell),
+Apart from null, it might very well be the biggest design mistake of the language
+--- in my opinion.
+When I first learned about monadic error handling (with the `Either` type in Haskell),
 I was delighted.
 Obviously this was the right approach to error handling, elegant and effective.
 
 Along came Rust, and I immediately fell in love with it.
-It appeared to do everything right that annoyed me about C#.
-Not only did it feature the absence of null (an entire class of problems … gone),
+It appeared to do everything right that C# did wrong.
+Not only did it feature the absence of null (an entire class of problems … gone!),
 it also had unrecoverable failures (now called panics),
 and monadic error handling for the cases where errors are not exceptional.
 
 Fast forward a year.
-[Claxon][claxon] --- my Rust-only decoder for the FLAC codec ---
+[Claxon][claxon] --- my pure-Rust decoder for the FLAC codec ---
 decoded its entire test suite correctly for the first time a week ago.
 With [Hound][hound], a Rust library for handling WAV files,
 I could verify the output against the reference decoder.
@@ -30,15 +28,19 @@ things can fail at several levels:
 apart from IO errors,
 there are the issues of ill-formed data and incorrect usage of the library
 (e.g. writing an odd number of samples to a stereo stream).
-I had not used monadic error handling before,
-aside from a few toy programs in Scala and Haskell.
+Thus, I got to do some error handling in Rust.
+
+Aside from a few toy programs in Scala and Haskell,
+I had not used monadic error handling before.
 Claxon and Hound are my first serious projects
-where I get to see how my expectations hold up.
+where I got to see how my expectations would hold up.
 Mostly, monadic error handling is a breeze,
 but it has its downsides too.
 
 [claxon]: https://github.com/ruud-v-a/claxon
 [hound]:  https://github.com/ruud-v-a/claxon
+
+<!--more-->
 
 Liar, liar!
 -----------
@@ -65,8 +67,8 @@ and cause even worse problems of their own.
 [msdn]: https://msdn.microsoft.com/en-us/library/gg145045.aspx
 [getfullpath]: https://msdn.microsoft.com/en-us/library/system.io.path.getfullpath.aspx
 
-Algebraic data types solve this issue in a surprisingly clean way.
-They are available in many languages,
+Algebraic data types solve the issue in a surprisingly clean way.
+They are available in languages
 such as Haskell, Rust, Scala, and maybe even [a future version of C#][csharppattern],
 but in this post I will use Rust.
 
