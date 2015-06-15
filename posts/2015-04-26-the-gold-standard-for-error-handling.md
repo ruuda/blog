@@ -395,6 +395,7 @@ Pros:
 - Control flow focuses on the “happy path” (à la Meijer)
 - Separation between good type and failure type
 - Good support for debugging, can provide stack trace information
+- Can make error hierarchies
 
 Cons:
 
