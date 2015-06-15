@@ -361,9 +361,45 @@ for the more functionally inclined.
 
 The downside
 ------------
-It seems as though monadic error handling (DID I INTRODUCE THE TERM BEFORE?) is
-the solution to all problems.
-Blah and then complain about debuggability.
+It seems as though monadic error handling is the solution to all problems.
+With algebraic data types, the errors that a function can return
+are known and checked at compile time.
+In the end, this allows error handling to be expressed in a real elegant way.
+However, when writing Claxon, I ran into one downside in particular.
+You won’t see it in the above examples,
+because it is not there after the program has been written.
+It is an issue with debuggability.
+
+The error type of a `Result` carries no more information than strictly necessary.
+On the one hand this makes them very efficient,
+but on the other hand they lack critical debugging context.
+In particular, an `Err` does not contain a site of origin,
+no call stack,
+nor a traceroute to the current call site.
+Take the `cat` function above, for instance.
+Suppose it returns `Err(err)`, where `err` is an [`io::Error`][io::error].
+Its `description()` contains all the information about what went wrong reading,
+but it does not tell you _which_ of the two reads failed.
+Combining functions that may fail is easy with `try`,
+but disentangling them after something failed is a pain.
+
+[io::error]: https://doc.rust-lang.org/stable/std/io/struct.Error.html
+
+Furthermore,
+Visual Studio has outstanding tooling for exceptions.
+You can select specifically to break on some exceptions when thrown,
+or when unhandled by user code.
+.NET exceptions contain a full stack trace and information about the target site.
+All of this is currently not possible with Rust’s `Result`,
+though I think this is not a fundamental impossibility.
+I can imagine the compiler inserting a breakpoint when an `Err` is constructed,
+and maybe an error type can carry
+a list of source locations when compiling in debug mode.
+The `try!` macro could push its location in the source file before it propagates an error.
+This would attach traceroute-like information to an error in debug mode,
+and the release build would be every bit as efficient.
+Nevertheless, Rust is a young language,
+and I am not aware of any feature like this today.
 
 For error handling/of error handling?
 Few options:
