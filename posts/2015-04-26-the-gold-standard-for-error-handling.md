@@ -272,7 +272,7 @@ The comparison above is not entirely fair.
 In the example, we handled _all_ exceptions.
 The true power of exceptions though,
 lies in _not_ handling them.
-They automatically propagate up the call stack,
+They automatically propagate down the call stack,
 until a handler is encountered.
 
 Suppose that instead of throwing our custom `ParseException`,
