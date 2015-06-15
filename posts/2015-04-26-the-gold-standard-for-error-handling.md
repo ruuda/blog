@@ -404,16 +404,38 @@ Conclusion
 ----------
 Exceptions and results are two ways to do error handling,
 both with their advantages and disadvantages.
-The big downside of exceptions,
+The big downside of exceptions in C#,
 is that handling them
 can be --- and _will be_ --- ignored or forgotten.
-This leads to crashes on edge cases,
-crashes that may only be discovered in the field.
+This leads to crashes,
+crashes that may make it into the field.
 A proper type system like Rust’s can prevent these errors at compile time.
-Monadic error handling with algebraic data types is a powerful tool,
-but the debugging story is currently not optimal in Rust.
+There is room for improvement on the debugging side,
+but nonetheless monadic error handling with algebraic data types is a powerful tool.
 
+There are a lot of sides to the subject that I did not touch upon in this post.
+Performance is an issue that deserves a post in its own right,
+and the distinction between recoverable and unrecoverable errors
+(which C# does not make but Rust does) is an interesting issue as well.
+Niko Matsakis recently wrote about [enums versus virtual structs][enumvirt],
+which relates to exception hierarchies,
+a way to control the granularity of error handling.
+Finally, I touched only superficially on the `Result` type in Rust,
+and I did not talk about the `Error` trait at all.
+If you like to know more about error handling in Rust,
+Andrew Gallant wrote a [fantastic blog post][burntsushi] a month ago
+that dives deep into all of the details.
+If you had not heard of Rust before but this post got you excited,
+the [book][book] is a great place to start.
+Rust has an amazing community that is very welcoming to new members.
 
+[enumvirt]:   http://smallcultfollowing.com/babysteps/blog/2015/05/29/classes-strike-back/
+[burntsushi]: http://blog.burntsushi.net/rust-error-handling/
+[book]:       https://doc.rust-lang.org/stable/book/
+
+---
+
+Rust 1.0.0 was used in this post.
 
 For error handling/of error handling?
 Few options:
