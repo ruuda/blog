@@ -1,6 +1,7 @@
 ---
 title: Exceptional results: error handling with C# and Rust
 date: 2015-04-26 22:04
+draft: true
 ---
 
 In C#, the standard way to do error handling is by using exceptions.
