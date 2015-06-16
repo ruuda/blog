@@ -98,7 +98,7 @@ public static uint CheckNextVersion(IEnumerable<uint> previousVersions,
                                     string versionString)
 {
   var version = uint.Parse(versionString);
-  if (version <= previousVersions.Min()) return version;
+  if (version < previousVersions.Min()) return version;
   throw new InvalidVersionException();
 }
 ```
@@ -172,7 +172,7 @@ pub fn check_next_version(previous_versions: &[u32],
                           version_string: &str)
                           -> Result<u32, InvalidVersionError> {
     let version = version_string.parse::<u32>();
-    if version <= previous_versions.iter().cloned().min() {
+    if version < previous_versions.iter().cloned().min() {
         Ok(version)
     } else {
         Err(InvalidVersionError)
@@ -182,7 +182,7 @@ pub fn check_next_version(previous_versions: &[u32],
 
 “Error,” the compiler says!
 Uh oh.
-“Binary operation `<=` cannot be applied to `Result<u32, ParseIntError>`.”
+“Binary operation `<` cannot be applied to `Result<u32, ParseIntError>`.”
 While a parse method returning an integer is perfectly fine in C#,
 there is no place for such blatant lies in an honest language.
 Parsing can fail,
@@ -209,7 +209,7 @@ pub fn check_next_version(previous_versions: &[u32],
         Ok(n) => n,
         Err(_) => return Err(Error::ParseError)
     };
-    if version <= previous_versions.iter().cloned().min() {
+    if version < previous_versions.iter().cloned().min() {
         Ok(version)
     } else {
         Err(Error::InvalidVersion)
@@ -217,7 +217,7 @@ pub fn check_next_version(previous_versions: &[u32],
 }
 ```
 
-“Error” again, right after the `<=`.
+“Error” again, right after the `<`.
 Ouch.
 “Mismatched types: expected `u32`, found `Option<u32>`.
 The compiler is telling us that an empty set has no minimum.
@@ -250,7 +250,7 @@ pub fn check_next_version(previous_versions: &[u32],
         Err(_) => return Err(Error::ParseError)
     };
     if let Some(min) = previous_versions.iter().cloned().min() {
-        if version <= min {
+        if version < min {
             Ok(version)
         } else if min == 0 {
             Err(Error::NewReleaseImpossible)
