@@ -15,7 +15,7 @@ in addition to a “success” type,
 and monads are the tool to combine such functions with ease.
 
 In C#, exceptions are the standard way of doing error handling.
-I have written plenty of C# code in that deals with exceptions,
+I have written plenty of C# code that deals with exceptions,
 and it is a pain to do it correctly.
 Apart from null, it might very well be the biggest design mistake of the language.
 I was delighted when I learned about [monadic error handling][eithermonad],
