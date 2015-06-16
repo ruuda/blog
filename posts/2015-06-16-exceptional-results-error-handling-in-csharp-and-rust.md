@@ -202,28 +202,28 @@ Where you can ignore the problem in C#,
 Rust forces us to consider all cases.
 
 To fix the error,
-we first need a way to return either `ParseError` or `InvalidVersionError` from the function.
+we first need a way to return either `ParseFailed` or `InvalidVersion` from the function.
 `Result` has only one error type,
 so we need a single type that can be either of the two errors: an enum.
 Let’s try again:
 
 ```rust
-enum Error {
-    ParseError,
+pub enum KelvinError {
+    ParseFailed,
     InvalidVersion
 }
 
 pub fn check_next_version(previous_versions: &[u32],
                           version_string: &str)
-                          -> Result<u32, Error> {
+                          -> Result<u32, KelvinError> {
     let version = match version_string.parse::<u32>() {
         Ok(n) => n,
-        Err(_) => return Err(Error::ParseError)
+        Err(_) => return Err(KelvinError::ParseFailed)
     };
     if version < previous_versions.iter().cloned().min() {
         Ok(version)
     } else {
-        Err(Error::InvalidVersion)
+        Err(KelvinError::InvalidVersion)
     }
 }
 ```
@@ -247,26 +247,26 @@ This is great when you get the types right,
 but it can lead to less comprehensible compiler errors when you get them wrong.
 
 ```rust
-pub enum Error {
-    ParseError,
+pub enum KelvinError {
+    ParseFailed,
     InvalidVersion,
     NewReleaseImpossible
 }
 
 pub fn check_next_version(previous_versions: &[u32],
                           version_string: &str)
-                          -> Result<u32, Error> {
+                          -> Result<u32, KelvinError> {
     let version = match version_string.parse() {
         Ok(n) => n,
-        Err(_) => return Err(Error::ParseError)
+        Err(_) => return Err(KelvinError::ParseFailed)
     };
     if let Some(min) = previous_versions.iter().cloned().min() {
         if version < min {
             Ok(version)
         } else if min == 0 {
-            Err(Error::NewReleaseImpossible)
+            Err(KelvinError::NewReleaseImpossible)
         } else {
-            Err(Error::InvalidVersion)
+            Err(KelvinError::InvalidVersion)
         }
     } else {
         Ok(version) // Initially, any version is fine.
@@ -315,28 +315,28 @@ How would we go about that in Rust?
 If our function returned `Result<u32, ParseIntError>`,
 we could just return the error,
 but this is not the case.
-We need a way to convert a `ParseIntError` into `Error::ParseError` automatically.
-The way to do this, is by implementing `From` for `Error`:
+We need a way to convert a `ParseIntError` into a `KelvinError` automatically.
+The way to do this, is by implementing `From` for `KelvinError`:
 
 ```rust
 use std::num::ParseIntError;
 
-impl From<ParseIntError> for Error {
-   fn from(_: ParseIntError) -> Error {
-       Error::ParseError
+impl From<ParseIntError> for KelvinError {
+   fn from(_: ParseIntError) -> KelvinError {
+       KelvinError::ParseFailed
    }
 }
 ```
 
 We ignore the actual error data, as indicated by the `_`.
-It is possible to make `ParseError` wrap the original error instead,
+It is possible to make `ParseFailed` wrap the original error instead,
 but in this post I will keep it simple.
 Instead of this:
 
 ```rust
 let version = match version_string.parse() {
     Ok(n) => n,
-    Err(_) => return Err(Error::ParseError)
+    Err(_) => return Err(KelvinError::ParseFailed)
 };
 ```
 
