@@ -4,14 +4,25 @@ date: 2015-04-26 22:04
 draft: true
 ---
 
-In C#, the standard way to do error handling is by using exceptions.
-I have written plenty of code in that deals with exceptions,
+When I first learned about monadic error handling, I was delighted.
+Error handling is something that every robust program has to deal with.
+There are various approaches to it,
+but often a programming language forces its particular paradigm on you.
+For most mainstream languages, this means exceptions.
+Monadic error handling is a less widespread alternative.
+Algebraic data types allow for the return type of a function to encode an error type
+in addition to a “success” type,
+and monads are the tool to combine such functions with ease.
+
+In C#, exceptions are the standard way of doing error handling.
+I have written plenty of C# code in that deals with exceptions,
 and it is a pain to do it correctly.
-Apart from null, it might very well be the biggest design mistake of the language
---- in my opinion.
-When I first learned about monadic error handling (with the `Either` type in Haskell),
-I was delighted.
+Apart from null, it might very well be the biggest design mistake of the language.
+I was delighted when I learned about [monadic error handling][eithermonad],
+with the `Either` type in Haskell.
 Obviously this was the right approach to error handling, elegant and effective.
+
+[eithermonad]: http://www.learnyouahaskell.com/for-a-few-monads-more
 
 Along came Rust, and I immediately fell in love with it.
 It appeared to do everything right that C# did wrong.
@@ -29,7 +40,7 @@ things can fail at several levels:
 apart from IO errors,
 there are the issues of ill-formed data and incorrect usage of the library
 (e.g. writing an odd number of samples to a stereo stream).
-Thus, I got to do some error handling in Rust.
+So, I got to do some error handling in Rust.
 
 Aside from a few toy programs in Scala and Haskell,
 I had not used monadic error handling before.
