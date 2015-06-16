@@ -1,7 +1,6 @@
 ---
 title: Exceptional results: error handling with C# and Rust
 date: 2015-04-26 22:04
-draft: true
 ---
 
 When I first learned about monadic error handling, I was delighted.
