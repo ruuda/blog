@@ -451,4 +451,4 @@ Rust has an amazing community that is very welcoming to new members.
 
 ---
 
-Rust 1.0.0 was used in this post.
+Rust 1.0.0 and C# 5 were used in this post.
