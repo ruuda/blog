@@ -230,7 +230,7 @@ pub fn check_next_version(previous_versions: &[u32],
 
 “Error” again, right after the `<`.
 Ouch.
-“Mismatched types: expected `u32`, found `Option<u32>`.
+“Mismatched types: expected `u32`, found `Option<u32>`.”
 The compiler is telling us that an empty set has no minimum.
 With the dishonest type system of C#,
 this edge case is easy to forget,
