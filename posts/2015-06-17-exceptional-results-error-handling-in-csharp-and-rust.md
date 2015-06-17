@@ -51,7 +51,7 @@ Mostly, monadic error handling is a breeze,
 but it has its downsides too.
 
 [claxon]: https://github.com/ruud-v-a/claxon
-[hound]:  https://github.com/ruud-v-a/claxon
+[hound]:  https://github.com/ruud-v-a/hound
 
 Liar, liar!
 -----------
