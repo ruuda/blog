@@ -154,8 +154,9 @@ public static uint CheckNextVersion(IEnumerable<uint> previousVersions,
     var min = previousVersions.Min();
 
     if (min == 0) throw new NewReleaseImpossibleException();
-    else if (min <= version) throw new InvalidVersionException();
-    else return version;
+    if (min <= version) throw new InvalidVersionException();
+
+    return version;
   }
   // If the list is empty there is no minimum. Initially, any version is fine.
   catch (InvalidOperationException) { return version; }
