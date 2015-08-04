@@ -22,8 +22,8 @@ executable site
   default-language:    Haskell2010
 
   build-depends: base       >= 4.7      && < 4.9
-               , hakyll     >= 4.7.0.0  && < 4.8
-               , pandoc     >= 1.14.0.4 && < 1.15
+               , hakyll     >= 4.7.2.2  && < 4.8
+               , pandoc     >= 1.15.0.6 && < 1.16
                , old-locale >= 1.0.0.5  && < 1.1
                , time       >= 1.5.0.0  && < 1.6
                , containers >= 0.5.0.0  && < 0.6
