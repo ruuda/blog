@@ -10,7 +10,7 @@ A few days ago I stumbled upon a [post][when-rust-makes-sense] that raised the f
 I wrote a reply on Reddit,
 but I thought I’d take the time to elaborate a bit more
 in the form of a blog post.
-The point be summarised succinctly by quoting [Bjarne Stroustrup][bjarne-quote]:
+The point can be summarised succinctly by quoting [Bjarne Stroustrup][bjarne-quote]:
 
 > Garbage collection is neither necessary nor sufficient.
 
@@ -69,6 +69,6 @@ when the resource has to outlive the current scope.
 
 [real-world-haskell]: http://book.realworldhaskell.org/read/io.html#io.files
 
-So yes, I want a language without a garbage collector.
-Because I want a language that can do resource management.
+So yes, I want a language without garbage collection.
+Because I want a language that can do _resource management_.
 
