@@ -32,8 +32,7 @@ and there are a lot of myths surrounding GC performance
 a garbage collector only manages memory.
 This works well for memory,
 because there generally is more memory available than what is actually needed,
-and (except for really low level stuff) applications do not care
-about the actual address space they use.
+and applications do not care about the actual address space they use.
 An array does not care if it is stored at `0x3a28213a` or `0x6339392c`.
 If something that is no longer alive was stored at `0x3a28213a`,
 the array is happy with being stored at `0x6339392c`
@@ -71,11 +70,12 @@ when the resource has to outlive the current scope.
 
 [real-world-haskell]: http://book.realworldhaskell.org/read/io.html#io.files
 
-I buy the point that locks should not always be considered resources.
-In specialised cases manually acquiring and releasing resources
-might be the best option.
-There neither a garbage collector
-nor some form of automatic resource mangement can help.
+There are of course cases where manual control of resoures is required.
+A device driver _does_ care about actual addresses,
+and for a thread-safe cache protected by a read-write lock
+manual acquire and release calls might be clearer than scope-based locking.
+In the specialised cases where there is need for manual resource management,
+neither garbage collection nor some form of automatic resource mangement can help.
 
 So yes, I want a language without garbage collection.
 Because I want a language that can do _resource management_.
