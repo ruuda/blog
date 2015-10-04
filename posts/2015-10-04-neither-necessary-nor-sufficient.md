@@ -3,14 +3,16 @@ title: Neither necessary nor sufficient
 date: 2015-10-04 15:20
 ---
 
-A few days ago I stumbled upon a [post][when-rust-makes-sense] that raised the following question:
+A few days ago I stumbled upon a [post][when-rust-makes-sense]
+that raised the following question:
 
 > A language without garbage collection, in 2015?
 
 I wrote a reply on Reddit,
 but I thought I’d take the time to elaborate a bit more
 in the form of a blog post.
-The point can be summarised succinctly by quoting [Bjarne Stroustrup][bjarne-quote]:
+The point can be summarised succinctly
+by quoting [Bjarne Stroustrup][bjarne-quote]:
 
 > Garbage collection is neither necessary nor sufficient.
 
@@ -21,7 +23,8 @@ The point can be summarised succinctly by quoting [Bjarne Stroustrup][bjarne-quo
 
 So a language without garbage collection, in 2015.
 Why?
-Because garbage collection does not solve the deeper underlying problem: _resource management_.
+Because garbage collection does not solve the deeper underlying problem:
+_resource management_.
 Performance differences aside
 (performance can mean different things in different scenarios
 and there are a lot of myths surrounding GC performance
@@ -61,13 +64,18 @@ is that they decouple resource lifetime from object lifetime.
 This allows for programming errors such as writing to a closed socket
 or not releasing a lock.
 There are constructs that can help in many cases.
-Python has `with`, C# has `using`,
-and Haskell has functions such as `withFile`.
+Python has `with`, C# has `using`, D has `scope`, and Haskell has `bracket`.
 These constructs bind resource lifetime to scope,
 so consequently they cannot be used
 when the resource has to outlive the current scope.
 
 [real-world-haskell]: http://book.realworldhaskell.org/read/io.html#io.files
+
+I buy the point that locks should not always be considered resources.
+In specialised cases manually acquiring and releasing resources
+might be the best option.
+There neither a garbage collector
+nor some form of automatic resource mangement can help.
 
 So yes, I want a language without garbage collection.
 Because I want a language that can do _resource management_.
