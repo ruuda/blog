@@ -3,16 +3,18 @@ title: Neither necessary nor sufficient
 date: 2015-10-04 15:20
 ---
 
-A few days ago I stumbled upon a [post][when-rust-makes-sense]
+A few days ago I stumbled upon a [blog post][when-rust-makes-sense]
 that raised the following question:
 
 > A language without garbage collection, in 2015?
 
+The language referred to is Rust,
+but that is hardly relevant here.
 I wrote a reply on Reddit,
 but I thought I’d take the time to elaborate a bit more
 in the form of a blog post.
-The point can be summarised succinctly
-by quoting [Bjarne Stroustrup][bjarne-quote]:
+Quoting [Bjarne Stroustrup][bjarne-quote]
+the point can be summarised succinctly:
 
 > Garbage collection is neither necessary nor sufficient.
 
@@ -67,6 +69,7 @@ Python has `with`, C# has `using`, D has `scope`, and Haskell has `bracket`.
 These constructs bind resource lifetime to scope,
 so consequently they cannot be used
 when the resource has to outlive the current scope.
+For instance, a `using` block is of no use for disposable member variables.
 
 [real-world-haskell]: http://book.realworldhaskell.org/read/io.html#io.files
 
