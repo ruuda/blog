@@ -374,15 +374,13 @@ article blockquote
     background-image: url('noise.png');
     display: block;
     overflow: hidden;
-    border-left: 0.5em solid #97cb29;
+    border-left: 0.3em solid #97cb29;
     border-top-right-radius: 0.24em;
     border-bottom-right-radius: 0.24em;
 }
 
 article blockquote > p
 {
-    font-size: 1.3em;
-    line-height: 1.4em;
     margin: 0.5em;
     margin-bottom: 0.4em;
     margin-left: 1.2em;
