@@ -66,7 +66,7 @@ This allows for programming errors such as writing to a closed socket
 or not releasing a lock.
 
 There are constructs that can help in many cases.
-Python has `with`, C# has `using`, D has `scope`, and Haskell has `bracket`.
+Python has `with`, C# has `using`, and Haskell has `bracket`.
 These constructs bind resource lifetime to scope.
 A scope-based solution is often sufficient,
 but in some cases a resource has to outlive the current scope.
