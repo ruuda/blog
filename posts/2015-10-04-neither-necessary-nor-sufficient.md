@@ -1,6 +1,7 @@
 ---
 title: Neither necessary nor sufficient
 date: 2015-10-04 15:20
+minutes: 5
 ---
 
 A few days ago I stumbled upon a [blog post][when-rust-makes-sense]
