@@ -28,8 +28,8 @@ Why?
 Because garbage collection does not solve the deeper underlying problem:
 _resource management_.
 Performance differences aside
-(performance can mean different things in different scenarios
-and there are a lot of myths surrounding GC performance
+(there are many different metrics for performance
+and even more myths surrounding those
 — I don’t want to go down that rabbit hole here),
 a garbage collector only manages memory.
 This works well for memory,
@@ -44,7 +44,7 @@ The story is different when there is contention for a resource.
 From the lock protecting a critical section to the socket serving a website
 — you cannot afford to leave such resources lingering around
 until a GC comes along to decide what is still being used.
-In most of the “modern” languages sporting a GC,
+In most languages sporting a GC,
 resource management is still utterly manual.
 You still need to `close()` your `OutputStream` in Java.
 You still need to `Release()`, `Close()` or `Dispose()` of your `Semaphore` in C#.
@@ -64,21 +64,23 @@ The problem with disposable objects or handles,
 is that they decouple resource lifetime from object lifetime.
 This allows for programming errors such as writing to a closed socket
 or not releasing a lock.
+
 There are constructs that can help in many cases.
 Python has `with`, C# has `using`, D has `scope`, and Haskell has `bracket`.
-These constructs bind resource lifetime to scope,
-so consequently they cannot be used
-when the resource has to outlive the current scope.
-For instance, a `using` block is of no use for disposable member variables.
+These constructs bind resource lifetime to scope.
+A scope-based solution is often sufficient,
+but in some cases a resource has to outlive the current scope.
+A `using` block for instance,
+is of no use for disposable member variables.
 
 [real-world-haskell]: http://book.realworldhaskell.org/read/io.html#io.files
 
-There are of course cases where manual control of resoures is required.
+Of course, sometimes manual control of resoures is required.
 A device driver _does_ care about actual addresses,
-and for a thread-safe cache protected by a read-write lock
-manual acquire and release calls might be clearer than scope-based locking.
-In the specialised cases where there is need for manual resource management,
-neither garbage collection nor some form of automatic resource mangement can help.
+and manual acquire and release calls might be clearer than scope-based locking
+for a thread-safe cache protected by a read-write lock.
+In the specialised cases where there is a need for manual resource management,
+neither garbage collection nor automatic resource mangement can help.
 
 So yes, I want a language without garbage collection.
 Because I want a language that can do _resource management_.
