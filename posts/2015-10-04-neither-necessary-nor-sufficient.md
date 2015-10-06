@@ -24,7 +24,7 @@ the point can be summarised succinctly:
 
 <!--more-->
 
-So a language without garbage collection, in 2015.
+A language without garbage collection, in 2015.
 Why?
 Because garbage collection does not solve the deeper underlying problem:
 _resource management_.
@@ -35,7 +35,8 @@ and even more myths surrounding those
 a garbage collector only manages memory.
 This works well for memory,
 because there generally is more memory available than what is actually needed,
-and applications do not care about the actual address space they use.
+and applications do not care about the actual addresses they use.
+The address space is uniform.
 An array does not care if it is stored at `0x3a28213a` or `0x6339392c`.
 If something that is no longer alive was stored at `0x3a28213a`,
 the array is happy with being stored at `0x6339392c`
@@ -66,7 +67,7 @@ is that they decouple resource lifetime from object lifetime.
 This allows for programming errors such as writing to a closed socket
 or not releasing a lock.
 
-There are constructs that can help in many cases.
+There exist constructs that can help in many cases.
 Python has `with`, C# has `using`, and Haskell has `bracket`.
 These constructs bind resource lifetime to scope.
 A scope-based solution is often sufficient,
@@ -82,6 +83,8 @@ and manual acquire and release calls might be clearer than scope-based locking
 for a thread-safe cache protected by a read-write lock.
 In the specialised cases where there is a need for manual resource management,
 neither garbage collection nor automatic resource mangement can help.
+But little code actually benefits from manual memory management,
+and I would argue that this is the case for other resourses as well.
 
 So yes, I want a language without garbage collection.
 Because I want a language that can do _resource management_.
