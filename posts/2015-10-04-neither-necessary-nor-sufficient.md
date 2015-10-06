@@ -34,7 +34,7 @@ and even more myths surrounding those
 — I don’t want to go down that rabbit hole here),
 a garbage collector only manages memory.
 This works well for memory,
-because there generally is more memory available than what is actually needed,
+because there generally is more memory available than what is needed,
 and applications do not care about the actual addresses they use.
 The address space is uniform.
 An array does not care if it is stored at `0x3a28213a` or `0x6339392c`.
@@ -83,7 +83,7 @@ and manual acquire and release calls might be clearer than scope-based locking
 for a thread-safe cache protected by a read-write lock.
 In the specialised cases where there is a need for manual resource management,
 neither garbage collection nor automatic resource mangement can help.
-But little code actually benefits from manual memory management,
+But little code benefits from manual memory management,
 and I would argue that this is the case for other resourses as well.
 
 So yes, I want a language without garbage collection.
