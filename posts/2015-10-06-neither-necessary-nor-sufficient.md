@@ -1,6 +1,6 @@
 ---
 title: Neither necessary nor sufficient
-date: 2015-10-04 15:20
+date: 2015-10-06 19:41
 minutes: 5
 ---
 
