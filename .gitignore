@@ -1,0 +1,3 @@
+# Cabal sandbox
+cabal.sandbox.config
+.cabal-sandbox/
