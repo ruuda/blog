@@ -26,17 +26,17 @@ data Fragment = Loop String
 parse :: String -> [Fragment]
 parse = fmap toFragment . tokenize
   where toFragment (Outer str) = Raw str
-        toFragment (Inner str) = case span (/= ' ') str of
-          ("foreach ", list) -> Loop list
-          ("if ", condition) -> Conditional condition
-          ("end", "")        -> End
-          (variable, "")     -> Variable variable
+        toFragment (Inner str) = case break (== ' ') str of
+          ("foreach", list) -> Loop $ tail list
+          ("if", condition) -> Conditional $ tail condition
+          ("end", "")       -> End
+          (variable, _)     -> Variable variable
 
 data Context = StringContext String
              | MapContext (M.Map String Context)
              | ListContext [Context]
 
--- Applies the template (fragments) with given context until an `End` is
+-- Applies the template (fragments) with given context until an end fragment is
 -- encountered, at which point the currint string and the remaining fragments
 -- are returned.
 applyBlock :: [Fragment] -> Context -> (String, [Fragment])
