@@ -1,9 +1,23 @@
+-- This file implements a tiny templating engine inspired by Moustache. A
+-- context for applying templates is a subset of json that features strings,
+-- lists, and maps. A template is a string where things inside {{moustaches}}
+-- have special meaning:
+--
+--  * Conditionals: "{{if <cond>}} inner {{end}}" expands to " inner " if the
+--    key <cond> is present in the context, and it does not equal the string
+--    "false". This makes it possible to switch "foo: true" to "foo: false"
+--    instead of having to remove the key entirely.
+--
+--  * Loops: "{{foreach <list>}} inner {{end}}" expands to an expansion of
+--    " inner " for every element of <list>. The context for the inner expansion
+--    is the list element. (So list must be a list of maps [TODO].)
+--
+--  * Variables: "{{<var>}}" expands to the value of <var> if that is a string.
+
 import           Control.Monad (join)
 import qualified Data.Map as M
-import           Data.Maybe (fromMaybe)
 
 data Token = Outer String | Inner String
-  deriving (Show) -- TODO: This is for debugging only, remove.
 
 -- Splits a string into things inside and outside of moustaches.
 tokenize :: String -> [Token]
@@ -34,7 +48,7 @@ parse = fmap toFragment . tokenize
 
 data Context = StringContext String
              | MapContext (M.Map String Context)
-             | ListContext [Context]
+             | ListContext [Context] -- TODO: This is useless indirection, make it [M.Map String Context] instead?
 
 -- Applies the template (fragments) with given context until an end fragment is
 -- encountered, at which point the currint string and the remaining fragments
@@ -52,7 +66,7 @@ applyBlock fragments context = next fragments ""
         isTrue condition = case lookup condition of
           Just (StringContext "false") -> False
           Just _                       -> True -- TODO: should an empty list or empty map be false?
-          Nothing                      -> False
+          Nothing                      -> False -- Or should only "true" be true?
         getList name = case lookup name of
           Just (ListContext list) -> list
           _                       -> []
