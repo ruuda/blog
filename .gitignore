@@ -1,3 +1,6 @@
 # Cabal sandbox
 cabal.sandbox.config
 .cabal-sandbox/
+
+# Editor files
+*.swp
