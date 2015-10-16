@@ -16,7 +16,7 @@
 --
 --  * Loops: "{{foreach <list>}} inner {{end}}" expands to an expansion of
 --    " inner " for every element of <list>. The context for the inner expansion
---    is the list element. (So list must be a list of maps [TODO].)
+--    is the list element.
 --
 --  * Variables: "{{<var>}}" expands to the value of <var> if that is a string.
 
@@ -52,30 +52,26 @@ parse = fmap toFragment . tokenize
           ("end", "")       -> End
           (variable, _)     -> Variable variable
 
-data Context = StringContext String
-             | MapContext (M.Map String Context)
-             | ListContext [Context] -- TODO: This is useless indirection, make it [M.Map String Context] instead?
+type Context      = M.Map String ContextValue
+data ContextValue = StringValue String
+                  | ListValue [Context]
 
 -- Applies the template (fragments) with given context until an end fragment is
 -- encountered, at which point the currint string and the remaining fragments
 -- are returned.
 applyBlock :: [Fragment] -> Context -> (String, [Fragment])
 applyBlock fragments context = next fragments ""
-  where lookup name = case context of
-          MapContext map -> M.lookup name map
-          _              -> Nothing
-        expand variable = case lookup variable of
-          Just (StringContext str) -> str
-          Just (ListContext _)     -> variable ++ " is a list"
-          Just (MapContext _)      -> variable ++ " is a map"
-          Nothing                  -> "undefined"
-        isTrue condition = case lookup condition of
-          Just (StringContext "false") -> False
-          Just _                       -> True -- TODO: should an empty list or empty map be false?
-          Nothing                      -> False -- Or should only "true" be true?
-        getList name = case lookup name of
-          Just (ListContext list) -> list
-          _                       -> []
+  where expand variable = case M.lookup variable context of
+          Just (StringValue str) -> str
+          Just (ListValue _)     -> variable ++ " is a list"
+          Nothing                -> "undefined"
+        isTrue condition = case M.lookup condition context of
+          Just (StringValue "false") -> False
+          Just _                     -> True -- TODO: should an empty list or empty map be false?
+          Nothing                    -> False -- Or should only "true" be true?
+        getList name = case M.lookup name context of
+          Just (ListValue list) -> list
+          _                     -> []
         next :: [Fragment] -> String -> (String, [Fragment])
         next              [] str = (str, [])
         next (fragment:more) str = case fragment of
