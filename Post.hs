@@ -5,9 +5,8 @@
 -- the licence file in the root of the repository.
 
 import qualified Data.Map as M
-import           Data.Maybe (fromJust)
 import           Data.Time.Format
-import           Data.Time.Clock (UTCTime)
+import           Data.Time.Calendar (Day, showGregorian, toGregorian)
 import           Text.Pandoc
 
 -- Front matter consists of key value pairs, both of type string.
@@ -24,40 +23,42 @@ extractFrontMatter = parseFM M.empty . drop 1 . lines
           where (key, delimValue) = break (== ':') line
                 value = drop 2 delimValue -- Drop the colon and space.
 
--- A post is its front matter, plus the "body" field set to rendered html.
-type Post = M.Map String String
+data Post = Post { title :: String
+                 , date  :: Day
+                 , slug  :: String
+                 , body  :: String } deriving (Show) -- TODO: This is for debugging only, remove.
 
-renderPost :: String -> Post
-renderPost str = M.insert "body" html fm
-  where (fm, bodymd) = extractFrontMatter str
-        ropt         = def -- TODO: set correct reader options
-        wopt         = def -- TODO: set correct writer options
-        html         = case fmap (writeHtmlString wopt) (readCommonMark ropt bodymd) of
-          Right result -> result
-          Left _       -> "failed to parse markdown"
+-- Returns the post date, formatted like "17 April, 2015".
+longDate :: Post -> String
+longDate = formatTime defaultTimeLocale "%e %B, %Y" . date
 
--- Turns a date like "2015-10-17" into "17 October, 2015".
-expandDate :: String -> String
-expandDate = formatTime defaultTimeLocale "%e %B, %Y" . parse
-  where parse :: String -> UTCTime
-        parse = parseTimeOrError True defaultTimeLocale "%F"
+-- Returns the post date, formatted like "2015-04-17".
+shortDate :: Post -> String
+shortDate = showGregorian . date
 
--- Turns a date and slug into an absolute url for the post.
-getUrl :: String -> String -> String
-getUrl date slug = "/" ++ (fmap toSlash date) ++ "/" ++ slug
-  where toSlash '-' = '/'
-        toSlash  c  =  c
+-- Returns the year in which the post was published.
+year :: Post -> Integer
+year post = y where (y, m, d) = toGregorian $ date post
 
--- Add computed metadata to the post, given the slug.
-addMetadata :: Post -> String -> Post
-addMetadata post slug = M.union post metadata
-  where date     = fromJust $ M.lookup "date" post
-        longDate = expandDate date
-        year     = fst $ break (== '-') date -- Everything up to the first hyphen is the year.
-        url      = getUrl date slug
-        file     = url ++ "/index.html"
-        metadata = M.fromList [ ("slug", slug)
-                              , ("long-date", longDate)
-                              , ("year", year)
-                              , ("url", url)
-                              , ("file", file) ]
+-- Returns the canonical absolute url for a particular post.
+url :: Post -> String
+url post = "/" ++ datePath ++ "/" ++ (slug post)
+  where datePath = formatTime defaultTimeLocale "%Y/%m/%d" $ date post
+
+-- Given a slug and the contents of the post file (markdown with front matter),
+-- renders the body to html and parses the metadata.
+renderPost :: String -> String -> Post
+renderPost slug contents = Post {
+  title = frontMatter M.! "title",
+  date  = parseTimeOrError True defaultTimeLocale "%F" (frontMatter M.! "date"),
+  slug  = slug,
+  body  = renderMarkdown bodyContents
+} where (frontMatter, bodyContents) = extractFrontMatter contents
+
+-- Renders markdown to html using Pandoc with my settings.
+renderMarkdown :: String -> String
+renderMarkdown md = case fmap (writeHtmlString wopt) (readCommonMark ropt md) of
+  Right result -> result
+  Left  _      -> "Failed to parse markdown."
+  where ropt = def -- TODO: set correct reader options.
+        wopt = def -- TODO: set correct writer options.
