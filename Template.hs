@@ -40,8 +40,10 @@ data Fragment = Loop String
               | Raw String
   deriving (Show) -- TODO This is for debugging only, remove.
 
+type Template = [Fragment]
+
 -- Converts a string into fragments that can be fed into the interpreter.
-parse :: String -> [Fragment]
+parse :: String -> Template
 parse = fmap toFragment . tokenize
   where toFragment (Outer str) = Raw str
         toFragment (Inner str) = case break (== ' ') str of
@@ -81,5 +83,5 @@ applyBlock fragments context = next fragments ""
             where inner         = join $ fmap (\ctx -> fst $ applyBlock more ctx) $ getList list
                   (_, continue) = applyBlock more context
 
-apply :: [Fragment] -> Context -> String
+apply :: Template -> Context -> String
 apply fragments context = fst $ applyBlock fragments context
