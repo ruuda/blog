@@ -5,6 +5,7 @@
 -- the licence file in the root of the repository.
 
 import qualified Data.Map as M
+import           Data.Maybe (fromJust)
 import           Data.Time.Format
 import           Data.Time.Clock (UTCTime)
 import           Text.Pandoc
@@ -40,3 +41,23 @@ expandDate :: String -> String
 expandDate = formatTime defaultTimeLocale "%e %B, %Y" . parse
   where parse :: String -> UTCTime
         parse = parseTimeOrError True defaultTimeLocale "%F"
+
+-- Turns a date and slug into an absolute url for the post.
+getUrl :: String -> String -> String
+getUrl date slug = "/" ++ (fmap toSlash date) ++ "/" ++ slug
+  where toSlash '-' = '/'
+        toSlash  c  =  c
+
+-- Add computed metadata to the post, given the slug.
+addMetadata :: Post -> String -> Post
+addMetadata post slug = M.union post metadata
+  where date     = fromJust $ M.lookup "date" post
+        longDate = expandDate date
+        year     = fst $ break (== '-') date -- Everything up to the first hyphen is the year.
+        url      = getUrl date slug
+        file     = url ++ "/index.html"
+        metadata = M.fromList [ ("slug", slug)
+                              , ("long-date", longDate)
+                              , ("year", year)
+                              , ("url", url)
+                              , ("file", file) ]
