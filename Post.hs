@@ -8,7 +8,7 @@ module Post ( Post
             , body
             , date
             , longDate
-            , renderPost
+            , parse
             , shortDate
             , slug
             , title
@@ -58,8 +58,8 @@ url post = "/" ++ datePath ++ "/" ++ (slug post)
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.
-renderPost :: String -> String -> Post
-renderPost slug contents = Post {
+parse :: String -> String -> Post
+parse slug contents = Post {
   title = frontMatter M.! "title",
   date  = parseTimeOrError True defaultTimeLocale "%F" (frontMatter M.! "date"),
   slug  = slug,

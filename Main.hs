@@ -31,7 +31,7 @@ readTemplates = mapFilesBaseName $ (fmap T.parse) . readFile
 -- Reads a post from a file.
 readPost :: FilePath -> IO P.Post
 readPost fname = fmap makePost $ readFile fname
-  where makePost body = P.renderPost (takeBaseName fname) body
+  where makePost body = P.parse (takeBaseName fname) body
 
 -- Reads and renders all posts in the given directory.
 readPosts :: FilePath -> IO [P.Post]
