@@ -4,6 +4,17 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
+module Post ( Post
+            , body
+            , date
+            , longDate
+            , renderPost
+            , shortDate
+            , slug
+            , title
+            , url
+            , year ) where
+
 import qualified Data.Map as M
 import           Data.Time.Format
 import           Data.Time.Calendar (Day, showGregorian, toGregorian)

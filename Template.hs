@@ -4,6 +4,8 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
+module Template (Template, Context, ContextValue, parse, apply) where
+
 -- This file implements a tiny templating engine inspired by Moustache. A
 -- context for applying templates is a subset of json that features strings,
 -- lists, and maps. A template is a string where things inside {{moustaches}}
