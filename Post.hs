@@ -5,6 +5,8 @@
 -- the licence file in the root of the repository.
 
 import qualified Data.Map as M
+import           Data.Time.Format
+import           Data.Time.Clock (UTCTime)
 import           Text.Pandoc
 
 -- Front matter consists of key value pairs, both of type string.
@@ -32,3 +34,9 @@ renderPost str = M.insert "body" html fm
         html         = case fmap (writeHtmlString wopt) (readCommonMark ropt bodymd) of
           Right result -> result
           Left _       -> "failed to parse markdown"
+
+-- Turns a date like "2015-10-17" into "17 October, 2015".
+expandDate :: String -> String
+expandDate = formatTime defaultTimeLocale "%e %B, %Y" . parse
+  where parse :: String -> UTCTime
+        parse = parseTimeOrError True defaultTimeLocale "%F"
