@@ -7,14 +7,16 @@
 import           Control.Monad (filterM, mapM)
 import qualified Data.Map as M
 import           System.Directory (doesFileExist, getDirectoryContents)
-import           System.FilePath (takeBaseName)
+import           System.FilePath ((</>), takeBaseName)
 
 import qualified Post as P
 import qualified Template as T
 
 -- Applies the IO-performing function f to every file in a given directory.
 mapFiles :: (FilePath -> IO a) -> FilePath -> IO [a]
-mapFiles f dir = getDirectoryContents dir >>= filterM doesFileExist >>= mapM f
+mapFiles f dir = enumerateFiles >>= filterM doesFileExist >>= mapM f
+  -- Prepend the directory names to the names returned by getDirectoryContents.
+  where enumerateFiles = fmap (fmap (dir </>)) (getDirectoryContents dir)
 
 -- Applies the IO-performing function f to every file in a given directory, and
 -- returns a map from the file basename to the result.
