@@ -6,6 +6,7 @@
 
 module Post ( Post
             , body
+            , context
             , date
             , longDate
             , parse
@@ -19,6 +20,8 @@ import qualified Data.Map as M
 import           Data.Time.Format
 import           Data.Time.Calendar (Day, showGregorian, toGregorian)
 import           Text.Pandoc
+
+import qualified Template as T
 
 -- Front matter consists of key value pairs, both of type string.
 -- There is no fancy YAML here.
@@ -55,6 +58,14 @@ year post = y where (y, m, d) = toGregorian $ date post
 url :: Post -> String
 url post = "/" ++ datePath ++ "/" ++ (slug post)
   where datePath = formatTime defaultTimeLocale "%Y/%m/%d" $ date post
+
+-- Returns the template expansion context for the post.
+context :: Post -> T.Context
+context p = fmap T.StringValue $ M.fromList [ ("title", title p)
+                                            , ("short-date", shortDate p)
+                                            , ("long-date", longDate p)
+                                            , ("url", url p)
+                                            , ("content", body p) ]
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.
