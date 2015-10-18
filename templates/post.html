@@ -1,35 +1,37 @@
-<body>
-  <article>
-    <header>
-      <h1>{{title}}</h1> <!-- TODO: header (derive from title) -->
-      {{if part}}<p class="part">Part {{part}}</p>{{end}}
-      {{if subtitle}}<h2>{{subtitle}}</h2>{{end}}
-      <p class="postinfo">
-        written by <span class="author">Ruud van Asseldonk</span><br>
-        published <time datetime="{{short-date}}" itemprop="datePublished">{{long-date}}</time>
+{{include head.html}}
+  <body>
+    <article>
+      <header>
+        <h1>{{title}}</h1> <!-- TODO: header (derive from title) -->
+        {{if part}}<p class="part">Part {{part}}</p>{{end}}
+        {{if subtitle}}<h2>{{subtitle}}</h2>{{end}}
+        <p class="postinfo">
+          written by <span class="author">Ruud van Asseldonk</span><br>
+          published <time datetime="{{short-date}}" itemprop="datePublished">{{long-date}}</time>
+        </p>
+      </header>
+      {{content}}
+    </article>
+    <section class="teaser">
+      <p>Further reading</p>
+      <h1>{{further.title}}</h1>
+      <p>{{further.synopsis}}<a href="/{{further.url}}">Read full post</a></p>
+    </section>
+    <footer>
+      <h1>About me</h1>
+      <p>TODO</p>
+      <ul id="navigation">
+        <li><a href="/">About</a></li>
+        <li><a href="/archive">Writing</a></li>
+        <li><a href="https://github.com/ruud-v-a">Code</a></li>
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+      <p id="notices">
+        <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Copyleft</a>
+        {{copyright-year}} Ruud van Asseldonk
+        <span id="breakdot">&middot;</span>
+        <a href="https://github.com/ruud-v-a/ruudvanasseldonk.com">Source</a>
       </p>
-    </header>
-    {{content}}
-  </article>
-  <section class="teaser">
-    <p>Further reading</p>
-    <h1>{{further.title}}</h1>
-    <p>{{further.synopsis}}<a href="/{{further.url}}">Read full post</a></p>
-  </section>
-  <footer>
-    <h1>About me</h1>
-    <p>TODO</p>
-    <ul id="navigation">
-      <li><a href="/">About</a></li>
-      <li><a href="/archive">Writing</a></li>
-      <li><a href="https://github.com/ruud-v-a">Code</a></li>
-      <li><a href="/contact">Contact</a></li>
-    </ul>
-    <p id="notices">
-      <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Copyleft</a>
-      {{copyright-year}} Ruud van Asseldonk
-      <span id="breakdot">&middot;</span>
-      <a href="https://github.com/ruud-v-a/ruudvanasseldonk.com">Source</a>
-    </p>
-  </footer>
-</body>
+    </footer>
+  </body>
+</html>
