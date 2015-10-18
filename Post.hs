@@ -10,7 +10,9 @@ module Post ( Post
             , date
             , longDate
             , parse
+            , relatedContext
             , shortDate
+            , selectRelated
             , slug
             , title
             , url
@@ -19,6 +21,7 @@ module Post ( Post
 import qualified Data.Map as M
 import           Data.Time.Format
 import           Data.Time.Calendar (Day, showGregorian, toGregorian)
+import           GHC.Exts (sortWith)
 import           Text.Pandoc
 
 import qualified Template as T
@@ -84,3 +87,30 @@ renderMarkdown md = case fmap (writeHtmlString wopt) (readCommonMark ropt md) of
   Left  _      -> "Failed to parse markdown."
   where ropt = def -- TODO: set correct reader options.
         wopt = def -- TODO: set correct writer options.
+
+-- Related content for a post, for the further reading section in the footer.
+data RelatedContent = Further Post
+                    | Series [Post]
+                    deriving (Show) -- TODO: this is for debugging only, remove.
+
+-- Returns the template expansion context for related content.
+relatedContext :: RelatedContent -> T.Context
+relatedContext related = case related of
+  Further post -> T.nestContext "further" $ context post
+  Series posts -> M.singleton "series" $ T.ListValue $ fmap context posts
+
+-- Takes an (unordered) list of posts and produces a list of posts together with
+-- related content for that post.
+selectRelated :: [Post] -> [(Post, RelatedContent)]
+selectRelated posts = fmap nextElsePrev prevPostNext
+  where -- Create chronological triples of (previous post, post, next post).
+        chronological = sortWith date posts
+        prevPosts     = Nothing : (fmap Just chronological)
+        nextPosts     = (drop 1 $ fmap Just chronological) ++ [Nothing]
+        prevPostNext  = zip3 prevPosts chronological nextPosts
+
+        -- Select the next post as "Further" content if there is one, otherwise
+        -- take the previous post (which is assumed to exist in that case).
+        nextElsePrev x = case x of
+          (_, post, Just next) -> (post, Further next)
+          (Just prev, post, _) -> (post, Further prev)
