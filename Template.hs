@@ -7,6 +7,7 @@
 module Template ( Context
                 , ContextValue(ListValue, StringValue, TemplateValue)
                 , Template
+                , nestContext
                 , parse
                 , apply ) where
 
@@ -68,6 +69,11 @@ data ContextValue = ListValue [Context]
                   | StringValue String
                   | TemplateValue Template
 
+-- Fakes nested context fields by prepending "<key>." to the keys of the child
+-- context.
+nestContext :: String -> Context -> Context
+nestContext key child = M.mapKeys ((key ++ ".") ++) child
+
 -- Applies the template (fragments) with given context until an end fragment is
 -- encountered, at which point the currint string and the remaining fragments
 -- are returned.
@@ -98,5 +104,6 @@ applyBlock fragments context = next fragments ""
             where inner         = join $ fmap (\ctx -> fst $ applyBlock more ctx) $ getList list
                   (_, continue) = applyBlock more context
 
+-- Applies the template with the given context.
 apply :: Template -> Context -> String
 apply fragments context = fst $ applyBlock fragments context
