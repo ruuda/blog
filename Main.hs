@@ -7,7 +7,7 @@
 import           Control.Monad (filterM, mapM)
 import qualified Data.Map as M
 import           System.Directory (doesFileExist, getDirectoryContents)
-import           System.FilePath ((</>), takeBaseName)
+import           System.FilePath ((</>), takeBaseName, takeFileName)
 
 import qualified Post as P
 import qualified Template as T
@@ -19,14 +19,14 @@ mapFiles f dir = enumerateFiles >>= filterM doesFileExist >>= mapM f
   where enumerateFiles = fmap (fmap (dir </>)) (getDirectoryContents dir)
 
 -- Applies the IO-performing function f to every file in a given directory, and
--- returns a map from the file basename to the result.
-mapFilesBaseName :: (FilePath -> IO a) -> FilePath -> IO (M.Map String a)
-mapFilesBaseName f = (fmap M.fromList) . (mapFiles makePair)
-  where makePair fname = fmap (\x -> (takeBaseName fname, x)) (f fname)
+-- returns a map from the file name to the result.
+mapFilesFileName :: (FilePath -> IO a) -> FilePath -> IO (M.Map FilePath a)
+mapFilesFileName f = (fmap M.fromList) . (mapFiles makePair)
+  where makePair fname = fmap (\x -> (takeFileName fname, x)) (f fname)
 
 -- Reads and parses all templates in the given directory.
-readTemplate :: FilePath -> IO T.Template
-readTemplate = (fmap T.parse) . readFile
+readTemplates :: FilePath -> IO (M.Map FilePath T.Template)
+readTemplates = mapFilesFileName $ (fmap T.parse) . readFile
 
 -- Reads a post from a file.
 readPost :: FilePath -> IO P.Post
@@ -37,18 +37,17 @@ readPost fname = fmap makePost $ readFile fname
 readPosts :: FilePath -> IO [P.Post]
 readPosts = mapFiles readPost
 
--- Applies the inner template, sets that as body for the outer template,
--- and applies the outer template.
-applyTemplates :: T.Template -> T.Template -> T.Context -> String
-applyTemplates outer inner context = T.apply outer octx
-  where octx = M.insert "body" (T.StringValue $ T.apply inner context) context
+-- Given the post template and the global context, expands the template with the
+-- context for the post.
+expandPost :: T.Template -> T.Context -> P.Post -> String
+expandPost tmpl ctx post = T.apply tmpl $ M.union ctx (P.context post)
 
 main :: IO ()
 main = do
-  baseTmpl <- readTemplate "templates/base.html"
-  postTmpl <- readTemplate "templates/post.html"
-  posts    <- readPosts    "posts/"
+  templates <- readTemplates "templates/"
+  posts     <- readPosts     "posts/"
 
-  let expandPost = applyTemplates baseTmpl postTmpl
+  -- Create a context that contains all of the templates, to handle includes.
+  let tctx = fmap T.TemplateValue templates
 
   putStrLn "TODO: actually generate something"
