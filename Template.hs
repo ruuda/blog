@@ -16,7 +16,7 @@ module Template ( Context
 -- have special meaning:
 --
 --  * Conditionals: "{{if <cond>}} inner {{end}}" expands to " inner " if the
---    key <cond> is present in the context and equals "true".
+--    key <cond> is present.
 --
 --  * Loops: "{{foreach <list>}} inner {{end}}" expands to an expansion of
 --    " inner " for every element of <list>. The context for the inner expansion
@@ -71,12 +71,10 @@ applyBlock fragments context = next fragments ""
           Just (StringValue str) -> str
           Just (ListValue _)     -> variable ++ " is a list"
           Nothing                -> "undefined"
-        isTrue condition = case M.lookup condition context of
-          Just (StringValue "true") -> True
-          _                         -> False
         getList name = case M.lookup name context of
           Just (ListValue list) -> list
           _                     -> []
+        isTrue condition = M.member condition context
         next :: [Fragment] -> String -> (String, [Fragment])
         next              [] str = (str, [])
         next (fragment:more) str = case fragment of
