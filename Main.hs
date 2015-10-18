@@ -25,8 +25,8 @@ mapFilesBaseName f = (fmap M.fromList) . (mapFiles makePair)
   where makePair fname = fmap (\x -> (takeBaseName fname, x)) (f fname)
 
 -- Reads and parses all templates in the given directory.
-readTemplates :: FilePath -> IO (M.Map String T.Template)
-readTemplates = mapFilesBaseName $ (fmap T.parse) . readFile
+readTemplate :: FilePath -> IO T.Template
+readTemplate = (fmap T.parse) . readFile
 
 -- Reads a post from a file.
 readPost :: FilePath -> IO P.Post
@@ -37,8 +37,18 @@ readPost fname = fmap makePost $ readFile fname
 readPosts :: FilePath -> IO [P.Post]
 readPosts = mapFiles readPost
 
+-- Applies the inner template, sets that as body for the outer template,
+-- and applies the outer template.
+applyTemplates :: T.Template -> T.Template -> T.Context -> String
+applyTemplates outer inner context = T.apply outer octx
+  where octx = M.insert "body" (T.StringValue $ T.apply inner context) context
+
 main :: IO ()
 main = do
-  templates <- readTemplates "templates/"
-  posts     <- readPosts     "posts/"
+  baseTmpl <- readTemplate "templates/base.html"
+  postTmpl <- readTemplate "templates/post.html"
+  posts    <- readPosts    "posts/"
+
+  let expandPost = applyTemplates baseTmpl postTmpl
+
   putStrLn "TODO: actually generate something"
