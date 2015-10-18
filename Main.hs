@@ -6,6 +6,8 @@
 
 import           Control.Monad (filterM, mapM)
 import qualified Data.Map as M
+import           Data.Time.Calendar (toGregorian)
+import           Data.Time.Clock (getCurrentTime, utctDay)
 import           System.Directory (doesFileExist, getDirectoryContents)
 import           System.FilePath ((</>), takeBaseName, takeFileName)
 
@@ -49,5 +51,9 @@ main = do
 
   -- Create a context that contains all of the templates, to handle includes.
   let tctx = fmap T.TemplateValue templates
+
+  -- Create a context with the field "year" set to the current year.
+  (year, month, day) <- fmap (toGregorian . utctDay) getCurrentTime
+  let yctx = M.singleton "year" (T.StringValue $ show year)
 
   putStrLn "TODO: actually generate something"
