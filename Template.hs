@@ -5,15 +5,15 @@
 -- the licence file in the root of the repository.
 
 module Template ( Context
-                , ContextValue(StringValue, ListValue)
+                , ContextValue(ListValue, StringValue, TemplateValue)
                 , Template
                 , parse
                 , apply ) where
 
 -- This file implements a tiny templating engine inspired by Moustache. A
--- context for applying templates is a subset of json that features strings,
--- lists, and maps. A template is a string where things inside {{moustaches}}
--- have special meaning:
+-- context for applying templates resembles json. It features strings, lists,
+-- maps, and templates itself. A template is a string where things inside
+-- {{moustaches}} have special meaning:
 --
 --  * Conditionals: "{{if <cond>}} inner {{end}}" expands to " inner " if the
 --    key <cond> is present.
@@ -21,6 +21,9 @@ module Template ( Context
 --  * Loops: "{{foreach <list>}} inner {{end}}" expands to an expansion of
 --    " inner " for every element of <list>. The context for the inner expansion
 --    is the list element.
+--
+--  * Includes: "{{include <template>}}" expands to an expansion of the template
+--    <template>. The context for this expansion is the current context.
 --
 --  * Variables: "{{<var>}}" expands to the value of <var> if that is a string.
 
@@ -39,11 +42,12 @@ tokenize str = next str (Outer "") []
         next ('}':'}':more) (Inner inner) tokens = next more (Outer "") (tokens ++ [Inner inner])
         next (      c:more) (Inner inner) tokens = next more (Inner (inner ++ [c])) tokens
 
-data Fragment = Loop String
-              | Conditional String
+data Fragment = Conditional String
               | End
-              | Variable String
+              | Include String
+              | Loop String
               | Raw String
+              | Variable String
   deriving (Show) -- TODO This is for debugging only, remove.
 
 type Template = [Fragment]
@@ -53,14 +57,16 @@ parse :: String -> Template
 parse = fmap toFragment . tokenize
   where toFragment (Outer str) = Raw str
         toFragment (Inner str) = case break (== ' ') str of
-          ("foreach", list) -> Loop $ tail list
           ("if", condition) -> Conditional $ tail condition
           ("end", "")       -> End
+          ("include", tmpl) -> Include $ tail tmpl
+          ("foreach", list) -> Loop $ tail list
           (variable, _)     -> Variable variable
 
 type Context      = M.Map String ContextValue
-data ContextValue = StringValue String
-                  | ListValue [Context]
+data ContextValue = ListValue [Context]
+                  | StringValue String
+                  | TemplateValue Template
 
 -- Applies the template (fragments) with given context until an end fragment is
 -- encountered, at which point the currint string and the remaining fragments
@@ -69,8 +75,12 @@ applyBlock :: [Fragment] -> Context -> (String, [Fragment])
 applyBlock fragments context = next fragments ""
   where expand variable = case M.lookup variable context of
           Just (StringValue str) -> str
-          Just (ListValue _)     -> variable ++ " is a list"
+          Just _                 -> variable ++ " is not a string"
           Nothing                -> "undefined"
+        include name = case M.lookup name context of
+          Just (TemplateValue tmpl) -> apply tmpl context
+          Just _                    -> name ++ " is not a template"
+          Nothing                   -> "undefined"
         getList name = case M.lookup name context of
           Just (ListValue list) -> list
           _                     -> []
@@ -83,6 +93,7 @@ applyBlock fragments context = next fragments ""
           Variable variable -> next more (str ++ expand variable)
           Conditional cond  -> next continue $ if (isTrue cond) then str ++ inner else str
             where (inner, continue) = applyBlock more context
+          Include template  -> next more (str ++ include template)
           Loop list         -> next continue $ str ++ inner
             where inner         = join $ fmap (\ctx -> fst $ applyBlock more ctx) $ getList list
                   (_, continue) = applyBlock more context
