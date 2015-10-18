@@ -7,3 +7,6 @@ cabal.sandbox.config
 
 # Editor files
 *.swp
+
+# Generated blog output
+out/

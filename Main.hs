@@ -4,12 +4,12 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-import           Control.Monad (filterM, mapM)
+import           Control.Monad (filterM, mapM, foldM_)
 import qualified Data.Map as M
 import           Data.Time.Calendar (toGregorian)
 import           Data.Time.Clock (getCurrentTime, utctDay)
-import           System.Directory (doesFileExist, getDirectoryContents)
-import           System.FilePath ((</>), takeBaseName, takeFileName)
+import           System.Directory (doesFileExist, createDirectoryIfMissing, getDirectoryContents)
+import           System.FilePath ((</>), takeBaseName, takeDirectory, takeFileName)
 
 import qualified Post as P
 import qualified Template as T
@@ -39,21 +39,33 @@ readPost fname = fmap makePost $ readFile fname
 readPosts :: FilePath -> IO [P.Post]
 readPosts = mapFiles readPost
 
--- Given the post template and the global context, expands the template with the
--- context for the post.
-expandPost :: T.Template -> T.Context -> P.Post -> String
-expandPost tmpl ctx post = T.apply tmpl $ M.union ctx (P.context post)
+-- Given the post template and the global context, expands the template for all
+-- of the posts and writes them to the output directory. This also prints a list
+-- of processed posts to the standard output.
+writePosts :: T.Template -> T.Context -> [P.Post] -> FilePath -> IO ()
+writePosts tmpl ctx posts outDir = foldM_ writePost 1 withRelated
+  where total       = length posts
+        withRelated = P.selectRelated posts
+        writePost i (post, related) = do
+          let destFile = outDir </> (drop 1 $ P.url post) </> "index.html"
+          let context  = M.unions [P.context post, P.relatedContext related, ctx]
+          let rendered = T.apply tmpl context
+          putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
+          createDirectoryIfMissing True $ takeDirectory destFile
+          writeFile destFile rendered
+          return $ i + 1
 
 main :: IO ()
 main = do
   templates <- readTemplates "templates/"
   posts     <- readPosts     "posts/"
 
-  -- Create a context that contains all of the templates, to handle includes.
-  let tctx = fmap T.TemplateValue templates
-
-  -- Create a context with the field "year" set to the current year.
+  -- Create a context with the field "year" set to the current year, and create
+  -- a context that contains all of the templates, to handle includes.
   (year, month, day) <- fmap (toGregorian . utctDay) getCurrentTime
   let yctx = M.singleton "year" (T.StringValue $ show year)
+      tctx = fmap T.TemplateValue templates
+      globalContext = M.union tctx yctx
 
-  putStrLn "TODO: actually generate something"
+  putStrLn "Writing posts..."
+  writePosts (templates M.! "post.html") globalContext posts "out/"
