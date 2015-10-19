@@ -11,6 +11,7 @@ import           Data.Time.Clock (getCurrentTime, utctDay)
 import           System.Directory (doesFileExist, createDirectoryIfMissing, getDirectoryContents)
 import           System.FilePath ((</>), takeBaseName, takeDirectory, takeFileName)
 
+import           Minification (minifyHtml)
 import qualified Post as P
 import qualified Template as T
 
@@ -49,7 +50,7 @@ writePosts tmpl ctx posts outDir = foldM_ writePost 1 withRelated
         writePost i (post, related) = do
           let destFile = outDir </> (drop 1 $ P.url post) </> "index.html"
           let context  = M.unions [P.context post, P.relatedContext related, ctx]
-          let rendered = T.apply tmpl context
+          let rendered = minifyHtml $ T.apply tmpl context
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
           writeFile destFile rendered
