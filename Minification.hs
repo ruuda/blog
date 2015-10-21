@@ -84,6 +84,24 @@ stripAfterOpen prev tag = mapTextIf S.isTagOpen prev stripBegin tag
 stripBeforeClose :: Tag -> Maybe Tag -> Tag
 stripBeforeClose tag next = mapTextIf S.isTagClose next stripEnd tag
 
+-- Strips whitespace before an opening tag if the tag is not inline.
+stripBeforeOpen :: Tag -> Maybe Tag -> Tag
+stripBeforeOpen tag next = mapTextIf shouldStripBefore next stripEnd tag
+  where shouldStripBefore (S.TagOpen name _) = not $ isInline name
+        shouldStripBefore _ = False
+
+-- Strips whitespace after a closing tag if the tag is not inline.
+stripAfterClose :: Maybe Tag -> Tag -> Tag
+stripAfterClose prev tag = mapTextIf shouldStripAfter prev stripBegin tag
+  where shouldStripAfter (S.TagClose name) = not $ isInline name
+        shouldStripAfter _ = False
+
+-- Tests whether an element is inline. The list here is not exhaustive. The
+-- elements have been chosen such that significant whitespace is not removed
+-- from the html that I feed through the minifier (my rendered blog posts).
+isInline :: String -> Bool
+isInline t = t `elem` ["a", "acronym", "code", "em", "span", "strong", "time"]
+
 -- Removes comment tags and merges adjacent text tags.
 removeComments :: [Tag] -> [Tag]
 removeComments = merge . filter (not . isComment)
@@ -98,13 +116,15 @@ removeComments = merge . filter (not . isComment)
 --
 --  * After an opening tag.
 --  * Before a closing tag.
---  * Between the closing tag and opening tag of non-inline tags. (TODO)
+--  * Before the opening tag of a non-inline element.
+--  * After the closing tag of a non-inline element.
 --
 --  Consecutive whitespace is merged to a single whitespace character.
 --  Whitespace inside <pre> is left untouched.
 stripTags :: [Tag] -> [Tag]
 stripTags =
-  -- TODO: filter between tags.
+  (mapTagsPreviousExcept stripAfterClose) .
+  (mapTagsNextExcept stripBeforeOpen) .
   (mapTagsNextExcept stripBeforeClose) .
   (mapTagsPreviousExcept stripAfterOpen) .
   (mapTagsExcept $ mapText mergeWhitespace) .
