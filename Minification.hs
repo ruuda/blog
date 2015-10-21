@@ -84,7 +84,17 @@ stripAfterOpen prev tag = mapTextIf S.isTagOpen prev stripBegin tag
 stripBeforeClose :: Tag -> Maybe Tag -> Tag
 stripBeforeClose tag next = mapTextIf S.isTagClose next stripEnd tag
 
--- Removes excess whitespace. Whitespace is removed in the following places:
+-- Removes comment tags and merges adjacent text tags.
+removeComments :: [Tag] -> [Tag]
+removeComments = merge . filter (not . isComment)
+  where isComment (S.TagComment _) = True
+        isComment _                = False
+        merge (S.TagText u : S.TagText v : more) = merge $ (S.TagText $ u ++ v) : more
+        merge (tag : more) = tag : (merge more)
+        merge [] = []
+
+-- Removes excess whitespace and comments. Whitespace is removed in the
+-- following places:
 --
 --  * After an opening tag.
 --  * Before a closing tag.
@@ -94,11 +104,11 @@ stripBeforeClose tag next = mapTextIf S.isTagClose next stripEnd tag
 --  Whitespace inside <pre> is left untouched.
 stripTags :: [Tag] -> [Tag]
 stripTags =
-  -- TODO: filter comment tags.
   -- TODO: filter between tags.
   (mapTagsNextExcept stripBeforeClose) .
   (mapTagsPreviousExcept stripAfterOpen) .
-  (mapTagsExcept $ mapText mergeWhitespace)
+  (mapTagsExcept $ mapText mergeWhitespace) .
+  (removeComments)
 
 minifyHtml :: String -> String
 minifyHtml = S.renderTags . stripTags . S.parseTags
