@@ -1,6 +1,7 @@
 ---
 title: Encryption by default
 date: 2015-01-13
+synopsis: You should encrypt all of your internet traffic. I am helping by making my site available over https.
 ---
 
 In recent years, it has been revealed that tapping of internet traffic is happening at very large scales.

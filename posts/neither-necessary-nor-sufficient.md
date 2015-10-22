@@ -2,6 +2,7 @@
 title: Neither necessary nor sufficient
 date: 2015-10-06
 minutes: 5
+synopsis: A garbage collector is neither necessary nor sufficient because it does not solve the problem of resource management.
 ---
 
 A few days ago I stumbled upon a [blog post][when-rust-makes-sense]

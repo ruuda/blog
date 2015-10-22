@@ -2,6 +2,7 @@
 title: Fibonacci numbers in finite fields
 date: 2014-07-01
 math: true
+synopsis: With a bit of algebra, Fibonacci numbers can be computed efficiently using only integer arithmetic.
 ---
 
 A function that computes the $n$-th Fibonacci number

@@ -1,6 +1,7 @@
 ---
 title: Geomancer at Indigo
 date: 2012-09-23
+synopsis: One of the games that I worked on will be presented at Indigo 2012.
 ---
 
 During the past half year at [IGAD](http://made.nhtv.nl/),

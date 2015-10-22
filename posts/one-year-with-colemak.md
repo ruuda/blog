@@ -1,6 +1,7 @@
 ---
 title: One year with Colemak
 date: 2014-07-17
+synopsis: After typing in Colemak for a year I am still convinced that it was worth the switch.
 ---
 
 About a year ago I switched to [Colemak][colemak].

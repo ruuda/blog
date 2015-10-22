@@ -1,6 +1,7 @@
 ---
 title: Global Game Jam 2012
 date: 2012-01-30
+synopsis: During the Global Game Jam 2012 I made an award-winning game about a particle accelerator.
 ---
 
 Last weekend I participated in the [Global Game Jam](http://globalgamejam.org).

@@ -1,6 +1,7 @@
 ---
 title: Yaose is now free software
 date: 2011-11-14
+synopsis: I made my editor for Ogre script files available as free software.
 ---
 
 After a long time, in which I have had little time to work on Yaose,
