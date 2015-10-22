@@ -19,6 +19,7 @@ module Post ( Post
             , year ) where
 
 import qualified Data.Map as M
+import           Data.Maybe (fromMaybe)
 import           Data.Time.Format
 import           Data.Time.Calendar (Day, showGregorian, toGregorian)
 import           GHC.Exts (sortWith)
@@ -43,6 +44,7 @@ extractFrontMatter = parseFM M.empty . drop 1 . lines
 data Post = Post { title :: String
                  , date  :: Day
                  , slug  :: String
+                 , synopsis :: String
                  , body  :: String } deriving (Show) -- TODO: This is for debugging only, remove.
 
 -- Returns the post date, formatted like "17 April, 2015".
@@ -68,6 +70,7 @@ context p = fmap T.StringValue $ M.fromList [ ("title", title p)
                                             , ("short-date", shortDate p)
                                             , ("long-date", longDate p)
                                             , ("url", url p)
+                                            , ("synopsis", synopsis p)
                                             , ("content", body p) ]
 
 -- Given a slug and the contents of the post file (markdown with front matter),
@@ -77,6 +80,7 @@ parse slug contents = Post {
   title = frontMatter M.! "title",
   date  = parseTimeOrError True defaultTimeLocale "%F" (frontMatter M.! "date"),
   slug  = slug,
+  synopsis = fromMaybe "TODO: Write synopsis." (M.lookup "synopsis" frontMatter),
   body  = renderMarkdown bodyContents
 } where (frontMatter, bodyContents) = extractFrontMatter contents
 
