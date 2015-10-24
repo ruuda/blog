@@ -124,3 +124,15 @@ stripTags =
 
 minifyHtml :: String -> String
 minifyHtml = S.renderTags . stripTags . S.parseTags
+
+-- Determines for every character whether it is inside a /* */ comment.
+identifyComments :: String -> [Bool]
+identifyComments = identify False
+  where identify _ ('/' : '*' : more) = True : True : (identify True more)
+        identify _ ('*' : '/' : more) = True : True : (identify False more)
+        identify s (x : xs)           = s : (identify s xs)
+        identify _ []                 = []
+
+-- Removes /* */ comments.
+stripCssComments :: String -> String
+stripCssComments css = fmap fst $ filter (not . snd) $ zip css (identifyComments css)
