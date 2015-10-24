@@ -2,6 +2,7 @@
 title: Writing a path tracer in Rust, part 5: tonemapping
 header: Writing a path tracer in Rust
 subheader: Tonemapping
+part: 5
 date: 2014-08-24
 ---
 

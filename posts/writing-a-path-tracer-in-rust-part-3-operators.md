@@ -2,6 +2,7 @@
 title: Writing a path tracer in Rust, part 3: operators
 header: Writing a path tracer in Rust
 subheader: Operators
+part: 3
 date: 2014-08-15
 ---
 

@@ -2,6 +2,7 @@
 title: Writing a path tracer in Rust, part 4: tracing rays
 header: Writing a path tracer in Rust
 subheader: Tracing rays
+part: 4
 date: 2014-08-19
 ---
 

@@ -2,6 +2,7 @@
 title: Writing a path tracer in Rust, part 6: multithreading
 header: Writing a path tracer in Rust
 subheader: Multithreading
+part: 6
 date: 2014-09-15
 ---
 
