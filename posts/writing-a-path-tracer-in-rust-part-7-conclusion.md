@@ -1,5 +1,7 @@
 ---
 title: Writing a path tracer in Rust, part 7: conclusion
+header: Writing a path tracer in Rust
+subheader: Conclusion
 date: 2014-10-20
 ---
 
