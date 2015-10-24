@@ -9,17 +9,22 @@ import qualified Data.Map as M
 import           Data.Time.Calendar (toGregorian)
 import           Data.Time.Clock (getCurrentTime, utctDay)
 import           System.Directory (doesFileExist, createDirectoryIfMissing, getDirectoryContents)
-import           System.FilePath ((</>), takeBaseName, takeDirectory, takeFileName)
+import           System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeFileName)
 
 import           Minification (minifyHtml)
 import qualified Post as P
 import qualified Template as T
 
+-- Applies the IO-performing function f to every file in a given directory if
+-- the filename satisfies the predicate p.
+mapFilesIf :: (FilePath -> Bool) -> (FilePath -> IO a) -> FilePath -> IO [a]
+mapFilesIf p f dir = enumerateFiles >>= filterM doesFileExist >>= mapM f
+  -- Prepend the directory names to the names returned by getDirectoryContents.
+  where enumerateFiles = fmap (filter p . fmap (dir </>)) $ getDirectoryContents dir
+
 -- Applies the IO-performing function f to every file in a given directory.
 mapFiles :: (FilePath -> IO a) -> FilePath -> IO [a]
-mapFiles f dir = enumerateFiles >>= filterM doesFileExist >>= mapM f
-  -- Prepend the directory names to the names returned by getDirectoryContents.
-  where enumerateFiles = fmap (fmap (dir </>)) (getDirectoryContents dir)
+mapFiles = mapFilesIf $ \_ -> True
 
 -- Applies the IO-performing function f to every file in a given directory, and
 -- returns a map from the file name to the result.
@@ -38,7 +43,7 @@ readPost fname = fmap makePost $ readFile fname
 
 -- Reads and renders all posts in the given directory.
 readPosts :: FilePath -> IO [P.Post]
-readPosts = mapFiles readPost
+readPosts = mapFilesIf ((== ".md") . takeExtension) readPost
 
 -- Given the post template and the global context, expands the template for all
 -- of the posts and writes them to the output directory. This also prints a list
