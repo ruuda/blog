@@ -44,6 +44,7 @@ extractFrontMatter = parseFM M.empty . drop 1 . lines
 data Post = Post { title     :: String
                  , header    :: String
                  , subheader :: Maybe String
+                 , part      :: Maybe Int
                  , date      :: Day
                  , slug      :: String
                  , synopsis  :: String
@@ -66,6 +67,10 @@ url :: Post -> String
 url post = "/" ++ datePath ++ "/" ++ (slug post)
   where datePath = formatTime defaultTimeLocale "%Y/%m/%d" $ date post
 
+-- Converts an integer to a Roman numeral (nothing fancy, works for 1-9).
+toRoman :: Int -> String
+toRoman i = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"] !! (i - 1)
+
 -- Returns the template expansion context for the post.
 context :: Post -> T.Context
 context p = fmap T.StringValue ctx
@@ -77,7 +82,8 @@ context p = fmap T.StringValue ctx
                                , ("url", url p)
                                , ("synopsis", synopsis p)
                                , ("content", body p) ]
-        optFields = M.fromList [ ("subheader", subheader p) ]
+        optFields = M.fromList [ ("subheader", subheader p)
+                               , ("part", fmap toRoman $ part p) ]
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.
@@ -86,6 +92,7 @@ parse slug contents = Post {
   title     = frontMatter M.! "title",
   header    = fromMaybe (frontMatter M.! "title") $ M.lookup "header" frontMatter,
   subheader = M.lookup "subheader" frontMatter,
+  part      = fmap read $ M.lookup "part" frontMatter,
   date      = parseTimeOrError True defaultTimeLocale "%F" (frontMatter M.! "date"),
   slug      = slug,
   synopsis  = fromMaybe "TODO: Write synopsis." $ M.lookup "synopsis" frontMatter,
