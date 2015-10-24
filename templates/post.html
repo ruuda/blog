@@ -2,10 +2,10 @@
   <body>
     <article itemscope>
       <header>
-        <h1>{{title}}</h1> <!-- TODO: header (derive from title) -->
+        <h1>{{header}}</h1>
         {{if part}}<p class="part">Part {{part}}</p>{{end}}
-        {{if subtitle}}<h2>{{subtitle}}</h2>{{end}}
-        <p class="postinfo">
+        {{if subheader}}<h2>{{subheader}}</h2>{{end}}
+        <p>
           written by <span class="author">Ruud van Asseldonk</span><br>
           published <time datetime="{{short-date}}" itemprop="datePublished">{{long-date}}</time>
         </p>

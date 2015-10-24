@@ -41,11 +41,13 @@ extractFrontMatter = parseFM M.empty . drop 1 . lines
           where (key, delimValue) = break (== ':') line
                 value = drop 2 delimValue -- Drop the colon and space.
 
-data Post = Post { title :: String
-                 , date  :: Day
-                 , slug  :: String
-                 , synopsis :: String
-                 , body  :: String } deriving (Show) -- TODO: This is for debugging only, remove.
+data Post = Post { title     :: String
+                 , header    :: String
+                 , subheader :: Maybe String
+                 , date      :: Day
+                 , slug      :: String
+                 , synopsis  :: String
+                 , body      :: String } deriving (Show) -- TODO: This is for debugging only, remove.
 
 -- Returns the post date, formatted like "17 April, 2015".
 longDate :: Post -> String
@@ -66,22 +68,28 @@ url post = "/" ++ datePath ++ "/" ++ (slug post)
 
 -- Returns the template expansion context for the post.
 context :: Post -> T.Context
-context p = fmap T.StringValue $ M.fromList [ ("title", title p)
-                                            , ("short-date", shortDate p)
-                                            , ("long-date", longDate p)
-                                            , ("url", url p)
-                                            , ("synopsis", synopsis p)
-                                            , ("content", body p) ]
+context p = fmap T.StringValue ctx
+  where ctx       = M.union fields (M.mapMaybe id optFields)
+        fields    = M.fromList [ ("title", title p)
+                               , ("header", header p)
+                               , ("short-date", shortDate p)
+                               , ("long-date", longDate p)
+                               , ("url", url p)
+                               , ("synopsis", synopsis p)
+                               , ("content", body p) ]
+        optFields = M.fromList [ ("subheader", subheader p) ]
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.
 parse :: String -> String -> Post
 parse slug contents = Post {
-  title = frontMatter M.! "title",
-  date  = parseTimeOrError True defaultTimeLocale "%F" (frontMatter M.! "date"),
-  slug  = slug,
-  synopsis = fromMaybe "TODO: Write synopsis." (M.lookup "synopsis" frontMatter),
-  body  = renderMarkdown bodyContents
+  title     = frontMatter M.! "title",
+  header    = fromMaybe (frontMatter M.! "title") $ M.lookup "header" frontMatter,
+  subheader = M.lookup "subheader" frontMatter,
+  date      = parseTimeOrError True defaultTimeLocale "%F" (frontMatter M.! "date"),
+  slug      = slug,
+  synopsis  = fromMaybe "TODO: Write synopsis." $ M.lookup "synopsis" frontMatter,
+  body      = renderMarkdown bodyContents
 } where (frontMatter, bodyContents) = extractFrontMatter contents
 
 -- Renders markdown to html using Pandoc with my settings.
