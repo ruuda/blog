@@ -9,6 +9,8 @@ module Minification (minifyHtml) where
 import           Data.Char (isSpace)
 import qualified Text.HTML.TagSoup as S
 
+import           Html (Tag, insideTag)
+
 -- Removes the first character of a string if that character is whitespace
 stripBegin :: String -> String
 stripBegin []      = []
@@ -23,16 +25,6 @@ stripEnd = reverse . stripBegin . reverse
 mergeWhitespace :: String -> String
 mergeWhitespace str = fmap fst $ filter shouldKeep $ zip str $ (tail str) ++ "x"
   where shouldKeep (a, b) = not $ (isSpace a) && (isSpace b)
-
-type Tag = S.Tag String
-
--- Given a set of tag names and a list of tags, produces a list where the
--- elements are the current number of unclosed tags from the set.
-insideTag :: [String] -> [Tag] -> [Int]
-insideTag tagNames tags = scanl nestCount 0 tags
-  where nestCount n (S.TagOpen name _) | name `elem` tagNames = n + 1
-        nestCount n (S.TagClose name)  | name `elem` tagNames = n - 1
-        nestCount n _ = n
 
 -- Determines for every tag whether it is inside a tag that might have
 -- significant whitespace.
