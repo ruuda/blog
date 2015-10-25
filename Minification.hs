@@ -75,6 +75,13 @@ minifyCss = stripCssBefore . stripCssAfter . mergeWhitespace . stripCssComments
 insidePre :: [Tag] -> [Bool]
 insidePre = fmap (> 0) . insideTag ["pre"]
 
+-- Applies the function to tags inside elements of which the tag name is in the
+-- list.
+mapTagsInside :: [String] -> (Tag -> Tag) -> [Tag] -> [Tag]
+mapTagsInside tagNames f tags = fmap select $ zip isInside tags
+  where select (inTag, tag)   = if inTag then f tag else tag
+        isInside              = fmap (> 0) $ insideTag tagNames tags
+
 -- Applies a mapping function to the tags, except when a tag is inside a tag a
 -- tag that might have significant whitespace. The function `tmap` is a way to
 -- abstract over the mapping function, it should not alter the length of the
@@ -141,6 +148,10 @@ removeComments = merge . filter (not . isComment)
         merge (tag : more) = tag : (merge more)
         merge [] = []
 
+-- Minifies the contents of all <style> tags.
+minifyStyleTags :: [Tag] -> [Tag]
+minifyStyleTags = mapTagsInside ["style"] $ mapText minifyCss
+
 -- Removes excess whitespace and comments. Whitespace is removed in the
 -- following places:
 --
@@ -160,5 +171,7 @@ stripTags =
   (mapTagsExcept $ mapText mergeWhitespace) .
   (removeComments)
 
+-- Minifies html by removing excess whitespace and comments, and by minifying
+-- inline stylesheets.
 minifyHtml :: String -> String
-minifyHtml = S.renderTags . stripTags . S.parseTags
+minifyHtml = S.renderTags . minifyStyleTags . stripTags . S.parseTags
