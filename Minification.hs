@@ -4,7 +4,7 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-module Minification (minifyHtml) where
+module Minification (minifyCss, minifyHtml) where
 
 import           Data.Char (isSpace)
 import qualified Text.HTML.TagSoup as S
@@ -44,6 +44,12 @@ mapWithPrevious f xs = fmap (uncurry f) $ zip (Nothing : fmap Just xs) xs
 
 mapWithNext :: (a -> Maybe a -> b) -> [a] -> [b]
 mapWithNext f xs = fmap (uncurry f) $ zip xs ((tail $ fmap Just xs) ++ [Nothing])
+
+filterWithPrevious :: (Maybe a -> a -> Bool) -> [a] -> [a]
+filterWithPrevious f xs = fmap snd . filter (uncurry f) $ zip (Nothing : fmap Just xs) xs
+
+filterWithNext :: (a -> Maybe a -> Bool) -> [a] -> [a]
+filterWithNext f xs = fmap fst . filter (uncurry f) $ zip xs ((tail $ fmap Just xs) ++ [Nothing])
 
 -- Applies f to all tags except when the tag is inside a tag in `preTags`.
 mapTagsExcept :: (Tag -> Tag) -> [Tag] -> [Tag]
@@ -136,3 +142,23 @@ identifyComments = identify False
 -- Removes /* */ comments.
 stripCssComments :: String -> String
 stripCssComments css = fmap fst $ filter (not . snd) $ zip css (identifyComments css)
+
+-- Removes whitespace after a colon, semicolon, comma, or after curly brackets.
+stripCssAfter :: String -> String
+stripCssAfter = filterWithPrevious shouldKeep
+  where shouldKeep (Just p) c = not $ (isSpace c) && (p `elem` ",:;{}")
+        shouldKeep _ _        = True
+
+-- Removes whitespace before a curly bracket, and the last semicolon before a
+-- closing bracket.
+stripCssBefore :: String -> String
+stripCssBefore = filterWithNext shouldKeep
+  where shouldKeep s   (Just '{') = not $ isSpace s
+        shouldKeep ';' (Just '}') = False
+        shouldKeep _ _            = True
+
+-- A basic css minifier that merges and removes whitespace. The transformations
+-- it makes might not be correct (inside strings for example), but it works for
+-- the stylesheets that I use it on.
+minifyCss :: String -> String
+minifyCss = stripCssBefore . stripCssAfter . mergeWhitespace . stripCssComments
