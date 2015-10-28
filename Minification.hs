@@ -141,10 +141,8 @@ isInline t = t `elem` ["a", "acronym", "code", "em", "span", "strong", "time"]
 
 -- Removes comment tags and merges adjacent text tags.
 removeComments :: [Tag] -> [Tag]
-removeComments = merge . filter (not . isComment)
-  where isComment (S.TagComment _) = True
-        isComment _                = False
-        merge (S.TagText u : S.TagText v : more) = merge $ (S.TagText $ u ++ v) : more
+removeComments = merge . filter (not . S.isTagComment)
+  where merge (S.TagText u : S.TagText v : more) = merge $ (S.TagText $ u ++ v) : more
         merge (tag : more) = tag : (merge more)
         merge [] = []
 
