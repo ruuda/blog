@@ -4,10 +4,18 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-module Html (Tag, insideTag, renderTags) where
+module Html ( Tag
+            , getCode
+            , getEmText
+            , getStrongText
+            , insideTag
+            , renderTags
+            ) where
 
 -- This module contains utility functions for dealing with html.
 
+import           Control.Monad (join)
+import           Data.List (intersperse)
 import qualified Text.HTML.TagSoup as S
 
 type Tag = S.Tag String
@@ -27,7 +35,7 @@ escapeHtml = concatMap escape
 -- do not escape inside <style> tags in addition to the default <script> tags.
 renderOptions :: S.RenderOptions String
 renderOptions = S.RenderOptions escapeHtml minimize rawTag
-  where minimize tag = False -- Do not omit closin tags for empty tags.
+  where minimize tag = False -- Do not omit closing tags for empty tags.
         rawTag   tag = (tag == "script") || (tag == "style")
 
 -- Like Tagsoup's renderTags, but with the above options applied.
@@ -41,3 +49,22 @@ insideTag tagNames tags = scanl nestCount 0 tags
   where nestCount n (S.TagOpen name _) | name `elem` tagNames = n + 1
         nestCount n (S.TagClose name)  | name `elem` tagNames = n - 1
         nestCount n _ = n
+
+-- Returns the the text in all tags with the specified name.
+getTextInTag :: String -> String -> String
+getTextInTag name = join . intersperse " " . getText . filterInside . S.parseTags
+  where inside       tags = fmap (> 0) $ insideTag [name] tags
+        filterInside tags = fmap fst $ filter snd $ zip tags (inside tags)
+        getText           = fmap S.fromTagText . filter S.isTagText
+
+-- Extracts all text between <code> tags.
+getCode :: String -> String
+getCode = getTextInTag "code"
+
+-- Extracts all text between <em> tags.
+getEmText :: String -> String
+getEmText = getTextInTag "em"
+
+-- Extracts all text between <strong> tags.
+getStrongText :: String -> String
+getStrongText = getTextInTag "strong"
