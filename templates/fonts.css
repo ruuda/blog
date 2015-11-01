@@ -1,0 +1,11 @@
+/* For monospace I use the font Inconsolata, designed by Raph Levien,
+ * released under the SIL Open Font License. It is available from
+ * http://levien.com/type/myfonts/inconsolata.html. */
+
+{{if mono-font}}
+@font-face
+{
+  font-family: Inconsolata;
+  src: url(m.woff2) format("woff2"), url(m.woff) format("woff");
+}
+{{end}}

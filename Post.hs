@@ -26,6 +26,7 @@ import           GHC.Exts (sortWith)
 import           Text.Pandoc
 
 import qualified Template as T
+import qualified Font as F
 
 -- Front matter consists of key value pairs, both of type string.
 -- There is no fancy YAML here.
@@ -67,6 +68,10 @@ url :: Post -> String
 url post = "/" ++ datePath ++ "/" ++ (slug post)
   where datePath = formatTime defaultTimeLocale "%Y/%m/%d" $ date post
 
+-- Returns whether post has code in it that requires a monospace font.
+usesMonoFont :: Post -> Bool
+usesMonoFont = not . null . F.getCode . body
+
 -- Converts an integer to a Roman numeral (nothing fancy, works for 1-9).
 toRoman :: Int -> String
 toRoman i = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"] !! (i - 1)
@@ -83,7 +88,9 @@ context p = fmap T.StringValue ctx
                                , ("synopsis", synopsis p)
                                , ("content", body p) ]
         optFields = M.fromList [ ("subheader", subheader p)
-                               , ("part", fmap toRoman $ part p) ]
+                               , ("part", fmap toRoman $ part p)
+                               , ("mono-font", monoFontField) ]
+        monoFontField = if usesMonoFont p then Just "true" else Nothing
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.
