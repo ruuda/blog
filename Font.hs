@@ -4,10 +4,13 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-module Font (getCodeGlyphs) where
+module Font (SubsetCommand, getCodeGlyphs, subsetFonts) where
 
+import           Control.Monad (mapM)
 import           Data.Char (isAscii, isLetter)
 import qualified Data.Set as Set
+import           System.IO (hClose, hPutStrLn)
+import qualified System.Process as P
 
 import qualified Html
 
@@ -67,3 +70,23 @@ getGlyphName c = case c of
 -- all <code> tags in the string.
 getCodeGlyphs :: String -> [String]
 getCodeGlyphs = fmap getGlyphName . filter (/= '\n') . unique . Html.getCode
+
+-- A subset command is the source font filename, the destination basename, and
+-- the glyph names of the glyphs to subset.
+data SubsetCommand = SubsetCommand FilePath FilePath [String]
+
+subsetFonts :: [SubsetCommand] -> IO ()
+subsetFonts commands = do
+  (Just stdin, mstdout, mstderr, pid) <- P.createProcess subsetScript
+  mapM (pushCommand stdin) commands
+  hClose stdin
+  P.waitForProcess pid
+  return () -- Ignore the exit code.
+
+  -- The Python interpreter needs to have a pipe for stdin because we want to
+  -- write to it. TODO: ensure stdin is piped.
+  where subsetScript = P.proc "python3" ["fonts/subset.py"]
+        pushCommand stdin (SubsetCommand src dst glyphs) = do
+          hPutStrLn stdin src
+          hPutStrLn stdin dst
+          hPutStrLn stdin $ unwords glyphs
