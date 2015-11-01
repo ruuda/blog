@@ -50,10 +50,11 @@ identifyComments = identify False
 stripCssComments :: String -> String
 stripCssComments css = fmap fst $ filter (not . snd) $ zip css (identifyComments css)
 
--- Removes whitespace after a colon, semicolon, comma, or after curly brackets.
+-- Removes whitespace after a colon, semicolon, comma, curly brackets,
+-- or after parentheses.
 stripCssAfter :: String -> String
 stripCssAfter = filterWithPrevious shouldKeep
-  where shouldKeep (Just p) c = not $ (isSpace c) && (p `elem` ",:;{}")
+  where shouldKeep (Just p) c = not $ (isSpace c) && (p `elem` ",:;{}()")
         shouldKeep _ _        = True
 
 -- Removes whitespace before a curly bracket, and the last semicolon before a
