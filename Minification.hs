@@ -9,7 +9,7 @@ module Minification (minifyCss, minifyHtml) where
 import           Data.Char (isSpace)
 import qualified Text.HTML.TagSoup as S
 
-import           Html (Tag, insideTag)
+import           Html (Tag, insideTag, renderTags)
 
 -- Removes the first character of a string if that character is whitespace
 stripBegin :: String -> String
@@ -172,4 +172,4 @@ stripTags =
 -- Minifies html by removing excess whitespace and comments, and by minifying
 -- inline stylesheets.
 minifyHtml :: String -> String
-minifyHtml = S.renderTags . minifyStyleTags . stripTags . S.parseTags
+minifyHtml = renderTags . minifyStyleTags . stripTags . S.parseTags
