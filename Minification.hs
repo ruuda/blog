@@ -68,7 +68,9 @@ stripCssBefore = filterWithNext shouldKeep
 -- it makes might not be correct (inside strings for example), but it works for
 -- the stylesheets that I use it on.
 minifyCss :: String -> String
-minifyCss = stripCssBefore . stripCssAfter . mergeWhitespace . stripCssComments
+minifyCss = stripBegin . stripEnd
+          . stripCssBefore . stripCssAfter
+          . mergeWhitespace . stripCssComments
 
 -- Determines for every tag whether it is inside a tag that might have
 -- significant whitespace.
