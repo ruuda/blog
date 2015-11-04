@@ -4,12 +4,13 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-module Font (SubsetCommand, getCodeGlyphs, subsetFonts) where
+module Font (SubsetCommand, getCodeGlyphs, subsetArtifact, subsetFonts) where
 
 import           Control.Monad (mapM)
 import           Data.Char (isAscii, isLetter)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
+import           System.FilePath ((</>), takeDirectory)
 import qualified System.Process as P
 
 import qualified Html
@@ -73,7 +74,7 @@ getCodeGlyphs = fmap getGlyphName . filter (/= '\n') . unique . Html.getCode
 
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
-data SubsetCommand = SubsetCommand FilePath FilePath [String]
+data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
 
 subsetFonts :: [SubsetCommand] -> IO ()
 subsetFonts commands = do
@@ -90,3 +91,14 @@ subsetFonts commands = do
           hPutStrLn stdin src
           hPutStrLn stdin dst
           hPutStrLn stdin $ unwords glyphs
+
+-- Given an html filename and its contents, generates subset commands that will
+-- put the subsetted fonts in the same directory as the html file.
+-- TODO: How to handle the root page?
+subsetArtifact :: FilePath -> String -> [SubsetCommand]
+subsetArtifact fname html = filter isUseful commands
+  where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
+        baseName    = takeDirectory fname
+        monoGlyphs  = getCodeGlyphs html
+        monoCommand = SubsetCommand "fonts/inconsolata.otf" (baseName </> "mono") monoGlyphs
+        commands    = [monoCommand]

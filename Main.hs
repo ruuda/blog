@@ -11,6 +11,7 @@ import           Data.Time.Clock (getCurrentTime, utctDay)
 import           System.Directory (doesFileExist, createDirectoryIfMissing, getDirectoryContents)
 import           System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeFileName)
 
+import           Font (subsetArtifact, subsetFonts)
 import           Minification (minifyHtml)
 import qualified Post as P
 import qualified Template as T
@@ -56,10 +57,11 @@ writePosts tmpl ctx posts outDir = fmap snd $ foldM writePost (1, []) withRelate
   where total       = length posts
         withRelated = P.selectRelated posts
         writePost (i, artifacts) (post, related) = do
-          let destFile = outDir </> (drop 1 $ P.url post) </> "index.html"
+          let destName = outDir </> (drop 1 $ P.url post)
+          let destFile = destName </> "index.html"
           let context  = M.unions [P.context post, P.relatedContext related, ctx]
           let rendered = minifyHtml $ T.apply tmpl context
-          let artifact = (destFile, rendered)
+          let artifact = (destName, rendered)
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
           writeFile destFile rendered
@@ -79,4 +81,5 @@ main = do
 
   putStrLn "Writing posts..."
   artifacts <- writePosts (templates M.! "post.html") globalContext posts "out/"
-  return ()
+  putStrLn "Subsetting fonts..."
+  subsetFonts $ concatMap (uncurry subsetArtifact) artifacts
