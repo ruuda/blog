@@ -4,7 +4,7 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-import           Control.Monad (filterM, mapM, foldM_)
+import           Control.Monad (filterM, mapM, foldM)
 import qualified Data.Map as M
 import           Data.Time.Calendar (toGregorian)
 import           Data.Time.Clock (getCurrentTime, utctDay)
@@ -45,21 +45,25 @@ readPost fname = fmap makePost $ readFile fname
 readPosts :: FilePath -> IO [P.Post]
 readPosts = mapFilesIf ((== ".md") . takeExtension) readPost
 
+-- An artifact is the name of an html file plus its contents.
+type Artifact = (FilePath, String)
+
 -- Given the post template and the global context, expands the template for all
 -- of the posts and writes them to the output directory. This also prints a list
 -- of processed posts to the standard output.
-writePosts :: T.Template -> T.Context -> [P.Post] -> FilePath -> IO ()
-writePosts tmpl ctx posts outDir = foldM_ writePost 1 withRelated
+writePosts :: T.Template -> T.Context -> [P.Post] -> FilePath -> IO [Artifact]
+writePosts tmpl ctx posts outDir = fmap snd $ foldM writePost (1, []) withRelated
   where total       = length posts
         withRelated = P.selectRelated posts
-        writePost i (post, related) = do
+        writePost (i, artifacts) (post, related) = do
           let destFile = outDir </> (drop 1 $ P.url post) </> "index.html"
           let context  = M.unions [P.context post, P.relatedContext related, ctx]
           let rendered = minifyHtml $ T.apply tmpl context
+          let artifact = (destFile, rendered)
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
           writeFile destFile rendered
-          return $ i + 1
+          return $ (i + 1, artifact:artifacts)
 
 main :: IO ()
 main = do
@@ -74,4 +78,5 @@ main = do
       globalContext = M.union tctx yctx
 
   putStrLn "Writing posts..."
-  writePosts (templates M.! "post.html") globalContext posts "out/"
+  artifacts <- writePosts (templates M.! "post.html") globalContext posts "out/"
+  return ()
