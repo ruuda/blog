@@ -100,5 +100,5 @@ subsetArtifact fname html = filter isUseful commands
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
         baseName    = takeDirectory fname
         monoGlyphs  = getCodeGlyphs html
-        monoCommand = SubsetCommand "fonts/inconsolata.otf" (baseName </> "mono") monoGlyphs
+        monoCommand = SubsetCommand "fonts/inconsolata.otf" (baseName </> "m") monoGlyphs
         commands    = [monoCommand]
