@@ -78,15 +78,15 @@ data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
 
 subsetFonts :: [SubsetCommand] -> IO ()
 subsetFonts commands = do
-  (Just stdin, mstdout, mstderr, pid) <- P.createProcess subsetScript
+  (Just stdin, mstdout, mstderr, pid) <- P.createProcess subsetScriptPiped
   mapM (pushCommand stdin) commands
   hClose stdin
   P.waitForProcess pid
   return () -- Ignore the exit code.
-
-  -- The Python interpreter needs to have a pipe for stdin because we want to
-  -- write to it. TODO: ensure stdin is piped.
   where subsetScript = P.proc "python3" ["fonts/subset.py"]
+        -- The Python interpreter needs to have a pipe for stdin because we
+        -- want to write to it.
+        subsetScriptPiped = subsetScript { P.std_in = P.CreatePipe }
         pushCommand stdin (SubsetCommand src dst glyphs) = do
           hPutStrLn stdin src
           hPutStrLn stdin dst
