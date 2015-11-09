@@ -20,6 +20,7 @@ module Post ( Post
 
 import qualified Data.Map as M
 import           Data.Maybe (fromMaybe)
+import qualified Data.Set as S
 import           Data.Time.Format
 import           Data.Time.Calendar (Day, showGregorian, toGregorian)
 import           GHC.Exts (sortWith)
@@ -108,11 +109,16 @@ parse slug contents = Post {
 
 -- Renders markdown to html using Pandoc with my settings.
 renderMarkdown :: String -> String
-renderMarkdown md = case fmap (writeHtmlString wopt) (readCommonMark ropt md) of
+renderMarkdown md = case fmap (writeHtmlString wopt) (readMarkdown ropt md) of
   Right result -> result
   Left  _      -> "Failed to parse markdown."
-  where ropt = def -- TODO: set correct reader options.
-        wopt = def -- TODO: set correct writer options.
+  -- Enable inline LaTeX between dollars, and enable backtick code blocks.
+  -- For output, enable syntax highlighting of code and write math as MathML.
+  where ropt = def { readerExtensions     = S.insert Ext_tex_math_dollars $
+                                            S.insert Ext_backtick_code_blocks $
+                                            def }
+        wopt = def { writerHighlight      = True
+                   , writerHTMLMathMethod = MathML Nothing }
 
 -- Related content for a post, for the further reading section in the footer.
 data RelatedContent = Further Post

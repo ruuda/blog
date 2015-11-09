@@ -140,7 +140,7 @@ stripAfterClose prev tag = mapTextIf shouldStripAfter prev stripBegin tag
 -- elements have been chosen such that significant whitespace is not removed
 -- from the html that I feed through the minifier (my rendered blog posts).
 isInline :: String -> Bool
-isInline t = t `elem` ["a", "acronym", "code", "em", "span", "strong", "time"]
+isInline t = t `elem` ["a", "acronym", "code", "em", "math", "span", "strong", "time"]
 
 -- Removes comment tags and merges adjacent text tags.
 removeComments :: [Tag] -> [Tag]
