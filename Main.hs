@@ -46,8 +46,11 @@ readPost fname = fmap makePost $ readFile fname
 readPosts :: FilePath -> IO [P.Post]
 readPosts = mapFilesIf ((== ".md") . takeExtension) readPost
 
--- An artifact is the name of an html file plus its contents.
-type Artifact = (FilePath, String)
+-- An artifact is a numbered post plus its html contents.
+type Artifact = (Int, String)
+
+pageIdContext :: Int -> T.Context
+pageIdContext i = M.singleton "page-id" (T.StringValue $ show i)
 
 -- Given the post template and the global context, expands the template for all
 -- of the posts and writes them to the output directory. This also prints a list
@@ -57,11 +60,13 @@ writePosts tmpl ctx posts outDir = fmap snd $ foldM writePost (1, []) withRelate
   where total       = length posts
         withRelated = P.selectRelated posts
         writePost (i, artifacts) (post, related) = do
-          let destName = outDir </> (drop 1 $ P.url post)
-          let destFile = destName </> "index.html"
-          let context  = M.unions [P.context post, P.relatedContext related, ctx]
-          let rendered = minifyHtml $ T.apply tmpl context
-          let artifact = (destName, rendered)
+          let destFile = outDir </> (drop 1 $ P.url post) </> "index.html"
+              context  = M.unions [ P.context post
+                                  , P.relatedContext related
+                                  , pageIdContext i
+                                  , ctx]
+              rendered = minifyHtml $ T.apply tmpl context
+              artifact = (i, rendered)
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
           writeFile destFile rendered
@@ -81,5 +86,3 @@ main = do
 
   putStrLn "Writing posts..."
   artifacts <- writePosts (templates M.! "post.html") globalContext posts "out/"
-  putStrLn "Subsetting fonts..."
-  subsetFonts $ concatMap (uncurry subsetArtifact) artifacts
