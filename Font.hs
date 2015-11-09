@@ -10,7 +10,6 @@ import           Control.Monad (mapM)
 import           Data.Char (isAscii, isLetter)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
-import           System.FilePath ((</>), takeDirectory)
 import qualified System.Process as P
 
 import qualified Html
@@ -92,13 +91,16 @@ subsetFonts commands = do
           hPutStrLn stdin dst
           hPutStrLn stdin $ unwords glyphs
 
--- Given an html filename and its contents, generates subset commands that will
--- put the subsetted fonts in the same directory as the html file.
--- TODO: How to handle the root page?
+-- Given font file basename and html contents, generates subset commands that
+-- will output subsetted fonts with the given basename, and a suffix:
+--
+--  * "m" for monospace. (Subset of Inconsolata.)
+--  * TODO: subset others too.
+--
+--  Both a woff and woff2 file will be written.
 subsetArtifact :: FilePath -> String -> [SubsetCommand]
-subsetArtifact fname html = filter isUseful commands
+subsetArtifact baseName html = filter isUseful commands
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
-        baseName    = takeDirectory fname
         monoGlyphs  = getCodeGlyphs html
-        monoCommand = SubsetCommand "fonts/inconsolata.otf" (baseName </> "m") monoGlyphs
+        monoCommand = SubsetCommand "fonts/inconsolata.otf" (baseName ++ "m") monoGlyphs
         commands    = [monoCommand]

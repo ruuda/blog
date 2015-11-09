@@ -6,6 +6,7 @@
 @font-face
 {
   font-family: Inconsolata;
-  src: url(m.woff2) format("woff2"), url(m.woff) format("woff");
+  src: url(/fonts/{{page-id}}m.woff2) format("woff2"),
+       url(/fonts/{{page-id}}m.woff)  format("woff");
 }
 {{end}}

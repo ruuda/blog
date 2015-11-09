@@ -72,6 +72,17 @@ writePosts tmpl ctx posts outDir = fmap snd $ foldM writePost (1, []) withRelate
           writeFile destFile rendered
           return $ (i + 1, artifact:artifacts)
 
+mapFst :: (a -> b) -> (a, c) -> (b, c)
+mapFst f (x, y) = (f x, y)
+
+-- Subsets fonts for every post, putting subsetted fonts in the specified
+-- directory with a name based on the post number and a font-specific suffix.
+subsetFontsForArtifacts :: [Artifact] -> FilePath -> IO ()
+subsetFontsForArtifacts artifacts fontDir = do
+  createDirectoryIfMissing True fontDir
+  subsetFonts $ concatMap (uncurry subsetArtifact) namedArtifacts
+  where namedArtifacts = fmap (mapFst $ \i -> fontDir ++ (show i)) artifacts
+
 main :: IO ()
 main = do
   templates <- readTemplates "templates/"
@@ -86,3 +97,6 @@ main = do
 
   putStrLn "Writing posts..."
   artifacts <- writePosts (templates M.! "post.html") globalContext posts "out/"
+
+  putStrLn "Subsetting fonts..."
+  subsetFontsForArtifacts artifacts "out/fonts/"
