@@ -93,15 +93,15 @@ applyTagsExcept :: ([Tag] -> [Tag]) -> [Tag] -> [Tag]
 applyTagsExcept tmap tags = fmap select $ zip3 (insidePre tags) tags (tmap tags)
   where select (inPre, orig, mapped) = if inPre then orig else mapped
 
--- Applies f to all tags except when the tag is inside a tag in `preTags`.
+-- Applies f to all tags except when the tag is inside a <pre> tag.
 mapTagsExcept :: (Tag -> Tag) -> [Tag] -> [Tag]
 mapTagsExcept f = applyTagsExcept $ fmap f
 
--- Applies f to all tags and their predecessors, except inside a tag in `preTags`.
+-- Applies f to all tags and their predecessors, except inside a <pre> tag.
 mapTagsPreviousExcept :: (Maybe Tag -> Tag -> Tag) -> [Tag] -> [Tag]
 mapTagsPreviousExcept f = applyTagsExcept $ mapWithPrevious f
 
--- Applies f to all tags and their successors, except inside a tag in `preTags`.
+-- Applies f to all tags and their successors, except inside a <pre> tag.
 mapTagsNextExcept :: (Tag -> Maybe Tag -> Tag) -> [Tag] -> [Tag]
 mapTagsNextExcept f = applyTagsExcept $ mapWithNext f
 
