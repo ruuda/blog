@@ -16,6 +16,7 @@ module Html ( Tag
 
 import           Control.Monad (join)
 import           Data.List (intersperse)
+import qualified Data.Map as M
 import qualified Text.HTML.TagSoup as S
 
 type Tag = S.Tag String
@@ -41,6 +42,52 @@ renderOptions = S.RenderOptions escapeHtml minimize rawTag
 -- Like Tagsoup's renderTags, but with the above options applied.
 renderTags :: [Tag] -> String
 renderTags = S.renderTagsOptions renderOptions
+
+-- Various classifications for tags: inside body, inside code, etc.
+data TagClass = Code | Em | Pre | Strong | Other deriving (Eq, Ord)
+
+tagClassFromString :: String -> TagClass
+tagClassFromString str = case str of
+  "code"   -> Code
+  "em"     -> Em
+  "pre"    -> Pre
+  "strong" -> Strong
+  _        -> Other
+
+-- Used to count how much unclosed opening tags were encountered.
+type TagDepth = M.Map TagClass Int
+
+zeroDepth :: TagDepth
+zeroDepth = M.fromList [ (Code, 0)
+                       , (Em, 0)
+                       , (Pre, 0)
+                       , (Strong, 0)
+                       , (Other, 0) ]
+
+updateTagDepth :: TagDepth -> Tag -> TagDepth
+updateTagDepth td tag = case tag of
+  S.TagOpen  name _ -> M.adjust (\d -> d + 1) (tagClassFromString name) td
+  S.TagClose name   -> M.adjust (\d -> d - 1) (tagClassFromString name) td
+  _                 -> td
+
+-- Determines for every tag the nesting level of tag classifications.
+tagDepths :: [Tag] -> [TagDepth]
+tagDepths = scanl updateTagDepth zeroDepth
+
+data TagProperties = TagProperties { isCode   :: Bool
+                                   , isEm     :: Bool
+                                   , isPre    :: Bool
+                                   , isStrong :: Bool }
+
+getProperties :: TagDepth -> TagProperties
+getProperties td = TagProperties { isCode   = (td M.! Code)   > 0
+                                 , isEm     = (td M.! Em)     > 0
+                                 , isPre    = (td M.! Pre)    > 0
+                                 , isStrong = (td M.! Strong) > 0 }
+
+-- Given a list of tags, classifies them as "inside code", "inside em", etc.
+classifyTags :: [Tag] -> [(Tag, TagProperties)]
+classifyTags tags = zip tags $ fmap getProperties $ tagDepths tags
 
 -- Given a set of tag names and a list of tags, produces a list where the
 -- elements are the current number of unclosed tags from the set.
