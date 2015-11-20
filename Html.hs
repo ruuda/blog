@@ -5,10 +5,15 @@
 -- the licence file in the root of the repository.
 
 module Html ( Tag
+            , classifyTags
             , getCode
             , getEmText
             , getStrongText
             , insideTag
+            , isCode
+            , isEm
+            , isPre
+            , isStrong
             , renderTags
             ) where
 
@@ -97,21 +102,20 @@ insideTag tagNames tags = scanl nestCount 0 tags
         nestCount n (S.TagClose name)  | name `elem` tagNames = n - 1
         nestCount n _ = n
 
--- Returns the the text in all tags with the specified name.
-getTextInTag :: String -> String -> String
-getTextInTag name = join . intersperse " " . getText . filterInside . S.parseTags
-  where inside       tags = fmap (> 0) $ insideTag [name] tags
-        filterInside tags = fmap fst $ filter snd $ zip tags (inside tags)
-        getText           = fmap S.fromTagText . filter S.isTagText
+-- Returns the the text in all tags that satisfy the selector.
+getTextInTag :: (TagProperties -> Bool) -> String -> String
+getTextInTag selector = join . intersperse " " . getText . filterInside . S.parseTags
+  where filterInside  = fmap fst . filter (selector . snd) . classifyTags
+        getText       = fmap S.fromTagText . filter S.isTagText
 
 -- Extracts all text between <code> tags.
 getCode :: String -> String
-getCode = getTextInTag "code"
+getCode = getTextInTag isCode
 
 -- Extracts all text between <em> tags.
 getEmText :: String -> String
-getEmText = getTextInTag "em"
+getEmText = getTextInTag isEm
 
 -- Extracts all text between <strong> tags.
 getStrongText :: String -> String
-getStrongText = getTextInTag "strong"
+getStrongText = getTextInTag isStrong
