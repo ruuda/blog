@@ -6,6 +6,7 @@
 
 module Html ( Tag
             , classifyTags
+            , filterTags
             , getCode
             , getEmText
             , getStrongText
@@ -16,6 +17,7 @@ module Html ( Tag
             , isScript
             , isStrong
             , isStyle
+            , mapTagsWhere
             , renderTags
             ) where
 
@@ -118,11 +120,19 @@ insideTag tagNames tags = scanl nestCount 0 tags
         nestCount n (S.TagClose name)  | name `elem` tagNames = n - 1
         nestCount n _ = n
 
+-- Discards tags for which the predicate returns false.
+filterTags :: (TagProperties -> Bool) -> [Tag] -> [Tag]
+filterTags predicate = fmap fst . filter (predicate . snd) . classifyTags
+
+-- Applies the function f to all tags for which p returns true.
+mapTagsWhere :: (TagProperties -> Bool) -> (Tag -> Tag) -> [Tag] -> [Tag]
+mapTagsWhere p f = fmap select . classifyTags
+  where select (tag, properties) = if p properties then f tag else tag
+
 -- Returns the the text in all tags that satisfy the selector.
 getTextInTag :: (TagProperties -> Bool) -> String -> String
-getTextInTag selector = join . intersperse " " . getText . filterInside . S.parseTags
-  where filterInside  = fmap fst . filter (selector . snd) . classifyTags
-        getText       = fmap S.fromTagText . filter S.isTagText
+getTextInTag p  = join . intersperse " " . getText . (filterTags p) . S.parseTags
+  where getText = fmap S.fromTagText . filter S.isTagText
 
 -- Extracts all text between <code> tags.
 getCode :: String -> String

@@ -9,7 +9,9 @@ module Minification (minifyCss, minifyHtml) where
 import           Data.Char (isSpace)
 import qualified Text.HTML.TagSoup as S
 
-import           Html (Tag, insideTag, renderTags)
+import qualified Html
+
+type Tag = Html.Tag
 
 -- Removes the first character of a string if that character is whitespace
 stripBegin :: String -> String
@@ -76,14 +78,7 @@ minifyCss = stripBegin . stripEnd
 -- Determines for every tag whether it is inside a tag that might have
 -- significant whitespace.
 insidePre :: [Tag] -> [Bool]
-insidePre = fmap (> 0) . insideTag ["pre"]
-
--- Applies the function to tags inside elements of which the tag name is in the
--- list.
-mapTagsInside :: [String] -> (Tag -> Tag) -> [Tag] -> [Tag]
-mapTagsInside tagNames f tags = fmap select $ zip isInside tags
-  where select (inTag, tag)   = if inTag then f tag else tag
-        isInside              = fmap (> 0) $ insideTag tagNames tags
+insidePre = fmap (> 0) . Html.insideTag ["pre"]
 
 -- Applies a mapping function to the tags, except when a tag is inside a tag a
 -- tag that might have significant whitespace. The function `tmap` is a way to
@@ -151,7 +146,7 @@ removeComments = merge . filter (not . S.isTagComment)
 
 -- Minifies the contents of all <style> tags.
 minifyStyleTags :: [Tag] -> [Tag]
-minifyStyleTags = mapTagsInside ["style"] $ mapText minifyCss
+minifyStyleTags = Html.mapTagsWhere Html.isStyle $ mapText minifyCss
 
 -- Removes excess whitespace and comments. Whitespace is removed in the
 -- following places:
@@ -175,4 +170,4 @@ stripTags =
 -- Minifies html by removing excess whitespace and comments, and by minifying
 -- inline stylesheets.
 minifyHtml :: String -> String
-minifyHtml = renderTags . minifyStyleTags . stripTags . S.parseTags
+minifyHtml = Html.renderTags . minifyStyleTags . stripTags . S.parseTags
