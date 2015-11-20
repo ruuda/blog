@@ -13,7 +13,9 @@ module Html ( Tag
             , isCode
             , isEm
             , isPre
+            , isScript
             , isStrong
+            , isStyle
             , renderTags
             ) where
 
@@ -49,13 +51,21 @@ renderTags :: [Tag] -> String
 renderTags = S.renderTagsOptions renderOptions
 
 -- Various classifications for tags: inside body, inside code, etc.
-data TagClass = Code | Em | Pre | Strong | Other deriving (Eq, Ord)
+data TagClass = Code
+              | Em
+              | Pre
+              | Script
+              | Style
+              | Strong
+              | Other deriving (Eq, Ord)
 
 tagClassFromString :: String -> TagClass
 tagClassFromString str = case str of
   "code"   -> Code
   "em"     -> Em
   "pre"    -> Pre
+  "script" -> Script
+  "style"  -> Style
   "strong" -> Strong
   _        -> Other
 
@@ -63,11 +73,13 @@ tagClassFromString str = case str of
 type TagDepth = M.Map TagClass Int
 
 zeroDepth :: TagDepth
-zeroDepth = M.fromList [ (Code, 0)
-                       , (Em, 0)
-                       , (Pre, 0)
+zeroDepth = M.fromList [ (Code,   0)
+                       , (Em,     0)
+                       , (Pre,    0)
+                       , (Script, 0)
+                       , (Style,  0)
                        , (Strong, 0)
-                       , (Other, 0) ]
+                       , (Other,  0) ]
 
 updateTagDepth :: TagDepth -> Tag -> TagDepth
 updateTagDepth td tag = case tag of
@@ -82,12 +94,16 @@ tagDepths = scanl updateTagDepth zeroDepth
 data TagProperties = TagProperties { isCode   :: Bool
                                    , isEm     :: Bool
                                    , isPre    :: Bool
+                                   , isScript :: Bool
+                                   , isStyle  :: Bool
                                    , isStrong :: Bool }
 
 getProperties :: TagDepth -> TagProperties
 getProperties td = TagProperties { isCode   = (td M.! Code)   > 0
                                  , isEm     = (td M.! Em)     > 0
                                  , isPre    = (td M.! Pre)    > 0
+                                 , isScript = (td M.! Script) > 0
+                                 , isStyle  = (td M.! Style)  > 0
                                  , isStrong = (td M.! Strong) > 0 }
 
 -- Given a list of tags, classifies them as "inside code", "inside em", etc.
