@@ -84,16 +84,57 @@ getGlyphName c = case c of
   '‘' -> "quoteleft"
   '’' -> "quoteright"
 
+-- Given a piece of text, returns the glyph names of the ligatures required to
+-- typeset the text.
+getLigatures :: String -> [String]
+getLigatures = buildList []
+  where buildList glyphs str =
+          let liga more ligaName = buildList (ligaName : glyphs) more in
+          case str of
+            -- In general, the postscript glyph name of a ligature is made up
+            -- of the letters separated by underscores. However, ff, fi, and
+            -- fl are an exception to this rule.
+            []             -> glyphs
+            'f':'f':'b':xs -> liga xs "f_f_b"
+            'f':'f':'h':xs -> liga xs "f_f_h"
+            'f':'f':'i':xs -> liga xs "f_f_i"
+            'f':'f':'j':xs -> liga xs "f_f_j"
+            'f':'f':'k':xs -> liga xs "f_f_k"
+            'f':'f':'l':xs -> liga xs "f_f_l"
+            'f':'b':xs     -> liga xs "f_b"
+            'f':'f':xs     -> liga xs "ff"
+            'f':'h':xs     -> liga xs "f_h"
+            'f':'i':xs     -> liga xs "fi"
+            'f':'j':xs     -> liga xs "f_j"
+            'f':'k':xs     -> liga xs "f_k"
+            'f':'l':xs     -> liga xs "fl"
+            _ : xs         -> buildList glyphs xs
+
+data IncludeLigatures = NoLigatures
+                      | WithLigatures
+                      | WithDiscretionaryLigatures
+
+-- Given a piece of text, returns a list of postscript glyph names required to
+-- typeset the text.
+getGlyphs :: IncludeLigatures -> String -> [String]
+getGlyphs ligatures str = case ligatures of
+  NoLigatures                -> glyphs
+  WithLigatures              -> glyphs ++ ligaGlyphs
+  WithDiscretionaryLigatures -> glyphs ++ ligaGlyphs ++ dligGlyphs
+  where
+    glyphs     = fmap getGlyphName $ filter (/= '\n') $ unique str
+    ligaGlyphs = unique $ getLigatures str
+    dligGlyphs = [] -- TODO: extract discretionary ligatures
+
 -- Returns a list of postscript glyph names required to typeset the content of
 -- all <code> tags in the string.
 getCodeGlyphs :: String -> [String]
-getCodeGlyphs = fmap getGlyphName . filter (/= '\n') . unique . getCode
+getCodeGlyphs = getGlyphs NoLigatures . getCode
 
 -- Returns a list of postscript glyph names required to typeset the content of
 -- all italic text in a post. (The text between <em> tags.)
--- TODO: Take ligatures into account.
 getItalicGlyphs :: String -> [String]
-getItalicGlyphs = fmap getGlyphName . filter (/= '\n') . unique . getEmText
+getItalicGlyphs = getGlyphs WithLigatures . getEmText
 
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.

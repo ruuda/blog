@@ -1,3 +1,12 @@
+*
+{
+  /* Firefox applies ligatures automatically when they are available, but Chrome
+   * needs to be told explicitly. Note: Blink will drop the -webkit prefix soon.
+   * See https://crbug.com/537293. */
+  -webkit-font-feature-settings: 'liga';
+  font-feature-settings: 'liga';
+}
+
 code
 {
   font-family: Inconsolata, Consolas, monospace;
