@@ -75,30 +75,21 @@ minifyCss = stripBegin . stripEnd
           . stripCssBefore . stripCssAfter
           . mergeWhitespace . stripCssComments
 
--- Determines for every tag whether it is inside a tag that might have
--- significant whitespace.
-insidePre :: [Tag] -> [Bool]
-insidePre = fmap (> 0) . Html.insideTag ["pre"]
-
--- Applies a mapping function to the tags, except when a tag is inside a tag a
--- tag that might have significant whitespace. The function `tmap` is a way to
--- abstract over the mapping function, it should not alter the length of the
--- list.
-applyTagsExcept :: ([Tag] -> [Tag]) -> [Tag] -> [Tag]
-applyTagsExcept tmap tags = fmap select $ zip3 (insidePre tags) tags (tmap tags)
-  where select (inPre, orig, mapped) = if inPre then orig else mapped
+-- Applies f to all tags except when the tag is inside a <pre> tag.
+applyTagsExceptPre :: ([Tag] -> [Tag]) -> [Tag] -> [Tag]
+applyTagsExceptPre = Html.applyTagsWhere (not . Html.isPre)
 
 -- Applies f to all tags except when the tag is inside a <pre> tag.
-mapTagsExcept :: (Tag -> Tag) -> [Tag] -> [Tag]
-mapTagsExcept f = applyTagsExcept $ fmap f
+mapTagsExceptPre :: (Tag -> Tag) -> [Tag] -> [Tag]
+mapTagsExceptPre = Html.mapTagsWhere (not . Html.isPre)
 
 -- Applies f to all tags and their predecessors, except inside a <pre> tag.
-mapTagsPreviousExcept :: (Maybe Tag -> Tag -> Tag) -> [Tag] -> [Tag]
-mapTagsPreviousExcept f = applyTagsExcept $ mapWithPrevious f
+mapTagsPreviousExceptPre :: (Maybe Tag -> Tag -> Tag) -> [Tag] -> [Tag]
+mapTagsPreviousExceptPre f = applyTagsExceptPre $ mapWithPrevious f
 
 -- Applies f to all tags and their successors, except inside a <pre> tag.
-mapTagsNextExcept :: (Tag -> Maybe Tag -> Tag) -> [Tag] -> [Tag]
-mapTagsNextExcept f = applyTagsExcept $ mapWithNext f
+mapTagsNextExceptPre :: (Tag -> Maybe Tag -> Tag) -> [Tag] -> [Tag]
+mapTagsNextExceptPre f = applyTagsExceptPre $ mapWithNext f
 
 -- Applies a function to the text of a text tag.
 mapText :: (String -> String) -> Tag -> Tag
@@ -160,11 +151,11 @@ minifyStyleTags = Html.mapTagsWhere Html.isStyle $ mapText minifyCss
 --  Whitespace inside <pre> is left untouched.
 stripTags :: [Tag] -> [Tag]
 stripTags =
-  (mapTagsPreviousExcept stripAfterClose) .
-  (mapTagsNextExcept stripBeforeOpen) .
-  (mapTagsNextExcept stripBeforeClose) .
-  (mapTagsPreviousExcept stripAfterOpen) .
-  (mapTagsExcept $ mapText mergeWhitespace) .
+  (mapTagsPreviousExceptPre stripAfterClose) .
+  (mapTagsNextExceptPre stripBeforeOpen) .
+  (mapTagsNextExceptPre stripBeforeClose) .
+  (mapTagsPreviousExceptPre stripAfterOpen) .
+  (mapTagsExceptPre $ mapText mergeWhitespace) .
   (removeComments)
 
 -- Minifies html by removing excess whitespace and comments, and by minifying

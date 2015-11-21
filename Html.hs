@@ -5,12 +5,12 @@
 -- the licence file in the root of the repository.
 
 module Html ( Tag
+            , applyTagsWhere
             , classifyTags
             , filterTags
             , getCode
             , getEmText
             , getStrongText
-            , insideTag
             , isCode
             , isEm
             , isPre
@@ -112,22 +112,20 @@ getProperties td = TagProperties { isCode   = (td M.! Code)   > 0
 classifyTags :: [Tag] -> [(Tag, TagProperties)]
 classifyTags tags = zip tags $ fmap getProperties $ tagDepths tags
 
--- Given a set of tag names and a list of tags, produces a list where the
--- elements are the current number of unclosed tags from the set.
-insideTag :: [String] -> [Tag] -> [Int]
-insideTag tagNames tags = scanl nestCount 0 tags
-  where nestCount n (S.TagOpen name _) | name `elem` tagNames = n + 1
-        nestCount n (S.TagClose name)  | name `elem` tagNames = n - 1
-        nestCount n _ = n
-
 -- Discards tags for which the predicate returns false.
 filterTags :: (TagProperties -> Bool) -> [Tag] -> [Tag]
 filterTags predicate = fmap fst . filter (predicate . snd) . classifyTags
 
+-- Applies a mapping function to the tags when the predicate p returns true for
+-- that tag. The function tmap is a way to abstract over the mapping function,
+-- it should not alter the length of the list.
+applyTagsWhere :: (TagProperties -> Bool) -> ([Tag] -> [Tag]) -> [Tag] -> [Tag]
+applyTagsWhere p tmap tags = fmap select $ zip (classifyTags tags) (tmap tags)
+  where select ((orig, props), mapped) = if p props then mapped else orig
+
 -- Applies the function f to all tags for which p returns true.
 mapTagsWhere :: (TagProperties -> Bool) -> (Tag -> Tag) -> [Tag] -> [Tag]
-mapTagsWhere p f = fmap select . classifyTags
-  where select (tag, properties) = if p properties then f tag else tag
+mapTagsWhere p f = applyTagsWhere p (fmap f)
 
 -- Returns the the text in all tags that satisfy the selector.
 getTextInTag :: (TagProperties -> Bool) -> String -> String
