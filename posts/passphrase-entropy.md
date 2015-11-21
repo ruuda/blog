@@ -27,7 +27,7 @@ that much work. Entropy is a desirable property of cryptographic keys.
 The power of encryption lies in the large keyspace (the set of possible
 keys). Probably the most common algorithm nowadays is Rijndael with a 256-bit key.
 Brute-forcing a 256-bit key is simply
-[infeasable](http://crypto.stackexchange.com/questions/1145/how-much-would-it-cost-in-u-s-dollars-to-brute-force-a-256-bit-key-in-a-year),
+[infeasible](http://crypto.stackexchange.com/questions/1145/how-much-would-it-cost-in-u-s-dollars-to-brute-force-a-256-bit-key-in-a-year),
 so a 256-bit key can be considered secure. However, this is
 only true if the key is random -- that is, if the key
 has 256 bits of entropy.
@@ -54,7 +54,7 @@ As suggested by [xkcd](https://xkcd.com/936/), one can use a combination
 of four common words to make up a 'strong' passphrase. The comic assumes
 entropy of eleven bits per word, resulting in 44 bits of entropy
 for the entire passphrase. To see how this number is derived,
-we must adjust our view on the brute-force attack. As it is infeasable
+we must adjust our view on the brute-force attack. As it is infeasible
 to brute-force all 2<sup>256</sup> keys, a different strategy is required.
 If we assume that all passphrases are combinations of four words,
 then we can simply try all possible combinations of four words as a
