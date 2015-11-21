@@ -89,6 +89,12 @@ getGlyphName c = case c of
 getCodeGlyphs :: String -> [String]
 getCodeGlyphs = fmap getGlyphName . filter (/= '\n') . unique . getCode
 
+-- Returns a list of postscript glyph names required to typeset the content of
+-- all italic text in a post. (The text between <em> tags.)
+-- TODO: Take ligatures into account.
+getItalicGlyphs :: String -> [String]
+getItalicGlyphs = fmap getGlyphName . filter (/= '\n') . unique . getEmText
+
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
 data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
@@ -113,12 +119,15 @@ subsetFonts commands = do
 -- will output subsetted fonts with the given basename, and a suffix:
 --
 --  * "m" for monospace. (Subset of Inconsolata.)
+--  * "i" for italic. (Subset of Calluna Sans.)
 --  * TODO: subset others too.
 --
 --  Both a woff and woff2 file will be written.
 subsetArtifact :: FilePath -> String -> [SubsetCommand]
 subsetArtifact baseName html = filter isUseful commands
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
-        monoGlyphs  = getCodeGlyphs html
-        monoCommand = SubsetCommand "fonts/inconsolata.otf" (baseName ++ "m") monoGlyphs
-        commands    = [monoCommand]
+        italicGlyphs  = getItalicGlyphs html
+        monoGlyphs    = getCodeGlyphs html
+        italicCommand = SubsetCommand "fonts/calluna-sans-italic.otf" (baseName ++ "i") italicGlyphs
+        monoCommand   = SubsetCommand "fonts/inconsolata.otf" (baseName ++ "m") monoGlyphs
+        commands      = [italicCommand, monoCommand]
