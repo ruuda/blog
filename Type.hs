@@ -4,7 +4,13 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-module Font (SubsetCommand, getCodeGlyphs, subsetArtifact, subsetFonts) where
+module Type ( SubsetCommand
+            , getCode
+            , getEmText
+            , getStrongText
+            , subsetArtifact
+            , subsetFonts
+            ) where
 
 import           Control.Monad (mapM)
 import           Data.Char (isAscii, isLetter)
@@ -16,6 +22,18 @@ import qualified Html
 
 unique :: Ord a => [a] -> [a]
 unique = Set.toList . Set.fromList
+
+-- Extracts all text between <code> tags.
+getCode :: String -> String
+getCode = Html.getTextInTag Html.isCode
+
+-- Extracts all text between <em> tags.
+getEmText :: String -> String
+getEmText = Html.getTextInTag Html.isEm
+
+-- Extracts all text between <strong> tags.
+getStrongText :: String -> String
+getStrongText = Html.getTextInTag Html.isStrong
 
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String
@@ -69,7 +87,7 @@ getGlyphName c = case c of
 -- Returns a list of postscript glyph names required to typeset the content of
 -- all <code> tags in the string.
 getCodeGlyphs :: String -> [String]
-getCodeGlyphs = fmap getGlyphName . filter (/= '\n') . unique . Html.getCode
+getCodeGlyphs = fmap getGlyphName . filter (/= '\n') . unique . getCode
 
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.

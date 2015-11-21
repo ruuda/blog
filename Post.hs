@@ -26,8 +26,8 @@ import           Data.Time.Calendar (Day, showGregorian, toGregorian)
 import           GHC.Exts (sortWith)
 import           Text.Pandoc
 
-import qualified Html
 import qualified Template as T
+import qualified Type
 
 -- Front matter consists of key value pairs, both of type string.
 -- There is no fancy YAML here.
@@ -71,7 +71,7 @@ url post = "/" ++ datePath ++ "/" ++ (slug post)
 
 -- Returns whether post has code in it that requires a monospace font.
 usesMonoFont :: Post -> Bool
-usesMonoFont = not . null . Html.getCode . body
+usesMonoFont = not . null . Type.getCode . body
 
 -- Converts an integer to a Roman numeral (nothing fancy, works for 1-9).
 toRoman :: Int -> String

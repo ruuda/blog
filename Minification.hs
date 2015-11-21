@@ -161,4 +161,4 @@ stripTags =
 -- Minifies html by removing excess whitespace and comments, and by minifying
 -- inline stylesheets.
 minifyHtml :: String -> String
-minifyHtml = Html.renderTags . minifyStyleTags . stripTags . S.parseTags
+minifyHtml = Html.renderTags . minifyStyleTags . stripTags . Html.parseTags

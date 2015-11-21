@@ -8,9 +8,7 @@ module Html ( Tag
             , applyTagsWhere
             , classifyTags
             , filterTags
-            , getCode
-            , getEmText
-            , getStrongText
+            , getTextInTag
             , isCode
             , isEm
             , isPre
@@ -18,6 +16,7 @@ module Html ( Tag
             , isStrong
             , isStyle
             , mapTagsWhere
+            , parseTags
             , renderTags
             ) where
 
@@ -51,6 +50,10 @@ renderOptions = S.RenderOptions escapeHtml minimize rawTag
 -- Like Tagsoup's renderTags, but with the above options applied.
 renderTags :: [Tag] -> String
 renderTags = S.renderTagsOptions renderOptions
+
+-- Reexport of Tagsoup's parseTags for symmetry.
+parseTags :: String -> [Tag]
+parseTags = S.parseTags
 
 -- Various classifications for tags: inside body, inside code, etc.
 data TagClass = Code
@@ -129,17 +132,5 @@ mapTagsWhere p f = applyTagsWhere p (fmap f)
 
 -- Returns the the text in all tags that satisfy the selector.
 getTextInTag :: (TagProperties -> Bool) -> String -> String
-getTextInTag p  = join . intersperse " " . getText . (filterTags p) . S.parseTags
+getTextInTag p  = join . intersperse " " . getText . (filterTags p) . parseTags
   where getText = fmap S.fromTagText . filter S.isTagText
-
--- Extracts all text between <code> tags.
-getCode :: String -> String
-getCode = getTextInTag isCode
-
--- Extracts all text between <em> tags.
-getEmText :: String -> String
-getEmText = getTextInTag isEm
-
--- Extracts all text between <strong> tags.
-getStrongText :: String -> String
-getStrongText = getTextInTag isStrong

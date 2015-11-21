@@ -11,10 +11,10 @@ import           Data.Time.Clock (getCurrentTime, utctDay)
 import           System.Directory (doesFileExist, createDirectoryIfMissing, getDirectoryContents)
 import           System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeFileName)
 
-import           Font (subsetArtifact, subsetFonts)
 import           Minification (minifyHtml)
 import qualified Post as P
 import qualified Template as T
+import           Type (subsetArtifact, subsetFonts)
 
 -- Applies the IO-performing function f to every file in a given directory if
 -- the filename satisfies the predicate p.
