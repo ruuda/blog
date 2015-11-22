@@ -42,3 +42,14 @@
   src: url(/fonts/{{page-id}}bs.woff2) format("woff2"),
        url(/fonts/{{page-id}}bs.woff)  format("woff");
 }
+
+/* The serif italic font is used only for the post subheading. */
+{{if subheader}}
+@font-face
+{
+  font-family: Calluna;
+  font-style: italic;
+  src: url(/fonts/{{page-id}}is.woff2) format("woff2"),
+       url(/fonts/{{page-id}}is.woff)  format("woff");
+}
+{{end}}

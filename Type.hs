@@ -42,6 +42,10 @@ getHeadingText = Html.getTextInTag isHeading
   -- headings (h2). The post subheading (h2 in header) should not be included.
   where isHeading t = (Html.isH1 t) || ((Html.isH2 t) && (not $ Html.isHeader t))
 
+-- Returns the subheading of a post (<h2> inside <header>).
+getSubheadingText :: String -> String
+getSubheadingText = Html.getTextInTag (\t -> (Html.isH2 t) && (Html.isHeader t))
+
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String
 getGlyphName c = case c of
@@ -157,6 +161,11 @@ getBoldGlyphs = getGlyphs WithLigatures . getStrongText
 getHeadingGlyphs :: String -> [String]
 getHeadingGlyphs = getGlyphs WithLigatures . getHeadingText
 
+-- Returns a list of postscript glyph names required to typeset the post
+-- subheading.
+getSubheadingGlyphs :: String -> [String]
+getSubheadingGlyphs = getGlyphs WithDiscretionaryLigatures . getSubheadingText
+
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
 data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
@@ -191,7 +200,7 @@ subsetArtifact baseName html = filter isUseful commands
         subset file suffix glyphs = SubsetCommand file (baseName ++ suffix) glyphs
         boldGlyphs        = getBoldGlyphs html
         headingGlyphs     = getHeadingGlyphs html
-        subheadingGlyphs  = [] -- TODO
+        subheadingGlyphs  = getSubheadingGlyphs html
         italicGlyphs      = getItalicGlyphs html
         monoGlyphs        = getCodeGlyphs html
         boldCommand       = subset "fonts/calluna-sans-bold.otf" "b" boldGlyphs

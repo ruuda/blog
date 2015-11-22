@@ -21,3 +21,10 @@ h1, h2
 {
   font-family: Calluna, serif;
 }
+
+header > h2
+{
+  font-family: Calluna, serif;
+  font-weight: normal;
+  font-style: italic;
+}
