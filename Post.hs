@@ -110,7 +110,7 @@ parse slug contents = Post {
   date      = parseTimeOrError True defaultTimeLocale "%F" (frontMatter M.! "date"),
   slug      = slug,
   synopsis  = fromMaybe "TODO: Write synopsis." $ M.lookup "synopsis" frontMatter,
-  body      = renderMarkdown bodyContents
+  body      = Type.expandPunctuation $ renderMarkdown bodyContents
 } where (frontMatter, bodyContents) = extractFrontMatter contents
 
 -- Renders markdown to html using Pandoc with my settings.

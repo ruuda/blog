@@ -91,15 +91,10 @@ mapTagsPreviousExceptPre f = applyTagsExceptPre $ mapWithPrevious f
 mapTagsNextExceptPre :: (Tag -> Maybe Tag -> Tag) -> [Tag] -> [Tag]
 mapTagsNextExceptPre f = applyTagsExceptPre $ mapWithNext f
 
--- Applies a function to the text of a text tag.
-mapText :: (String -> String) -> Tag -> Tag
-mapText f (S.TagText str) = S.TagText (f str)
-mapText f tag             = tag
-
 -- Applies a function to the text of a tag if the other tag exists and
 -- satisfies a condition.
 mapTextIf :: (Tag -> Bool) -> Maybe Tag -> (String -> String) -> Tag -> Tag
-mapTextIf cond (Just other) f tag = if (cond other) then mapText f tag else tag
+mapTextIf cond (Just other) f tag = if (cond other) then Html.mapText f tag else tag
 mapTextIf cond Nothing      f tag = tag
 
 -- Strips whitespace after an opening tag.
@@ -137,7 +132,7 @@ removeComments = merge . filter (not . S.isTagComment)
 
 -- Minifies the contents of all <style> tags.
 minifyStyleTags :: [Tag] -> [Tag]
-minifyStyleTags = Html.mapTagsWhere Html.isStyle $ mapText minifyCss
+minifyStyleTags = Html.mapTagsWhere Html.isStyle $ Html.mapText minifyCss
 
 -- Removes excess whitespace and comments. Whitespace is removed in the
 -- following places:
@@ -155,7 +150,7 @@ stripTags =
   (mapTagsNextExceptPre stripBeforeOpen) .
   (mapTagsNextExceptPre stripBeforeClose) .
   (mapTagsPreviousExceptPre stripAfterOpen) .
-  (mapTagsExceptPre $ mapText mergeWhitespace) .
+  (mapTagsExceptPre $ Html.mapText mergeWhitespace) .
   (removeComments)
 
 -- Minifies html by removing excess whitespace and comments, and by minifying

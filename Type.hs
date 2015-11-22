@@ -5,6 +5,7 @@
 -- the licence file in the root of the repository.
 
 module Type ( SubsetCommand
+            , expandPunctuation
             , getCode
             , getEmText
             , getStrongText
@@ -13,7 +14,7 @@ module Type ( SubsetCommand
             ) where
 
 import           Control.Monad (mapM)
-import           Data.Char (isAscii, isLetter)
+import           Data.Char (isAscii, isLetter, isSpace)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
 import qualified System.Process as P
@@ -39,6 +40,9 @@ getStrongText = Html.getTextInTag Html.isStrong
 getGlyphName :: Char -> String
 getGlyphName c = case c of
   a | (isAscii a) && (isLetter a) -> [a] -- Ascii letters are their own name.
+  '\x2009' -> "thinspace"
+  '\x2013' -> "endash"
+  '\x2014' -> "emdash"
   '\\' -> "backslash"
   '\'' -> "quotesingle"
   ' ' -> "space"
@@ -172,3 +176,30 @@ subsetArtifact baseName html = filter isUseful commands
         italicCommand = SubsetCommand "fonts/calluna-sans-italic.otf" (baseName ++ "i") italicGlyphs
         monoCommand   = SubsetCommand "fonts/inconsolata.otf" (baseName ++ "m") monoGlyphs
         commands      = [italicCommand, monoCommand]
+
+-- Replaces double dashes (--) surrounded by spaces with em-dashes (—)
+-- surrounded by thin spaces, and single dashes surrounded by spaces with
+-- en-dashes surrounded by thin spaces. Also replaces triple dots with an
+-- ellipsis (…).
+expandPunctuationRaw :: String -> String
+expandPunctuationRaw str = case str of
+  -- The code point U+2009 is a (breakable) thin space. The code point U+2014
+  -- is an em-dash (—), U+2013 an en-dash (–). Though they can be embedded in
+  -- string literals directly, they are escaped because they can be hard to
+  -- distinguish in an editor with monospace font.
+  s1:'-':'-':s2:more -> if isSpace s1 && isSpace s2
+                          then "\x2009\x2014\x2009" ++ expandPunctuationRaw more
+                          else s1 : '-' : '-' : s2 : expandPunctuationRaw more
+  s1:'-':s2:more     -> if isSpace s1 && isSpace s2
+                          then "\x2009\x2013\x2009" ++ expandPunctuationRaw more
+                          else s1 : '-' : s2 : expandPunctuationRaw more
+  '.':'.':'.':more   -> '…' : expandPunctuationRaw more
+  c:more             -> c : expandPunctuationRaw more
+  []                 -> []
+
+-- Expands punctuation like expandPunctuationRaw in the html body, except in
+-- tags where this is invalid (in <code> tags).
+expandPunctuation :: String -> String
+expandPunctuation = Html.renderTags . Html.mapTagsWhere inBody expand . Html.parseTags
+  where inBody    = not . Html.isCode
+        expand    = Html.mapText expandPunctuationRaw

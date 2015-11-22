@@ -16,6 +16,7 @@ module Html ( Tag
             , isStrong
             , isStyle
             , mapTagsWhere
+            , mapText
             , parseTags
             , renderTags
             ) where
@@ -54,6 +55,11 @@ renderTags = S.renderTagsOptions renderOptions
 -- Reexport of Tagsoup's parseTags for symmetry.
 parseTags :: String -> [Tag]
 parseTags = S.parseTags
+
+-- Applies a function to the text of a text tag.
+mapText :: (String -> String) -> Tag -> Tag
+mapText f (S.TagText str) = S.TagText (f str)
+mapText f tag             = tag
 
 -- Various classifications for tags: inside body, inside code, etc.
 data TagClass = Code
