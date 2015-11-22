@@ -136,9 +136,14 @@ getCodeGlyphs :: String -> [String]
 getCodeGlyphs = getGlyphs NoLigatures . getCode
 
 -- Returns a list of postscript glyph names required to typeset the content of
--- all italic text in a post. (The text between <em> tags.)
+-- all italic body text in a post. (The text between <em> tags.)
 getItalicGlyphs :: String -> [String]
 getItalicGlyphs = getGlyphs WithLigatures . getEmText
+
+-- Returns a list of postscript glyph names required to typeset the content of
+-- all bold body text in a post. (The text between <strong> tags.)
+getBoldGlyphs :: String -> [String]
+getBoldGlyphs = getGlyphs WithLigatures . getStrongText
 
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
@@ -171,11 +176,13 @@ subsetFonts commands = do
 subsetArtifact :: FilePath -> String -> [SubsetCommand]
 subsetArtifact baseName html = filter isUseful commands
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
+        boldGlyphs    = getBoldGlyphs html
         italicGlyphs  = getItalicGlyphs html
         monoGlyphs    = getCodeGlyphs html
+        boldCommand   = SubsetCommand "fonts/calluna-sans-bold.otf" (baseName ++ "b") boldGlyphs
         italicCommand = SubsetCommand "fonts/calluna-sans-italic.otf" (baseName ++ "i") italicGlyphs
         monoCommand   = SubsetCommand "fonts/inconsolata.otf" (baseName ++ "m") monoGlyphs
-        commands      = [italicCommand, monoCommand]
+        commands      = [boldCommand, italicCommand, monoCommand]
 
 -- Replaces double dashes (--) surrounded by spaces with em-dashes (—)
 -- surrounded by thin spaces, and single dashes surrounded by spaces with

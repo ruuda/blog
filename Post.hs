@@ -77,6 +77,10 @@ usesMonoFont = not . null . Type.getCode . body
 usesItalicFont :: Post -> Bool
 usesItalicFont = not . null . Type.getEmText . body
 
+-- Returns whether the post has <strong> tags that require a bold font.
+usesBoldFont :: Post -> Bool
+usesBoldFont = not . null . Type.getStrongText . body
+
 -- Converts an integer to a Roman numeral (nothing fancy, works for 1-9).
 toRoman :: Int -> String
 toRoman i = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"] !! (i - 1)
@@ -94,10 +98,12 @@ context p = fmap T.StringValue ctx
                                , ("content", body p) ]
         optFields = M.fromList [ ("subheader", subheader p)
                                , ("part", fmap toRoman $ part p)
+                               , ("bold-font", boldFontField)
                                , ("italic-font", italicFontField)
                                , ("mono-font", monoFontField) ]
-        monoFontField   = if usesMonoFont   p then Just "true" else Nothing
+        boldFontField   = if usesBoldFont   p then Just "true" else Nothing
         italicFontField = if usesItalicFont p then Just "true" else Nothing
+        monoFontField   = if usesMonoFont   p then Just "true" else Nothing
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.

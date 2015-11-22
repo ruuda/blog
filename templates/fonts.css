@@ -15,6 +15,16 @@
 }
 {{end}}
 
+{{if bold-font}}
+@font-face
+{
+  font-family: Calluna Sans;
+  font-weight: bold;
+  src: url(/fonts/{{page-id}}b.woff2) format("woff2"),
+       url(/fonts/{{page-id}}b.woff)  format("woff");
+}
+{{end}}
+
 {{if italic-font}}
 @font-face
 {
