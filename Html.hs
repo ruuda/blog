@@ -11,6 +11,10 @@ module Html ( Tag
             , getTextInTag
             , isCode
             , isEm
+            , isH1
+            , isH2
+            , isHead
+            , isHeader
             , isPre
             , isScript
             , isStrong
@@ -64,6 +68,10 @@ mapText _ tag             = tag
 -- Various classifications for tags: inside body, inside code, etc.
 data TagClass = Code
               | Em
+              | H1
+              | H2
+              | Head
+              | Header
               | Pre
               | Script
               | Style
@@ -74,6 +82,10 @@ tagClassFromString :: String -> TagClass
 tagClassFromString str = case str of
   "code"   -> Code
   "em"     -> Em
+  "h1"     -> H1
+  "h2"     -> H2
+  "head"   -> Head
+  "header" -> Header
   "pre"    -> Pre
   "script" -> Script
   "style"  -> Style
@@ -86,6 +98,10 @@ type TagDepth = M.Map TagClass Int
 zeroDepth :: TagDepth
 zeroDepth = M.fromList [ (Code,   0)
                        , (Em,     0)
+                       , (H1,     0)
+                       , (H2,     0)
+                       , (Head,   0)
+                       , (Header, 0)
                        , (Pre,    0)
                        , (Script, 0)
                        , (Style,  0)
@@ -104,6 +120,10 @@ tagDepths = scanl updateTagDepth zeroDepth
 
 data TagProperties = TagProperties { isCode   :: Bool
                                    , isEm     :: Bool
+                                   , isH1     :: Bool
+                                   , isH2     :: Bool
+                                   , isHead   :: Bool
+                                   , isHeader :: Bool
                                    , isPre    :: Bool
                                    , isScript :: Bool
                                    , isStyle  :: Bool
@@ -112,6 +132,10 @@ data TagProperties = TagProperties { isCode   :: Bool
 getProperties :: TagDepth -> TagProperties
 getProperties td = TagProperties { isCode   = (td M.! Code)   > 0
                                  , isEm     = (td M.! Em)     > 0
+                                 , isH1     = (td M.! H1)     > 0
+                                 , isH2     = (td M.! H2)     > 0
+                                 , isHead   = (td M.! Head)   > 0
+                                 , isHeader = (td M.! Header) > 0
                                  , isPre    = (td M.! Pre)    > 0
                                  , isScript = (td M.! Script) > 0
                                  , isStyle  = (td M.! Style)  > 0
