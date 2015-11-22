@@ -13,7 +13,6 @@ module Type ( SubsetCommand
             , subsetFonts
             ) where
 
-import           Control.Monad (mapM)
 import           Data.Char (isAscii, isLetter, isSpace)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
@@ -87,6 +86,7 @@ getGlyphName c = case c of
   'ë' -> "edieresis"
   '‘' -> "quoteleft"
   '’' -> "quoteright"
+  _   -> error $ "no postscript glyph name for '" ++ [c] ++ "'"
 
 -- Given a piece of text, returns the glyph names of the ligatures required to
 -- typeset the text.
@@ -151,11 +151,11 @@ data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
 
 subsetFonts :: [SubsetCommand] -> IO ()
 subsetFonts commands = do
-  (Just stdin, mstdout, mstderr, pid) <- P.createProcess subsetScriptPiped
-  mapM (pushCommand stdin) commands
+  (Just stdin, _stdout, _stderr, pid) <- P.createProcess subsetScriptPiped
+  mapM_ (pushCommand stdin) commands
   hClose stdin
-  P.waitForProcess pid
-  return () -- Ignore the exit code.
+  _exitCode <- P.waitForProcess pid -- Ignore the exit code.
+  return ()
   where subsetScript = P.proc "python3" ["fonts/subset.py"]
         -- The Python interpreter needs to have a pipe for stdin because we
         -- want to write to it.

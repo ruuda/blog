@@ -4,7 +4,7 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-import           Control.Monad (filterM, mapM, foldM)
+import           Control.Monad (filterM, foldM)
 import qualified Data.Map as M
 import           Data.Time.Calendar (toGregorian)
 import           Data.Time.Clock (getCurrentTime, utctDay)
@@ -90,7 +90,7 @@ main = do
 
   -- Create a context with the field "year" set to the current year, and create
   -- a context that contains all of the templates, to handle includes.
-  (year, month, day) <- fmap (toGregorian . utctDay) getCurrentTime
+  (year, _month, _day) <- fmap (toGregorian . utctDay) getCurrentTime
   let yctx = M.singleton "year" (T.StringValue $ show year)
       tctx = fmap T.TemplateValue templates
       globalContext = M.union tctx yctx

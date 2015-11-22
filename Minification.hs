@@ -45,7 +45,7 @@ identifyComments :: String -> [Bool]
 identifyComments = identify False
   where identify _ ('/' : '*' : more) = True : True : (identify True more)
         identify _ ('*' : '/' : more) = True : True : (identify False more)
-        identify s (x : xs)           = s : (identify s xs)
+        identify s (_ : xs)           = s : (identify s xs)
         identify _ []                 = []
 
 -- Removes /* */ comments.
@@ -95,7 +95,7 @@ mapTagsNextExceptPre f = applyTagsExceptPre $ mapWithNext f
 -- satisfies a condition.
 mapTextIf :: (Tag -> Bool) -> Maybe Tag -> (String -> String) -> Tag -> Tag
 mapTextIf cond (Just other) f tag = if (cond other) then Html.mapText f tag else tag
-mapTextIf cond Nothing      f tag = tag
+mapTextIf _    Nothing      _ tag = tag
 
 -- Strips whitespace after an opening tag.
 stripAfterOpen :: Maybe Tag -> Tag -> Tag

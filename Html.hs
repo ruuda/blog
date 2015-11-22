@@ -45,8 +45,8 @@ escapeHtml = concatMap escape
 -- do not escape inside <style> tags in addition to the default <script> tags.
 renderOptions :: S.RenderOptions String
 renderOptions = S.RenderOptions escapeHtml minimize rawTag
-  where minimize tag = False -- Do not omit closing tags for empty tags.
-        rawTag   tag = (tag == "script") || (tag == "style")
+  where minimize _ = False -- Do not omit closing tags for empty tags.
+        rawTag tag = (tag == "script") || (tag == "style")
 
 -- Like Tagsoup's renderTags, but with the above options applied.
 renderTags :: [Tag] -> String
@@ -59,7 +59,7 @@ parseTags = S.parseTags
 -- Applies a function to the text of a text tag.
 mapText :: (String -> String) -> Tag -> Tag
 mapText f (S.TagText str) = S.TagText (f str)
-mapText f tag             = tag
+mapText _ tag             = tag
 
 -- Various classifications for tags: inside body, inside code, etc.
 data TagClass = Code

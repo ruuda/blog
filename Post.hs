@@ -38,8 +38,9 @@ type FrontMatter = M.Map String String
 -- is what comes after that. Ignores first line assuming it is "---".
 extractFrontMatter :: String -> (FrontMatter, String)
 extractFrontMatter = parseFM M.empty . drop 1 . lines
-  where parseFM fm ("---":body) = (fm, unlines body)
-        parseFM fm (line:more)  = parseFM (M.insert key value fm) more
+  where parseFM _ []                = error "Post should not be empty."
+        parseFM fm ("---":postBody) = (fm, unlines postBody)
+        parseFM fm (line:more)      = parseFM (M.insert key value fm) more
           where (key, delimValue) = break (== ':') line
                 value = drop 2 delimValue -- Drop the colon and space.
 
@@ -62,7 +63,7 @@ shortDate = showGregorian . date
 
 -- Returns the year in which the post was published.
 year :: Post -> Integer
-year post = y where (y, m, d) = toGregorian $ date post
+year post = y where (y, _m, _d) = toGregorian $ date post
 
 -- Returns the canonical absolute url for a particular post.
 url :: Post -> String
@@ -108,13 +109,13 @@ context p = fmap T.StringValue ctx
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.
 parse :: String -> String -> Post
-parse slug contents = Post {
+parse postSlug contents = Post {
   title     = frontMatter M.! "title",
   header    = fromMaybe (frontMatter M.! "title") $ M.lookup "header" frontMatter,
   subheader = M.lookup "subheader" frontMatter,
   part      = fmap read $ M.lookup "part" frontMatter,
   date      = parseTimeOrError True defaultTimeLocale "%F" (frontMatter M.! "date"),
-  slug      = slug,
+  slug      = postSlug,
   synopsis  = fromMaybe "TODO: Write synopsis." $ M.lookup "synopsis" frontMatter,
   body      = Type.expandPunctuation $ renderMarkdown bodyContents
 } where (frontMatter, bodyContents) = extractFrontMatter contents
@@ -160,3 +161,4 @@ selectRelated posts = fmap nextElsePrev prevPostNext
         nextElsePrev x = case x of
           (_, post, Just next) -> (post, Further next)
           (Just prev, post, _) -> (post, Further prev)
+          _                    -> error "At least two posts are required."
