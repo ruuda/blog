@@ -76,8 +76,8 @@ looking for is the monadic composition operation (usually called _bind_).
 Given two methods, one that returns a `Task<B>`, and one that takes a `B`
 and returns a `Task<C>`, composition should give me a method that returns a `Task<C>`.
 This is exactly what bind does. In the context of tasks,
-the name 'bind' might seem a bit odd. A more natural name in this case,
-would be 'then'. Peculiar enough, the designers of `Task` did not include such
+the name ‘bind’ might seem a bit odd. A more natural name in this case,
+would be ‘then’. Peculiar enough, the designers of `Task` did not include such
 a method. Fortunately, [implementations of this method](https://blogs.msdn.com/b/pfxteam/archive/2010/11/21/10094564.aspx)
 have been written. Using this `Then` method, composition becomes easy and elegant:
 
@@ -98,8 +98,8 @@ desired, but this can easily be changed.
 
 Return
 ------
-For `Task<T>` to be a monad, it not only requires a 'bind' method,
-but a 'return' method as well. The return method is nothing like the `return`
+For `Task<T>` to be a monad, it not only requires a ‘bind’ method,
+but a ‘return’ method as well. The return method is nothing like the `return`
 statement in C#. What it does, is convert a non-monadic value, into a
 monadic value. In other words, it converts `T` into a `Task<T>`. The .NET
 framework 4.5 implements return: it is called `Task.FromResult`. For

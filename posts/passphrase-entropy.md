@@ -8,7 +8,7 @@ While I was researching passphrase entropy today, I made a shocking discovery.
 _Virtually any passphrase that a human can remember,
 does not have enough entropy to generate a strong cryptographic key._
 Even though most modern encryption algorithms use key sizes of 128 or 256 bits,
-a comparatively 'strong' passphrase has nowhere near this amount
+a comparatively ‘strong’ passphrase has nowhere near this amount
 of entropy bits.
 
 <!--more-->
@@ -35,7 +35,7 @@ has 256 bits of entropy.
 Deriving keys
 -------------
 In many cases, the key cannot be stored. It must be remembered by a human,
-so data cannot be decrypted without this person's knowledge. Unfortunately,
+so data cannot be decrypted without this person’s knowledge. Unfortunately,
 humans are not every good at remembering a sequence of 256 bits.
 Even when expressed octally, it is still a sequence of 64 random digits.
 This is where key derivation comes into play. A key derivation algorithm
@@ -51,7 +51,7 @@ cannot directly increase the entropy of a passphrase.
 Typical passphrase entropy
 --------------------------
 As suggested by [xkcd](https://xkcd.com/936/), one can use a combination
-of four common words to make up a 'strong' passphrase. The comic assumes
+of four common words to make up a ‘strong’ passphrase. The comic assumes
 entropy of eleven bits per word, resulting in 44 bits of entropy
 for the entire passphrase. To see how this number is derived,
 we must adjust our view on the brute-force attack. As it is infeasible

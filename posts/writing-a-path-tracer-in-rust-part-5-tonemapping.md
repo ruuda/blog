@@ -194,7 +194,7 @@ This could be done in C++ as well, but that would needlessly complicate the code
 The tonemap unit
 ----------------
 The gather unit simply accumulates buffers which is not that interesting,
-so I'll jump straight to the tonemap unit.
+so I’ll jump straight to the tonemap unit.
 The tonemapping algorithm in Luculentus is just a toy algorithm.
 It is by no means physically correct, but it does produce a nice image.
 

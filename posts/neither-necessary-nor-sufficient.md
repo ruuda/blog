@@ -52,7 +52,7 @@ resource management is still utterly manual.
 You still need to `close()` your `OutputStream` in Java.
 You still need to `Release()`, `Close()` or `Dispose()` of your `Semaphore` in C#.
 Even this Haskell example straight from [Real World Haskell][real-world-haskell]
-is nothing more than fancy syntax for C's file handles:
+is nothing more than fancy syntax for C’s file handles:
 
 ```haskell
 main = do
