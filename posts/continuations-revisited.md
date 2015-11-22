@@ -109,7 +109,7 @@ task.Wait();
 ```
 
 Again, tasks lack a composition operation, the current solution does not scale
-well. What if I wanted to call `M1` … `M7` sequentially (but the methods applied
+well. What if I wanted to call `M1` ... `M7` sequentially (but the methods applied
 to the instances in parallel)? Furthermore, the continuation blocks, which wastes
 a thread. Let’s try that again, using the `Then` method from the [previous post](/2013/05/01/the-task-monad-in-csharp):
 

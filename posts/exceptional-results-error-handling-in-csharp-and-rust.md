@@ -28,7 +28,7 @@ Obviously this was the right approach to error handling, elegant and effective.
 
 Along came Rust, and I immediately fell in love with it.
 It appeared to do everything right that C# did wrong.
-Not only did it feature the absence of null (an entire class of problems … gone!),
+Not only did it feature the absence of null (an entire class of problems ... gone!),
 it also had unrecoverable failures (now called panics),
 and monadic error handling for the cases where errors are not exceptional.
 
