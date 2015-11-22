@@ -34,3 +34,11 @@
        url(/fonts/{{page-id}}i.woff)  format("woff");
 }
 {{end}}
+
+@font-face
+{
+  font-family: Calluna;
+  font-weight: bold;
+  src: url(/fonts/{{page-id}}bs.woff2) format("woff2"),
+       url(/fonts/{{page-id}}bs.woff)  format("woff");
+}

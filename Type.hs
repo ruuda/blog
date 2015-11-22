@@ -35,6 +35,13 @@ getEmText = Html.getTextInTag Html.isEm
 getStrongText :: String -> String
 getStrongText = Html.getTextInTag Html.isStrong
 
+-- Returns the post title and section headings.
+getHeadingText :: String -> String
+getHeadingText = Html.getTextInTag isHeading
+  -- The heading font is used for the post heading (h1), and the section
+  -- headings (h2). The post subheading (h2 in header) should not be included.
+  where isHeading t = (Html.isH1 t) || ((Html.isH2 t) && (not $ Html.isHeader t))
+
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String
 getGlyphName c = case c of
@@ -145,6 +152,11 @@ getItalicGlyphs = getGlyphs WithLigatures . getEmText
 getBoldGlyphs :: String -> [String]
 getBoldGlyphs = getGlyphs WithLigatures . getStrongText
 
+-- Returns a list of postscript glyph names required to typeset the titles and
+-- section headings in a post.
+getHeadingGlyphs :: String -> [String]
+getHeadingGlyphs = getGlyphs WithLigatures . getHeadingText
+
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
 data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
@@ -176,13 +188,22 @@ subsetFonts commands = do
 subsetArtifact :: FilePath -> String -> [SubsetCommand]
 subsetArtifact baseName html = filter isUseful commands
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
-        boldGlyphs    = getBoldGlyphs html
-        italicGlyphs  = getItalicGlyphs html
-        monoGlyphs    = getCodeGlyphs html
-        boldCommand   = SubsetCommand "fonts/calluna-sans-bold.otf" (baseName ++ "b") boldGlyphs
-        italicCommand = SubsetCommand "fonts/calluna-sans-italic.otf" (baseName ++ "i") italicGlyphs
-        monoCommand   = SubsetCommand "fonts/inconsolata.otf" (baseName ++ "m") monoGlyphs
-        commands      = [boldCommand, italicCommand, monoCommand]
+        subset file suffix glyphs = SubsetCommand file (baseName ++ suffix) glyphs
+        boldGlyphs        = getBoldGlyphs html
+        headingGlyphs     = getHeadingGlyphs html
+        subheadingGlyphs  = [] -- TODO
+        italicGlyphs      = getItalicGlyphs html
+        monoGlyphs        = getCodeGlyphs html
+        boldCommand       = subset "fonts/calluna-sans-bold.otf" "b" boldGlyphs
+        headingCommand    = subset "fonts/calluna-bold.otf" "bs" headingGlyphs
+        subheadingCommand = subset "fonts/calluna-italic.otf" "is" subheadingGlyphs
+        italicCommand     = subset "fonts/calluna-sans-italic.otf" "i" italicGlyphs
+        monoCommand       = subset "fonts/inconsolata.otf" "m" monoGlyphs
+        commands          = [ boldCommand
+                            , headingCommand
+                            , subheadingCommand
+                            , italicCommand
+                            , monoCommand ]
 
 -- Replaces double dashes (--) surrounded by spaces with em-dashes (—)
 -- surrounded by thin spaces, and single dashes surrounded by spaces with
