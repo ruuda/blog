@@ -18,7 +18,7 @@ and only get to see their colour component of the world.
 At the location of the player,
 her colours ‘leak’ into the perception of the other players,
 revealing a part of her world.
-The objective of the game is to collect as many eggs as possible --- however,
+The objective of the game is to collect as many eggs as possible -- however,
 those eggs are generally not visible to the player,
 because they have the colours of the opponents.
 The player _can_ see the eggs of her opponents,
@@ -39,7 +39,7 @@ because it has everything built-in.
 On the other hand,
 all the fun stuff is done for you already,
 and what is left to do is more like scripting than programming.
-That is fine for the game jam of course --- you want to have something playable in two days.
+That is fine for the game jam of course -- you want to have something playable in two days.
 A game jam is not the place to apply those dirty hacks to squeeze out every bit of processing power of your machine.
 Making the game was an awesome experience nonetheless;
 [this](http://youtu.be/OZBWfyYtYQY) playing at the beamer for at least half an hour says enough about the atmosphere, I think.

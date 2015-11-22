@@ -168,8 +168,8 @@ Although syntax is to some extent a matter of preference,
 there are quantitative measures as well.
 If I compare the number of non-whitespace source characters,
 the C++ version has roughly 109 thousand characters
-— excluding the files that I did not port
-— whereas the Rust version has roughly 74 thousand characters,
+-- excluding the files that I did not port
+-- whereas the Rust version has roughly 74 thousand characters,
 about two thirds the size of the C++ version.
 
 C++ is notorious for its cryptic error messages

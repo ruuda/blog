@@ -81,8 +81,8 @@ differs from [4.5](http://msdn.microsoft.com/en-us/library/system.io.stream.clos
 
 On a side note: as opposed to `Task<T>`, `IObservable<T>` _does_
 implement the full set of monadic operations by default. The
-implementation of ‘return’ — which takes a `T` and returns an
-`IObservable<T>` — is simply called `Return`.
+implementation of ‘return’ -- which takes a `T` and returns an
+`IObservable<T>` -- is simply called `Return`.
 
 More composition
 ----------------

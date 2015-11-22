@@ -23,7 +23,7 @@ I was charmed by this new language.
 [reddit]: http://reddit.com/r/programming
 
 I followed the development for a while,
-but I never got around to actually writing some code --- until now.
+but I never got around to actually writing some code -- until now.
 As an exercise, I decided to port [Luculentus][luculentus] to Rust.
 Luculentus is a proof of concept spectral path tracer that I wrote for a graphics programming course.
 It is written in C++.

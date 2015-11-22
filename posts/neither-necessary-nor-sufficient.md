@@ -32,7 +32,7 @@ _resource management_.
 Performance differences aside
 (there are many different metrics for performance
 and even more myths surrounding those
-— I don’t want to go down that rabbit hole here),
+-- I don’t want to go down that rabbit hole here),
 a garbage collector only manages memory.
 This works well for memory,
 because there generally is more memory available than what is needed,
@@ -45,7 +45,7 @@ if the garbage collector has not yet discovered that `0x3a28213a` is free.
 
 The story is different when there is contention for a resource.
 From the lock protecting a critical section to the socket serving a website
-— you cannot afford to leave such resources lingering around
+-- you cannot afford to leave such resources lingering around
 until a GC comes along to decide what is still being used.
 In most languages sporting a GC,
 resource management is still utterly manual.

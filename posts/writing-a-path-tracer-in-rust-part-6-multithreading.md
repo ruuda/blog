@@ -378,7 +378,7 @@ In Rust, safety is enforced by default.
 
 This concludes my port of the Luculentus spectral path tracer.
 Next time I will summarise the process,
-and I will compare the performance of the two versions ---
+and I will compare the performance of the two versions --
 which might surprise you.
 
 ---

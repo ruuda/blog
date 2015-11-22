@@ -223,7 +223,7 @@ while (...)
 ```
 
 We intersect a ray with the scene.
-If nothing was hit, the light intensity is zero --- a black background.
+If nothing was hit, the light intensity is zero -- a black background.
 If an object was intersected, and its `material` pointer is null,
 its `emissiveMaterial` is not null by assumption, so the object is a light source.
 The final intensity is the intensity of the light source reduced by the effects of previous bounces.

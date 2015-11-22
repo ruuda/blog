@@ -16,7 +16,7 @@ I had a lot of fun during the weekend, and I’m very pleased with the result.
 I especially like the distinctive visual style.
 This is without doubt the most beautiful game jam game that I ever worked on.
 It is really impressive what Derk Over and Hans Crefcoeur
---- the two artists on our team ---
+-- the two artists on our team --
 managed to pull off in such a short amount of time.
 This year Maarten Crefcoeur joined us for audio,
 so the game features original music as well.

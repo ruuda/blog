@@ -125,7 +125,7 @@ async Task MainAsync()
 }
 ```
 
-Better indeed, but the remarkable thing is — this code has _exactly_ the same
+Better indeed, but the remarkable thing is -- this code has _exactly_ the same
 structure as the Haskell version with do notation! I do not know whether the C#
 designers were inspired by the do notation, but it is striking that the
 constructs are so similar, both in the clumsy syntax, as well as the improved

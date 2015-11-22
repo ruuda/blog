@@ -35,7 +35,7 @@ and monadic error handling for the cases where errors are not exceptional.
 <!--more-->
 
 Fast forward one year.
-[Claxon][claxon] --- my pure-Rust decoder for the FLAC codec ---
+[Claxon][claxon] -- my pure-Rust decoder for the FLAC codec --
 decoded its entire test suite correctly for the first time a week ago.
 With [Hound][hound], a Rust library for handling WAV files,
 I could verify the output against the reference decoder.
@@ -426,7 +426,7 @@ Exceptions and results are two ways to do error handling,
 both with their advantages and disadvantages.
 The big downside of exceptions in C#,
 is that handling them
-can be --- and _will be_ --- ignored or forgotten.
+can be -- and _will be_ -- ignored or forgotten.
 This leads to crashes,
 crashes that may make it into the field.
 A proper type system like Rust’s can prevent these errors at compile time.
