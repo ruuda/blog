@@ -125,6 +125,31 @@ getLigatures = buildList []
             'f':'l':xs     -> liga xs "fl"
             _ : xs         -> buildList glyphs xs
 
+-- Given a piece of text, returns the postscript glyph names of the
+-- discretionary ligatures required to typeset the text.
+getDiscretionaryLigatures :: String -> [String]
+getDiscretionaryLigatures = buildList []
+  where buildList glyphs str =
+          let liga more ligaName = buildList (ligaName : glyphs) more in
+          case str of
+            -- As with the normal ligatures, the glyph names are inconsistent.
+            -- Calluna also has ip and it ligatures, but I find those too
+            -- excessive for my subheadings.
+            []             -> glyphs
+            'c':'b':xs     -> liga xs "c_b"
+            'c':'h':xs     -> liga xs "c_h"
+            'c':'k':xs     -> liga xs "c_k"
+            'c':'p':xs     -> liga xs "c_p"
+            'c':'t':xs     -> liga xs "ct"
+            'g':'i':xs     -> liga xs "g_i"
+            'q':'u':xs     -> liga xs "q_u"
+            's':'b':xs     -> liga xs "s_b"
+            's':'h':xs     -> liga xs "s_h"
+            's':'k':xs     -> liga xs "s_k"
+            's':'p':xs     -> liga xs "s_p"
+            's':'t':xs     -> liga xs "st"
+            _ : xs         -> buildList glyphs xs
+
 data IncludeLigatures = NoLigatures
                       | WithLigatures
                       | WithDiscretionaryLigatures
@@ -139,7 +164,7 @@ getGlyphs ligatures str = case ligatures of
   where
     glyphs     = fmap getGlyphName $ filter (/= '\n') $ unique str
     ligaGlyphs = unique $ getLigatures str
-    dligGlyphs = [] -- TODO: extract discretionary ligatures
+    dligGlyphs = unique $ getDiscretionaryLigatures str
 
 -- Returns a list of postscript glyph names required to typeset the content of
 -- all <code> tags in the string.

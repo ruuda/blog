@@ -11,6 +11,24 @@ from sys import stdin
 def subset(fontfile, outfile_basename, glyphs):
     options = Options()
 
+    # Fonttools has this "feature" that if you enable 'dlig', it will also give
+    # you glyphs that you did not ask for, but if you do not enable 'dlig',
+    # then discretionary ligatures do not render properly. See
+    # See https://github.com/behdad/fonttools/issues/43.
+    # As a workaround, only enable 'dlig' if there are glyphs for discretionary
+    # ligatures.
+    dligs = set(glyphs).intersection(['c_b', 'c_h', 'c_k', 'c_p', 'ct', 'g_i',
+                                      'q_u', 's_b', 's_h', 's_k', 's_p', 'st'])
+    if len(dligs) > 0:
+        options.layout_features.append('dlig')
+    else:
+        # Why is is it even necessary to remove 'dlig', I hear you ask? It is
+        # not in there by default. Well, Fonttools is really the worst possible
+        # library that you can imagine. I filed
+        # https://github.com/behdad/fonttools/issues/413.
+        if 'dlig' in options.layout_features:
+            options.layout_features.remove('dlig')
+
     # TODO: What is the purpose of the font program table? It is rather large
     # here, making up about a third of the final file size. Apparently it has
     # something to do with hinting. It might have been inserted by the font

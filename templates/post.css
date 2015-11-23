@@ -27,4 +27,6 @@ header > h2
   font-family: Calluna, serif;
   font-weight: normal;
   font-style: italic;
+  -webkit-font-feature-settings: 'dlig';
+  font-feature-settings: 'dlig';
 }
