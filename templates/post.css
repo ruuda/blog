@@ -1,32 +1,207 @@
 *
 {
+  margin: 0;
+  padding: 0;
+}
+
+code, em, strong
+{
+  line-height: 1;
+}
+
+html
+{
+  font-size: 12pt;
+}
+
+body
+{
+  background-color: #fffef8;
+  border-top: 0.7em solid #c36;
+  color: #456;
+  font-family: Calluna Sans, sans-serif;
   /* Firefox applies ligatures automatically when they are available, but Chrome
    * needs to be told explicitly. Note: Blink will drop the -webkit prefix soon.
    * See https://crbug.com/537293. */
-  -webkit-font-feature-settings: 'liga';
-  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga', 'kern';
+  font-feature-settings: 'liga', 'kern';
+  line-height: 1.4em;
 }
 
-code
+article
 {
-  font-family: Inconsolata, Consolas, monospace;
+  padding: 1.4em;
+  padding-top: 0;
 }
 
-em, strong
-{
-  font-family: Calluna Sans, sans-serif;
-}
-
-h1, h2
+header
 {
   font-family: Calluna, serif;
+  margin-left: 1em;
+  margin-right: 1em;
+  text-align: center;
+}
+
+header > h1
+{
+  /* Align the header on the third baseline. (The first baseline is at the
+   * bottom of the top border of the <body>.) Ensure that the bottom margin
+   * aligns with the grid. */
+  color: #000;
+  font-size: 2.8em;
+  line-height: 2.8rem;
+  margin-bottom: 0.7rem;
+  padding-top: 2.8rem;
 }
 
 header > h2
 {
-  font-family: Calluna, serif;
-  font-weight: normal;
-  font-style: italic;
   -webkit-font-feature-settings: 'dlig';
   font-feature-settings: 'dlig';
+  font-size: 1.4em;
+  font-style: italic;
+  font-weight: normal;
+  line-height: 1.4rem;
+  margin-bottom: 1.0rem;
+  padding-top: 0.4rem;
+}
+
+header > p
+{
+  color: #c36;
+  padding-top: 0.5em;
+  padding-bottom: 0.9em;
+}
+
+p
+{
+  margin-bottom: 1em;
+  padding-top: 0.4em;
+}
+
+a
+{
+  color: #c36;
+  text-decoration: none;
+}
+
+h2
+{
+  font-family: Calluna, serif;
+  font-size: 1.4em;
+  line-height: 1em;
+  margin-bottom: 0.2rem;
+  padding-top: 1.2rem;
+}
+
+/* TODO: hang the bullets in the margin when there is space. */
+article > ul
+{
+  list-style: none;
+  margin-bottom: 1em;
+  padding-top: 0.4em;
+}
+
+article li:before
+{
+  color: #c36;
+  content: '•';
+  display: inline-block;
+  margin-left: -1em;
+  width: 1em;
+}
+
+article li
+{
+  margin-left: 1em;
+}
+
+code
+{
+  color: #c36;
+  font-family: Inconsolata, Consolas, monospace;
+  font-size: 0.87em; /* Match Inconsolata to Calluna by x-height. */
+}
+
+div.sourceCode
+{
+  overflow: hidden;
+}
+
+pre.sourceCode
+{
+  /* The bottom of the block is baseline-aligned. The top is not, but the space
+   * between the top and the text baseline and between the bottom and the
+   * x-height is both 1.6em. The code baseline is offset from the regular
+   * baseline by 0.7em (half a line height). */
+  background-color: #eee;
+  border-left: 0.25em solid #c36;
+  margin-bottom: 0.7em;
+  margin-top: 0.2em;
+  overflow: auto;
+  padding-bottom: 0.9em;
+  padding-left: 1.4em;
+  padding: 1em;
+}
+
+.teaser
+{
+  background-color: #c36;
+  color: #f5b2c8;
+  padding-bottom: 0.7em;
+  padding: 1.4em;
+}
+
+.teaser p:first-child {
+  margin-bottom: 0.3em;
+}
+
+.teaser a {
+  color: #fff; /* TODO: Pick good colour scheme. */
+}
+
+.teaser a:after
+{
+  color: #fff;
+  content: ' »';
+}
+
+.teaser > h2, footer > h2
+{
+  margin-bottom: 0.2rem;
+  padding-top: 0.5rem; /* Same vertical alignment as article h2. */
+}
+
+footer
+{
+  background-color: #234; /* TODO: pick unified colour scheme. */
+  color: #ccc;
+  padding: 1.4em;
+}
+
+footer ul
+{
+  list-style: none;
+  margin-bottom: 2.4em;
+  padding-top: 0.4em;
+}
+
+#notices
+{
+  text-align: center;
+}
+
+footer span
+{
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+}
+
+/* TODO: disable this when the viewport width allows. */
+#breakdot
+{
+  display: block;
+  height: 0;
+  overflow: hidden;
+  width: 0;
 }
