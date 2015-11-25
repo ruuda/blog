@@ -15,6 +15,7 @@ module Html ( Tag
             , isH2
             , isHead
             , isHeader
+            , isMath
             , isPre
             , isScript
             , isStrong
@@ -72,6 +73,7 @@ data TagClass = Code
               | H2
               | Head
               | Header
+              | Math
               | Pre
               | Script
               | Style
@@ -86,6 +88,7 @@ tagClassFromString str = case str of
   "h2"     -> H2
   "head"   -> Head
   "header" -> Header
+  "math"   -> Math
   "pre"    -> Pre
   "script" -> Script
   "style"  -> Style
@@ -102,6 +105,7 @@ zeroDepth = M.fromList [ (Code,   0)
                        , (H2,     0)
                        , (Head,   0)
                        , (Header, 0)
+                       , (Math,   0)
                        , (Pre,    0)
                        , (Script, 0)
                        , (Style,  0)
@@ -124,6 +128,7 @@ data TagProperties = TagProperties { isCode   :: Bool
                                    , isH2     :: Bool
                                    , isHead   :: Bool
                                    , isHeader :: Bool
+                                   , isMath   :: Bool
                                    , isPre    :: Bool
                                    , isScript :: Bool
                                    , isStyle  :: Bool
@@ -136,6 +141,7 @@ getProperties td = TagProperties { isCode   = (td M.! Code)   > 0
                                  , isH2     = (td M.! H2)     > 0
                                  , isHead   = (td M.! Head)   > 0
                                  , isHeader = (td M.! Header) > 0
+                                 , isMath   = (td M.! Math)   > 0
                                  , isPre    = (td M.! Pre)    > 0
                                  , isScript = (td M.! Script) > 0
                                  , isStyle  = (td M.! Style)  > 0
