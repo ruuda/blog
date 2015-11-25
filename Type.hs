@@ -13,7 +13,7 @@ module Type ( SubsetCommand
             , subsetFonts
             ) where
 
-import           Data.Char (isAscii, isLetter, isSpace)
+import           Data.Char (isAscii, isLetter, isSpace, ord)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
 import qualified System.Process as P
@@ -50,9 +50,10 @@ getSubheadingText = Html.getTextInTag (\t -> (Html.isH2 t) && (Html.isHeader t))
 getGlyphName :: Char -> String
 getGlyphName c = case c of
   a | (isAscii a) && (isLetter a) -> [a] -- Ascii letters are their own name.
-  '\x2009' -> "thinspace"
-  '\x2013' -> "endash"
-  '\x2014' -> "emdash"
+  '\x00a0' -> "uni00A0"                  -- U+00A0 is a non-breaking space.
+  '\x2009' -> "thinspace"                -- TODO: Should I remove it, and put
+  '\x2013' -> "endash"                   -- an &nbsp; in the source, just to
+  '\x2014' -> "emdash"                   -- keep the source free of magic?
   '\\' -> "backslash"
   '\'' -> "quotesingle"
   ' ' -> "space"
@@ -86,6 +87,7 @@ getGlyphName c = case c of
   '=' -> "equal"
   '>' -> "greater"
   '?' -> "question"
+  '@' -> "at"
   '[' -> "bracketleft"
   ']' -> "bracketright"
   '_' -> "underscore"
@@ -93,11 +95,18 @@ getGlyphName c = case c of
   '{' -> "braceleft"
   '|' -> "bar"
   '}' -> "braceright"
+  '±' -> "plusminus"
+  '·' -> "periodcentered"
   'é' -> "eacute"
   'ë' -> "edieresis"
   '‘' -> "quoteleft"
   '’' -> "quoteright"
-  _   -> error $ "no postscript glyph name for '" ++ [c] ++ "'"
+  '“' -> "quotedblleft"
+  '”' -> "quotedblright"
+  '…' -> "ellipsis"
+  '≈' -> "approxequal"
+  _   -> error $ "no postscript glyph name for '" ++ [c] ++ "' " ++
+                 "(code point " ++ (show $ ord c) ++ ")"
 
 -- Given a piece of text, returns the glyph names of the ligatures required to
 -- typeset the text.
