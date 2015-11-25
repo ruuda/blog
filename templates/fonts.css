@@ -15,6 +15,13 @@
 }
 {{end}}
 
+@font-face
+{
+  font-family: Calluna Sans;
+  src: url(/fonts/{{page-id}}r.woff2) format("woff2"),
+       url(/fonts/{{page-id}}r.woff)  format("woff");
+}
+
 {{if bold-font}}
 @font-face
 {

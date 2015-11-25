@@ -46,6 +46,21 @@ getHeadingText = Html.getTextInTag isHeading
 getSubheadingText :: String -> String
 getSubheadingText = Html.getTextInTag (\t -> (Html.isH2 t) && (Html.isHeader t))
 
+-- Returns the text that should be typeset with the body font. Mostly this is
+-- everything that should not be typeset with a different font.
+getBodyText :: String -> String
+getBodyText = Html.getTextInTag isBodyTag
+  where isBodyTag tag = (not $ Html.isCode tag)   && -- <code> uses monospace font.
+                        (not $ Html.isEm tag)     && -- <em> uses italic font.
+                        (not $ Html.isH1 tag)     && -- <h1> uses bold serif font.
+                        (not $ Html.isH2 tag)     && -- <h2> uses bold serif font.
+                        (not $ Html.isHead tag)   && -- Exclude non-body tags.
+                        (not $ Html.isHeader tag) && -- <header> uses serif font.
+                        (not $ Html.isMath tag)   &&
+                        (not $ Html.isScript tag) &&
+                        (not $ Html.isStrong tag) && -- <strong> uses bold font.
+                        (not $ Html.isStyle tag)
+
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String
 getGlyphName c = case c of
@@ -200,6 +215,10 @@ getHeadingGlyphs = getGlyphs WithLigatures . getHeadingText
 getSubheadingGlyphs :: String -> [String]
 getSubheadingGlyphs = getGlyphs WithDiscretionaryLigatures . getSubheadingText
 
+-- Returns a list of postscript glyph names required to typeset the body text.
+getBodyGlyphs :: String -> [String]
+getBodyGlyphs = getGlyphs WithLigatures . getBodyText
+
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
 data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
@@ -232,17 +251,20 @@ subsetArtifact :: FilePath -> String -> [SubsetCommand]
 subsetArtifact baseName html = filter isUseful commands
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
         subset file suffix glyphs = SubsetCommand file (baseName ++ suffix) glyphs
+        bodyGlyphs        = getBodyGlyphs html
         boldGlyphs        = getBoldGlyphs html
         headingGlyphs     = getHeadingGlyphs html
         subheadingGlyphs  = getSubheadingGlyphs html
         italicGlyphs      = getItalicGlyphs html
         monoGlyphs        = getCodeGlyphs html
+        bodyCommand       = subset "fonts/calluna-sans.otf" "r" bodyGlyphs
         boldCommand       = subset "fonts/calluna-sans-bold.otf" "b" boldGlyphs
         headingCommand    = subset "fonts/calluna-bold.otf" "bs" headingGlyphs
         subheadingCommand = subset "fonts/calluna-italic.otf" "is" subheadingGlyphs
         italicCommand     = subset "fonts/calluna-sans-italic.otf" "i" italicGlyphs
         monoCommand       = subset "fonts/inconsolata.otf" "m" monoGlyphs
-        commands          = [ boldCommand
+        commands          = [ bodyCommand
+                            , boldCommand
                             , headingCommand
                             , subheadingCommand
                             , italicCommand
