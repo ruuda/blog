@@ -120,7 +120,6 @@ code
 {
   color: #c36;
   font-family: Inconsolata, Consolas, monospace;
-  font-size: 0.87em; /* Match Inconsolata to Calluna by x-height. */
 }
 
 div.sourceCode
