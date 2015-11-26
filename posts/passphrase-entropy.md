@@ -11,8 +11,6 @@ Even though most modern encryption algorithms use key sizes of 128 or 256 bits,
 a comparatively ‘strong’ passphrase has nowhere near this amount
 of entropy bits.
 
-<!--more-->
-
 Entropy
 -------
 Entropy in information theory, is related to the number of possible values

@@ -44,8 +44,6 @@ the tonemap unit periodically generates an image.
 [ciexyz]:  https://en.wikipedia.org/wiki/CIE_XYZ
 [srgb]:    https://en.wikipedia.org/wiki/SRGB
 
-<!--more-->
-
 Trace units
 -----------
 The trace unit chooses a wavelength in the visible spectrum and a point on the screen at random.

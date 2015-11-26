@@ -30,8 +30,6 @@ For the few source files I have, it takes 0.46 seconds to compile and run on Lin
 That feels like compilation is _instant_.
 Windows is slower, at 1.16 seconds.
 
-<!--more-->
-
 One downside of Cargo is that it only looks for `Cargo.toml`,
 and I dislike having uppercase characters in my filenames.
 At least `make` accepts `makefile` as well.

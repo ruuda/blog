@@ -54,8 +54,6 @@ which is what I will do in this post.
 [trick]:       http://bosker.wordpress.com/2011/07/27/computing-fibonacci-numbers-using-binet%E2%80%99s-formula/
 [finitefield]: https://en.wikipedia.org/wiki/Finite_field
 
-<!--more-->
-
 Finite fields
 -------------
 A finite field $\mathbb{F}_p$ of prime order $p$ consists of the integers $0, 1, …, p - 1$.

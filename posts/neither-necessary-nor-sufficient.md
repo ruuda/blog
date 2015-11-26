@@ -23,8 +23,6 @@ the point can be summarised succinctly:
 [when-rust-makes-sense]: https://m50d.github.io/2015/09/28/when-rust-makes-sense.html
 [bjarne-quote]:          https://isocpp.org/blog/2015/09/bjarne-stroustrup-announces-cpp-core-guidelines
 
-<!--more-->
-
 A language without garbage collection, in 2015.
 Why?
 Because garbage collection does not solve the deeper underlying problem:

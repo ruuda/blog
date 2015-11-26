@@ -73,8 +73,6 @@ let v = Vector3 { x: 1.0, y: 1.0, z: 1.0 };
 Note that the numbers do not need an `f` suffix, even though they are single-precision floats.
 The type of a literal can depend on the context.
 
-<!--more-->
-
 Operator overloading
 --------------------
 There are a few obvious operators to overload for `Vector3`: binary + and -, unary -, and binary * for scalar multiplication.

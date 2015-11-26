@@ -10,8 +10,6 @@ The second method takes an `A` and returns a `Task<B>`.
 The third method takes a `B`, etc. As it turns out, there is no easy
 way to compose these methods in C#, even though there should be.
 
-<!--more-->
-
 The `System.Threading.Tasks` namespace is very well designed, and overall
 everything seems to be thought through very well. However, in this
 particular case, the framework seems to lack an obvious composition operation.

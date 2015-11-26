@@ -32,8 +32,6 @@ Not only did it feature the absence of null (an entire class of problems ... gon
 it also had unrecoverable failures (now called panics),
 and monadic error handling for the cases where errors are not exceptional.
 
-<!--more-->
-
 Fast forward one year.
 [Claxon][claxon] -- my pure-Rust decoder for the FLAC codec --
 decoded its entire test suite correctly for the first time a week ago.

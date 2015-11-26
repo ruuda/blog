@@ -43,8 +43,6 @@ pub struct Ray {
 }
 ```
 
-<!--more-->
-
 Now we need something to intersect a ray with: a surface.
 In C++, the intersection and surface are defined as follows:
 

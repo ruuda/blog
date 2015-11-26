@@ -7,8 +7,6 @@ A while ago, I wrote about how `Task<T>` [is a monad](/2013/05/01/the-task-monad
 and about how that simplifies composition. Today, I want to look at observables,
 and how they can be used as a replacement for tasks.
 
-<!--more-->
-
 Observables, which are part of the Reactive Framework (Rx), are not yet
 included in the .NET base class library. The easiest way to get them is
 through [NuGet](https://www.nuget.org/packages/Rx-Main). A lot has been

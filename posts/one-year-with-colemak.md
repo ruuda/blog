@@ -35,8 +35,6 @@ so unfortunately I have no hard data.
 [kbd]:     http://www.microsoft.com/hardware/en-us/p/natural-ergonomic-keyboard-4000/B2M-00012
 [colemak]: http://colemak.com/
 
-<!--more-->
-
 What you gain
 -------------
 Aside from a layout that is optimised for typing instead of not jamming typewriters,

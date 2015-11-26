@@ -13,8 +13,6 @@ next week.
 
 ![(an overview of Geomancer)](/images/geomancer-overview.png)
 
-<!--more-->
-
 Indigo is an annual event organised by the
 [Dutch Game Garden](http://dutchgamegarden.nl),
 where game developers can showcase their games.

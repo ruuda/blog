@@ -8,8 +8,6 @@ let’s make a comparison between the new `async` and `await` syntax in C# 5,
 and the do notation in Haskell. Two constructs that might seem unrelated at
 first, allow code to be written in a form that is _exactly_ the same.
 
-<!--more-->
-
 The do notation
 ---------------
 Haskellers figured out that monads could be used to do IO a long time ago, but

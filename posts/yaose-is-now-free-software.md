@@ -13,8 +13,6 @@ This is a shame, because I think Yaose has great potential.
 Therefore, the source code of Yaose is now
 [freely available](http://veniogames.com/downloads/yaose/free-software).
 
-<!--more-->
-
 The source code for Yaose is, however, slightly messy,
 and not organised very well.
 At first, I wanted to sort this out before releasing the source to the public.

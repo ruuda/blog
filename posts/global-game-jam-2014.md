@@ -30,8 +30,6 @@ or strategically reveal an egg to encourage other players to make a move.
 We [again](/2012/01/30/global-game-jam-2012) made it to the top-three with our game,
 the third place this time.
 
-<!--more-->
-
 This was my first time using [Unity](http://unity3d.com),
 the technology which the game is built with.
 It was perfect for rapid development like the game jam,

@@ -14,8 +14,6 @@ programming, and [Last.fm](http://last.fm) knows which tracks I have
 been listening to. All that was left to do, was cross-reference the
 data.
 
-<!--more-->
-
 GitScrobbler
 ------------
 

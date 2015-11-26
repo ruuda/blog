@@ -42,8 +42,6 @@ Threads can do the loops in parallel.
 Only access to the buffer in which all contributions are accumulated, needs to be synchronised.
 To track progress, something still needs to ensure that an image is generated periodically.
 
-<!--more-->
-
 The task scheduler
 ------------------
 The task scheduler is responsible for determining what threads should do.
