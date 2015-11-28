@@ -9,6 +9,7 @@ module Type ( SubsetCommand
             , getCode
             , getEmText
             , getStrongText
+            , makeAbbrs
             , subsetArtifact
             , subsetFonts
             ) where
@@ -17,6 +18,7 @@ import           Data.Char (isAscii, isAsciiUpper, isLetter, isSpace, ord)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
 import qualified System.Process as P
+import qualified Text.HTML.TagSoup as S
 
 import qualified Html
 
@@ -46,20 +48,22 @@ getHeadingText = Html.getTextInTag isHeading
 getSubheadingText :: String -> String
 getSubheadingText = Html.getTextInTag (\t -> (Html.isH2 t) && (Html.isHeader t))
 
+isBodyTag :: Html.TagProperties -> Bool
+isBodyTag tag = (not $ Html.isCode   tag) && -- <code> uses monospace font.
+                (not $ Html.isEm     tag) && -- <em> uses italic font.
+                (not $ Html.isH1     tag) && -- <h1> uses bold serif font.
+                (not $ Html.isH2     tag) && -- <h2> uses bold serif font.
+                (not $ Html.isHead   tag) && -- Exclude non-body tags.
+                (not $ Html.isHeader tag) && -- <header> uses serif font.
+                (not $ Html.isMath   tag) &&
+                (not $ Html.isScript tag) &&
+                (not $ Html.isStrong tag) && -- <strong> uses bold font.
+                (not $ Html.isStyle  tag)
+
 -- Returns the text that should be typeset with the body font. Mostly this is
 -- everything that should not be typeset with a different font.
 getBodyText :: String -> String
 getBodyText = Html.getTextInTag isBodyTag
-  where isBodyTag tag = (not $ Html.isCode tag)   && -- <code> uses monospace font.
-                        (not $ Html.isEm tag)     && -- <em> uses italic font.
-                        (not $ Html.isH1 tag)     && -- <h1> uses bold serif font.
-                        (not $ Html.isH2 tag)     && -- <h2> uses bold serif font.
-                        (not $ Html.isHead tag)   && -- Exclude non-body tags.
-                        (not $ Html.isHeader tag) && -- <header> uses serif font.
-                        (not $ Html.isMath tag)   &&
-                        (not $ Html.isScript tag) &&
-                        (not $ Html.isStrong tag) && -- <strong> uses bold font.
-                        (not $ Html.isStyle tag)
 
 -- Splits a string into words at spaces, dashes and dots. Does not discard any
 -- characters, split points become single-character elements.
@@ -70,13 +74,30 @@ splitWords = filter (not . null) . foldr prepend [""]
                                 then "" : [c] : word : more
                                 else (c : word) : more
 
+data AbbrWord = Regular String | AllCaps String
+
+abbrNull :: AbbrWord -> Bool
+abbrNull (Regular str) = null str
+abbrNull (AllCaps str) = null str
+
 -- Splits a string into sentences and all-caps words alternatingly.
-splitAbbrs :: String -> [String]
-splitAbbrs = filter (not . null) . foldr prepend [""] . splitWords
+splitAbbrs :: String -> [AbbrWord]
+splitAbbrs = filter (not . abbrNull) . foldr prepend [Regular ""] . splitWords
   where prepend _    []              = error "unreachable"
-        prepend word (sentence:more) = if all isAsciiUpper word
-                                       then "" : word : sentence : more
-                                       else (word ++ sentence) : more
+        prepend word (AllCaps str : more) = Regular word : AllCaps str : more
+        prepend word (Regular str : more) = if all isAsciiUpper word
+                                            then AllCaps word : Regular str : more
+                                            else Regular (word ++ str) : more
+
+-- Inserts <abbr> tags around words in all-caps.
+-- TODO: Due to my definition of isBodyTag, this will not add <abbr>s inside
+-- <em> or <strong> or <h1> or <h2>. That should be fixed.
+makeAbbrs :: String -> String
+makeAbbrs = Html.renderTags . Html.concatMapTagsWhere isBodyTag mkAbbr . Html.parseTags
+  where mkAbbr (S.TagText str)    = concatMap insertAbbrs $ splitAbbrs str
+        mkAbbr tag                = [tag]
+        insertAbbrs (Regular str) = [S.TagText str]
+        insertAbbrs (AllCaps str) = [S.TagOpen "abbr" [], S.TagText str, S.TagClose "abbr"]
 
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String

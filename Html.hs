@@ -8,6 +8,7 @@ module Html ( Tag
             , TagProperties
             , applyTagsWhere
             , classifyTags
+            , concatMapTagsWhere
             , filterTags
             , getTextInTag
             , isCode
@@ -166,6 +167,11 @@ applyTagsWhere p tmap tags = fmap select $ zip (classifyTags tags) (tmap tags)
 -- Applies the function f to all tags for which p returns true.
 mapTagsWhere :: (TagProperties -> Bool) -> (Tag -> Tag) -> [Tag] -> [Tag]
 mapTagsWhere p f = applyTagsWhere p (fmap f)
+
+-- Applies the function f to all tags for which p returns true and flattens the result.
+concatMapTagsWhere :: (TagProperties -> Bool) -> (Tag -> [Tag]) -> [Tag] -> [Tag]
+concatMapTagsWhere p f = concatMap select . classifyTags
+  where select (tag, props) = if (p props) then f tag else [tag]
 
 -- Returns the the text in all tags that satisfy the selector.
 getTextInTag :: (TagProperties -> Bool) -> String -> String
