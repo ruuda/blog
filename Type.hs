@@ -70,7 +70,7 @@ getBodyText = Html.getTextInTag isBodyTag
 splitWords :: String -> [String]
 splitWords = filter (not . null) . foldr prepend [""]
   where prepend _ []          = error "unreachable"
-        prepend c (word:more) = if (c == '.') || (c == '-') || (isSpace c)
+        prepend c (word:more) = if not $ isLetter c
                                 then "" : [c] : word : more
                                 else (c : word) : more
 
@@ -85,7 +85,7 @@ splitAbbrs :: String -> [AbbrWord]
 splitAbbrs = filter (not . abbrNull) . foldr prepend [Regular ""] . splitWords
   where prepend _    []              = error "unreachable"
         prepend word (AllCaps str : more) = Regular word : AllCaps str : more
-        prepend word (Regular str : more) = if all isAsciiUpper word
+        prepend word (Regular str : more) = if (all isAsciiUpper word) && (length word >= 2)
                                             then AllCaps word : Regular str : more
                                             else Regular (word ++ str) : more
 
