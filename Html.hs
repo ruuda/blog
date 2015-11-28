@@ -5,6 +5,7 @@
 -- the licence file in the root of the repository.
 
 module Html ( Tag
+            , TagProperties
             , applyTagsWhere
             , classifyTags
             , filterTags
