@@ -13,7 +13,7 @@ module Type ( SubsetCommand
             , subsetFonts
             ) where
 
-import           Data.Char (isAscii, isLetter, isSpace, ord)
+import           Data.Char (isAscii, isAsciiUpper, isLetter, isSpace, ord)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
 import qualified System.Process as P
@@ -60,6 +60,23 @@ getBodyText = Html.getTextInTag isBodyTag
                         (not $ Html.isScript tag) &&
                         (not $ Html.isStrong tag) && -- <strong> uses bold font.
                         (not $ Html.isStyle tag)
+
+-- Splits a string into words at spaces, dashes and dots. Does not discard any
+-- characters, split points become single-character elements.
+splitWords :: String -> [String]
+splitWords = filter (not . null) . foldr prepend [""]
+  where prepend _ []          = error "unreachable"
+        prepend c (word:more) = if (c == '.') || (c == '-') || (isSpace c)
+                                then "" : [c] : word : more
+                                else (c : word) : more
+
+-- Splits a string into sentences and all-caps words alternatingly.
+splitAbbrs :: String -> [String]
+splitAbbrs = filter (not . null) . foldr prepend [""] . splitWords
+  where prepend _    []              = error "unreachable"
+        prepend word (sentence:more) = if all isAsciiUpper word
+                                       then "" : word : sentence : more
+                                       else (word ++ sentence) : more
 
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String
