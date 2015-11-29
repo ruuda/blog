@@ -11,6 +11,7 @@ module Html ( Tag
             , concatMapTagsWhere
             , filterTags
             , getTextInTag
+            , isAbbr
             , isCode
             , isEm
             , isH1
@@ -69,7 +70,8 @@ mapText f (S.TagText str) = S.TagText (f str)
 mapText _ tag             = tag
 
 -- Various classifications for tags: inside body, inside code, etc.
-data TagClass = Code
+data TagClass = Abbr
+              | Code
               | Em
               | H1
               | H2
@@ -84,6 +86,7 @@ data TagClass = Code
 
 tagClassFromString :: String -> TagClass
 tagClassFromString str = case str of
+  "abbr"   -> Abbr
   "code"   -> Code
   "em"     -> Em
   "h1"     -> H1
@@ -101,7 +104,8 @@ tagClassFromString str = case str of
 type TagDepth = M.Map TagClass Int
 
 zeroDepth :: TagDepth
-zeroDepth = M.fromList [ (Code,   0)
+zeroDepth = M.fromList [ (Abbr,   0)
+                       , (Code,   0)
                        , (Em,     0)
                        , (H1,     0)
                        , (H2,     0)
@@ -124,7 +128,8 @@ updateTagDepth td tag = case tag of
 tagDepths :: [Tag] -> [TagDepth]
 tagDepths = scanl updateTagDepth zeroDepth
 
-data TagProperties = TagProperties { isCode   :: Bool
+data TagProperties = TagProperties { isAbbr   :: Bool
+                                   , isCode   :: Bool
                                    , isEm     :: Bool
                                    , isH1     :: Bool
                                    , isH2     :: Bool
@@ -137,7 +142,8 @@ data TagProperties = TagProperties { isCode   :: Bool
                                    , isStrong :: Bool }
 
 getProperties :: TagDepth -> TagProperties
-getProperties td = TagProperties { isCode   = (td M.! Code)   > 0
+getProperties td = TagProperties { isAbbr   = (td M.! Abbr)   > 0
+                                 , isCode   = (td M.! Code)   > 0
                                  , isEm     = (td M.! Em)     > 0
                                  , isH1     = (td M.! H1)     > 0
                                  , isH2     = (td M.! H2)     > 0
