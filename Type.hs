@@ -14,7 +14,7 @@ module Type ( SubsetCommand
             , subsetFonts
             ) where
 
-import           Data.Char (isAscii, isAsciiUpper, isLetter, isSpace, ord)
+import           Data.Char (isAscii, isAsciiUpper, isLetter, isSpace, ord, toLower)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
 import qualified System.Process as P
@@ -53,6 +53,12 @@ getSerifText :: String -> String
 getSerifText = Html.getTextInTag (\t -> (Html.isHeader t) &&
                                         (not $ Html.isH1 t) &&
                                         (not $ Html.isH2 t))
+
+-- Returns the text that should be typeset in sans-serif small caps.
+getSmallCapsText :: String -> String
+getSmallCapsText = fmap toLower .
+                   filter (not . isSpace) .
+                   Html.getTextInTag Html.isAbbr
 
 isBodyTag :: Html.TagProperties -> Bool
 isBodyTag tag = (not $ Html.isCode   tag) && -- <code> uses monospace font.
@@ -267,6 +273,9 @@ getSerifGlyphs = getGlyphs WithLigatures . getSerifText
 getBodyGlyphs :: String -> [String]
 getBodyGlyphs = getGlyphs WithLigatures . getBodyText
 
+getSmallCapsGlyphs :: String -> [String]
+getSmallCapsGlyphs = getGlyphs NoLigatures . getSmallCapsText
+
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
 data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
@@ -299,7 +308,10 @@ subsetArtifact :: FilePath -> String -> [SubsetCommand]
 subsetArtifact baseName html = filter isUseful commands
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
         subset file suffix glyphs = SubsetCommand file (baseName ++ suffix) glyphs
-        bodyGlyphs        = getBodyGlyphs html
+        -- The names of small caps glyphs are equal to the normal names, but
+        -- with a ".smcp" suffix.
+        smallCapsGlyphs   = fmap (++ ".smcp") $ getSmallCapsGlyphs html
+        bodyGlyphs        = (getBodyGlyphs html) ++ smallCapsGlyphs
         boldGlyphs        = getBoldGlyphs html
         headingGlyphs     = getHeadingGlyphs html
         serifGlyphs       = getSerifGlyphs html

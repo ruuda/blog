@@ -85,6 +85,18 @@ a
   text-decoration: none;
 }
 
+abbr
+{
+  /* Use the caps-to-small-caps opentype feature, instead of 'smcp' (or even
+   * font-variant: small-caps) in combination with text-transform: lowercase.
+   * This allows for graceful fallback: if font feature settings are not
+   * supported, all caps will be shown. */
+  /* TODO: Remove prefixed version once Blink drops the prefix. */
+  /* TODO: Add letterspacing once non-broken version of Blink is mainstream. */
+  -webkit-font-feature-settings: 'c2sc';
+  font-feature-settings: 'c2sc';
+}
+
 h2
 {
   font-family: Calluna, serif;

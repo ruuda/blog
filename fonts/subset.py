@@ -29,6 +29,17 @@ def subset(fontfile, outfile_basename, glyphs):
         if 'dlig' in options.layout_features:
             options.layout_features.remove('dlig')
 
+    # Same for small caps, it needs to be enabled explicitly. Luckily, only the
+    # glyphs in the list get included, no extra ones.
+    if any(g.endswith('.smcp') for g in glyphs):
+        options.layout_features.append('smcp')
+        options.layout_features.append('c2sc')
+    else:
+        if 'smcp' in options.layout_features:
+            options.layout_features.remove('smcp')
+        if 'c2sc' in options.layout_features:
+            options.layout_features.remove('c2sc')
+
     # TODO: What is the purpose of the font program table? It is rather large
     # here, making up about a third of the final file size. Apparently it has
     # something to do with hinting. It might have been inserted by the font
