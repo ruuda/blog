@@ -45,6 +45,13 @@
 @font-face
 {
   font-family: Calluna;
+  src: url(/fonts/{{page-id}}s.woff2) format("woff2"),
+       url(/fonts/{{page-id}}s.woff)  format("woff");
+}
+
+@font-face
+{
+  font-family: Calluna;
   font-weight: bold;
   src: url(/fonts/{{page-id}}bs.woff2) format("woff2"),
        url(/fonts/{{page-id}}bs.woff)  format("woff");

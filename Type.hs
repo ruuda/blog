@@ -48,6 +48,12 @@ getHeadingText = Html.getTextInTag isHeading
 getSubheadingText :: String -> String
 getSubheadingText = Html.getTextInTag (\t -> (Html.isH2 t) && (Html.isHeader t))
 
+-- Returns the text that should be set in serif (<p> inside <header>).
+getSerifText :: String -> String
+getSerifText = Html.getTextInTag (\t -> (Html.isHeader t) &&
+                                        (not $ Html.isH1 t) &&
+                                        (not $ Html.isH2 t))
+
 isBodyTag :: Html.TagProperties -> Bool
 isBodyTag tag = (not $ Html.isCode   tag) && -- <code> uses monospace font.
                 (not $ Html.isEm     tag) && -- <em> uses italic font.
@@ -253,6 +259,10 @@ getHeadingGlyphs = getGlyphs WithLigatures . getHeadingText
 getSubheadingGlyphs :: String -> [String]
 getSubheadingGlyphs = getGlyphs WithDiscretionaryLigatures . getSubheadingText
 
+-- Returns a list of postscript glyph names required to typeset the serif text.
+getSerifGlyphs :: String -> [String]
+getSerifGlyphs = getGlyphs WithLigatures . getSerifText
+
 -- Returns a list of postscript glyph names required to typeset the body text.
 getBodyGlyphs :: String -> [String]
 getBodyGlyphs = getGlyphs WithLigatures . getBodyText
@@ -292,18 +302,21 @@ subsetArtifact baseName html = filter isUseful commands
         bodyGlyphs        = getBodyGlyphs html
         boldGlyphs        = getBoldGlyphs html
         headingGlyphs     = getHeadingGlyphs html
+        serifGlyphs       = getSerifGlyphs html
         subheadingGlyphs  = getSubheadingGlyphs html
         italicGlyphs      = getItalicGlyphs html
         monoGlyphs        = getCodeGlyphs html
         bodyCommand       = subset "fonts/calluna-sans.otf" "r" bodyGlyphs
         boldCommand       = subset "fonts/calluna-sans-bold.otf" "b" boldGlyphs
         headingCommand    = subset "fonts/calluna-bold.otf" "bs" headingGlyphs
+        serifCommand      = subset "fonts/calluna.otf" "s" serifGlyphs
         subheadingCommand = subset "fonts/calluna-italic.otf" "is" subheadingGlyphs
         italicCommand     = subset "fonts/calluna-sans-italic.otf" "i" italicGlyphs
         monoCommand       = subset "fonts/inconsolata.otf" "m" monoGlyphs
         commands          = [ bodyCommand
                             , boldCommand
                             , headingCommand
+                            , serifCommand
                             , subheadingCommand
                             , italicCommand
                             , monoCommand ]
