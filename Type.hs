@@ -6,9 +6,9 @@
 
 module Type ( SubsetCommand
             , expandPunctuation
+            , getBoldText
             , getCode
-            , getEmText
-            , getStrongText
+            , getItalicText
             , makeAbbrs
             , subsetArtifact
             , subsetFonts
@@ -30,12 +30,12 @@ getCode :: String -> String
 getCode = Html.getTextInTag Html.isCode
 
 -- Extracts all text between <em> tags.
-getEmText :: String -> String
-getEmText = Html.getTextInTag Html.isEm
+getItalicText :: String -> String
+getItalicText = Html.getTextInTag Html.isEm
 
 -- Extracts all text between <strong> tags.
-getStrongText :: String -> String
-getStrongText = Html.getTextInTag Html.isStrong
+getBoldText :: String -> String
+getBoldText = Html.getTextInTag Html.isStrong
 
 -- Returns the post title and section headings.
 getHeadingText :: String -> String
@@ -236,12 +236,12 @@ getCodeGlyphs = getGlyphs NoLigatures . getCode
 -- Returns a list of postscript glyph names required to typeset the content of
 -- all italic body text in a post. (The text between <em> tags.)
 getItalicGlyphs :: String -> [String]
-getItalicGlyphs = getGlyphs WithLigatures . getEmText
+getItalicGlyphs = getGlyphs WithLigatures . getItalicText
 
 -- Returns a list of postscript glyph names required to typeset the content of
 -- all bold body text in a post. (The text between <strong> tags.)
 getBoldGlyphs :: String -> [String]
-getBoldGlyphs = getGlyphs WithLigatures . getStrongText
+getBoldGlyphs = getGlyphs WithLigatures . getBoldText
 
 -- Returns a list of postscript glyph names required to typeset the titles and
 -- section headings in a post.

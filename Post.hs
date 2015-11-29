@@ -76,11 +76,11 @@ usesMonoFont = not . null . Type.getCode . body
 
 -- Returns whether the post has <em> tags that require an italic font.
 usesItalicFont :: Post -> Bool
-usesItalicFont = not . null . Type.getEmText . body
+usesItalicFont = not . null . Type.getItalicText . body
 
 -- Returns whether the post has <strong> tags that require a bold font.
 usesBoldFont :: Post -> Bool
-usesBoldFont = not . null . Type.getStrongText . body
+usesBoldFont = not . null . Type.getBoldText . body
 
 -- Converts an integer to a Roman numeral (nothing fancy, works for 1-9).
 toRoman :: Int -> String
