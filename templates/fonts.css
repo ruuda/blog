@@ -45,16 +45,16 @@
 @font-face
 {
   font-family: Calluna;
-  src: url(/fonts/{{page-id}}s.woff2) format("woff2"),
-       url(/fonts/{{page-id}}s.woff)  format("woff");
+  src: url(/fonts/{{page-id}}sr.woff2) format("woff2"),
+       url(/fonts/{{page-id}}sr.woff)  format("woff");
 }
 
 @font-face
 {
   font-family: Calluna;
   font-weight: bold;
-  src: url(/fonts/{{page-id}}bs.woff2) format("woff2"),
-       url(/fonts/{{page-id}}bs.woff)  format("woff");
+  src: url(/fonts/{{page-id}}sb.woff2) format("woff2"),
+       url(/fonts/{{page-id}}sb.woff)  format("woff");
 }
 
 /* The serif italic font is used only for the post subheading. */
@@ -63,7 +63,7 @@
 {
   font-family: Calluna;
   font-style: italic;
-  src: url(/fonts/{{page-id}}is.woff2) format("woff2"),
-       url(/fonts/{{page-id}}is.woff)  format("woff");
+  src: url(/fonts/{{page-id}}si.woff2) format("woff2"),
+       url(/fonts/{{page-id}}si.woff)  format("woff");
 }
 {{end}}

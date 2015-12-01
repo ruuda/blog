@@ -6,15 +6,14 @@
 
 module Type ( SubsetCommand
             , expandPunctuation
-            , getBoldText
-            , getCode
-            , getItalicText
             , makeAbbrs
             , subsetArtifact
             , subsetFonts
             ) where
 
-import           Data.Char (isAscii, isAsciiUpper, isLetter, isSpace, ord, toLower)
+import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter, isSpace, ord, toLower)
+import           Data.List (partition)
+import           Data.Maybe (fromJust, isJust)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
 import qualified System.Process as P
@@ -22,60 +21,57 @@ import qualified Text.HTML.TagSoup as S
 
 import qualified Html
 
+--type Tag = Html.Tag
+type TagProperties = Html.TagProperties
+
 unique :: Ord a => [a] -> [a]
 unique = Set.toList . Set.fromList
 
--- Extracts all text between <code> tags.
-getCode :: String -> String
-getCode = Html.getTextInTag Html.isCode
+data FontFamily  = Mono | Sans | Serif                      deriving Eq
+data FontWeight  = Regular | Bold                           deriving Eq
+data FontStyle   = Roman | Italic                           deriving Eq
+data FontCaps    = UnchangedCaps | SmallCaps | AllSmallCaps deriving Eq
+type FontAndCaps = (FontFamily, FontWeight, FontStyle, FontCaps)
+type Font        = (FontFamily, FontWeight, FontStyle)
 
--- Extracts all text between <em> tags.
-getItalicText :: String -> String
-getItalicText = Html.getTextInTag Html.isEm
+-- Whether a tag needs typesetting with a webfont.
+needsFont :: TagProperties -> Bool
+needsFont t = case t of
+  _ | Html.isHead t   -> False
+  _ | Html.isMath t   -> False
+  _ | Html.isScript t -> False
+  _ | Html.isStyle t  -> False
+  _ | otherwise       -> True
 
--- Extracts all text between <strong> tags.
-getBoldText :: String -> String
-getBoldText = Html.getTextInTag Html.isStrong
+getFamily :: TagProperties -> FontFamily
+getFamily t = case t of
+  _ | Html.isCode t    -> Mono
+  _ | Html.isHeader t  -> Serif
+  _ | Html.isHeading t -> Serif
+  _ | otherwise        -> Sans
 
--- Returns the post title and section headings.
-getHeadingText :: String -> String
-getHeadingText = Html.getTextInTag isHeading
-  -- The heading font is used for the post heading (h1), and the section
-  -- headings (h2). The post subheading (h2 in header) should not be included.
-  where isHeading t = (Html.isH1 t) || ((Html.isH2 t) && (not $ Html.isHeader t))
+getWeight :: TagProperties -> FontWeight
+getWeight t = case t of
+  _ | Html.isSubtitle t -> Regular
+  _ | Html.isTitle t    -> Bold
+  _ | Html.isH2 t       -> Bold
+  _ | Html.isStrong t   -> Bold
+  _ | otherwise         -> Regular
 
--- Returns the subheading of a post (<h2> inside <header>).
-getSubheadingText :: String -> String
-getSubheadingText = Html.getTextInTag (\t -> (Html.isH2 t) && (Html.isHeader t))
+getStyle :: TagProperties -> FontStyle
+getStyle t = case t of
+  _ | Html.isEm t       -> Italic
+  _ | Html.isSubtitle t -> Italic
+  _ | otherwise         -> Roman
 
--- Returns the text that should be set in serif (<p> inside <header>).
-getSerifText :: String -> String
-getSerifText = Html.getTextInTag (\t -> (Html.isHeader t) &&
-                                        (not $ Html.isH1 t) &&
-                                        (not $ Html.isH2 t))
+getCaps :: TagProperties -> FontCaps
+getCaps t = case t of
+  _ | Html.isAbbr t -> AllSmallCaps
+  _ | otherwise     -> UnchangedCaps
 
--- Returns the text that should be typeset in sans-serif small caps.
-getSmallCapsText :: String -> String
-getSmallCapsText = fmap toLower .
-                   filter (not . isSpace) .
-                   Html.getTextInTag Html.isAbbr
-
-isBodyTag :: Html.TagProperties -> Bool
-isBodyTag tag = (not $ Html.isCode   tag) && -- <code> uses monospace font.
-                (not $ Html.isEm     tag) && -- <em> uses italic font.
-                (not $ Html.isH1     tag) && -- <h1> uses bold serif font.
-                (not $ Html.isH2     tag) && -- <h2> uses bold serif font.
-                (not $ Html.isHead   tag) && -- Exclude non-body tags.
-                (not $ Html.isHeader tag) && -- <header> uses serif font.
-                (not $ Html.isMath   tag) &&
-                (not $ Html.isScript tag) &&
-                (not $ Html.isStrong tag) && -- <strong> uses bold font.
-                (not $ Html.isStyle  tag)
-
--- Returns the text that should be typeset with the body font. Mostly this is
--- everything that should not be typeset with a different font.
-getBodyText :: String -> String
-getBodyText = Html.getTextInTag isBodyTag
+getFont :: TagProperties -> Maybe FontAndCaps
+getFont t = if needsFont t then Just font else Nothing
+  where font = (getFamily t, getWeight t, getStyle t, getCaps t)
 
 -- Splits a string into words at spaces, dashes and dots. Does not discard any
 -- characters, split points become single-character elements.
@@ -86,30 +82,31 @@ splitWords = filter (not . null) . foldr prepend [""]
                                 then "" : [c] : word : more
                                 else (c : word) : more
 
-data AbbrWord = Regular String | AllCaps String
+data AbbrWord = MixedCaps String | AllCaps String
 
 abbrNull :: AbbrWord -> Bool
-abbrNull (Regular str) = null str
-abbrNull (AllCaps str) = null str
+abbrNull (MixedCaps str) = null str
+abbrNull (AllCaps   str) = null str
 
 -- Splits a string into sentences and all-caps words alternatingly.
 splitAbbrs :: String -> [AbbrWord]
-splitAbbrs = filter (not . abbrNull) . foldr prepend [Regular ""] . splitWords
+splitAbbrs = filter (not . abbrNull) . foldr prepend [MixedCaps ""] . splitWords
   where prepend _    []              = error "unreachable"
-        prepend word (AllCaps str : more) = Regular word : AllCaps str : more
-        prepend word (Regular str : more) = if (all isAsciiUpper word) && (length word >= 2)
-                                            then AllCaps word : Regular str : more
-                                            else Regular (word ++ str) : more
+        prepend word (AllCaps   str : more) = MixedCaps word : AllCaps str : more
+        prepend word (MixedCaps str : more) = if (all isAsciiUpper word) && (length word >= 2)
+                                            then AllCaps word : MixedCaps str : more
+                                            else MixedCaps (word ++ str) : more
 
 -- Inserts <abbr> tags around words in all-caps.
--- TODO: Due to my definition of isBodyTag, this will not add <abbr>s inside
--- <em> or <strong> or <h1> or <h2>. That should be fixed.
 makeAbbrs :: String -> String
 makeAbbrs = Html.renderTags . Html.concatMapTagsWhere isBodyTag mkAbbr . Html.parseTags
-  where mkAbbr (S.TagText str)    = concatMap insertAbbrs $ splitAbbrs str
-        mkAbbr tag                = [tag]
-        insertAbbrs (Regular str) = [S.TagText str]
-        insertAbbrs (AllCaps str) = [S.TagOpen "abbr" [], S.TagText str, S.TagClose "abbr"]
+  where mkAbbr (S.TagText str)      = concatMap insertAbbrs $ splitAbbrs str
+        mkAbbr tag                  = [tag]
+        insertAbbrs (MixedCaps str) = [S.TagText str]
+        insertAbbrs (AllCaps   str) = [S.TagOpen "abbr" [], S.TagText str, S.TagClose "abbr"]
+        -- Only insert <abbr> tags in things that are typesetted (text content),
+        -- but not in monospace content (code).
+        isBodyTag t = (needsFont t) && (not $ Html.isCode t)
 
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String
@@ -224,57 +221,44 @@ getDiscretionaryLigatures = buildList []
             's':'t':xs     -> liga xs "st"
             _ : xs         -> buildList glyphs xs
 
+-- Parses html and returns a list with pieces of text and the font they should
+-- be set in.
+mapFont :: String -> [(String, FontAndCaps)]
+mapFont = (fmap dropMaybe)
+        . (filter $ isJust . snd)
+        . (fmap selectFont)
+        . (filter $ S.isTagText . fst)
+        . Html.classifyTags
+        . Html.parseTags
+  where dropMaybe  (str, justFont) = (str, fromJust justFont)
+        selectFont (tag, props)    = (S.fromTagText tag, getFont props)
+
 data IncludeLigatures = NoLigatures
                       | WithLigatures
                       | WithDiscretionaryLigatures
 
--- Given a piece of text, returns a list of postscript glyph names required to
--- typeset the text.
-getGlyphs :: IncludeLigatures -> String -> [String]
-getGlyphs ligatures str = case ligatures of
-  NoLigatures                -> glyphs
-  WithLigatures              -> glyphs ++ ligaGlyphs
-  WithDiscretionaryLigatures -> glyphs ++ ligaGlyphs ++ dligGlyphs
-  where
-    glyphs     = fmap getGlyphName $ filter (/= '\n') $ unique str
-    ligaGlyphs = unique $ getLigatures str
-    dligGlyphs = unique $ getDiscretionaryLigatures str
-
--- Returns a list of postscript glyph names required to typeset the content of
--- all <code> tags in the string.
-getCodeGlyphs :: String -> [String]
-getCodeGlyphs = getGlyphs NoLigatures . getCode
-
--- Returns a list of postscript glyph names required to typeset the content of
--- all italic body text in a post. (The text between <em> tags.)
-getItalicGlyphs :: String -> [String]
-getItalicGlyphs = getGlyphs WithLigatures . getItalicText
-
--- Returns a list of postscript glyph names required to typeset the content of
--- all bold body text in a post. (The text between <strong> tags.)
-getBoldGlyphs :: String -> [String]
-getBoldGlyphs = getGlyphs WithLigatures . getBoldText
-
--- Returns a list of postscript glyph names required to typeset the titles and
--- section headings in a post.
-getHeadingGlyphs :: String -> [String]
-getHeadingGlyphs = getGlyphs WithLigatures . getHeadingText
-
--- Returns a list of postscript glyph names required to typeset the post
--- subheading.
-getSubheadingGlyphs :: String -> [String]
-getSubheadingGlyphs = getGlyphs WithDiscretionaryLigatures . getSubheadingText
-
--- Returns a list of postscript glyph names required to typeset the serif text.
-getSerifGlyphs :: String -> [String]
-getSerifGlyphs = getGlyphs WithLigatures . getSerifText
-
--- Returns a list of postscript glyph names required to typeset the body text.
-getBodyGlyphs :: String -> [String]
-getBodyGlyphs = getGlyphs WithLigatures . getBodyText
-
-getSmallCapsGlyphs :: String -> [String]
-getSmallCapsGlyphs = getGlyphs NoLigatures . getSmallCapsText
+-- Given a font and wether to include ligatures, and content processed by
+-- mapFont, returns a list of postscript glyph names required to typeset the
+-- content.
+getGlyphs :: Font -> IncludeLigatures -> [(String, FontAndCaps)] -> [String]
+getGlyphs font ligatures = unique . (concatMap mapGlyphs) . (filter matchesFont)
+        -- Note: there are more small cap glyphs than just the letters, but for
+        -- now I don't use them.
+  where makeSmcp glyph = case glyph of
+          g:[] -> if isAsciiLower g then g : ".smcp" else glyph
+          _    -> glyph
+        glyphsFor      = fmap getGlyphName . filter (/= '\n') . unique
+        ligasFor str   = case ligatures of
+          NoLigatures -> []
+          _           -> getLigatures str
+        dligsFor str   = case ligatures of
+          WithDiscretionaryLigatures -> getDiscretionaryLigatures str
+          _                          -> []
+        matchesFont  (_,   (f, w, s, _   )) = (font == (f, w, s))
+        mapGlyphs    (str, (_, _, _, caps)) = case caps of
+          UnchangedCaps -> (glyphsFor str) ++ (ligasFor str) ++ (dligsFor str)
+          SmallCaps     -> fmap makeSmcp $ glyphsFor str
+          AllSmallCaps  -> fmap makeSmcp $ glyphsFor $ fmap toLower str
 
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
@@ -299,39 +283,36 @@ subsetFonts commands = do
 -- Given font file basename and html contents, generates subset commands that
 -- will output subsetted fonts with the given basename, and a suffix:
 --
---  * "m" for monospace. (Subset of Inconsolata.)
---  * "i" for italic. (Subset of Calluna Sans.)
---  * TODO: subset others too.
+--  * "m" for monospace, subset of Inconsolata.
+--  * "sr", "si", and "sb" for the roman, italic, and bold subset of Calluna.
+--  * "r", "i", and "b" for their sans-serif variants, subset of Calluna Sans.
 --
 --  Both a woff and woff2 file will be written.
 subsetArtifact :: FilePath -> String -> [SubsetCommand]
 subsetArtifact baseName html = filter isUseful commands
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
         subset file suffix glyphs = SubsetCommand file (baseName ++ suffix) glyphs
-        -- The names of small caps glyphs are equal to the normal names, but
-        -- with a ".smcp" suffix.
-        smallCapsGlyphs   = fmap (++ ".smcp") $ getSmallCapsGlyphs html
-        bodyGlyphs        = (getBodyGlyphs html) ++ smallCapsGlyphs
-        boldGlyphs        = getBoldGlyphs html
-        headingGlyphs     = getHeadingGlyphs html
-        serifGlyphs       = getSerifGlyphs html
-        subheadingGlyphs  = getSubheadingGlyphs html
-        italicGlyphs      = getItalicGlyphs html
-        monoGlyphs        = getCodeGlyphs html
-        bodyCommand       = subset "fonts/calluna-sans.otf" "r" bodyGlyphs
-        boldCommand       = subset "fonts/calluna-sans-bold.otf" "b" boldGlyphs
-        headingCommand    = subset "fonts/calluna-bold.otf" "bs" headingGlyphs
-        serifCommand      = subset "fonts/calluna.otf" "s" serifGlyphs
-        subheadingCommand = subset "fonts/calluna-italic.otf" "is" subheadingGlyphs
-        italicCommand     = subset "fonts/calluna-sans-italic.otf" "i" italicGlyphs
-        monoCommand       = subset "fonts/inconsolata.otf" "m" monoGlyphs
-        commands          = [ bodyCommand
-                            , boldCommand
-                            , headingCommand
-                            , serifCommand
-                            , subheadingCommand
-                            , italicCommand
-                            , monoCommand ]
+        fontPieces = mapFont html
+
+        serifItalicGlyphs = getGlyphs (Serif, Regular, Italic) WithDiscretionaryLigatures fontPieces
+        serifRomanGlyphs  = getGlyphs (Serif, Regular, Roman)  WithLigatures fontPieces
+        serifBoldGlyphs   = getGlyphs (Serif, Bold,    Roman)  WithLigatures fontPieces
+        sansItalicGlyphs  = getGlyphs (Sans,  Regular, Italic) WithLigatures fontPieces
+        sansRomanGlyphs   = getGlyphs (Sans,  Regular, Roman)  WithLigatures fontPieces
+        sansBoldGlyphs    = getGlyphs (Sans,  Bold,    Roman)  WithLigatures fontPieces
+        monoGlyphs        = getGlyphs (Mono,  Regular, Roman)  NoLigatures   fontPieces
+
+        serifItalicCommand = subset "fonts/calluna-italic.otf"      "si" serifItalicGlyphs
+        serifRomanCommand  = subset "fonts/calluna.otf"             "sr" serifRomanGlyphs
+        serifBoldCommand   = subset "fonts/calluna-bold.otf"        "sb" serifBoldGlyphs
+        sansItalicCommand  = subset "fonts/calluna-sans-italic.otf" "i"  sansItalicGlyphs
+        sansRomanCommand   = subset "fonts/calluna-sans.otf"        "r"  sansRomanGlyphs
+        sansBoldCommand    = subset "fonts/calluna-sans-bold.otf"   "b"  sansBoldGlyphs
+        monoCommand        = subset "fonts/inconsolata.otf"         "m"  monoGlyphs
+
+        commands = [ serifItalicCommand, serifRomanCommand, serifBoldCommand
+                   , sansItalicCommand,  sansRomanCommand,  sansBoldCommand
+                   , monoCommand ]
 
 -- Replaces double dashes (--) surrounded by spaces with em-dashes (—)
 -- surrounded by thin spaces, and single dashes surrounded by spaces with

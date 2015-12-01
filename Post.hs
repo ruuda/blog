@@ -26,6 +26,7 @@ import           Data.Time.Calendar (Day, showGregorian, toGregorian)
 import           GHC.Exts (sortWith)
 import           Text.Pandoc
 
+import qualified Html
 import qualified Template as T
 import qualified Type
 
@@ -72,15 +73,15 @@ url post = "/" ++ datePath ++ "/" ++ (slug post)
 
 -- Returns whether post has code in it that requires a monospace font.
 usesMonoFont :: Post -> Bool
-usesMonoFont = not . null . Type.getCode . body
+usesMonoFont = not . null . Html.filterTags Html.isCode . Html.parseTags . body
 
 -- Returns whether the post has <em> tags that require an italic font.
 usesItalicFont :: Post -> Bool
-usesItalicFont = not . null . Type.getItalicText . body
+usesItalicFont = not . null . Html.filterTags Html.isEm . Html.parseTags . body
 
 -- Returns whether the post has <strong> tags that require a bold font.
 usesBoldFont :: Post -> Bool
-usesBoldFont = not . null . Type.getBoldText . body
+usesBoldFont = not . null . Html.filterTags Html.isStrong . Html.parseTags . body
 
 -- Converts an integer to a Roman numeral (nothing fancy, works for 1-9).
 toRoman :: Int -> String

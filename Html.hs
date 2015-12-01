@@ -18,13 +18,17 @@ module Html ( Tag
             , isH2
             , isHead
             , isHeader
+            , isHeading
             , isMath
             , isPre
             , isScript
+            , isSubtitle
             , isStrong
             , isStyle
+            , isTitle
             , mapTagsWhere
             , mapText
+            , mapTextWith
             , parseTags
             , renderTags
             ) where
@@ -141,6 +145,15 @@ data TagProperties = TagProperties { isAbbr   :: Bool
                                    , isStyle  :: Bool
                                    , isStrong :: Bool }
 
+isHeading :: TagProperties -> Bool
+isHeading t = (isH1 t) || (isH2 t)
+
+isTitle :: TagProperties -> Bool
+isTitle t = (isHeader t) && (isH1 t)
+
+isSubtitle :: TagProperties -> Bool
+isSubtitle t = (isHeader t) && (isH2 t)
+
 getProperties :: TagDepth -> TagProperties
 getProperties td = TagProperties { isAbbr   = (td M.! Abbr)   > 0
                                  , isCode   = (td M.! Code)   > 0
@@ -183,3 +196,8 @@ concatMapTagsWhere p f = concatMap select . classifyTags
 getTextInTag :: (TagProperties -> Bool) -> String -> String
 getTextInTag p  = join . intersperse " " . getText . (filterTags p) . parseTags
   where getText = fmap S.fromTagText . filter S.isTagText
+
+-- Returns a list of text in text nodes, together with a value selected by f.
+mapTextWith :: (TagProperties -> a) -> String -> [(String, a)]
+mapTextWith f = fmap select . (filter $ S.isTagText . fst) . classifyTags . parseTags
+  where select (tag, props) = (S.fromTagText tag, f props)
