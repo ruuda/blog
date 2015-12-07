@@ -12,7 +12,6 @@ module Type ( SubsetCommand
             ) where
 
 import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter, isSpace, ord, toLower, toUpper)
-import           Data.List (partition)
 import           Data.Maybe (fromJust, isJust)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
@@ -271,11 +270,13 @@ data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
 
 subsetFonts :: [SubsetCommand] -> IO ()
 subsetFonts commands = do
-  (Just stdin, _stdout, _stderr, pid) <- P.createProcess subsetScriptPiped
-  mapM_ (pushCommand stdin) commands
-  hClose stdin
-  _exitCode <- P.waitForProcess pid -- Ignore the exit code.
-  return ()
+  -- Divide the workload over eight processes to speed up subsetting.
+  procs <- sequence $ replicate 8 $ P.createProcess subsetScriptPiped
+  let stdins = fmap (\(Just stdin, _, _, _) -> stdin) procs
+      pids   = fmap (\(_, _, _, pid) -> pid) procs
+  mapM_ (uncurry pushCommand) (zip (cycle stdins) commands)
+  mapM_ hClose stdins
+  mapM_ P.waitForProcess pids -- Wait, but ignore the exit codes.
   where subsetScript = P.proc "python3" ["fonts/subset.py"]
         -- The Python interpreter needs to have a pipe for stdin because we
         -- want to write to it.
