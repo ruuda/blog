@@ -107,8 +107,9 @@ h2
 }
 
 /* TODO: hang the bullets in the margin when there is space. */
-article > ul
+article > ul, article > ol
 {
+  counter-reset: ol;
   list-style: none;
   margin-bottom: 1em;
   padding-top: 0.4em;
@@ -117,10 +118,22 @@ article > ul
 article li:before
 {
   color: #c36;
-  content: '•';
   display: inline-block;
   margin-left: -1em;
   width: 1em;
+}
+
+article > ul > li:before
+{
+  content: '•';
+}
+
+article > ol > li:before
+{
+  /* TODO: Ensure that the counter values are included in the subsetted font. */
+  content: counter(ol, decimal);
+  counter-increment: ol;
+  font-weight: bold;
 }
 
 article li
