@@ -11,7 +11,7 @@ module Type ( SubsetCommand
             , subsetFonts
             ) where
 
-import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter, isSpace, ord, toLower)
+import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter, isSpace, ord, toLower, toUpper)
 import           Data.List (partition)
 import           Data.Maybe (fromJust, isJust)
 import qualified Data.Set as Set
@@ -245,8 +245,13 @@ getGlyphs font ligatures = unique . (concatMap mapGlyphs) . (filter matchesFont)
         -- Note: there are more small cap glyphs than just the letters, but for
         -- now I don't use them.
   where makeSmcp glyph = case glyph of
-          g:[] -> if isAsciiLower g then g : ".smcp" else glyph
-          _    -> glyph
+          -- For a small cap, include both the small cap and the regular
+          -- capital. Because of the way opentype works, the capital needs to be
+          -- included even if it is not used, because small caps follow a
+          -- substitution rule, and if the true capital is not there, there is
+          -- nothing to substitute.
+          g:[] | isAsciiLower g -> [g : ".smcp", [toUpper g]]
+          _                     -> [glyph]
         glyphsFor      = fmap getGlyphName . filter (/= '\n') . unique
         ligasFor str   = case ligatures of
           NoLigatures -> []
@@ -257,8 +262,8 @@ getGlyphs font ligatures = unique . (concatMap mapGlyphs) . (filter matchesFont)
         matchesFont  (_,   (f, w, s, _   )) = (font == (f, w, s))
         mapGlyphs    (str, (_, _, _, caps)) = case caps of
           UnchangedCaps -> (glyphsFor str) ++ (ligasFor str) ++ (dligsFor str)
-          SmallCaps     -> fmap makeSmcp $ glyphsFor str
-          AllSmallCaps  -> fmap makeSmcp $ glyphsFor $ fmap toLower str
+          SmallCaps     -> concatMap makeSmcp $ glyphsFor str
+          AllSmallCaps  -> concatMap makeSmcp $ glyphsFor $ fmap toLower str
 
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
