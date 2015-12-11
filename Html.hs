@@ -37,7 +37,6 @@ module Html ( Tag
 
 import           Control.Monad (join)
 import           Data.List (intersperse)
-import qualified Data.Map as M
 import qualified Text.HTML.TagSoup as S
 
 type Tag = S.Tag String
@@ -85,52 +84,40 @@ data TagClass = Abbr
               | Pre
               | Script
               | Style
-              | Strong
-              | Other deriving (Eq, Ord)
+              | Strong deriving (Eq, Ord, Show)
 
-tagClassFromString :: String -> TagClass
-tagClassFromString str = case str of
-  "abbr"   -> Abbr
-  "code"   -> Code
-  "em"     -> Em
-  "h1"     -> H1
-  "h2"     -> H2
-  "head"   -> Head
-  "header" -> Header
-  "math"   -> Math
-  "pre"    -> Pre
-  "script" -> Script
-  "style"  -> Style
-  "strong" -> Strong
-  _        -> Other
+tagClassFromName :: String -> Maybe TagClass
+tagClassFromName name = case name of
+  "abbr"   -> Just Abbr
+  "code"   -> Just Code
+  "em"     -> Just Em
+  "h1"     -> Just H1
+  "h2"     -> Just H2
+  "head"   -> Just Head
+  "header" -> Just Header
+  "math"   -> Just Math
+  "pre"    -> Just Pre
+  "script" -> Just Script
+  "style"  -> Just Style
+  "strong" -> Just Strong
+  _        -> Nothing
 
--- Used to count how much unclosed opening tags were encountered.
-type TagDepth = M.Map TagClass Int
+-- A stack of tag name (string) and classification.
+type TagStack = [(String, TagClass)]
 
-zeroDepth :: TagDepth
-zeroDepth = M.fromList [ (Abbr,   0)
-                       , (Code,   0)
-                       , (Em,     0)
-                       , (H1,     0)
-                       , (H2,     0)
-                       , (Head,   0)
-                       , (Header, 0)
-                       , (Math,   0)
-                       , (Pre,    0)
-                       , (Script, 0)
-                       , (Style,  0)
-                       , (Strong, 0)
-                       , (Other,  0) ]
+updateTagStack :: TagStack -> Tag -> TagStack
+updateTagStack ts tag = case tag of
+  S.TagOpen name _     -> case tagClassFromName name of
+   Just classification -> (name, classification) : ts
+   Nothing             -> ts
+  S.TagClose name -> case ts of
+    (topName, _) : more -> if topName == name then more else ts
+    _                   -> ts
+  _                     -> ts
 
-updateTagDepth :: TagDepth -> Tag -> TagDepth
-updateTagDepth td tag = case tag of
-  S.TagOpen  name _ -> M.adjust (\d -> d + 1) (tagClassFromString name) td
-  S.TagClose name   -> M.adjust (\d -> d - 1) (tagClassFromString name) td
-  _                 -> td
-
--- Determines for every tag the nesting level of tag classifications.
-tagDepths :: [Tag] -> [TagDepth]
-tagDepths = scanl updateTagDepth zeroDepth
+-- Determines for every tag the nested tag classifications.
+tagStacks :: [Tag] -> [[TagClass]]
+tagStacks = fmap (fmap snd) . scanl updateTagStack []
 
 data TagProperties = TagProperties { isAbbr   :: Bool
                                    , isCode   :: Bool
@@ -154,23 +141,25 @@ isTitle t = (isHeader t) && (isH1 t)
 isSubtitle :: TagProperties -> Bool
 isSubtitle t = (isHeader t) && (isH2 t)
 
-getProperties :: TagDepth -> TagProperties
-getProperties td = TagProperties { isAbbr   = (td M.! Abbr)   > 0
-                                 , isCode   = (td M.! Code)   > 0
-                                 , isEm     = (td M.! Em)     > 0
-                                 , isH1     = (td M.! H1)     > 0
-                                 , isH2     = (td M.! H2)     > 0
-                                 , isHead   = (td M.! Head)   > 0
-                                 , isHeader = (td M.! Header) > 0
-                                 , isMath   = (td M.! Math)   > 0
-                                 , isPre    = (td M.! Pre)    > 0
-                                 , isScript = (td M.! Script) > 0
-                                 , isStyle  = (td M.! Style)  > 0
-                                 , isStrong = (td M.! Strong) > 0 }
+getProperties :: [TagClass] -> TagProperties
+getProperties ts =
+  let test cls = (cls `elem` ts)
+  in TagProperties { isAbbr   = test Abbr
+                   , isCode   = test Code
+                   , isEm     = test Em
+                   , isH1     = test H1
+                   , isH2     = test H2
+                   , isHead   = test Head
+                   , isHeader = test Header
+                   , isMath   = test Math
+                   , isPre    = test Pre
+                   , isScript = test Script
+                   , isStyle  = test Style
+                   , isStrong = test Strong }
 
 -- Given a list of tags, classifies them as "inside code", "inside em", etc.
 classifyTags :: [Tag] -> [(Tag, TagProperties)]
-classifyTags tags = zip tags $ fmap getProperties $ tagDepths tags
+classifyTags tags = zip tags $ fmap getProperties $ tagStacks tags
 
 -- Discards tags for which the predicate returns false.
 filterTags :: (TagProperties -> Bool) -> [Tag] -> [Tag]
