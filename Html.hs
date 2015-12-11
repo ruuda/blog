@@ -22,6 +22,7 @@ module Html ( Tag
             , isMath
             , isPre
             , isScript
+            , isSmcp
             , isSubtitle
             , isStrong
             , isStyle
@@ -35,7 +36,7 @@ module Html ( Tag
 
 -- This module contains utility functions for dealing with html.
 
-import           Control.Monad (join)
+import           Control.Monad (join, mplus, msum)
 import           Data.List (intersperse)
 import qualified Text.HTML.TagSoup as S
 
@@ -83,6 +84,7 @@ data TagClass = Abbr
               | Math
               | Pre
               | Script
+              | Smcp -- Not an html tag, but a class.
               | Style
               | Strong deriving (Eq, Ord, Show)
 
@@ -102,12 +104,23 @@ tagClassFromName name = case name of
   "strong" -> Just Strong
   _        -> Nothing
 
+tagClassFromAttributes :: [(String, String)] -> Maybe TagClass
+tagClassFromAttributes = msum . fmap fromAttr
+  where fromAttr attr = case attr of
+          ("class", "smcp") -> Just Smcp
+          _                 -> Nothing
+
+-- Try to classify the tag based on the tag name, or based on the attributes
+-- otherwise.
+tagClass :: String -> [(String, String)] -> Maybe TagClass
+tagClass name attrs = mplus (tagClassFromName name) (tagClassFromAttributes attrs)
+
 -- A stack of tag name (string) and classification.
 type TagStack = [(String, TagClass)]
 
 updateTagStack :: TagStack -> Tag -> TagStack
 updateTagStack ts tag = case tag of
-  S.TagOpen name _     -> case tagClassFromName name of
+  S.TagOpen name attrs -> case tagClass name attrs of
    Just classification -> (name, classification) : ts
    Nothing             -> ts
   S.TagClose name -> case ts of
@@ -129,6 +142,7 @@ data TagProperties = TagProperties { isAbbr   :: Bool
                                    , isMath   :: Bool
                                    , isPre    :: Bool
                                    , isScript :: Bool
+                                   , isSmcp   :: Bool
                                    , isStyle  :: Bool
                                    , isStrong :: Bool }
 
@@ -154,6 +168,7 @@ getProperties ts =
                    , isMath   = test Math
                    , isPre    = test Pre
                    , isScript = test Script
+                   , isSmcp   = test Smcp
                    , isStyle  = test Style
                    , isStrong = test Strong }
 
