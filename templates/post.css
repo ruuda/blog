@@ -168,7 +168,7 @@ pre.sourceCode
   padding: 1em;
 }
 
-.teaser
+#teaser
 {
   background-color: #c36;
   color: #f5b2c8;
@@ -176,21 +176,21 @@ pre.sourceCode
   padding: 1.4em;
 }
 
-.teaser p:first-child {
+#teaser p:first-child {
   margin-bottom: 0.3em;
 }
 
-.teaser a {
+#teaser a {
   color: #fff; /* TODO: Pick good colour scheme. */
 }
 
-.teaser a:after
+#teaser a:after
 {
   color: #fff;
   content: ' »';
 }
 
-.teaser > h2, footer > h2
+#teaser > h2, footer > h2
 {
   margin-bottom: 0.2rem;
   padding-top: 0.5rem; /* Same vertical alignment as article h2. */
