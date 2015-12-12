@@ -191,6 +191,7 @@ pre.sourceCode
 
 #teaser a {
   color: #fff; /* TODO: Pick good colour scheme. */
+  font-family: Calluna, serif;
 }
 
 #teaser a:after

@@ -11,6 +11,7 @@ module Html ( Tag
             , concatMapTagsWhere
             , filterTags
             , getTextInTag
+            , isA
             , isAbbr
             , isCode
             , isEm
@@ -26,6 +27,8 @@ module Html ( Tag
             , isSubtitle
             , isStrong
             , isStyle
+            , isTeaser
+            , isTeaserLink
             , isTitle
             , mapTagsWhere
             , mapText
@@ -74,7 +77,8 @@ mapText f (S.TagText str) = S.TagText (f str)
 mapText _ tag             = tag
 
 -- Various classifications for tags: inside body, inside code, etc.
-data TagClass = Abbr
+data TagClass = A
+              | Abbr
               | Code
               | Em
               | H1
@@ -84,12 +88,15 @@ data TagClass = Abbr
               | Math
               | Pre
               | Script
-              | Smcp -- Not an html tag, but a class.
+              | Smcp   -- Not an html tag, but a class.
               | Style
-              | Strong deriving (Eq, Ord, Show)
+              | Strong
+              | Teaser -- Not an html tag, but an id.
+              deriving (Eq, Ord, Show)
 
 tagClassFromName :: String -> Maybe TagClass
 tagClassFromName name = case name of
+  "a"      -> Just A
   "abbr"   -> Just Abbr
   "code"   -> Just Code
   "em"     -> Just Em
@@ -108,6 +115,7 @@ tagClassFromAttributes :: [(String, String)] -> Maybe TagClass
 tagClassFromAttributes = msum . fmap fromAttr
   where fromAttr attr = case attr of
           ("class", "smcp") -> Just Smcp
+          ("id", "teaser")  -> Just Teaser
           _                 -> Nothing
 
 -- Try to classify the tag based on the tag name, or based on the attributes
@@ -132,7 +140,8 @@ updateTagStack ts tag = case tag of
 tagStacks :: [Tag] -> [[TagClass]]
 tagStacks = fmap (fmap snd) . scanl updateTagStack []
 
-data TagProperties = TagProperties { isAbbr   :: Bool
+data TagProperties = TagProperties { isA      :: Bool
+                                   , isAbbr   :: Bool
                                    , isCode   :: Bool
                                    , isEm     :: Bool
                                    , isH1     :: Bool
@@ -144,7 +153,8 @@ data TagProperties = TagProperties { isAbbr   :: Bool
                                    , isScript :: Bool
                                    , isSmcp   :: Bool
                                    , isStyle  :: Bool
-                                   , isStrong :: Bool }
+                                   , isStrong :: Bool
+                                   , isTeaser :: Bool }
 
 isHeading :: TagProperties -> Bool
 isHeading t = (isH1 t) || (isH2 t)
@@ -155,10 +165,14 @@ isTitle t = (isHeader t) && (isH1 t)
 isSubtitle :: TagProperties -> Bool
 isSubtitle t = (isHeader t) && (isH2 t)
 
+isTeaserLink :: TagProperties -> Bool
+isTeaserLink t = (isTeaser t) && (isA t)
+
 getProperties :: [TagClass] -> TagProperties
 getProperties ts =
   let test cls = (cls `elem` ts)
-  in TagProperties { isAbbr   = test Abbr
+  in TagProperties { isA      = test A
+                   , isAbbr   = test Abbr
                    , isCode   = test Code
                    , isEm     = test Em
                    , isH1     = test H1
@@ -170,7 +184,8 @@ getProperties ts =
                    , isScript = test Script
                    , isSmcp   = test Smcp
                    , isStyle  = test Style
-                   , isStrong = test Strong }
+                   , isStrong = test Strong
+                   , isTeaser = test Teaser }
 
 -- Given a list of tags, classifies them as "inside code", "inside em", etc.
 classifyTags :: [Tag] -> [(Tag, TagProperties)]

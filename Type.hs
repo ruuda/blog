@@ -44,10 +44,11 @@ needsFont t = case t of
 
 getFamily :: TagProperties -> FontFamily
 getFamily t = case t of
-  _ | Html.isCode t    -> Mono
-  _ | Html.isHeader t  -> Serif
-  _ | Html.isHeading t -> Serif
-  _ | otherwise        -> Sans
+  _ | Html.isCode t       -> Mono
+  _ | Html.isHeader t     -> Serif
+  _ | Html.isHeading t    -> Serif
+  _ | Html.isTeaserLink t -> Serif
+  _ | otherwise           -> Sans
 
 getWeight :: TagProperties -> FontWeight
 getWeight t = case t of
@@ -65,9 +66,10 @@ getStyle t = case t of
 
 getCaps :: TagProperties -> FontCaps
 getCaps t = case t of
-  _ | Html.isAbbr t -> AllSmallCaps
-  _ | Html.isSmcp t -> AllSmallCaps
-  _ | otherwise     -> UnchangedCaps
+  _ | Html.isAbbr t       -> AllSmallCaps
+  _ | Html.isSmcp t       -> AllSmallCaps
+  _ | Html.isTeaserLink t -> AllSmallCaps
+  _ | otherwise           -> UnchangedCaps
 
 getFont :: TagProperties -> Maybe FontAndCaps
 getFont t = if needsFont t then Just font else Nothing
