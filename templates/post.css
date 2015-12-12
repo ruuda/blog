@@ -85,7 +85,7 @@ a
   text-decoration: none;
 }
 
-abbr
+abbr, .smcp
 {
   /* Use the caps-to-small-caps opentype feature, instead of 'smcp' (or even
    * font-variant: small-caps) in combination with text-transform: lowercase.
@@ -95,6 +95,15 @@ abbr
   /* TODO: Add letterspacing once non-broken version of Blink is mainstream. */
   -webkit-font-feature-settings: 'c2sc';
   font-feature-settings: 'c2sc';
+  text-transform: uppercase;
+}
+
+.smcp
+{
+  /* Note: this breaks small caps in Blink. Enable once
+   * https://crrev.com/1416603005 goes mainstream, or live with the non-small
+   * caps? */
+  letter-spacing: 0.1em;
 }
 
 h2

@@ -66,6 +66,7 @@ getStyle t = case t of
 getCaps :: TagProperties -> FontCaps
 getCaps t = case t of
   _ | Html.isAbbr t -> AllSmallCaps
+  _ | Html.isSmcp t -> AllSmallCaps
   _ | otherwise     -> UnchangedCaps
 
 getFont :: TagProperties -> Maybe FontAndCaps

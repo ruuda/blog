@@ -3,7 +3,7 @@
     <article itemscope>
       <header>
         <h1>{{header}}</h1>
-        {{if part}}<p class="part">Part {{part}}</p>{{end}}
+        {{if part}}<p class="smcp">Part {{part}}</p>{{end}}
         {{if subheader}}<h2>{{subheader}}</h2>{{end}}
         <p>
           written by <span class="author">Ruud van Asseldonk</span><br>
@@ -13,7 +13,7 @@
       {{content}}
     </article>
     <section id="teaser">
-      <p>Further reading</p>
+      <p class="smcp">Further reading</p>
       <h2>{{further.title}}</h2>
       <p>{{further.synopsis}} <a href="{{further.url}}">Read full post</a></p>
     </section>
