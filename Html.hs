@@ -35,6 +35,7 @@ module Html ( Tag
             , mapTagsWhere
             , mapText
             , mapTextWith
+            , maxOlLength
             , parseTags
             , renderTags
             ) where
@@ -230,3 +231,10 @@ getTextInTag p  = join . intersperse " " . getText . (filterTags p) . parseTags
 mapTextWith :: (TagProperties -> a) -> String -> [(String, a)]
 mapTextWith f = fmap select . (filter $ S.isTagText . fst) . classifyTags . parseTags
   where select (tag, props) = (S.fromTagText tag, f props)
+
+-- Returns the length of the longest ordered list in an html string.
+maxOlLength :: String -> Int
+maxOlLength = maximum . foldl listLength [0] . classifyTags . parseTags
+  where listLength ns     ((S.TagOpen  "ol" _), _  )            = 0 : ns
+        listLength (n:ns) ((S.TagOpen  "li" _), cls) | isOl cls = (n + 1) : ns
+        listLength ns     _                                     = ns
