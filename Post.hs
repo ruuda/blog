@@ -79,13 +79,13 @@ usesMonoFont = not . null . Html.filterTags Html.isCode . Html.parseTags . body
 usesItalicFont :: Post -> Bool
 usesItalicFont = not . null . Html.filterTags Html.isEm . Html.parseTags . body
 
--- Returns whether the post has <strong> tags that require a bold font.
-usesBoldFont :: Post -> Bool
-usesBoldFont = not . null . Html.filterTags Html.isStrong . Html.parseTags . body
-
 -- Converts an integer to a Roman numeral (nothing fancy, works for 1-9).
 toRoman :: Int -> String
 toRoman i = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"] !! (i - 1)
+
+-- Maps a boolean to a field that can be used in a template expansion context.
+booleanField :: Bool -> Maybe String
+booleanField b = if b then Just "true" else Nothing
 
 -- Returns the template expansion context for the post.
 context :: Post -> T.Context
@@ -103,9 +103,9 @@ context p = fmap T.StringValue ctx
                                , ("bold-font", boldFontField)
                                , ("italic-font", italicFontField)
                                , ("mono-font", monoFontField) ]
-        boldFontField   = if usesBoldFont   p then Just "true" else Nothing
-        italicFontField = if usesItalicFont p then Just "true" else Nothing
-        monoFontField   = if usesMonoFont   p then Just "true" else Nothing
+        boldFontField   = booleanField $ Type.usesBoldFont $ body p
+        italicFontField = booleanField $ usesItalicFont p
+        monoFontField   = booleanField $ usesMonoFont p
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.

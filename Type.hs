@@ -9,6 +9,7 @@ module Type ( SubsetCommand
             , makeAbbrs
             , subsetArtifact
             , subsetFonts
+            , usesBoldFont
             ) where
 
 import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter, isSpace, ord, toLower, toUpper)
@@ -322,6 +323,13 @@ subsetArtifact baseName html = filter isUseful commands
         commands = [ serifItalicCommand, serifRomanCommand, serifBoldCommand
                    , sansItalicCommand,  sansRomanCommand,  sansBoldCommand
                    , monoCommand ]
+
+-- Returns whether the html contains text that must be set in the bold
+-- sans-serif font.
+usesBoldFont :: String -> Bool
+usesBoldFont = not . null . filter isBoldSans . mapFontFull
+  where isBoldSans (_, (Sans, Bold, _, _)) = True
+        isBoldSans _                       = False
 
 -- Replaces double dashes (--) surrounded by spaces with em-dashes (—)
 -- surrounded by thin spaces, and single dashes surrounded by spaces with
