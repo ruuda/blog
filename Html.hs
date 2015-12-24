@@ -21,6 +21,7 @@ module Html ( Tag
             , isHeader
             , isHeading
             , isMath
+            , isOl
             , isPre
             , isScript
             , isSmcp
@@ -30,6 +31,7 @@ module Html ( Tag
             , isTeaser
             , isTeaserLink
             , isTitle
+            , isUl
             , mapTagsWhere
             , mapText
             , mapTextWith
@@ -86,12 +88,14 @@ data TagClass = A
               | Head
               | Header
               | Math
+              | Ol
               | Pre
               | Script
               | Smcp   -- Not an html tag, but a class.
               | Style
               | Strong
               | Teaser -- Not an html tag, but an id.
+              | Ul
               deriving (Eq, Ord, Show)
 
 tagClassFromName :: String -> Maybe TagClass
@@ -105,10 +109,12 @@ tagClassFromName name = case name of
   "head"   -> Just Head
   "header" -> Just Header
   "math"   -> Just Math
+  "ol"     -> Just Ol
   "pre"    -> Just Pre
   "script" -> Just Script
   "style"  -> Just Style
   "strong" -> Just Strong
+  "ul"     -> Just Ul
   _        -> Nothing
 
 tagClassFromAttributes :: [(String, String)] -> Maybe TagClass
@@ -149,12 +155,14 @@ data TagProperties = TagProperties { isA      :: Bool
                                    , isHead   :: Bool
                                    , isHeader :: Bool
                                    , isMath   :: Bool
+                                   , isOl     :: Bool
                                    , isPre    :: Bool
                                    , isScript :: Bool
                                    , isSmcp   :: Bool
                                    , isStyle  :: Bool
                                    , isStrong :: Bool
-                                   , isTeaser :: Bool }
+                                   , isTeaser :: Bool
+                                   , isUl     :: Bool }
 
 isHeading :: TagProperties -> Bool
 isHeading t = (isH1 t) || (isH2 t)
@@ -180,12 +188,14 @@ getProperties ts =
                    , isHead   = test Head
                    , isHeader = test Header
                    , isMath   = test Math
+                   , isOl     = test Ol
                    , isPre    = test Pre
                    , isScript = test Script
                    , isSmcp   = test Smcp
                    , isStyle  = test Style
                    , isStrong = test Strong
-                   , isTeaser = test Teaser }
+                   , isTeaser = test Teaser
+                   , isUl     = test Ul }
 
 -- Given a list of tags, classifies them as "inside code", "inside em", etc.
 classifyTags :: [Tag] -> [(Tag, TagProperties)]
