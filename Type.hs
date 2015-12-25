@@ -57,6 +57,7 @@ getWeight t = case t of
   _ | Html.isTitle t    -> Bold
   _ | Html.isH2 t       -> Bold
   _ | Html.isStrong t   -> Bold
+  _ | Html.isTh t       -> Bold
   _ | otherwise         -> Regular
 
 getStyle :: TagProperties -> FontStyle
