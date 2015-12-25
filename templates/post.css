@@ -285,6 +285,12 @@ footer span
 @media(min-width: 425px)
 {
   html { font-size: 18px; }
+
+  header
+  {
+    margin-left: 1.4em;
+    margin-right: 1.4em;
+  }
 }
 
 @media(min-width: 583px)
@@ -295,6 +301,12 @@ footer span
   {
     padding-left: 2em;
     padding-right: 2em;
+  }
+
+  header
+  {
+    margin-left: 2em;
+    margin-right: 2em;
   }
 }
 
@@ -309,6 +321,12 @@ footer span
     max-width: 37em;
     padding-left: 2.8em;
     padding-right: 2.8em;
+  }
+
+  header
+  {
+    margin-left: 2.8em;
+    margin-right: 2.8em;
   }
 
   /* Hang list numbers and bullets in the margin when there is enough space. */
