@@ -224,7 +224,7 @@ That would certainly simplify the quaternion code, and it would allow scalar mul
 
 [rfc]: https://github.com/rust-lang/rfcs/pull/195
 
-**Edit 2014-11-05:** Rust 0.13 does have multidispatch now,
+**Edit:** Rust 0.13 does have multidispatch now,
 and the code has been simplified accordingly.
 
 Next time I will discuss more of the type system,
