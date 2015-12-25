@@ -170,6 +170,7 @@ getGlyphName c = case c of
   '’' -> "quoteright"
   '“' -> "quotedblleft"
   '”' -> "quotedblright"
+  '•' -> "bullet"
   '…' -> "ellipsis"
   '≈' -> "approxequal"
   _   -> error $ "no postscript glyph name for '" ++ [c] ++ "' " ++
@@ -242,6 +243,10 @@ mapFont = (fmap dropMaybe)
 synthesizeListNumbers :: String -> String
 synthesizeListNumbers html = concatMap show [1 .. Html.maxOlLength html]
 
+-- Given html, returns a list bullet if the html contains an unordered list.
+synthesizeListBullets :: String -> String
+synthesizeListBullets html = if Html.hasUl html then "•" else ""
+
 -- Given html, returns a string with guillemets that are added by css.
 synthesizeGuillemets :: String -> String
 synthesizeGuillemets html = if hasTeaserLink then "»" else ""
@@ -255,6 +260,7 @@ synthesizeGuillemets html = if hasTeaserLink then "»" else ""
 synthesizeFont :: String -> [(String, FontAndCaps)]
 synthesizeFont html =
   [ (synthesizeListNumbers html, (Sans,  Bold,    Roman, UnchangedCaps))
+  , (synthesizeListBullets html, (Sans,  Regular, Roman, UnchangedCaps))
   , (synthesizeGuillemets  html, (Serif, Regular, Roman, AllSmallCaps )) ]
 
 -- Returns all the text that should be typeset and the font it should be set in.
