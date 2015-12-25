@@ -209,6 +209,9 @@ pre.sourceCode
 #teaser a {
   color: #fff; /* TODO: Pick good colour scheme. */
   font-family: Calluna, serif;
+  /* For reasons unknown to me, this fixes the baseline alignment of the teaser
+   * paragraph in Firefox. The value has been found by trial and error. */
+  line-height: 1.25;
 }
 
 #teaser a:after
