@@ -31,7 +31,6 @@ body
 article, #teaser, #footer
 {
   padding: 1.4em;
-  max-width: 35em;
   margin-left: auto;
   margin-right: auto;
 }
@@ -123,7 +122,6 @@ h2
   padding-top: 1.2rem;
 }
 
-/* TODO: hang the bullets in the margin when there is space. */
 article > ul, article > ol
 {
   counter-reset: ol;
@@ -291,11 +289,32 @@ footer span
 @media(min-width: 583px)
 {
   html { font-size: 20px; }
+
+  article, #teaser, #footer
+  {
+    padding-left: 2em;
+    padding-right: 2em;
+  }
 }
 
 @media(min-width: 776px)
 {
   html { font-size: 22px; }
+
+  article, #teaser, #footer
+  {
+    /* By limiting the width to 37em (31.4 minus padding),
+     * there are on average 87 characters per line. */
+    max-width: 37em;
+    padding-left: 2.8em;
+    padding-right: 2.8em;
+  }
+
+  /* Hang list numbers and bullets in the margin when there is enough space. */
+  article li
+  {
+    margin-left: 0;
+  }
 }
 
 @media(min-width: 1008px)
