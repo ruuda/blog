@@ -11,6 +11,7 @@ module Html ( Tag
             , concatMapTagsWhere
             , filterTags
             , getTextInTag
+            , hasUl
             , isA
             , isAbbr
             , isArticle
@@ -241,6 +242,14 @@ getTextInTag p  = join . intersperse " " . getText . (filterTags p) . parseTags
 mapTextWith :: (TagProperties -> a) -> String -> [(String, a)]
 mapTextWith f = fmap select . (filter $ S.isTagText . fst) . classifyTags . parseTags
   where select (tag, props) = (S.fromTagText tag, f props)
+
+-- Returns whether an <ul> tag is present in the <article> in an html string.
+hasUl :: String -> Bool
+hasUl = not . null
+      . filter (isArticle . snd)
+      . filter (S.isTagOpenName "ul" . fst)
+      . classifyTags
+      . parseTags
 
 -- Returns the length of the longest ordered list in an html string.
 maxOlLength :: String -> Int
