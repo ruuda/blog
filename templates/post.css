@@ -229,7 +229,7 @@ code.sourceCode
   content: ' »';
 }
 
-#teaser > h2, footer > h2
+#teaser > h2
 {
   margin-bottom: 0.2rem;
   padding-top: 0.5rem; /* Same vertical alignment as article h2. */
@@ -238,7 +238,7 @@ code.sourceCode
 footer
 {
   background-color: #234; /* TODO: pick unified colour scheme. */
-  color: #ccc;
+  color: #b4aaaa;
   padding: 1.4em;
 }
 
