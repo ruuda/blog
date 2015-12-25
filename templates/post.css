@@ -190,6 +190,19 @@ pre
   padding: 1em;
 }
 
+code.sourceCode
+{
+  color: #456;
+}
+
+/* Syntax highlighting colors, adapted from the default prism.js theme. */
+.kw           { color: #07a; } /* Keyword */
+.dt           { color: #d56; } /* Data type, function */
+.fu           { color: #690; } /* Function */
+.dv, .bn, .fl { color: #905; } /* Decimal, base N, float */
+.ch, .st      { color: #e90; } /* Character, string */
+.co           { color: #789; } /* Comment */
+
 #teaser
 {
   background-color: #c36;
