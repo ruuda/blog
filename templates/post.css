@@ -327,6 +327,8 @@ footer span
   {
     margin-left: 2.8em;
     margin-right: 2.8em;
+    margin-top: 1.4em;
+    margin-bottom: 1.4em;
   }
 
   /* Hang list numbers and bullets in the margin when there is enough space. */
