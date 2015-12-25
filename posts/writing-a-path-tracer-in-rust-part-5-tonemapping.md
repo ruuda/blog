@@ -295,8 +295,8 @@ pub fn tonemap(&mut self, tristimuli: &[Vector3]) {
 I also like Rust’s cast.
 It is less intrusive than the C++ one.
 
----
-
+Conclusion
+----------
 Altough the C++ and Rust snippets in this post are very much alike,
 there is a big difference:
 the Rust code is guaranteed to be memory safe and thread safe.
@@ -313,8 +313,6 @@ This is something that does not show in the final code.
 
 Next time I will discuss how these units work together to utilise all available computing power,
 and I will elaborate on multithreading.
-
----
 
 Discuss this post on [Reddit][reddit].
 Rust 0.12.0-pre-nightly was used in this post.

@@ -451,6 +451,4 @@ Rust has an amazing community that is very welcoming to new members.
 [burntsushi]: http://blog.burntsushi.net/rust-error-handling/
 [book]:       https://doc.rust-lang.org/stable/book/
 
----
-
 Rust 1.0.0 and C# 5 were used in this post.

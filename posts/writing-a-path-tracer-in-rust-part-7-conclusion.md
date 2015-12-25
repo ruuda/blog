@@ -229,8 +229,6 @@ but so far, Rust’s advantages outweigh the minor annoyances.
 If I could choose between C++ and Rust for my next project,
 I would choose Rust.
 
----
-
 Discuss this post on [Reddit][reddit].
 
 [reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/10/20/writing-a-path-tracer-in-rust-part-7-conclusion

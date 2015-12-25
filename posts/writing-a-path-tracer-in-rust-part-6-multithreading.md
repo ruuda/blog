@@ -357,8 +357,8 @@ and the code will compile just fine.
 [lodepng]: https://github.com/pornel/lodepng-rust
 [honest]:  https://channel9.msdn.com/Shows/Going+Deep/Erik-Meijer-Functional-Programming
 
----
-
+Conclusion
+----------
 Ownership in Rust is a powerful tool.
 It enables synchronisation primitives that are impossible to misuse.
 Multithreading in Rust differs from C++ much in the same way that memory management does:
@@ -372,16 +372,13 @@ The tools that enable safe concurrent programming are there in both languages.
 In C++, you can choose to use them.
 In Rust, safety is enforced by default.
 
-[values]: http://www.infoq.com/presentations/Value-Values
-
 This concludes my port of the Luculentus spectral path tracer.
 Next time I will summarise the process,
 and I will compare the performance of the two versions --
 which might surprise you.
 
----
-
 Discuss this post on [Reddit][reddit].
 Rust 0.12.0-pre-nightly was used in this post.
 
+[values]: http://www.infoq.com/presentations/Value-Values
 [reddit]: http://reddit.com/r/rust/ruudvanasseldonk.com/2014/09/15/writing-a-path-tracer-in-rust-part-6-multithreading

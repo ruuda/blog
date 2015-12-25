@@ -312,11 +312,7 @@ provided that a suitable prime exists.
 (This is the case for all common integer sizes.)
 You can find my implementation of a more general function on [GitHub][github].
 
+Discuss this post on [Reddit][reddit].
+
 [github]: https://github.com/ruud-v-a/fibint
-
-----------
-
-Discuss this post on [Reddit][reddit]. <!-- or [Hacker News][hn]. -->
-
 [reddit]: http://reddit.com/r/programming/ruudvanasseldonk.com/2014/07/01/fibonacci-numbers-in-finite-fields
-[hn]:     https://news.ycombinator.com/submit

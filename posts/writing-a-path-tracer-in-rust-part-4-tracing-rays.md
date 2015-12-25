@@ -263,15 +263,11 @@ If we were to match on that, it would move the box into the match variable.
 Here we do not want to take ownership of the material,
 so by matching with `ref`, the `mat` variables will borrow the material instead.
 
----
-
 For the cases in this post, the types in Rust and C++ are very similar.
 However, Rust has a more advanced type system, with several benefits:
 it prevents you from constructing invalid objects,
 and it forces you to consider every case.
 Next time I will discuss how ray intensities are converted into an image.
-
----
 
 Discuss this post on [Reddit][reddit].
 Rust 0.12.0-pre-nightly was used in this post.

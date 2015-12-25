@@ -227,13 +227,9 @@ That would certainly simplify the quaternion code, and it would allow scalar mul
 **Edit 2014-11-05:** Rust 0.13 does have multidispatch now,
 and the code has been simplified accordingly.
 
----
-
 Next time I will discuss more of the type system,
 and there will finally be rays!
 I will also discuss more of the internals of the path tracer.
-
----
 
 Discuss this post on [Reddit][reddit].
 Rust 0.12.0-pre-nightly was used in this post.
