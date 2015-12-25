@@ -30,6 +30,7 @@ module Html ( Tag
             , isStyle
             , isTeaser
             , isTeaserLink
+            , isTh
             , isTitle
             , isUl
             , mapTagsWhere
@@ -96,6 +97,7 @@ data TagClass = A
               | Style
               | Strong
               | Teaser -- Not an html tag, but an id.
+              | Th
               | Ul
               deriving (Eq, Ord, Show)
 
@@ -115,6 +117,7 @@ tagClassFromName name = case name of
   "script" -> Just Script
   "style"  -> Just Style
   "strong" -> Just Strong
+  "th"     -> Just Th
   "ul"     -> Just Ul
   _        -> Nothing
 
@@ -163,6 +166,7 @@ data TagProperties = TagProperties { isA      :: Bool
                                    , isStyle  :: Bool
                                    , isStrong :: Bool
                                    , isTeaser :: Bool
+                                   , isTh     :: Bool
                                    , isUl     :: Bool }
 
 isHeading :: TagProperties -> Bool
@@ -196,6 +200,7 @@ getProperties ts =
                    , isStyle  = test Style
                    , isStrong = test Strong
                    , isTeaser = test Teaser
+                   , isTh     = test Th
                    , isUl     = test Ul }
 
 -- Given a list of tags, classifies them as "inside code", "inside em", etc.
