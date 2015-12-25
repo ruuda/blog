@@ -233,8 +233,9 @@ code.sourceCode
 
 #teaser a:after
 {
+  /* U+00a0 is a non-breaking space. */
   color: #fff;
-  content: ' »';
+  content: '\a0»';
 }
 
 #teaser > h2

@@ -249,7 +249,7 @@ synthesizeListBullets html = if Html.hasUl html then "•" else ""
 
 -- Given html, returns a string with guillemets that are added by css.
 synthesizeGuillemets :: String -> String
-synthesizeGuillemets html = if hasTeaserLink then "»" else ""
+synthesizeGuillemets html = if hasTeaserLink then "\x00a0»" else ""
   where hasTeaserLink  = not $ null
                        $ filter (isTeaserLink . snd)
                        $ Html.classifyTags
