@@ -151,6 +151,22 @@ article li
   margin-left: 1em;
 }
 
+table
+{
+  border-spacing: 0;
+  margin-bottom: 1em;
+}
+
+th
+{
+  padding-top: 0.4em;
+}
+
+th, td
+{
+  padding-right: 1.4em;
+}
+
 code
 {
   color: #c36;
