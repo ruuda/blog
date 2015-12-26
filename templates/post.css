@@ -178,9 +178,17 @@ code
   font-family: Inconsolata, Consolas, monospace;
 }
 
+div.sourceCode
+{
+  /* Hang the border left of the pre in the margin. */
+  /* TODO: How do I handle this when there is no div? */
+  margin-left: -0.25em;
+  overflow: hidden;
+}
+
 pre
 {
-  /* The bottom of the block is baseline-aligned. The top is not, but the space
+  /* The top and bottom of the block are not baseline-aligned, but the space
    * between the top and the text baseline and between the bottom and the
    * x-height is both 1.6em. The code baseline is offset from the regular
    * baseline by 0.7em (half a line height). */
@@ -189,10 +197,9 @@ pre
   margin-bottom: 0.6em;
   margin-top: 0.2em;
   overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: 0.9em;
-  padding-left: 1.4em;
   padding: 1em;
+  padding-left: 1.4em;
+  padding-right: 1.4em;
 }
 
 code.sourceCode
@@ -341,6 +348,14 @@ footer span
 @media(min-width: 1008px)
 {
   html { font-size: 24px; }
+
+  /* Align source code with text and pull borders into the margin, if there is
+   * space. TODO: How to handle this when there is no extra div? */
+  div.sourceCode
+  {
+    margin-left: -1.65em;
+    margin-right: -1.4em;
+  }
 }
 
 @media(min-width: 1281px)
