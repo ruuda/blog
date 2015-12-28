@@ -200,6 +200,12 @@ pre
   padding: 1rem;
   padding-left: 1.4rem;
   padding-right: 1.4rem;
+
+  /* Use a slightly smaller font size for code blocks, because matching the
+   * x-height to the body font makes the code look too big. Do keep the same
+   * line height to ensure proper baseline alignment. */
+  font-size: 0.9em;
+  line-height: 1.4rem;
 }
 
 code.sourceCode
