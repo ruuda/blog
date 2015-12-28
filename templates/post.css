@@ -193,13 +193,13 @@ pre
    * x-height is both 1.6em. The code baseline is offset from the regular
    * baseline by 0.7em (half a line height). */
   background-color: #eee;
-  border-left: 0.25em solid #c36;
-  margin-bottom: 0.6em;
-  margin-top: 0.2em;
+  border-left: 0.25rem solid #c36;
+  margin-bottom: 0.6rem;
+  margin-top: 0.2rem;
   overflow-x: auto;
-  padding: 1em;
-  padding-left: 1.4em;
-  padding-right: 1.4em;
+  padding: 1rem;
+  padding-left: 1.4rem;
+  padding-right: 1.4rem;
 }
 
 code.sourceCode
