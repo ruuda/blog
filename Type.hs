@@ -6,6 +6,7 @@
 
 module Type ( SubsetCommand
             , expandPunctuation
+            , insertRunIn
             , makeAbbrs
             , subsetArtifact
             , subsetFonts
@@ -422,3 +423,16 @@ runInLength str = 25 + offset
           (Just s, Just p) -> if (abs p) <= (abs s) + 10 then p else s
           (Just s, _)      -> s
           _                -> error "sentence must contain spaces"
+
+-- Adds <span class="run-in"> around the first few words of an html snippet.
+-- Assumes that the html starts with a <p> tag.
+insertRunIn :: String -> String
+insertRunIn html  = Html.renderTags newTags
+  where newTags   = openTag : openSpan : runIn : closeSpan : nonRunIn : more
+        openSpan  = S.TagOpen "span" [("class", "run-in")]
+        closeSpan = S.TagClose "span"
+        openTag : textTag : more  = Html.parseTags html
+        text                      = S.fromTagText textTag
+        (runInText, nonRunInText) = splitAt (runInLength text) text
+        runIn                     = S.TagText runInText
+        nonRunIn                  = S.TagText nonRunInText
