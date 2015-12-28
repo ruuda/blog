@@ -25,6 +25,7 @@ module Html ( Tag
             , isMath
             , isOl
             , isPre
+            , isRunIn
             , isScript
             , isSmcp
             , isSubtitle
@@ -95,6 +96,7 @@ data TagClass = A
               | Math
               | Ol
               | Pre
+              | RunIn  -- Not an html tag, but a class.
               | Script
               | Smcp   -- Not an html tag, but a class.
               | Style
@@ -128,9 +130,10 @@ tagClassFromName name = case name of
 tagClassFromAttributes :: [(String, String)] -> Maybe TagClass
 tagClassFromAttributes = msum . fmap fromAttr
   where fromAttr attr = case attr of
-          ("class", "smcp") -> Just Smcp
-          ("id", "teaser")  -> Just Teaser
-          _                 -> Nothing
+          ("class", "smcp")   -> Just Smcp
+          ("class", "run-in") -> Just RunIn
+          ("id", "teaser")    -> Just Teaser
+          _                   -> Nothing
 
 -- Try to classify the tag based on the tag name, or based on the attributes
 -- otherwise.
@@ -166,6 +169,7 @@ data TagProperties = TagProperties { isA       :: Bool
                                    , isMath    :: Bool
                                    , isOl      :: Bool
                                    , isPre     :: Bool
+                                   , isRunIn   :: Bool
                                    , isScript  :: Bool
                                    , isSmcp    :: Bool
                                    , isStyle   :: Bool
@@ -201,6 +205,7 @@ getProperties ts =
                    , isMath    = test Math
                    , isOl      = test Ol
                    , isPre     = test Pre
+                   , isRunIn   = test RunIn
                    , isScript  = test Script
                    , isSmcp    = test Smcp
                    , isStyle   = test Style
