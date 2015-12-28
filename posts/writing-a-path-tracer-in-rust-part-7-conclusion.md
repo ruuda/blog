@@ -188,9 +188,9 @@ Compiler               Platform        Performance
 GCC 4.9.1*             Arch Linux x64  0.35 ± 0.04
 GCC 4.9.1              Arch Linux x64  0.33 ± 0.06
 rustc 0.12 2014-09-25  Arch Linux x64  0.32 ± 0.01
-Clang 3.5.0            Arch Linux x64  0.30 ± 0.05
-msvc 110               Windows 7 x64   0.23 ± 0.03
-msvc 110*              Windows 7 x64   0.23 ± 0.02
+clang 3.5.0            Arch Linux x64  0.30 ± 0.05
+MSVC 110               Windows 7 x64   0.23 ± 0.03
+MSVC 110*              Windows 7 x64   0.23 ± 0.02
 rustc 0.12 2014-09-23  Windows 7 x64   0.23 ± 0.01
 
 Optimisation levels were set as high as possible everywhere.
@@ -207,9 +207,9 @@ After the port, these are the compile times in seconds:
 Compiler               Time
 ---------------------  ------------
 rustc 0.12 2014-09-26   7.31 ± 0.05
-Clang 3.5.0            13.39 ± 0.03
+clang 3.5.0            13.39 ± 0.03
 GCC 4.9.1              17.3  ± 0.5
-msvc 110               20.4  ± 0.3
+MSVC 110               20.4  ± 0.3
 
 No instant compilation any more, but still much better than C++.
 
