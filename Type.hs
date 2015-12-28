@@ -12,7 +12,9 @@ module Type ( SubsetCommand
             , usesBoldFont
             ) where
 
-import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter, isSpace, ord, toLower, toUpper)
+import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter,
+                            isPunctuation, isSpace, ord, toLower, toUpper)
+import           Data.List (findIndex)
 import           Data.Maybe (fromJust, isJust)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
@@ -388,3 +390,35 @@ expandPunctuation :: String -> String
 expandPunctuation = Html.renderTags . Html.mapTagsWhere inBody expand . Html.parseTags
   where inBody    = not . Html.isCode
         expand    = Html.mapText expandPunctuationRaw
+
+-- Selects the value with the minimum absolute value, lifted to Maybe.
+minAbs :: Maybe Int -> Maybe Int -> Maybe Int
+minAbs mx my = case (mx, my) of
+  (Just x,  Just y)  -> Just $ if (abs x) < (abs y) then x else y
+  (Just x,  Nothing) -> Just x
+  (Nothing, Just y)  -> Just y
+  (Nothing, Nothing) -> Nothing
+
+-- Returns an optimal length for the run-in of small caps that opens a post.
+runInLength :: String -> Int
+runInLength str = 25 + offset
+  -- The ideal length for the run-in is 25 characters, a little less than a
+  -- third of the line length on full-width viewports, a bit more for narrow
+  -- viewports. Do not search further than 80 characters.
+  where (less, more) = splitAt 25 $ take 80 str
+        lessSpaceIdx = fmap (negate . (+1)) $ findIndex isSpace $ reverse less
+        moreSpaceIdx = findIndex isSpace more
+        lessPunctIdx = fmap (negate . (+1)) $ findIndex isPunctuation $ reverse less
+        morePunctIdx = findIndex isPunctuation more
+
+        -- For split on space and split on punctuation, select the split point
+        -- that is closest to 25 characters.
+        spaceIdx = minAbs lessSpaceIdx moreSpaceIdx
+        punctIdx = minAbs lessPunctIdx morePunctIdx
+
+        -- Prefer to split at punctuation if it is not more than ten characters
+        -- worse than splitting at a space.
+        offset = case (spaceIdx, punctIdx) of
+          (Just s, Just p) -> if (abs p) <= (abs s) + 10 then p else s
+          (Just s, _)      -> s
+          _                -> error "sentence must contain spaces"
