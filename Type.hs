@@ -74,6 +74,7 @@ getCaps t = case t of
   _ | Html.isAbbr t       -> AllSmallCaps
   _ | Html.isSmcp t       -> AllSmallCaps
   _ | Html.isTeaserLink t -> AllSmallCaps
+  _ | Html.isRunIn t      -> SmallCaps
   _ | otherwise           -> UnchangedCaps
 
 getFont :: TagProperties -> Maybe FontAndCaps

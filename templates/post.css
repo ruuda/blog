@@ -105,12 +105,25 @@ abbr, .smcp
   text-transform: uppercase;
 }
 
-.smcp
+abbr, .smcp
 {
   /* Note: this breaks small caps in Blink. Enable once
    * https://crrev.com/1416603005 goes mainstream, or live with the non-small
    * caps? */
   letter-spacing: 0.1em;
+}
+
+.run-in
+{
+  /* Use the 'smcp' feature instead of font-variant: small-caps, because not all
+   * browsers will select the true small-caps with font-variant. For the run-in
+   * it is fine if the fallback is to do nothing special at all. */
+  /* TODO: Remove prefixed version once Blink drops the prefix. */
+  -webkit-font-feature-settings: 'smcp';
+  font-feature-settings: 'smcp';
+
+  /* Use a bit more modest letter spacing here than for abbr and .smcp. */
+  letter-spacing: 0.05em;
 }
 
 h2
