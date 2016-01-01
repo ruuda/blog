@@ -80,6 +80,14 @@ header > p
   margin-bottom: 0;
 }
 
+/* The headings may contain manually inserted line breaks for a more balanced
+ * break, but these are intended for full-width pages only. Ignore them for
+ * narrow viewports. */
+header > h1 > br
+{
+  display: none;
+}
+
 p
 {
   margin-bottom: 1em;
@@ -352,10 +360,15 @@ footer span
 
   header
   {
-    margin-left: 2.8em;
-    margin-right: 2.8em;
     margin-top: 1.4em;
     margin-bottom: 1.4em;
+  }
+
+  /* At this width, headings have been line-wrapped manually for a more balanced
+   * result than what the browser would do. */
+  header > h1 > br
+  {
+    display: block;
   }
 
   /* Hang list numbers and bullets in the margin when there is enough space. */

@@ -76,9 +76,13 @@ minifyCss = stripBegin . stripEnd
           . stripCssBefore . stripCssAfter
           . mergeWhitespace . stripCssComments
 
--- Applies f to all tags except when the tag is inside a <pre> tag.
+-- Applies the mapping to all tags except when the tag is inside a <pre> tag,
+-- or when the tag is inside the title. (The page title contains <br> tags that
+-- might be hidden, and in that case there should still be whitespace to
+-- separate words.)
 applyTagsExceptPre :: ([Tag] -> [Tag]) -> [Tag] -> [Tag]
-applyTagsExceptPre = Html.applyTagsWhere (not . Html.isPre)
+applyTagsExceptPre = Html.applyTagsWhere $ not . (Html.isPre `orFns` Html.isTitle)
+  where orFns f g x = (f x) || (g x)
 
 -- Applies f to all tags except when the tag is inside a <pre> tag.
 mapTagsExceptPre :: (Tag -> Tag) -> [Tag] -> [Tag]

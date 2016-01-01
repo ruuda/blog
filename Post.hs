@@ -119,16 +119,22 @@ context p = fmap T.StringValue ctx
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.
 parse :: String -> String -> Post
-parse postSlug contents = Post {
-  title     = frontMatter M.! "title",
-  header    = fromMaybe (frontMatter M.! "title") $ M.lookup "header" frontMatter,
-  subheader = M.lookup "subheader" frontMatter,
-  part      = fmap read $ M.lookup "part" frontMatter,
-  date      = parseTimeOrError True defaultTimeLocale "%F" (frontMatter M.! "date"),
-  slug      = postSlug,
-  synopsis  = fromMaybe "TODO: Write synopsis." $ M.lookup "synopsis" frontMatter,
-  body      = Type.insertRunIn $ Type.expandPunctuation $ Type.makeAbbrs $ renderMarkdown bodyContents
-} where (frontMatter, bodyContents) = extractFrontMatter contents
+parse postSlug contents = let
+  (frontMatter, bodyContents) = extractFrontMatter contents
+  postTitle     = frontMatter M.! "title"
+  postHeading   = fromMaybe postTitle $ M.lookup "header" frontMatter
+  breakAt       = M.lookup "break" frontMatter
+  brokenHeading = foldr addBreak postHeading breakAt
+  refineType    = Type.insertRunIn . Type.expandPunctuation . Type.makeAbbrs
+  parseDate     = parseTimeOrError True defaultTimeLocale "%F"
+  in Post { title     = postTitle
+          , header    = brokenHeading
+          , subheader = M.lookup "subheader" frontMatter
+          , part      = fmap read $ M.lookup "part" frontMatter
+          , date      = parseDate $ frontMatter M.! "date"
+          , slug      = postSlug
+          , synopsis  = fromMaybe "TODO: Write synopsis." $ M.lookup "synopsis" frontMatter
+          , body      = refineType $ renderMarkdown bodyContents }
 
 -- Renders markdown to html using Pandoc with my settings.
 renderMarkdown :: String -> String
