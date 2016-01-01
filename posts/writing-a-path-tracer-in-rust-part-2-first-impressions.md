@@ -1,6 +1,7 @@
 ---
 title: Writing a path tracer in Rust, part 2: first impressions
 header: Writing a path tracer in Rust
+break: path tracer
 subheader: First impressions
 part: 2
 date: 2014-08-13

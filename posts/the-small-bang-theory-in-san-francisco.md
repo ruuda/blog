@@ -1,5 +1,6 @@
 ---
 title: The Small Bang Theory in San Francisco
+break: Theory in
 date: 2013-03-18
 synopsis: A game that I worked on will be on display during the Game Developers Conference next week.
 ---
