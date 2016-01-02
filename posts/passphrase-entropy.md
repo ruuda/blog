@@ -2,6 +2,7 @@
 title: Passphrase entropy
 date: 2012-07-07
 synopsis: Using longer encryption keys does not improve security unless you increase the length of your password too.
+run-in: While I was researching
 ---
 
 While I was researching passphrase entropy today, I made a shocking discovery.

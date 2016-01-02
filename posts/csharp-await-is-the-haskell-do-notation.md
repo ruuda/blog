@@ -2,6 +2,7 @@
 title: C# await is the Haskell do notation
 break: the Haskell
 date: 2013-08-20
+run-in: As a follow-up
 ---
 
 As a follow-up to the [task monad](/2013/05/01/the-task-monad-in-csharp),

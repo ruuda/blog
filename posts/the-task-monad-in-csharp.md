@@ -1,6 +1,7 @@
 ---
 title: The task monad in C#
 date: 2013-05-01
+run-in: Today I was trying
 ---
 
 Today I was trying to compose several asynchronous methods in C#.

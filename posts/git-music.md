@@ -2,6 +2,7 @@
 title: Git music
 date: 2013-07-20
 synopsis: I cross-referenced my Git commit history with my Last.fm scrobbles.
+run-in: A while ago
 ---
 
 A while ago I wondered: would there be a correlation between the music I

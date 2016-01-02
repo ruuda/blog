@@ -1,9 +1,10 @@
 ---
 title: Continuations revisited
 date: 2013-08-12
+run-in: A while ago
 ---
 
-A while ago, I wrote about how `Task<T>` [is a monad](/2013/05/01/the-task-monad-in-csharp),
+A while ago I wrote about how `Task<T>` [is a monad](/2013/05/01/the-task-monad-in-csharp),
 and about how that simplifies composition. Today, I want to look at observables,
 and how they can be used as a replacement for tasks.
 

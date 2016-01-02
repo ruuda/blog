@@ -2,9 +2,10 @@
 title: Global Game Jam 2014
 date: 2014-01-28
 synopsis: During the Global Game Jam 2014 I used Unity to build a game in 48 hours.
+run-in: Last weekend
 ---
 
-Last weekend, the [global game jam](http://globalgamejam.org) took place.
+Last weekend the [Global Game Jam](http://globalgamejam.org) took place.
 The theme this time was “We don’t see things as they are, we see them as we are.”
 I joined the jam site in Breda,
 and in 48 hours we built the game _Tristar_.
