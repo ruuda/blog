@@ -107,18 +107,24 @@ abbr, .smcp
    * This allows for graceful fallback: if font feature settings are not
    * supported, all caps will be shown. */
   /* TODO: Remove prefixed version once Blink drops the prefix. */
-  /* TODO: Add letterspacing once non-broken version of Blink is mainstream. */
   -webkit-font-feature-settings: 'c2sc';
   font-feature-settings: 'c2sc';
   text-transform: uppercase;
-}
 
-abbr, .smcp
-{
   /* Note: this breaks small caps in Blink. Enable once
    * https://crrev.com/1416603005 goes mainstream, or live with the non-small
    * caps? */
   letter-spacing: 0.1em;
+}
+
+abbr
+{
+  /* The generous letter spacing for small caps is great as a stylistic feature,
+   * but it is too much in the body text. */
+  letter-spacing: 0.03em;
+
+  /* Compensate for the extra space at the end. */
+  margin-right: -0.03em;
 }
 
 .run-in
@@ -130,7 +136,7 @@ abbr, .smcp
   -webkit-font-feature-settings: 'smcp';
   font-feature-settings: 'smcp';
 
-  /* Use a bit more modest letter spacing here than for abbr and .smcp. */
+  /* Use a bit more modest letter spacing here than for .smcp. */
   letter-spacing: 0.05em;
 }
 
