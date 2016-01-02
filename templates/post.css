@@ -166,7 +166,6 @@ article > ul > li:before
 
 article > ol > li:before
 {
-  /* TODO: Ensure that the counter values are included in the subsetted font. */
   content: counter(ol, decimal);
   counter-increment: ol;
   font-weight: bold;
