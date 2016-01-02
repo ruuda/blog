@@ -248,6 +248,23 @@ code.sourceCode
 .ch, .st      { color: #e90; } /* Character, string */
 .co           { color: #789; } /* Comment */
 
+img
+{
+  width: 100%;
+  height: auto;
+
+  /* To align images the same as code blocks, they need to be 0.2em below the
+   * baseline. The paragraph has a padding of 0.4em, so compensate the 0.2.
+   * This leaves 1.6em between the baseline and the image. For optical
+   * alignment, the same space should be left between the bottom and the
+   * x-height of the next line. Paragraphs are aligned such that there is 1em
+   * between the baseline and the x-height of the next line. The paragraph that
+   * surrounds the image provides 1em bottom margin, so 0.4em needs to be
+   * compensated, plus 0.2em for the top offset. */
+  margin-top: -0.2em;
+  margin-bottom: -0.6em;
+}
+
 #teaser-section
 {
   background-color: #c36;
