@@ -6,6 +6,7 @@
 
 module Html ( Tag
             , TagProperties
+            , makeRunIn
             , applyTagsWhere
             , classifyTags
             , concatMapTagsWhere
@@ -262,3 +263,10 @@ maxOlLength = maximum . foldl listLength [0] . classifyTags . parseTags
   where listLength ns     ((S.TagOpen  "ol" _), _  )            = 0 : ns
         listLength (n:ns) ((S.TagOpen  "li" _), cls) | isOl cls = (n + 1) : ns
         listLength ns     _                                     = ns
+
+-- Adds <span class="run-in"> around the first n characters of an html snippet.
+-- Assumes that the html starts with a <p> tag.
+makeRunIn :: String -> Int -> String
+makeRunIn html n  = prefix ++ (drop 3 runIn) ++ "</span>" ++ after
+  where (runIn, after) = splitAt (n + 3) html
+        prefix         = "<p><span class=\"run-in\">"
