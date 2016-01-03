@@ -5,6 +5,7 @@
 -- the licence file in the root of the repository.
 
 module Post ( Post
+            , archiveContext
             , body
             , context
             , date
@@ -24,7 +25,7 @@ import qualified Data.Set as S
 import qualified Data.Text as Text
 import           Data.Time.Format
 import           Data.Time.Calendar (Day, showGregorian, toGregorian)
-import           GHC.Exts (sortWith)
+import           GHC.Exts (groupWith, sortWith)
 import           Text.Pandoc
 
 import qualified Html
@@ -180,3 +181,20 @@ selectRelated posts = fmap nextElsePrev prevPostNext
           (_, post, Just next) -> (post, Further next)
           (Just prev, post, _) -> (post, Further prev)
           _                    -> error "At least two posts are required."
+
+-- Returns a context for a group of posts that share the same year.
+archiveYearContext :: [Post] -> T.Context
+archiveYearContext posts = M.fromList [yearField, postsField]
+  where yearField     = ("year", T.StringValue $ show $ year $ head $ posts)
+        chronological = sortWith date posts
+        recentFirst   = reverse chronological
+        postsField    = ("post", T.ListValue $ fmap context recentFirst)
+
+-- Returns a contexts with a "archive-year" list where every year has a "posts"
+-- lists.
+archiveContext :: [Post] -> T.Context
+archiveContext posts  = M.singleton "archive-year" (T.ListValue years)
+  where yearGroups    = groupWith year posts
+        chronological = sortWith (year . head) yearGroups
+        recentFirst   = reverse chronological
+        years         = fmap archiveYearContext recentFirst
