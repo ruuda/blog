@@ -11,6 +11,7 @@ import           Data.Time.Clock (getCurrentTime, utctDay)
 import           System.Directory (doesFileExist, createDirectoryIfMissing, getDirectoryContents)
 import           System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeFileName)
 
+import qualified Image
 import           Minification (minifyHtml)
 import qualified Post as P
 import qualified Template as T
@@ -52,24 +53,31 @@ type Artifact = (Int, String)
 pageIdContext :: Int -> T.Context
 pageIdContext i = M.singleton "page-id" (T.StringValue $ show i)
 
+-- Holds the output directory and input image directories.
+data Config = Config { outDir         :: FilePath
+                     , imageDir       :: FilePath
+                     , placeholderDir :: FilePath }
+
 -- Given the post template and the global context, expands the template for all
 -- of the posts and writes them to the output directory. This also prints a list
 -- of processed posts to the standard output.
-writePosts :: T.Template -> T.Context -> [P.Post] -> FilePath -> IO [Artifact]
-writePosts tmpl ctx posts outDir = fmap snd $ foldM writePost (1, []) withRelated
+writePosts :: T.Template -> T.Context -> [P.Post] -> Config -> IO [Artifact]
+writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelated
   where total       = length posts
         withRelated = P.selectRelated posts
         writePost (i, artifacts) (post, related) = do
-          let destFile = outDir </> (drop 1 $ P.url post) </> "index.html"
+          let destFile = (outDir config) </> (drop 1 $ P.url post) </> "index.html"
               context  = M.unions [ P.context post
                                   , P.relatedContext related
                                   , pageIdContext i
                                   , ctx]
-              rendered = minifyHtml $ T.apply tmpl context
-              artifact = (i, rendered)
+              html     = T.apply tmpl context
+          withImages  <- Image.processImages (imageDir config) (placeholderDir config) html
+          let minified = minifyHtml withImages
+              artifact = (i, minified)
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
-          writeFile destFile rendered
+          writeFile destFile minified
           return $ (i + 1, artifact:artifacts)
 
 mapFst :: (a -> b) -> (a, c) -> (b, c)
@@ -91,12 +99,15 @@ main = do
   -- Create a context with the field "year" set to the current year, and create
   -- a context that contains all of the templates, to handle includes.
   (year, _month, _day) <- fmap (toGregorian . utctDay) getCurrentTime
-  let yctx = M.singleton "year" (T.StringValue $ show year)
-      tctx = fmap T.TemplateValue templates
+  let yctx          = M.singleton "year" (T.StringValue $ show year)
+      tctx          = fmap T.TemplateValue templates
       globalContext = M.union tctx yctx
+      config        = Config { outDir         = "out/"
+                             , imageDir       = "images/compressed/"
+                             , placeholderDir = "images/thumbs/" }
 
   putStrLn "Writing posts..."
-  artifacts <- writePosts (templates M.! "post.html") globalContext posts "out/"
+  artifacts <- writePosts (templates M.! "post.html") globalContext posts config
 
   putStrLn "Subsetting fonts..."
   subsetFontsForArtifacts artifacts "out/fonts/"
