@@ -47,6 +47,7 @@ needsFont t = case t of
 getFamily :: TagProperties -> FontFamily
 getFamily t = case t of
   _ | Html.isCode t       -> Mono
+  _ | Html.isH3 t         -> Sans
   _ | Html.isHeader t     -> Serif
   _ | Html.isHeading t    -> Serif
   _ | Html.isTeaserLink t -> Serif
@@ -55,8 +56,7 @@ getFamily t = case t of
 getWeight :: TagProperties -> FontWeight
 getWeight t = case t of
   _ | Html.isSubtitle t -> Regular
-  _ | Html.isH1 t       -> Bold
-  _ | Html.isH2 t       -> Bold
+  _ | Html.isHeading t  -> Bold
   _ | Html.isStrong t   -> Bold
   _ | Html.isTh t       -> Bold
   _ | otherwise         -> Regular

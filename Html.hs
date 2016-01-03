@@ -20,6 +20,7 @@ module Html ( Tag
             , isEm
             , isH1
             , isH2
+            , isH3
             , isHead
             , isHeader
             , isHeading
@@ -91,6 +92,7 @@ data TagClass = A
               | Em
               | H1
               | H2
+              | H3
               | Head
               | Header
               | Math
@@ -115,6 +117,7 @@ tagClassFromName name = case name of
   "em"      -> Just Em
   "h1"      -> Just H1
   "h2"      -> Just H2
+  "h3"      -> Just H3
   "head"    -> Just Head
   "header"  -> Just Header
   "math"    -> Just Math
@@ -164,6 +167,7 @@ data TagProperties = TagProperties { isA       :: Bool
                                    , isEm      :: Bool
                                    , isH1      :: Bool
                                    , isH2      :: Bool
+                                   , isH3      :: Bool
                                    , isHead    :: Bool
                                    , isHeader  :: Bool
                                    , isMath    :: Bool
@@ -179,7 +183,7 @@ data TagProperties = TagProperties { isA       :: Bool
                                    , isUl      :: Bool }
 
 isHeading :: TagProperties -> Bool
-isHeading t = (isH1 t) || (isH2 t)
+isHeading t = (isH1 t) || (isH2 t) || (isH3 t)
 
 isSubtitle :: TagProperties -> Bool
 isSubtitle t = (isHeader t) && (isH2 t)
@@ -197,6 +201,7 @@ getProperties ts =
                    , isEm      = test Em
                    , isH1      = test H1
                    , isH2      = test H2
+                   , isH3      = test H3
                    , isHead    = test Head
                    , isHeader  = test Header
                    , isMath    = test Math
