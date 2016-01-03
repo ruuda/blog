@@ -45,6 +45,7 @@ header
   font-family: Calluna, serif;
   margin-left: 1em;
   margin-right: 1em;
+  overflow: hidden;
   text-align: center;
 }
 
@@ -98,6 +99,20 @@ a
 {
   color: #c36;
   text-decoration: none;
+}
+
+/* Used for post titles on the archive page. */
+h3
+{
+  /* Align as p, but remove the blank line afterwards. */
+  font-size: 1em;
+  margin-bottom: -0.4em;
+  padding-top: 0.4em;
+}
+
+h3 > a
+{
+  color: inherit;
 }
 
 abbr, .smcp
