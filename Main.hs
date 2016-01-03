@@ -85,17 +85,21 @@ writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelate
           return $ (i + 1, artifact:artifacts)
 
 -- Given the archive template and the global context, writes the archive page
--- to the destination file (excluding the index.html).
-writeArchive :: T.Template -> T.Context -> [P.Post] -> FilePath -> IO Artifact
-writeArchive tmpl ctx posts destFile = do
-  let context      = M.unions [ P.archiveContext posts
-                              , M.singleton "title" (T.StringValue "Writing by Ruud van Asseldonk")
-                              , pageIdContext 0 -- TODO: better page ID scheme
-                              , ctx ]
-      html         = minifyHtml $ T.apply tmpl context
-      artifact     = (0, html)
-  createDirectoryIfMissing True destFile
-  writeFile (destFile </> "index.html") html
+-- to the destination directory.
+writeArchive :: T.Template -> T.Context -> [P.Post] -> Config -> IO Artifact
+writeArchive tmpl ctx posts config = do
+  let url      = "/writing"
+      context  = M.unions [ P.archiveContext posts
+                          , M.singleton "title"     (T.StringValue "Writing by Ruud van Asseldonk")
+                          , M.singleton "url"       (T.StringValue url)
+                          , M.singleton "bold-font" (T.StringValue "true")
+                          , pageIdContext 0 -- TODO: better page ID scheme
+                          , ctx ]
+      html     = minifyHtml $ T.apply tmpl context
+      artifact = (0, html)
+      destDir  = (outDir config) </> (tail url)
+  createDirectoryIfMissing True destDir
+  writeFile (destDir </> "index.html") html
   return artifact
 
 mapFst :: (a -> b) -> (a, c) -> (b, c)
@@ -130,7 +134,7 @@ main = do
   postArtifacts <- writePosts (templates M.! "post.html") globalContext posts config
 
   putStrLn "Writing archive..."
-  archiveArtifact <- writeArchive (templates M.! "archive.html") globalContext posts "out/archive"
+  archiveArtifact <- writeArchive (templates M.! "archive.html") globalContext posts config
 
   putStrLn "Subsetting fonts..."
   let artifacts = archiveArtifact : postArtifacts
