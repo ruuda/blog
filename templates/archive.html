@@ -1,0 +1,18 @@
+{{include head.html}}
+  <body>
+    <article>
+      <header>
+        <h1>Writing</h1>
+      </header>
+      {{foreach archive-year}}
+        <h2>{{year}}</h2>
+        {{foreach post}}
+          <h3><a href="{{url}}">{{title}}</a></h3>
+          <p>{{synopsis}}</p>
+        {{end}}
+      {{end}}
+    </article>
+    {{include footer.html}}
+  </body>
+</html>
+
