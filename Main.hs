@@ -53,10 +53,9 @@ type Artifact = (Int, String)
 pageIdContext :: Int -> T.Context
 pageIdContext i = M.singleton "page-id" (T.StringValue $ show i)
 
--- Holds the output directory and input image directories.
-data Config = Config { outDir         :: FilePath
-                     , imageDir       :: FilePath
-                     , placeholderDir :: FilePath }
+-- Holds the output directory and input image directory.
+data Config = Config { outDir   :: FilePath
+                     , imageDir :: FilePath }
 
 -- Given the post template and the global context, expands the template for all
 -- of the posts and writes them to the output directory. This also prints a list
@@ -72,7 +71,7 @@ writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelate
                                   , pageIdContext i
                                   , ctx]
               html     = T.apply tmpl context
-          withImages  <- Image.processImages (imageDir config) (placeholderDir config) html
+          withImages  <- Image.processImages (imageDir config) html
           let minified = minifyHtml withImages
               artifact = (i, minified)
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
@@ -102,9 +101,8 @@ main = do
   let yctx          = M.singleton "year" (T.StringValue $ show year)
       tctx          = fmap T.TemplateValue templates
       globalContext = M.union tctx yctx
-      config        = Config { outDir         = "out/"
-                             , imageDir       = "images/compressed/"
-                             , placeholderDir = "images/thumbs/" }
+      config        = Config { outDir   = "out/"
+                             , imageDir = "images/compressed/" }
 
   putStrLn "Writing posts..."
   artifacts <- writePosts (templates M.! "post.html") globalContext posts config
