@@ -4,11 +4,11 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-import           Control.Monad (filterM, foldM)
+import           Control.Monad (filterM, foldM, void)
 import qualified Data.Map as M
 import           Data.Time.Calendar (toGregorian)
 import           Data.Time.Clock (getCurrentTime, utctDay)
-import           System.Directory (doesFileExist, createDirectoryIfMissing, getDirectoryContents)
+import           System.Directory (doesFileExist, copyFile, createDirectoryIfMissing, getDirectoryContents)
 import           System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeFileName)
 
 import qualified Image
@@ -27,6 +27,11 @@ mapFilesIf p f dir = enumerateFiles >>= filterM doesFileExist >>= mapM f
 -- Applies the IO-performing function f to every file in a given directory.
 mapFiles :: (FilePath -> IO a) -> FilePath -> IO [a]
 mapFiles = mapFilesIf $ \_ -> True
+
+-- Copies all files in the source directory to the destination directory.
+copyFiles :: FilePath -> FilePath -> IO ()
+copyFiles srcDir dstDir = void $ mapFiles copy srcDir
+  where copy fname = copyFile fname $ dstDir </> (takeFileName fname)
 
 -- Applies the IO-performing function f to every file in a given directory, and
 -- returns a map from the file name to the result.
@@ -103,6 +108,9 @@ main = do
       globalContext = M.union tctx yctx
       config        = Config { outDir   = "out/"
                              , imageDir = "images/compressed/" }
+
+  createDirectoryIfMissing True  "out/images/"
+  copyFiles "images/compressed/" "out/images/"
 
   putStrLn "Writing posts..."
   artifacts <- writePosts (templates M.! "post.html") globalContext posts config
