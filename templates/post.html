@@ -19,33 +19,6 @@
         <p>{{further.synopsis}} <a href="{{further.url}}" class="smcp">Read full post</a></p>
       </div>
     </section>
-    <footer>
-      <div id="footer">
-        <h2>About me</h2>
-        <p>
-          I love to create beautiful things using elegant code.
-          I particularly like low-level optimisation for bare metal performance and systems programming,
-          but I also enjoy high-level functional programming.
-          I prefer a strong type system over excessive unit testing
-          and I prefer common sense over agile development methodologies.
-          Data should be immutable.
-          I am mildly allergic to buzzwords.
-        </p>
-        <nav class="smcp">
-          <ul>
-            <li><a href="/">About</a></li>
-            <li><a href="/archive">Writing</a></li>
-            <li><a href="https://github.com/ruud-v-a">Code</a></li>
-            <li><a href="/contact">Contact</a></li>
-          </ul>
-        </nav>
-        <p id="notices" class="smcp">
-          <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Copyleft</a>
-          {{year}} Ruud van Asseldonk
-          <span id="breakdot">&middot;</span>
-          <a href="https://github.com/ruud-v-a/ruudvanasseldonk.com">Source</a>
-        </p>
-      </div>
-    </footer>
+    {{include footer.html}}
   </body>
 </html>
