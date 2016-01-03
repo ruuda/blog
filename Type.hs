@@ -55,7 +55,7 @@ getFamily t = case t of
 getWeight :: TagProperties -> FontWeight
 getWeight t = case t of
   _ | Html.isSubtitle t -> Regular
-  _ | Html.isTitle t    -> Bold
+  _ | Html.isH1 t       -> Bold
   _ | Html.isH2 t       -> Bold
   _ | Html.isStrong t   -> Bold
   _ | Html.isTh t       -> Bold

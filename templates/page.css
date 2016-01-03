@@ -48,7 +48,7 @@ header
   text-align: center;
 }
 
-header > h1
+h1
 {
   /* Align the header on the third baseline. (The first baseline is at the
    * bottom of the top border of the body.) Ensure that the bottom margin
@@ -83,7 +83,7 @@ header > p
 /* The headings may contain manually inserted line breaks for a more balanced
  * break, but these are intended for full-width pages only. Ignore them for
  * narrow viewports. */
-header > h1 > br
+h1 > br
 {
   display: none;
 }
@@ -388,7 +388,7 @@ footer span
 
   /* At this width, headings have been line-wrapped manually for a more balanced
    * result than what the browser would do. */
-  header > h1 > br
+  h1 > br
   {
     display: block;
   }

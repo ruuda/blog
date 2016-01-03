@@ -81,7 +81,7 @@ minifyCss = stripBegin . stripEnd
 -- might be hidden, and in that case there should still be whitespace to
 -- separate words.)
 applyTagsExceptPre :: ([Tag] -> [Tag]) -> [Tag] -> [Tag]
-applyTagsExceptPre = Html.applyTagsWhere $ not . (Html.isPre `orFns` Html.isTitle)
+applyTagsExceptPre = Html.applyTagsWhere $ not . (Html.isPre `orFns` Html.isH1)
   where orFns f g x = (f x) || (g x)
 
 -- Applies f to all tags except when the tag is inside a <pre> tag.

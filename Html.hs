@@ -35,7 +35,6 @@ module Html ( Tag
             , isTeaser
             , isTeaserLink
             , isTh
-            , isTitle
             , isUl
             , mapTagsWhere
             , mapText
@@ -181,9 +180,6 @@ data TagProperties = TagProperties { isA       :: Bool
 
 isHeading :: TagProperties -> Bool
 isHeading t = (isH1 t) || (isH2 t)
-
-isTitle :: TagProperties -> Bool
-isTitle t = (isHeader t) && (isH1 t)
 
 isSubtitle :: TagProperties -> Bool
 isSubtitle t = (isHeader t) && (isH2 t)
