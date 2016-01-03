@@ -5,6 +5,7 @@ break: path tracer
 subheader: Tonemapping
 part: 5
 date: 2014-08-24
+synopsis: Rust’s advanced type can express a rendering pipeline in a safer way than C++.
 ---
 
 As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to [Rust][rust].

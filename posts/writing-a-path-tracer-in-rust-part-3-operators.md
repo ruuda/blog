@@ -5,6 +5,7 @@ break: path tracer
 subheader: Operators
 part: 3
 date: 2014-08-15
+synopsis: Operator overloading can do wonders to make vector math readable. How does Rust compare to C++ here?
 ---
 
 As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to [Rust][rust].

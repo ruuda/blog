@@ -5,6 +5,7 @@ break: path tracer
 subheader: First impressions
 part: 2
 date: 2014-08-13
+synopsis: After setting my first baby steps in the Rust programming language, these are my initial impressions.
 ---
 
 As a learning exercise, I am porting the [Luculentus][luculentus] spectral path tracer to [Rust][rust].

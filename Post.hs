@@ -136,7 +136,7 @@ parse postSlug contents = let
           , part      = fmap read $ M.lookup "part" frontMatter
           , date      = parseDate $ frontMatter M.! "date"
           , slug      = postSlug
-          , synopsis  = fromMaybe "TODO: Write synopsis." $ M.lookup "synopsis" frontMatter
+          , synopsis  = frontMatter M.! "synopsis"
           , body      = refineType $ renderMarkdown bodyContents }
 
 -- Renders markdown to html using Pandoc with my settings.

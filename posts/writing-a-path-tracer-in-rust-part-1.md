@@ -4,6 +4,7 @@ header: Writing a path tracer in Rust
 break: path tracer
 part: 1
 date: 2014-08-10
+synopsis: As a learning exercise, I am going to port my spectral path tracer Luculentus from C++ to Rust.
 run-in: It must have been
 ---
 

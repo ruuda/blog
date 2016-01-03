@@ -3,7 +3,7 @@ title: Neither necessary nor sufficient
 break: necessary nor
 date: 2015-10-06
 minutes: 5
-synopsis: A garbage collector is neither necessary nor sufficient because it does not solve the problem of resource management.
+synopsis: A garbage collector is neither necessary nor sufficient for quality software because it does not solve the problem of resource management.
 run-in: A few days ago
 ---
 
