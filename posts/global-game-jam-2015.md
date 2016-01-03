@@ -11,7 +11,7 @@ In just 48 hours, we built the game [_Richy’s Groceries_](http://globalgamejam
 In the game, the player assumes the role of a mother shopping for groceries with her daughter
 when the store is about to close.
 
-![Richy’s Groceries](/images/richys-groceries.png)
+![Richy’s Groceries](/images/richys-groceries.jpg)
 
 I had a lot of fun during the weekend, and I’m very pleased with the result.
 I especially like the distinctive visual style.

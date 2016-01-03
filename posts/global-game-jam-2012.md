@@ -11,7 +11,7 @@ With our game, _The Small Bang Theory_, we won the first prize of
 [our location](http://globalgamejam.org/sites/2012/ggjnl-nhtv-breda-university-applied-sciences),
 and we have a chance of winning the national prize as well.
 
-![(picture of the game)](/images/the-small-bang-theory.png)
+![(picture of the game)](/images/the-small-bang-theory.jpg)
 
 Due to a lack of artists, our team made a game which is all procedural.
 The graphics are procedural, and there are infinitely many levels.
