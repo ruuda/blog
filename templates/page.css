@@ -33,6 +33,9 @@ article, #teaser, #footer
   padding: 1.4em;
   margin-left: auto;
   margin-right: auto;
+
+  /* With a width of 36em, there are 86 characters per line on average. */
+  max-width: 36em;
 }
 
 article
@@ -349,75 +352,64 @@ footer span
   width: 0;
 }
 
-/* Scale text size as the cube root of the screen width.
+/* Scale font size as the square root of the viewport width. 16px should be the
+ * minimum font size, for a viewport width of 400px. At 1600px, the content
+ * should fill half of the viewport. That means 36em is 800px, so the font size
+ * should be 22px.
  *
- *   min-with = 500 * (font-size / 19)^3
- */
+ * This leads to the following relations:
+ *
+ *     font-size = 10 + 12 * sqrt(width / 1600),
+ *     width     = (font-size - 10)^2 * (1600 / 144)
+ *
+ * Note that the min-width given below is actually the viewport width for its
+ * font size minus 0.5px, so the font size is right on average. */
 
-@media(min-width: 425px)
+@media(min-width: 470px)
+{
+  html { font-size: 17px; }
+
+  /* Add some margin to the heading to make it line-wrap nicer. Smaller
+   * viewports get more room because the words might not fit otherwise. */
+  header
+  {
+    margin-left: 2.8em;
+    margin-right: 2.8em;
+  }
+}
+
+@media(min-width: 625px)
 {
   html { font-size: 18px; }
 
-  header
+ /* Full-width headings have been line-wrapped manually for a more balanced
+  * result than what the browser would do. Even though at this size the line
+  * width is not yet 36em, titles that need breaking are typically much
+  * shorter per line, so this should fit. */
+  h1 > br
   {
-    margin-left: 1.4em;
-    margin-right: 1.4em;
+    display: block;
   }
 }
 
-@media(min-width: 583px)
+/* At this width, the viewport is wide enough to fit the content at its
+ * maximum width (36em). */
+@media(min-width: 802px)
 {
-  html { font-size: 20px; }
+  html { font-size: 19px; }
 
-  article, #teaser, #footer
-  {
-    padding-left: 2em;
-    padding-right: 2em;
-  }
-
-  header
-  {
-    margin-left: 2em;
-    margin-right: 2em;
-  }
-}
-
-@media(min-width: 776px)
-{
-  html { font-size: 22px; }
-
-  article, #teaser, #footer
-  {
-    /* By limiting the width to 37em (31.4 minus padding),
-     * there are on average 87 characters per line. */
-    max-width: 37em;
-    padding-left: 2.8em;
-    padding-right: 2.8em;
-  }
-
+  /* If we are on a large-ish screen anyway, give the header some room to
+   * breathe. */
   header
   {
     margin-top: 1.4em;
     margin-bottom: 1.4em;
   }
-
-  /* At this width, headings have been line-wrapped manually for a more balanced
-   * result than what the browser would do. */
-  h1 > br
-  {
-    display: block;
-  }
-
-  /* Hang list numbers and bullets in the margin when there is enough space. */
-  article li
-  {
-    margin-left: 0;
-  }
 }
 
-@media(min-width: 1008px)
+@media(min-width: 1003px)
 {
-  html { font-size: 24px; }
+  html { font-size: 20px; }
 
   /* Align source code with text and pull borders into the margin, if there is
    * space. TODO: How to handle this when there is no extra div? */
@@ -428,9 +420,51 @@ footer span
   }
 }
 
-@media(min-width: 1281px)
+@media(min-width: 1225px) { html { font-size: 21px; } }
+@media(min-width: 1496px) { html { font-size: 22px; } }
+@media(min-width: 1736px) { html { font-size: 23px; } }
+@media(min-width: 2025px) { html { font-size: 24px; } }
+
+/* At the points where the font size changes, the viewport width in ems makes
+ * a jump:
+ *
+ *   469px -> 470px: 29.3em -> 27.6em (delta -1.7em)
+ *   624px -> 625px: 36.7em -> 34.7em (delta -2.0em)
+ *   801px -> 802px: 44.5em -> 42.2em (delta -2.3em)
+ *
+ * Instead of having a minimal margin until the viewport is wide enough, I like
+ * to gradually increase the margin. Changing the margins at the same time as
+ * the font size would make the difference in line width even more extreme, so
+ * instead change the margins in between. (The in-between points can be computed
+ * using the width formula above, but now at integer font sizes.)
+ *
+ * The settings below split the first jump in 1.2em and 0.5em, and the second
+ * jump in 1.6em and 0.4em. */
+
+/* Ideal width for 16px font size. */
+@media(min-width: 400px)
 {
-  html { font-size: 26px; }
+  article, #teaser, #footer
+  {
+    padding-left: 2em;
+    padding-right: 2em;
+  }
+}
+
+/* Ideal width for 18px font size. */
+@media(min-width: 544px)
+{
+  article, #teaser, #footer
+  {
+    padding-left: 2.8em;
+    padding-right: 2.8em;
+  }
+
+  /* Hang list numbers and bullets in the margin when there is enough space. */
+  article li
+  {
+    margin-left: 0;
+  }
 }
 
 /* TODO: Test this on larger screens. */
