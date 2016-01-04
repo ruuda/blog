@@ -177,7 +177,6 @@ article > ul, article > ol
 
 article li:before
 {
-  color: #c36;
   display: inline-block;
   margin-left: -1em;
   width: 1em;
