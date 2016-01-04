@@ -168,6 +168,17 @@ h2
   padding-top: 1.2rem;
 }
 
+#archive h2
+{
+  color: #ccc; /* TODO: pick a unified color scheme. */
+  font-size: 2.8em;
+  letter-spacing: 1rem;
+
+  /* Unlike other h2, align this bigger one to the baseline. */
+  margin-bottom: 0.6rem;
+  padding-top: 0.8rem;
+}
+
 article > ul, article > ol
 {
   counter-reset: ol;
@@ -420,7 +431,25 @@ footer span
   }
 }
 
-@media(min-width: 1225px) { html { font-size: 21px; } }
+@media(min-width: 1225px)
+{
+  html { font-size: 21px; }
+
+  /* At this width it becomes feasible to hang the year headers in the margin. */
+  #archive h2
+  {
+    text-align: right;
+    letter-spacing: 0.5rem;
+    width: 8rem;
+    height: 0;
+
+    /* I want 2em distance to the text. 0.5em comes from the letter spacing
+     * already, 8em to compensate the width, so 9.5em in total. */
+    margin-left: -9.5rem;
+    margin-bottom: -0.8rem;
+  }
+}
+
 @media(min-width: 1496px) { html { font-size: 22px; } }
 @media(min-width: 1736px) { html { font-size: 23px; } }
 @media(min-width: 2025px) { html { font-size: 24px; } }
