@@ -17,7 +17,8 @@ html
 body
 {
   background-color: #fffef8;
-  border-top: 0.7em solid #c36;
+  border-top: 0.5em solid #c36;
+  padding-top: 0.2em;
   color: #456;
   font-family: Calluna Sans, sans-serif;
   /* Firefox applies ligatures automatically when they are available, but Chrome
