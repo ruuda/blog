@@ -64,9 +64,10 @@ data Config = Config { outDir   :: FilePath
 
 -- Given the post template and the global context, expands the template for all
 -- of the posts and writes them to the output directory. This also prints a list
--- of processed posts to the standard output.
+-- of processed posts to the standard output. Start numbering post artifacts at
+-- 53, lower indices are reserved for other pages.
 writePosts :: T.Template -> T.Context -> [P.Post] -> Config -> IO [Artifact]
-writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelated
+writePosts tmpl ctx posts config = fmap snd $ foldM writePost (53, []) withRelated
   where total       = length posts
         withRelated = P.selectRelated posts
         writePost (i, artifacts) (post, related) = do
@@ -89,14 +90,33 @@ writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelate
 writeArchive :: T.Template -> T.Context -> [P.Post] -> Config -> IO Artifact
 writeArchive tmpl ctx posts config = do
   let url      = "/writing"
+      pageId   = 0 -- TODO: better page ID scheme
       context  = M.unions [ P.archiveContext posts
                           , M.singleton "title"     (T.StringValue "Writing by Ruud van Asseldonk")
                           , M.singleton "url"       (T.StringValue url)
                           , M.singleton "bold-font" (T.StringValue "true")
-                          , pageIdContext 0 -- TODO: better page ID scheme
+                          , pageIdContext pageId
                           , ctx ]
       html     = minifyHtml $ T.apply tmpl context
-      artifact = (0, html)
+      artifact = (pageId, html)
+      destDir  = (outDir config) </> (tail url)
+  createDirectoryIfMissing True destDir
+  writeFile (destDir </> "index.html") html
+  return artifact
+
+-- Given the contact template and the global context, writes the contact page
+-- to the destination directory.
+writeContact :: T.Template -> T.Context -> Config -> IO Artifact
+writeContact tmpl ctx config = do
+  let url      = "/contact"
+      pageId   = 1 -- TODO: better page ID scheme
+      context  = M.unions [ M.singleton "title"     (T.StringValue "Contact Ruud van Asseldonk")
+                          , M.singleton "url"       (T.StringValue url)
+                          , M.singleton "mono-font" (T.StringValue "true")
+                          , pageIdContext pageId
+                          , ctx ]
+      html     = minifyHtml $ T.apply tmpl context
+      artifact = (pageId, html)
       destDir  = (outDir config) </> (tail url)
   createDirectoryIfMissing True destDir
   writeFile (destDir </> "index.html") html
@@ -135,7 +155,8 @@ main = do
 
   putStrLn "Writing archive..."
   archiveArtifact <- writeArchive (templates M.! "archive.html") globalContext posts config
+  contactArtifact <- writeContact (templates M.! "contact.html") globalContext config
 
   putStrLn "Subsetting fonts..."
-  let artifacts = archiveArtifact : postArtifacts
+  let artifacts = archiveArtifact : contactArtifact : postArtifacts
   subsetFontsForArtifacts artifacts "out/fonts/"
