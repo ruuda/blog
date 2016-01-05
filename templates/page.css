@@ -339,13 +339,15 @@ footer
 footer ul
 {
   list-style: none;
-  margin-bottom: 2.4em;
+  margin-bottom: 1em;
   padding-top: 0.4em;
 }
 
 #notices
 {
+  clear: both;
   text-align: center;
+  padding-top: 1.8em;
 }
 
 footer span
@@ -439,6 +441,38 @@ footer span
      * already, 8em to compensate the width, so 9.5em in total. */
     margin-left: -9.5rem;
     margin-bottom: -0.8rem;
+  }
+
+  /* Move the footer navigation into the margin too, left of the "About me"
+   * paragraph. */
+  #footer
+  {
+    /* Add 6em, the width of the navigation. */
+    max-width: 42em;
+  }
+
+  footer h2
+  {
+    /* Compensate the widening offset. */
+    margin-left: 3rem;
+  }
+
+  footer nav
+  {
+    float: left;
+    text-align: right;
+    width: 6em;
+
+    /* The footer gets 3em wider on the left, so add another 3em to move the
+     * nav fully into the margin, then separate from the text by 2em more. */
+    margin-left: -5em;
+  }
+
+  #about
+  {
+    float: right;
+    width: 36em;
+    margin-right: 3em;
   }
 }
 
