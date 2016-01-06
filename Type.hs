@@ -168,6 +168,8 @@ getGlyphName c = case c of
   '»' -> "guillemotright" -- A typo in the postscript specification.
   'é' -> "eacute"
   'ë' -> "edieresis"
+  'φ' -> "phi"
+  'ψ' -> "psi"
   '‘' -> "quoteleft"
   '’' -> "quoteright"
   '“' -> "quotedblleft"
