@@ -67,19 +67,21 @@ data Config = Config { outDir   :: FilePath
 -- of processed posts to the standard output. Start numbering post artifacts at
 -- 53, lower indices are reserved for other pages.
 writePosts :: T.Template -> T.Context -> [P.Post] -> Config -> IO [Artifact]
-writePosts tmpl ctx posts config = fmap snd $ foldM writePost (53, []) withRelated
+writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelated
   where total       = length posts
+        pageIdSeed  = 52
         withRelated = P.selectRelated posts
         writePost (i, artifacts) (post, related) = do
           let destFile = (outDir config) </> (drop 1 $ P.url post) </> "index.html"
+              pageId   = pageIdSeed + i
               context  = M.unions [ P.context post
                                   , P.relatedContext related
-                                  , pageIdContext i
+                                  , pageIdContext pageId
                                   , ctx]
               html     = T.apply tmpl context
           withImages  <- Image.processImages (imageDir config) html
           let minified = minifyHtml withImages
-              artifact = (i, minified)
+              artifact = (pageId, minified)
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
           writeFile destFile minified
