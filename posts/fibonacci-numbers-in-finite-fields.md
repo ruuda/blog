@@ -7,7 +7,7 @@ synopsis: With a bit of algebra, Fibonacci numbers can be computed efficiently u
 run-in: A function
 ---
 
-A function that computes the $n$-th Fibonacci number
+A function that computes the <var>n</var>-th Fibonacci number
 is often one of the first things that you encounter when reading up on any language.
 Here it is in C++:
 
@@ -24,9 +24,15 @@ u64 fib(u64 n)
 
 This implementation is simple, it reflects the mathematical definition,
 and it wastes all of your CPU cycles computing the same values over and over again.
-There are numerous [other ways][otherways] to compute the $n$-th Fibonacci number $F_n$ in a more efficient way.
+There are numerous [other ways][otherways] to compute the <var>n</var>-th Fibonacci number
+<var>F<sub>n</sub></var> in a more efficient way.
 A simple constant-time solution is to use the closed-form expression:
-$$ F_n = \frac{(1 + \sqrt{5})^{n} - (1 - \sqrt{5})^{n}}{2^{n} \sqrt{5}} $$
+
+<var>F<sub>n</sub></var> = <table><td>
+  <tr><td>(1 + √<span class="sqrt">5</span>)<sup><var>n</var></sup> -
+          (1 - √<span class="sqrt">5</span>)<sup><var>n</var></sup></td></tr>
+  <tr><td>2<sup><var>n</var></sup> √<span class="sqrt">5</span></td></tr></table>
+
 This expression involves the square root of five,
 so the naive approach is to use floating-point numbers:
 
@@ -46,7 +52,7 @@ There is a [trick][trick] that you can use to improve it somewhat,
 but as of `fib(79)` we run into a fundamental problem:
 the correct answer cannot be represented by a `double` any more.
 
-While I was solving an algebra exercise about the Fibonacci sequence modulo $p$ the other day,
+While I was solving an algebra exercise about the Fibonacci sequence modulo <var>p</var> the other day,
 I proved that that the closed-form expression is still correct in a [finite field][finitefield] of prime order,
 if the field contains a square root of five.
 This can be used to give an integer-only function to compute the Fibonacci numbers,
@@ -58,67 +64,73 @@ which is what I will do in this post.
 
 Finite fields
 -------------
-A finite field $\mathbb{F}_p$ of prime order $p$ consists of the integers $0, 1, …, p - 1$.
+A finite field 𝔽<sub><var>p</var></sub> of prime order <var>p</var> consists of the integers 0, 1, ..., <var>p</var> - 1.
 You can do addition and multiplication,
 but to ensure that the result is not too big,
-take the result modulo $p$.
-If $p$ is prime, then for every nonzero number $x$,
-there exists a number $x^{-1}$ such that $x \cdot x^{-1} \operatorname{mod} p = 1$.
-(Mathematicians omit the ‘$\operatorname{mod} p$’, because it is clear from the context.)
-You can think of this as the rational number $1/x$, but it is an integer in $\mathbb{F}_p$, not a fraction.
-For example, $\mathbb{F}_{5}$ consists of the integers $0$ through $4$.
-The multiplicative inverse of $3$ is $2$, because $3 \cdot 2 = 6 ≡ 1 \operatorname{mod} 5$.
+take the result modulo <var>p</var>.
+If <var>p</var> is prime, then for every nonzero number <var>x</var>,
+there exists a number <var>x</var><sup>-1</sup> such that <var>x</var> · <var>x</var><sup>-1</sup> mod <var>p</var> = 1.
+(Mathematicians omit the ‘mod <var>p</var>’, because it is clear from the context.)
+You can think of this as the rational number 1/<var>x</var>,
+but it is an integer in 𝔽<sub><var>p</var></sub>, not a fraction.
+For example, 𝔽<sub>5</sub> consists of the integers 0 through 4.
+The multiplicative inverse of 3 is 2, because 3 · 2 = 6 ≡ 1 mod 5.
 
 How are these finite fields useful for computing Fibonacci numbers?
-It turns out that the closed-form expression still works in $\mathbb{F}_p$ with a few adaptations.
-That allows us to compute the Fibonacci numbers modulo $p$ with integer operations only.
+It turns out that the closed-form expression still works in 𝔽<sub><var>p</var></sub> with a few adaptations.
+That allows us to compute the Fibonacci numbers modulo <var>p</var> with integer operations only.
 I will assume that we only care about Fibonacci numbers that can be represented by a 64-bit integer.
-$F_{93}$ is the largest Fibonacci number still representable,
-so if we can find a suitable prime $p$ such that $F_{93} < p < 2^{64}$,
-we can compute the Fibonacci numbers in $\mathbb{F}_p$.
+<var>F</var><sub>93</sub> is the largest Fibonacci number still representable,
+so if we can find a suitable prime <var>p</var> such that <var>F</var><sub>93</sub> < <var>p</var> < 2<sup>64</sup>,
+we can compute the Fibonacci numbers in 𝔽<sub><var>p</var></sub>.
 
 The closed-form expression explained
 ------------------------------------
-This real number $\sqrt{5}$ appears mysteriously in the closed-form expression.
+This real number √<span class="sqrt">5</span> appears mysteriously in the closed-form expression.
 Where does it come from, and how does the expression even yield integer values?
-It helps to understand where the $\sqrt{5}$ comes from to understand the $\mathbb{F}_p$ counterpart.
+It helps to understand where the √<span class="sqrt">5</span> comes from
+to understand the 𝔽<sub><var>p</var></sub> counterpart.
 Define
 $$ v = \sqrt{5}, \> \> \> \> φ = \frac{1 + v}{2}, \> \> \> \> ψ = \frac{1 - v}{2} $$
-Note that both $φ$ and $ψ$ are solutions of the equation
+Note that both <var>φ</var> and <var>ψ</var> are solutions of the equation
 $$ X^{2} = X + 1 $$
 because
 $$ \frac{(1 ± v)^{2}}{2^{2}} = \frac{1 ± 2v + v^{2}}{4} = \frac{1 ± 2v + 5}{4} = \frac{2 ± 2v}{4} + \frac{4}{4} = \frac{1 ± v}{2} + 1 $$
-By multiplying both sides of the equation with $X^{n-2}$,
-we can see that $φ$ and $ψ$ are also solutions of the equation
+By multiplying both sides of the equation with <var>X</var><sup>n - 2</sup>,
+we can see that <var>φ</var> and <var>ψ</var> are also solutions of the equation
 $$ X^{n} = X^{n-1} + X^{n-2} $$
-Now compare that to the Fibonacci relation, $F_{n} = F_{n-1} + F_{n-2}$.
+Now compare that to the Fibonacci relation,
+<var>F<sub>n</sub></var> = <var>F</var><sub><var>n</var> - 1</sub> + <var>F</var><sub><var>n</var> - 2</sub>.
 The equation satisfies the Fibonacci relation!
-If $φ$ and $ψ$ are solutions,
-a linear combination $aφ + bψ$ is also a solution,
-so if we can choose $a$ and $b$ such that $aφ^{0} + bψ^{0} = F_{0}$ and $aφ^{1} + bψ^{1} = F_{1}$,
-we have an expression for $F_{n}$.
-Solving this yields $a = v^{-1}$ and $b = -v^{-1}$,
+If <var>φ</var> and <var>ψ</var> are solutions,
+a linear combination <var>a</var> + <var>b</var> is also a solution,
+so if we can choose <var>a</var> and <var>b</var> such that
+<var>aφ</var><sup>0</sup> + </var>bψ</var><sup>0</sup> = <var>F</var><sub>0</sub>
+and <var>aφ</var><sup>1</sup> + <var>bψ</var><sup>1</sup> = <var>F</var><sub>1</sub>,
+we have an expression for <var>F<sub>n</sub></var>.
+Solving this yields <var>a</var> = <var>v</var><sup>-1</sup>
+and <var>b</var> = - <var>v</var><sup>-1</sup>,
 and that results in the expression we saw before.
 
-This derivation makes the $\sqrt{5}$ a little less mysterious,
+This derivation makes the √<span class="sqrt">5</span> a little less mysterious,
 but it shows something even more important:
-the only property of $v$ that we have used,
-is that $v^{2} = 5$,
-so if we can find a $v$ that squares to five a finite field,
+the only property of <var>v</var> that we have used,
+is that <var>v</var><sup>2</sup> = 5,
+so if we can find a <var>v</var> that squares to five a finite field,
 we can use the closed-form expression.
 
 Magic numbers
 -------------
 Of course any good function needs magic numbers.
 Don’t worry, we will have three.
-We are looking for a number in the range $0, 1, …, p - 1$,
-such that its square modulo $p$ is five.
+We are looking for a number in the range 0, 1, ..., <var>p</var> - 1,
+such that its square modulo <var>p</var> is five.
 Because of some more advanced mathematical [reasons][quadrecipr],
 such a number does not always exist.
-It exists only if $p \operatorname{mod} 5 = ±1$.
-So now we need to find a prime $p$,
-such that $F_{93} < p < 2^{64}$,
-and $p \operatorname{mod} 5 = 1$ or $p \operatorname{mod} 5 = 4$.
+It exists only if <var>p</var> mod 5 = ±1.
+So now we need to find a prime <var>p</var>,
+such that <var>F</var><sub>93</sub> < <var>p</var> < 2<sup>64</sup>,
+and <var>p</var> mod 5 = 1 or <var>p</var> mod 5 = 4.
 [Sage][sage] (mathematics software based on Python)
 will happily provide us with a suitable prime:
 
@@ -133,7 +145,7 @@ print p
 > 12200160415121876909
 ```
 
-This yields a prime $p$ smaller than $2^{64}$, so we’re good.
+This yields a prime <var>p</var> smaller than 2<sup>64</sup>, so we’re good.
 Now we know that a square root of five exists,
 but how do we find it?
 Sage can help us with that too:
@@ -148,9 +160,9 @@ print v
 
 Note that this is not the regular `sqrt` function for real numbers.
 Sage knows that `five` is an element of `Fp`,
-so it will search for the integer $v$ such that $v^{2} \operatorname{mod} p = 5$.
+so it will search for the integer <var>v</var> such that <var>v</var><sup>2</sup> mod <var>p</var> = 5.
 
-Finally, we need $v^{-1}$.
+Finally, we need <var>v</var><sup>-1</sup>.
 There are several ways to compute it,
 but because it is a constant,
 we can just pre-compute it with Sage:
@@ -166,11 +178,11 @@ print 1/v
 Modular arithmetic
 ------------------
 To implement the closed-form expression,
-we need to do arithmetic in $\mathbb{F}_p$,
-so all calculations are done modulo $p$.
+we need to do arithmetic in 𝔽<sub><var>p</var></sub>,
+so all calculations are done modulo <var>p</var>.
 How do we do addition?
 Simply `(a + b) % p` is not going to work here,
-because $p > 2^{63} - 1$,
+because <var>p</var> > 2<sup>63</sup> - 1,
 so `a + b` can overflow,
 and that would give an incorrect result.
 The solution is to check for overflow,
@@ -233,16 +245,16 @@ but these are actually slower on average.
 They will perform similarly for the worst-case input,
 but the constant-time functions will take that time for _every_ input.
 
-Finally, we need to be able to compute $2^{-n}$,
-the multiplicative inverse of $2^{n}$.
+Finally, we need to be able to compute 2<sup>-<var>n</var></sup>,
+the multiplicative inverse of 2<sup>n</sup>.
 A way to do this is to use the [extended Euclidean algorithm][euclideanalg],
 but because we have `powmod` already,
 there is an easier way.
-A [theorem][fermatltthm] in group theory tells us that for any nonzero $x$ in $\mathbb{F}_p$,
-we have $x^{p-1} = 1$.
+A [theorem][fermatltthm] in group theory tells us that for any nonzero <var>x</var> in 𝔽<sub><var>p</var></sub>,
+we have <var>x</var><sup><var>p</var> - 1</sup> = 1.
 This means that
-$$2^{-n} = 1 \cdot 2^{-n} = 2^{p-1} \cdot 2^{-n} = 2^{p-1-n} $$
-Because $n$ will not be larger than $93$,
+$$2^{-n} = 1 · 2^{-n} = 2^{p-1} · 2^{-n} = 2^{p-1-n} $$
+Because <var>n</var> will not be larger than 93,
 the exponent is positive.
 A positive power is something we can compute with `powmod`.
 
@@ -253,7 +265,7 @@ A positive power is something we can compute with `powmod`.
 Putting it all together
 -----------------------
 Let’s first rewrite the floating-point version a bit,
-so that it is easier to translate to $\mathbb{F}_p$.
+so that it is easier to translat𝔽<sub><var><</var>var>p</sub>.
 
 ```cpp
 u64 fib(u64 n)
@@ -297,8 +309,8 @@ u64 fib(u64 n)
 }
 ```
 
-Note again that we assumed that $n < p$,
-but since the result is only useful for $n < 94$,
+Note again that we assumed that <var>n</var> < <var>p</var>,
+but since the result is only useful for <var>n</var> < 94,
 that is not really a problem.
 
 The function does not run in constant time,
