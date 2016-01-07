@@ -148,6 +148,7 @@ renderMarkdown md = case fmap (writeHtmlString wopt) (readMarkdown ropt md) of
   -- accept tables. For output, enable syntax highlighting of code and write
   -- math as MathML.
   where ropt = def { readerExtensions     = S.insert Ext_backtick_code_blocks $
+                                            S.insert Ext_raw_html $
                                             S.insert Ext_simple_tables $
                                             S.insert Ext_tex_math_dollars
                                             def }
