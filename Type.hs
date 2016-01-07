@@ -114,6 +114,11 @@ makeAbbrs = Html.renderTags . Html.concatMapTagsWhere isBodyTag mkAbbr . Html.pa
         -- but not in monospace content (code).
         isBodyTag t = (needsFont t) && (not $ Html.isCode t)
 
+-- Returns whether Calluna or Inconsolata has a glyph for the character. This
+-- function is optimistic, so getGlyphName still fails for unexpected glyphs.
+isGlyphSupported :: Char -> Bool
+isGlyphSupported c = not $ c `elem` ['\n', 'φ', 'ψ', '≡', '𝔽']
+
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String
 getGlyphName c = case c of
@@ -168,8 +173,6 @@ getGlyphName c = case c of
   '»' -> "guillemotright" -- A typo in the postscript specification.
   'é' -> "eacute"
   'ë' -> "edieresis"
-  'φ' -> "phi"
-  'ψ' -> "psi"
   '‘' -> "quoteleft"
   '’' -> "quoteright"
   '“' -> "quotedblleft"
@@ -290,7 +293,7 @@ getGlyphs font ligatures = unique . (concatMap mapGlyphs) . (filter matchesFont)
           -- nothing to substitute.
           g:[] | isAsciiLower g -> [g : ".smcp", [toUpper g]]
           _                     -> [glyph]
-        glyphsFor      = fmap getGlyphName . filter (/= '\n') . unique
+        glyphsFor      = fmap getGlyphName . filter isGlyphSupported . unique
         ligasFor str   = case ligatures of
           NoLigatures -> []
           _           -> getLigatures str
