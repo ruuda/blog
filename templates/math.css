@@ -1,0 +1,17 @@
+.eqn
+{
+  text-align: center;
+  word-spacing: 0.35em;
+}
+
+.frac
+{
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.numer
+{
+  display: block;
+  border-bottom: 0.07em solid #456;
+}

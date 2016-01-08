@@ -112,9 +112,11 @@ context p = fmap T.StringValue ctx
                                , ("part", fmap toRoman $ part p)
                                , ("bold-font", boldFontField)
                                , ("italic-font", italicFontField)
+                               , ("math", mathField)
                                , ("mono-font", monoFontField) ]
         boldFontField   = booleanField $ Type.usesBoldFont $ body p
         italicFontField = booleanField $ usesItalicFont p
+        mathField       = booleanField $ Html.hasMath $ body p
         monoFontField   = booleanField $ usesMonoFont p
 
 -- Given a slug and the contents of the post file (markdown with front matter),

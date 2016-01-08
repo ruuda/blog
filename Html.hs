@@ -13,6 +13,7 @@ module Html ( Tag
             , filterTags
             , getTextInTag
             , hasUl
+            , hasMath
             , isA
             , isAbbr
             , isArticle
@@ -272,6 +273,13 @@ hasUl = not . null
       . filter (S.isTagOpenName "ul" . fst)
       . classifyTags
       . parseTags
+
+-- Returns whether an html snippet contains a <sub>, <sup>, or <var> tag.
+hasMath :: String -> Bool
+hasMath = any (\t -> isSub t || isSup t || isVar t)
+        . fmap snd
+        . classifyTags
+        . parseTags
 
 -- Returns the length of the longest ordered list in an html string.
 maxOlLength :: String -> Int
