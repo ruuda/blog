@@ -31,12 +31,15 @@ module Html ( Tag
             , isScript
             , isSmcp
             , isSubtitle
+            , isSub
+            , isSup
             , isStrong
             , isStyle
             , isTeaser
             , isTeaserLink
             , isTh
             , isUl
+            , isVar
             , mapTagsWhere
             , mapText
             , mapTextWith
@@ -103,9 +106,12 @@ data TagClass = A
               | Smcp   -- Not an html tag, but a class.
               | Style
               | Strong
+              | Sub
+              | Sup
               | Teaser -- Not an html tag, but an id.
               | Th
               | Ul
+              | Var
               deriving (Eq, Ord, Show)
 
 tagClassFromName :: String -> Maybe TagClass
@@ -126,8 +132,11 @@ tagClassFromName name = case name of
   "script"  -> Just Script
   "style"   -> Just Style
   "strong"  -> Just Strong
+  "sub"     -> Just Sub
+  "sup"     -> Just Sup
   "th"      -> Just Th
   "ul"      -> Just Ul
+  "var"     -> Just Var
   _         -> Nothing
 
 tagClassFromAttributes :: [(String, String)] -> Maybe TagClass
@@ -178,9 +187,12 @@ data TagProperties = TagProperties { isA       :: Bool
                                    , isSmcp    :: Bool
                                    , isStyle   :: Bool
                                    , isStrong  :: Bool
+                                   , isSub     :: Bool
+                                   , isSup     :: Bool
                                    , isTeaser  :: Bool
                                    , isTh      :: Bool
-                                   , isUl      :: Bool }
+                                   , isUl      :: Bool
+                                   , isVar     :: Bool }
 
 isHeading :: TagProperties -> Bool
 isHeading t = (isH1 t) || (isH2 t) || (isH3 t)
@@ -212,9 +224,12 @@ getProperties ts =
                    , isSmcp    = test Smcp
                    , isStyle   = test Style
                    , isStrong  = test Strong
+                   , isSub     = test Sub
+                   , isSup     = test Sup
                    , isTeaser  = test Teaser
                    , isTh      = test Th
-                   , isUl      = test Ul }
+                   , isUl      = test Ul
+                   , isVar     = test Var }
 
 -- Given a list of tags, classifies them as "inside code", "inside em", etc.
 classifyTags :: [Tag] -> [(Tag, TagProperties)]
