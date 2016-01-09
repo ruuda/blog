@@ -300,11 +300,6 @@ img
   color: #f5b2c8;
 }
 
-#teaser
-{
-  padding-bottom: 0.7em;
-}
-
 #teaser p:first-child {
   margin-bottom: 0.3em;
 }
@@ -312,9 +307,12 @@ img
 #teaser a {
   color: #fff; /* TODO: Pick good colour scheme. */
   font-family: Calluna, serif;
-  /* For reasons unknown to me, this fixes the baseline alignment of the teaser
-   * paragraph in Firefox. The value has been found by trial and error. */
-  line-height: 1.25;
+
+  /* Fix baseline alignment of the teaser in Firefox. At different viewport
+   * widths and zoom levels, the error is different, and there is no one
+   * value that corrects the error at all sizes. The value below works for
+   * large sizes. */
+  line-height: 0;
 }
 
 #teaser a:after
