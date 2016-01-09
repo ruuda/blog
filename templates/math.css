@@ -1,7 +1,14 @@
+/* Make sure that subscripts and superscripts do not disrupt the baseline. The
+ * fallback fonts for var elements can also disrupt the baseline, fix that.
+ * Because these elements are never on their own on a line, I can get away with
+ * setting the line height to 0. */
+sub, sup, var
+{
+  line-height: 0;
+}
+
 sub, sup
 {
-  /* Make sure that subscripts and superscripts do not disrupt the baseline. */
-  line-height: 1em;
   word-spacing: 0;
 
   /* Add a little space before superscripts, because the symbol that comes
@@ -54,11 +61,9 @@ sub
   border-bottom: 0.08em solid #456;
   display: block;
 
-  /* Compensate for the border to keep everything aligned to the baseline. */
-  line-height: 1.32rem;
-
-  /* Add a bit of space between the line and the symbols. */
-  margin-top: -0.1em;
+  /* Add a bit of space between the line and the symbols, and compensate for
+   * the height of the border. */
+  margin-top: -0.18em;
   padding-bottom: 0.1em;
 }
 
