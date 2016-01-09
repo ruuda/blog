@@ -87,42 +87,35 @@ writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelate
           writeFile destFile minified
           return $ (i + 1, artifact:artifacts)
 
--- Given the archive template and the global context, writes the archive page
--- to the destination directory.
-writeArchive :: T.Template -> T.Context -> [P.Post] -> Config -> IO Artifact
-writeArchive tmpl ctx posts config = do
-  let url      = "/writing"
-      pageId   = 0 -- TODO: better page ID scheme
-      context  = M.unions [ P.archiveContext posts
-                          , M.singleton "title"     (T.StringValue "Writing by Ruud van Asseldonk")
-                          , M.singleton "url"       (T.StringValue url)
-                          , M.singleton "bold-font" (T.StringValue "true")
+-- Writes a general (non-post) page given a template and expansion context.
+writePage :: Int -> String -> T.Context -> T.Template -> Config -> IO Artifact
+writePage pageId url pageContext template config = do
+  let context  = M.unions [ M.singleton "url" (T.StringValue url)
                           , pageIdContext pageId
-                          , ctx ]
-      html     = minifyHtml $ T.apply tmpl context
+                          , pageContext ]
+      html     = minifyHtml $ T.apply template context
       artifact = (pageId, html)
       destDir  = (outDir config) </> (tail url)
   createDirectoryIfMissing True destDir
   writeFile (destDir </> "index.html") html
   return artifact
 
+-- Given the archive template and the global context, writes the archive page
+-- to the destination directory.
+writeArchive :: T.Context -> T.Template -> [P.Post] -> Config -> IO Artifact
+writeArchive globalContext template posts = writePage 0 "/writing" context template
+  where context = M.unions [ P.archiveContext posts
+                           , M.singleton "title"     (T.StringValue "Writing by Ruud van Asseldonk")
+                           , M.singleton "bold-font" (T.StringValue "true")
+                           , globalContext ]
+
 -- Given the contact template and the global context, writes the contact page
 -- to the destination directory.
-writeContact :: T.Template -> T.Context -> Config -> IO Artifact
-writeContact tmpl ctx config = do
-  let url      = "/contact"
-      pageId   = 1 -- TODO: better page ID scheme
-      context  = M.unions [ M.singleton "title"     (T.StringValue "Contact Ruud van Asseldonk")
-                          , M.singleton "url"       (T.StringValue url)
-                          , M.singleton "mono-font" (T.StringValue "true")
-                          , pageIdContext pageId
-                          , ctx ]
-      html     = minifyHtml $ T.apply tmpl context
-      artifact = (pageId, html)
-      destDir  = (outDir config) </> (tail url)
-  createDirectoryIfMissing True destDir
-  writeFile (destDir </> "index.html") html
-  return artifact
+writeContact :: T.Context -> T.Template -> Config -> IO Artifact
+writeContact globalContext = writePage 1 "/contact" context
+  where context = M.unions [ M.singleton "title"     (T.StringValue "Contact Ruud van Asseldonk")
+                           , M.singleton "mono-font" (T.StringValue "true")
+                           , globalContext ]
 
 mapFst :: (a -> b) -> (a, c) -> (b, c)
 mapFst f (x, y) = (f x, y)
@@ -156,8 +149,8 @@ main = do
   postArtifacts <- writePosts (templates M.! "post.html") globalContext posts config
 
   putStrLn "Writing archive..."
-  archiveArtifact <- writeArchive (templates M.! "archive.html") globalContext posts config
-  contactArtifact <- writeContact (templates M.! "contact.html") globalContext config
+  archiveArtifact <- writeArchive globalContext (templates M.! "archive.html") posts config
+  contactArtifact <- writeContact globalContext (templates M.! "contact.html") config
 
   putStrLn "Subsetting fonts..."
   let artifacts = archiveArtifact : contactArtifact : postArtifacts
