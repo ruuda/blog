@@ -152,10 +152,8 @@ renderMarkdown md = case fmap (writeHtmlString wopt) (readMarkdown ropt md) of
   where ropt = def { readerExtensions     = S.insert Ext_backtick_code_blocks $
                                             S.insert Ext_raw_html $
                                             S.insert Ext_simple_tables $
-                                            S.insert Ext_tex_math_dollars
                                             def }
-        wopt = def { writerHighlight      = True
-                   , writerHTMLMathMethod = MathML Nothing }
+        wopt = def { writerHighlight      = True }
 
 -- Related content for a post, for the further reading section in the footer.
 data RelatedContent = Further Post
