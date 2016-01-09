@@ -65,6 +65,7 @@ getStyle :: TagProperties -> FontStyle
 getStyle t = case t of
   _ | Html.isEm t       -> Italic
   _ | Html.isSubtitle t -> Italic
+  _ | Html.isVar t      -> Italic
   _ | otherwise         -> Roman
 
 getCaps :: TagProperties -> FontCaps
