@@ -93,7 +93,7 @@ h1 > br
   display: none;
 }
 
-p
+p, nav
 {
   margin-bottom: 1em;
   padding-top: 0.4em;
@@ -179,7 +179,7 @@ h2
   padding-top: 0.8rem;
 }
 
-article > ul, article > ol
+ul, ol
 {
   counter-reset: ol;
   list-style: none;
@@ -187,28 +187,28 @@ article > ul, article > ol
   padding-top: 0.4em;
 }
 
-article li:before
+li
+{
+  margin-left: 1em;
+}
+
+li:before
 {
   display: inline-block;
   margin-left: -1em;
   width: 1em;
 }
 
-article > ul > li:before
+ul > li:before
 {
   content: '•';
 }
 
-article > ol > li:before
+ol > li:before
 {
   content: counter(ol, decimal);
   counter-increment: ol;
   font-weight: bold;
-}
-
-article li
-{
-  margin-left: 1em;
 }
 
 table
@@ -332,13 +332,6 @@ footer
 {
   background-color: #234; /* TODO: pick unified colour scheme. */
   color: #b4aaaa;
-}
-
-footer ul
-{
-  list-style: none;
-  margin-bottom: 1em;
-  padding-top: 0.4em;
 }
 
 #notices
@@ -514,7 +507,7 @@ footer span
   }
 
   /* Hang list numbers and bullets in the margin when there is enough space. */
-  article li
+  li
   {
     margin-left: 0;
   }
