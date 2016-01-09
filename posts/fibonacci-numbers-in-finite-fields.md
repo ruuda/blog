@@ -97,21 +97,73 @@ Where does it come from, and how does the expression even yield integer values?
 It helps to understand where the √<span class="sqrt"><span>5</span></span> comes from
 to understand the 𝔽<sub><var>p</var></sub> counterpart.
 Define
-$$ v = \sqrt{5}, \> \> \> \> φ = \frac{1 + v}{2}, \> \> \> \> ψ = \frac{1 - v}{2} $$
+
+<p class="eqn">
+  <var>v</var> = √<span class="sqrt"><span>5</span></span><span class="sep">,</span>
+  <var>φ</var> = <span class="frac"><span class="numer">1 + v</span>2</span><span class="sep">,</span>
+  <var>ψ</var> = <span class="frac"><span class="numer">1 - v</span>2</span>
+</p>
+
 Note that both <var>φ</var> and <var>ψ</var> are solutions of the equation
-$$ X^{2} = X + 1 $$
+
+<p class="eqn">
+  <var>X</var><sup>2</sup> = <var>X</var> + 1
+</p>
+
 because
-$$ \frac{(1 ± v)^{2}}{2^{2}} = \frac{1 ± 2v + v^{2}}{4} = \frac{1 ± 2v + 5}{4} = \frac{2 ± 2v}{4} + \frac{4}{4} = \frac{1 ± v}{2} + 1 $$
+
+<p class="eqn">
+  <span class="frac">
+    <span class="numer">
+      (1 ± <var>v</var>)<sup>2</sup>
+    </span>2<sup>2</sup>
+  </span>
+  =
+  <span class="frac">
+    <span class="numer">
+      1 ± 2<var>v</var> + <var>v</var><sup>2</sup>
+    </span>4
+  </span>
+  =
+  <span class="frac">
+    <span class="numer">
+      1 ± 2<var>v</var> + 5
+    </span>4
+  </span>
+  =
+  <span class="frac">
+    <span class="numer">
+      2 ± 2<var>v</var>
+    </span>4
+  </span> + <span class="frac">
+    <span class="numer">4</span>4
+  </span>
+  =
+  <span class="frac">
+    <span class="numer">
+      2 ± 2<var>v</var>
+    </span>4
+  </span> + 1
+</p>
+
 By multiplying both sides of the equation with <var>X</var><sup>n - 2</sup>,
 we can see that <var>φ</var> and <var>ψ</var> are also solutions of the equation
-$$ X^{n} = X^{n-1} + X^{n-2} $$
+
+<p class="eqn">
+  <var>X<sup>n</sup></var>
+  =
+  <var>X</var><sup><var>n</var> - 1</sup>
+  +
+  <var>X</var><sup><var>n</var> - 2</sup>
+</p>
+
 Now compare that to the Fibonacci relation,
 <var>F<sub>n</sub></var> = <var>F</var><sub><var>n</var> - 1</sub> + <var>F</var><sub><var>n</var> - 2</sub>.
 The equation satisfies the Fibonacci relation!
 If <var>φ</var> and <var>ψ</var> are solutions,
 a linear combination <var>a</var> + <var>b</var> is also a solution,
 so if we can choose <var>a</var> and <var>b</var> such that
-<var>aφ</var><sup>0</sup> + </var>bψ</var><sup>0</sup> = <var>F</var><sub>0</sub>
+<var>aφ</var><sup>0</sup> + <var>bψ</var><sup>0</sup> = <var>F</var><sub>0</sub>
 and <var>aφ</var><sup>1</sup> + <var>bψ</var><sup>1</sup> = <var>F</var><sub>1</sub>,
 we have an expression for <var>F<sub>n</sub></var>.
 Solving this yields <var>a</var> = <var>v</var><sup>-1</sup>
@@ -260,7 +312,14 @@ there is an easier way.
 A [theorem][fermatltthm] in group theory tells us that for any nonzero <var>x</var> in 𝔽<sub><var>p</var></sub>,
 we have <var>x</var><sup><var>p</var> - 1</sup> = 1.
 This means that
-$$2^{-n} = 1 · 2^{-n} = 2^{p-1} · 2^{-n} = 2^{p-1-n} $$
+
+<p class="eqn">
+    2<sup>-n</sup>
+  = 1 · 2<sup>-n</sup>
+  = 2<sup><var>p</var> - 1</sup> · 2<sup>-n</sup>
+  = 2<sup><var>p</var> - 1 - <var>n</var></sup>
+</p>
+
 Because <var>n</var> will not be larger than 93,
 the exponent is positive.
 A positive power is something we can compute with `powmod`.
@@ -272,7 +331,7 @@ A positive power is something we can compute with `powmod`.
 Putting it all together
 -----------------------
 Let’s first rewrite the floating-point version a bit,
-so that it is easier to translat𝔽<sub><var><</var>var>p</sub>.
+so that it is easier to translate 𝔽<sub><var>p</var></sub>.
 
 ```cpp
 u64 fib(u64 n)
