@@ -2,6 +2,7 @@ sub, sup
 {
   /* Make sure that subscripts and superscripts do not disrupt the baseline. */
   line-height: 1em;
+  word-spacing: 0;
 }
 
 .sqrt

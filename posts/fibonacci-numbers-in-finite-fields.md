@@ -30,8 +30,8 @@ A simple constant-time solution is to use the closed-form expression:
 
 <p class="eqn">
   <var>F<sub>n</sub></var> = <span class="frac"><span class="numer">
-  (1 + √<span class="sqrt"><span>5</span></span>)<sup><var>n</var></sup> -
-  (1 - √<span class="sqrt"><span>5</span></span>)<sup><var>n</var></sup>
+  (1 + √<span class="sqrt"><span>5</span></span>)<sup><var>n</var></sup> –
+  (1 – √<span class="sqrt"><span>5</span></span>)<sup><var>n</var></sup>
   </span>
   <!-- denominator does not need a span, omit to save bytes. -->
   2<sup><var>n</var></sup> √<span class="sqrt"><span>5</span></span>
@@ -69,12 +69,12 @@ which is what I will do in this post.
 
 Finite fields
 -------------
-A finite field 𝔽<sub><var>p</var></sub> of prime order <var>p</var> consists of the integers 0, 1, ..., <var>p</var> - 1.
+A finite field 𝔽<sub><var>p</var></sub> of prime order <var>p</var> consists of the integers 0, 1, ..., <var>p</var> – 1.
 You can do addition and multiplication,
 but to ensure that the result is not too big,
 take the result modulo <var>p</var>.
 If <var>p</var> is prime, then for every nonzero number <var>x</var>,
-there exists a number <var>x</var><sup>-1</sup> such that <var>x</var> · <var>x</var><sup>-1</sup> mod <var>p</var> = 1.
+there exists a number <var>x</var><sup>–1</sup> such that <var>x</var> · <var>x</var><sup>–1</sup> mod <var>p</var> = 1.
 (Mathematicians omit the ‘mod <var>p</var>’, because it is clear from the context.)
 You can think of this as the rational number 1/<var>x</var>,
 but it is an integer in 𝔽<sub><var>p</var></sub>, not a fraction.
@@ -101,7 +101,7 @@ Define
 <p class="eqn">
   <var>v</var> = √<span class="sqrt"><span>5</span></span><span class="sep">,</span>
   <var>φ</var> = <span class="frac"><span class="numer">1 + v</span>2</span><span class="sep">,</span>
-  <var>ψ</var> = <span class="frac"><span class="numer">1 - v</span>2</span>
+  <var>ψ</var> = <span class="frac"><span class="numer">1 – v</span>2</span>
 </p>
 
 Note that both <var>φ</var> and <var>ψ</var> are solutions of the equation
@@ -146,19 +146,19 @@ because
   </span> + 1
 </p>
 
-By multiplying both sides of the equation with <var>X</var><sup>n - 2</sup>,
+By multiplying both sides of the equation with <var>X</var><sup><var>n</var> – 2</sup>,
 we can see that <var>φ</var> and <var>ψ</var> are also solutions of the equation
 
 <p class="eqn">
   <var>X<sup>n</sup></var>
   =
-  <var>X</var><sup><var>n</var> - 1</sup>
+  <var>X</var><sup><var>n</var> – 1</sup>
   +
-  <var>X</var><sup><var>n</var> - 2</sup>
+  <var>X</var><sup><var>n</var> – 2</sup>
 </p>
 
 Now compare that to the Fibonacci relation,
-<var>F<sub>n</sub></var> = <var>F</var><sub><var>n</var> - 1</sub> + <var>F</var><sub><var>n</var> - 2</sub>.
+<var>F<sub>n</sub></var> = <var>F</var><sub><var>n</var> – 1</sub> + <var>F</var><sub><var>n</var> – 2</sub>.
 The equation satisfies the Fibonacci relation!
 If <var>φ</var> and <var>ψ</var> are solutions,
 a linear combination <var>a</var> + <var>b</var> is also a solution,
@@ -166,8 +166,8 @@ so if we can choose <var>a</var> and <var>b</var> such that
 <var>aφ</var><sup>0</sup> + <var>bψ</var><sup>0</sup> = <var>F</var><sub>0</sub>
 and <var>aφ</var><sup>1</sup> + <var>bψ</var><sup>1</sup> = <var>F</var><sub>1</sub>,
 we have an expression for <var>F<sub>n</sub></var>.
-Solving this yields <var>a</var> = <var>v</var><sup>-1</sup>
-and <var>b</var> = - <var>v</var><sup>-1</sup>,
+Solving this yields <var>a</var> = <var>v</var><sup>–1</sup>
+and <var>b</var> = –<var>v</var><sup>–1</sup>,
 and that results in the expression we saw before.
 
 This derivation makes the √<span class="sqrt"><span>5</span></span>
@@ -182,7 +182,7 @@ Magic numbers
 -------------
 Of course any good function needs magic numbers.
 Don’t worry, we will have three.
-We are looking for a number in the range 0, 1, ..., <var>p</var> - 1,
+We are looking for a number in the range 0, 1, ..., <var>p</var> – 1,
 such that its square modulo <var>p</var> is five.
 Because of some more advanced mathematical [reasons][quadrecipr],
 such a number does not always exist.
@@ -221,7 +221,7 @@ Note that this is not the regular `sqrt` function for real numbers.
 Sage knows that `five` is an element of `Fp`,
 so it will search for the integer <var>v</var> such that <var>v</var><sup>2</sup> mod <var>p</var> = 5.
 
-Finally, we need <var>v</var><sup>-1</sup>.
+Finally, we need <var>v</var><sup>–1</sup>.
 There are several ways to compute it,
 but because it is a constant,
 we can just pre-compute it with Sage:
@@ -241,7 +241,7 @@ we need to do arithmetic in 𝔽<sub><var>p</var></sub>,
 so all calculations are done modulo <var>p</var>.
 How do we do addition?
 Simply `(a + b) % p` is not going to work here,
-because <var>p</var> > 2<sup>63</sup> - 1,
+because <var>p</var> > 2<sup>63</sup> – 1,
 so `a + b` can overflow,
 and that would give an incorrect result.
 The solution is to check for overflow,
@@ -304,20 +304,20 @@ but these are actually slower on average.
 They will perform similarly for the worst-case input,
 but the constant-time functions will take that time for _every_ input.
 
-Finally, we need to be able to compute 2<sup>-<var>n</var></sup>,
+Finally, we need to be able to compute 2<sup>–<var>n</var></sup>,
 the multiplicative inverse of 2<sup>n</sup>.
 A way to do this is to use the [extended Euclidean algorithm][euclideanalg],
 but because we have `powmod` already,
 there is an easier way.
 A [theorem][fermatltthm] in group theory tells us that for any nonzero <var>x</var> in 𝔽<sub><var>p</var></sub>,
-we have <var>x</var><sup><var>p</var> - 1</sup> = 1.
+we have <var>x</var><sup><var>p</var> – 1</sup> = 1.
 This means that
 
 <p class="eqn">
-    2<sup>-n</sup>
-  = 1 · 2<sup>-n</sup>
-  = 2<sup><var>p</var> - 1</sup> · 2<sup>-n</sup>
-  = 2<sup><var>p</var> - 1 - <var>n</var></sup>
+    2<sup>–n</sup>
+  = 1 · 2<sup>–n</sup>
+  = 2<sup><var>p</var> – 1</sup> · 2<sup>–n</sup>
+  = 2<sup><var>p</var> – 1 – <var>n</var></sup>
 </p>
 
 Because <var>n</var> will not be larger than 93,
