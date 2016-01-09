@@ -3,6 +3,22 @@ sub, sup
   /* Make sure that subscripts and superscripts do not disrupt the baseline. */
   line-height: 1em;
   word-spacing: 0;
+
+  /* Add a little space before superscripts, because the symbol that comes
+   * before it is usually in italics, so it needs a bit of correction. In some
+   * cases (especially for the number '2'), if the previous character is not
+   * italic, this actually makes things worse, but on average it improves the
+   * spacing. */
+  margin-left: 0.1em;
+}
+
+sub
+{
+  /* Subscripts after italics can move a bit to the left. All but one of the
+   * subscripts that are not after an italic happen to be after the
+   * double-struck F for my posts, so there there is room as well. The one case
+   * where the default margin is right is a trade off. */
+  margin-left: -0.1em;
 }
 
 .sqrt
