@@ -1,3 +1,25 @@
+sub, sup
+{
+  /* Make sure that subscripts and superscripts do not disrupt the baseline. */
+  line-height: 1em;
+}
+
+.sqrt
+{
+  border-top: 0.08em solid #456;
+  margin-left: -0.04em;
+  position: relative;
+  top: 0.22em;
+}
+
+.sqrt > span
+{
+  padding-left: 0.14em;
+  padding-right: 0.1em;
+  position: relative;
+  top: -0.22em;
+}
+
 .eqn
 {
   text-align: center;
@@ -12,6 +34,13 @@
 
 .numer
 {
+  border-bottom: 0.08em solid #456;
   display: block;
-  border-bottom: 0.07em solid #456;
+
+  /* Compensate for the border to keep everything aligned to the baseline. */
+  line-height: 1.32rem;
+
+  /* Add a bit of space between the line and the symbols. */
+  margin-top: -0.1em;
+  padding-bottom: 0.1em;
 }

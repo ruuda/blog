@@ -28,10 +28,15 @@ There are numerous [other ways][otherways] to compute the <var>n</var>-th Fibona
 <var>F<sub>n</sub></var> in a more efficient way.
 A simple constant-time solution is to use the closed-form expression:
 
-<var>F<sub>n</sub></var> = <table><td>
-  <tr><td>(1 + √<span class="sqrt">5</span>)<sup><var>n</var></sup> -
-          (1 - √<span class="sqrt">5</span>)<sup><var>n</var></sup></td></tr>
-  <tr><td>2<sup><var>n</var></sup> √<span class="sqrt">5</span></td></tr></table>
+<p class="eqn">
+  <var>F<sub>n</sub></var> = <span class="frac"><span class="numer">
+  (1 + √<span class="sqrt"><span>5</span></span>)<sup><var>n</var></sup> -
+  (1 - √<span class="sqrt"><span>5</span></span>)<sup><var>n</var></sup>
+  </span>
+  <!-- denominator does not need a span, omit to save bytes. -->
+  2<sup><var>n</var></sup> √<span class="sqrt"><span>5</span></span>
+  </span>
+</p>
 
 This expression involves the square root of five,
 so the naive approach is to use floating-point numbers:
@@ -86,9 +91,10 @@ we can compute the Fibonacci numbers in 𝔽<sub><var>p</var></sub>.
 
 The closed-form expression explained
 ------------------------------------
-This real number √<span class="sqrt">5</span> appears mysteriously in the closed-form expression.
+This real number √<span class="sqrt"><span>5</span></span>
+appears mysteriously in the closed-form expression.
 Where does it come from, and how does the expression even yield integer values?
-It helps to understand where the √<span class="sqrt">5</span> comes from
+It helps to understand where the √<span class="sqrt"><span>5</span></span> comes from
 to understand the 𝔽<sub><var>p</var></sub> counterpart.
 Define
 $$ v = \sqrt{5}, \> \> \> \> φ = \frac{1 + v}{2}, \> \> \> \> ψ = \frac{1 - v}{2} $$
@@ -112,7 +118,8 @@ Solving this yields <var>a</var> = <var>v</var><sup>-1</sup>
 and <var>b</var> = - <var>v</var><sup>-1</sup>,
 and that results in the expression we saw before.
 
-This derivation makes the √<span class="sqrt">5</span> a little less mysterious,
+This derivation makes the √<span class="sqrt"><span>5</span></span>
+a little less mysterious,
 but it shows something even more important:
 the only property of <var>v</var> that we have used,
 is that <var>v</var><sup>2</sup> = 5,
