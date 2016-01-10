@@ -347,21 +347,6 @@ footer span
   margin-right: 0.25em;
 }
 
-/* Light footer used on pages with little content. */
-#light
-{
-  /* TODO: Should I instead turn it on for pages with a heavy footer? */
-  background-color: inherit;
-  padding: 1.4em;
-  color: #ccc;
-}
-
-#light a
-{
-  /* TODO: Tweak colors. */
-  color: #aaa;
-}
-
 /* Scale font size as the square root of the viewport width. 16px should be the
  * minimum font size, for a viewport width of 400px. At 1600px, the content
  * should fill half of the viewport. That means 36em is 800px, so the font size
