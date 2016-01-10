@@ -56,7 +56,7 @@ readPosts = mapFilesIf ((== ".md") . takeExtension) readPost
 type Artifact = (Int, String)
 
 pageIdContext :: Int -> Template.Context
-pageIdContext i = M.singleton "page-id" (Template.StringValue $ show i)
+pageIdContext i = Template.stringField "page-id" $ show i
 
 -- Holds the output directory and input image directory.
 data Config = Config { outDir   :: FilePath
@@ -90,7 +90,7 @@ writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelate
 -- Writes a general (non-post) page given a template and expansion context.
 writePage :: Int -> String -> Template.Context -> Template.Template -> Config -> IO Artifact
 writePage pageId url pageContext template config = do
-  let context  = M.unions [ M.singleton "url" (Template.StringValue url)
+  let context  = M.unions [ Template.stringField "url" url
                           , pageIdContext pageId
                           , pageContext ]
       html     = minifyHtml $ Template.apply template context
@@ -102,8 +102,8 @@ writePage pageId url pageContext template config = do
 
 writeIndex :: Template.Context -> Template.Template -> Config -> IO Artifact
 writeIndex globalContext = writePage 0 "/" context
-  where context = M.unions [ M.singleton "title" (Template.StringValue "Ruud van Asseldonk")
-                           , M.singleton "bold-font" (Template.StringValue "true")
+  where context = M.unions [ Template.stringField "title"     "Ruud van Asseldonk"
+                           , Template.stringField "bold-font" "true"
                            , globalContext ]
 
 -- Given the archive template and the global context, writes the archive page
@@ -111,16 +111,16 @@ writeIndex globalContext = writePage 0 "/" context
 writeArchive :: Template.Context -> Template.Template -> [P.Post] -> Config -> IO Artifact
 writeArchive globalContext template posts = writePage 1 "/writing" context template
   where context = M.unions [ P.archiveContext posts
-                           , M.singleton "title"     (Template.StringValue "Writing by Ruud van Asseldonk")
-                           , M.singleton "bold-font" (Template.StringValue "true")
+                           , Template.stringField "title"     "Writing by Ruud van Asseldonk"
+                           , Template.stringField "bold-font" "true"
                            , globalContext ]
 
 -- Given the contact template and the global context, writes the contact page
 -- to the destination directory.
 writeContact :: Template.Context -> Template.Template -> Config -> IO Artifact
 writeContact globalContext = writePage 2 "/contact" context
-  where context = M.unions [ M.singleton "title"     (Template.StringValue "Contact Ruud van Asseldonk")
-                           , M.singleton "mono-font" (Template.StringValue "true")
+  where context = M.unions [ Template.stringField "title"     "Contact Ruud van Asseldonk"
+                           , Template.stringField "mono-font" "true"
                            , globalContext ]
 
 mapFst :: (a -> b) -> (a, c) -> (b, c)
@@ -142,7 +142,7 @@ main = do
   -- Create a context with the field "year" set to the current year, and create
   -- a context that contains all of the templates, to handle includes.
   (year, _month, _day) <- fmap (toGregorian . utctDay) getCurrentTime
-  let yctx          = M.singleton "year" (Template.StringValue $ show year)
+  let yctx          = Template.stringField "year" $ show year
       tctx          = fmap Template.TemplateValue templates
       globalContext = M.union tctx yctx
       config        = Config { outDir   = "out/"

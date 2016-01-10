@@ -7,9 +7,12 @@
 module Template ( Context
                 , ContextValue(ListValue, StringValue, TemplateValue)
                 , Template
+                , apply
+                , listField
                 , nestContext
                 , parse
-                , apply ) where
+                , stringField
+                ) where
 
 -- This file implements a tiny templating engine inspired by Moustache. A
 -- context for applying templates resembles json. It features strings, lists,
@@ -68,6 +71,12 @@ type Context      = M.Map String ContextValue
 data ContextValue = ListValue [Context]
                   | StringValue String
                   | TemplateValue Template
+
+stringField :: String -> String -> Context
+stringField key value = M.singleton key (StringValue value)
+
+listField :: String -> [Context] -> Context
+listField key values = M.singleton key (ListValue values)
 
 -- Fakes nested context fields by prepending "<key>." to the keys of the child
 -- context.

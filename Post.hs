@@ -164,7 +164,7 @@ data RelatedContent = Further Post
 relatedContext :: RelatedContent -> Template.Context
 relatedContext related = case related of
   Further post -> Template.nestContext "further" $ context post
-  Series posts -> M.singleton "series" $ Template.ListValue $ fmap context posts
+  Series posts -> Template.listField   "series" $ fmap context posts
 
 -- Takes an (unordered) list of posts and produces a list of posts together with
 -- related content for that post.
@@ -185,16 +185,16 @@ selectRelated posts = fmap nextElsePrev prevPostNext
 
 -- Returns a context for a group of posts that share the same year.
 archiveYearContext :: [Post] -> Template.Context
-archiveYearContext posts = M.fromList [yearField, postsField]
-  where yearField     = ("year", Template.StringValue $ show $ year $ head $ posts)
+archiveYearContext posts = yearField `M.union` postsField
+  where yearField     = Template.stringField "year" $ show $ year $ head $ posts
         chronological = sortWith date posts
         recentFirst   = reverse chronological
-        postsField    = ("post", Template.ListValue $ fmap context recentFirst)
+        postsField    = Template.listField "post" $ fmap context recentFirst
 
 -- Returns a contexts with a "archive-year" list where every year has a "posts"
 -- lists.
 archiveContext :: [Post] -> Template.Context
-archiveContext posts  = M.singleton "archive-year" (Template.ListValue years)
+archiveContext posts  = Template.listField "archive-year" years
   where yearGroups    = groupWith year posts
         chronological = sortWith (year . head) yearGroups
         recentFirst   = reverse chronological
