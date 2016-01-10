@@ -29,7 +29,7 @@ import           GHC.Exts (groupWith, sortWith)
 import           Text.Pandoc
 
 import qualified Html
-import qualified Template as T
+import qualified Template
 import qualified Type
 
 -- Front matter consists of key value pairs, both of type string.
@@ -98,8 +98,8 @@ addBreak between = Text.unpack . Text.replace textBetween broken . Text.pack
         broken              = Text.pack $ brAfter ++ "<br> " ++ brBefore
 
 -- Returns the template expansion context for the post.
-context :: Post -> T.Context
-context p = fmap T.StringValue ctx
+context :: Post -> Template.Context
+context p = fmap Template.StringValue ctx
   where ctx       = M.union fields (M.mapMaybe id optFields)
         fields    = M.fromList [ ("title", title p)
                                , ("header", header p)
@@ -161,10 +161,10 @@ data RelatedContent = Further Post
                     deriving (Show) -- TODO: this is for debugging only, remove.
 
 -- Returns the template expansion context for related content.
-relatedContext :: RelatedContent -> T.Context
+relatedContext :: RelatedContent -> Template.Context
 relatedContext related = case related of
-  Further post -> T.nestContext "further" $ context post
-  Series posts -> M.singleton "series" $ T.ListValue $ fmap context posts
+  Further post -> Template.nestContext "further" $ context post
+  Series posts -> M.singleton "series" $ Template.ListValue $ fmap context posts
 
 -- Takes an (unordered) list of posts and produces a list of posts together with
 -- related content for that post.
@@ -184,17 +184,17 @@ selectRelated posts = fmap nextElsePrev prevPostNext
           _                    -> error "At least two posts are required."
 
 -- Returns a context for a group of posts that share the same year.
-archiveYearContext :: [Post] -> T.Context
+archiveYearContext :: [Post] -> Template.Context
 archiveYearContext posts = M.fromList [yearField, postsField]
-  where yearField     = ("year", T.StringValue $ show $ year $ head $ posts)
+  where yearField     = ("year", Template.StringValue $ show $ year $ head $ posts)
         chronological = sortWith date posts
         recentFirst   = reverse chronological
-        postsField    = ("post", T.ListValue $ fmap context recentFirst)
+        postsField    = ("post", Template.ListValue $ fmap context recentFirst)
 
 -- Returns a contexts with a "archive-year" list where every year has a "posts"
 -- lists.
-archiveContext :: [Post] -> T.Context
-archiveContext posts  = M.singleton "archive-year" (T.ListValue years)
+archiveContext :: [Post] -> Template.Context
+archiveContext posts  = M.singleton "archive-year" (Template.ListValue years)
   where yearGroups    = groupWith year posts
         chronological = sortWith (year . head) yearGroups
         recentFirst   = reverse chronological
