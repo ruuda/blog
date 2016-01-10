@@ -20,7 +20,8 @@ module Template ( Context
 -- {{moustaches}} have special meaning:
 --
 --  * Conditionals: "{{if <cond>}} inner {{end}}" expands to " inner " if the
---    key <cond> is present.
+--    key <cond> is present. "{{if !cond}} inner {{end}}" expands to " inner "
+--    if the key <cond> is not present.
 --
 --  * Loops: "{{foreach <list>}} inner {{end}}" expands to an expansion of
 --    " inner " for every element of <list>. The context for the inner expansion
@@ -99,7 +100,9 @@ applyBlock fragments context = next fragments ""
         getList name = case M.lookup name context of
           Just (ListValue list) -> list
           _                     -> []
-        isTrue condition = M.member condition context
+        isTrue condition = if (head condition) == '!' then negated else present
+          where present  = M.member condition context
+                negated  = not $ M.member (tail condition) context
         next :: [Fragment] -> String -> (String, [Fragment])
         next              [] str = (str, [])
         next (fragment:more) str = case fragment of
