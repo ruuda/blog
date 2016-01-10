@@ -347,16 +347,19 @@ footer span
   margin-right: 0.25em;
 }
 
-.light
+/* Light footer used on pages with little content. */
+#light
 {
   /* TODO: Should I instead turn it on for pages with a heavy footer? */
   background-color: inherit;
+  padding: 1.4em;
+  color: #ccc;
 }
 
-.light a
+#light a
 {
   /* TODO: Tweak colors. */
-  color: #555;
+  color: #aaa;
 }
 
 /* Scale font size as the square root of the viewport width. 16px should be the
