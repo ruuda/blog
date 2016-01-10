@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Ruud van Asseldonk</title>
+  <id>https://ruudvanasseldonk.com/</id>
+  <icon>/favicon.png</icon>
+  <link href="https://ruudvanasseldonk.com/writing" rel="alternate"/>
+  <link href="https://ruudvanasseldonk.com/feed.xml" rel="self"/>
+  <author>
+    <name>Ruud van Asseldonk</name>
+  </author>
+  <updated>{{updated}}T00:00:00Z</updated>
+  {{foreach post}}
+  <entry> 
+    <title>{{title}}</title>
+    <id>https://ruudvanasseldonk.com{{url}}</id>
+    <link href="https://ruudvanasseldonk.com{{url}}" rel="alternate"/>
+    <updated>{{short-date}}T00:00:00Z</updated>
+    <published>{{short-date}}T00:00:00Z</published>
+    <summary>{{synopsis}}</summary>
+  </entry>
+  {{end}}
+</feed>

@@ -125,6 +125,16 @@ writeContact globalContext = writePage 2 "/contact" context
                            , Template.stringField "light"     "true"
                            , globalContext ]
 
+-- Given the feed template and list of posts, writes an atom feed.
+writeFeed :: Template.Template -> [P.Post] -> Config -> IO ()
+writeFeed template posts config = do
+  let url      = "/feed.xml"
+      context  = P.feedContext posts
+      atom     = Template.apply template context
+      destFile = (outDir config) </> (tail url)
+  createDirectoryIfMissing True (outDir config)
+  writeFile destFile atom
+
 mapFst :: (a -> b) -> (a, c) -> (b, c)
 mapFst f (x, y) = (f x, y)
 
@@ -160,6 +170,9 @@ main = do
   indexArtifact   <- writeIndex   globalContext (templates M.! "index.html")   config
   contactArtifact <- writeContact globalContext (templates M.! "contact.html") config
   archiveArtifact <- writeArchive globalContext (templates M.! "archive.html") posts config
+
+  putStrLn "Writing atom feed..."
+  writeFeed (templates M.! "feed.xml") posts config
 
   putStrLn "Subsetting fonts..."
   let artifacts = indexArtifact : contactArtifact : archiveArtifact : postArtifacts

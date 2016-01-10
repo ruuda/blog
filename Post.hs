@@ -9,6 +9,7 @@ module Post ( Post
             , body
             , context
             , date
+            , feedContext
             , longDate
             , parse
             , relatedContext
@@ -199,3 +200,11 @@ archiveContext posts  = Template.listField "archive-year" years
         chronological = sortWith (year . head) yearGroups
         recentFirst   = reverse chronological
         years         = fmap archiveYearContext recentFirst
+
+-- Context for generating an atom feed for the 15 most recent posts.
+feedContext :: [Post] -> Template.Context
+feedContext posts = updatedField `M.union` postsField
+  where chronological = sortWith date posts
+        recentFirst   = take 15 $ reverse chronological
+        updatedField  = Template.stringField "updated" $ shortDate $ head recentFirst
+        postsField    = Template.listField "post" $ fmap context recentFirst
