@@ -100,10 +100,16 @@ writePage pageId url pageContext template config = do
   writeFile (destDir </> "index.html") html
   return artifact
 
+writeIndex :: T.Context -> T.Template -> Config -> IO Artifact
+writeIndex globalContext = writePage 0 "/" context
+  where context = M.unions [ M.singleton "title" (T.StringValue "Ruud van Asseldonk")
+                           , M.singleton "bold-font" (T.StringValue "true")
+                           , globalContext ]
+
 -- Given the archive template and the global context, writes the archive page
 -- to the destination directory.
 writeArchive :: T.Context -> T.Template -> [P.Post] -> Config -> IO Artifact
-writeArchive globalContext template posts = writePage 0 "/writing" context template
+writeArchive globalContext template posts = writePage 1 "/writing" context template
   where context = M.unions [ P.archiveContext posts
                            , M.singleton "title"     (T.StringValue "Writing by Ruud van Asseldonk")
                            , M.singleton "bold-font" (T.StringValue "true")
@@ -112,7 +118,7 @@ writeArchive globalContext template posts = writePage 0 "/writing" context templ
 -- Given the contact template and the global context, writes the contact page
 -- to the destination directory.
 writeContact :: T.Context -> T.Template -> Config -> IO Artifact
-writeContact globalContext = writePage 1 "/contact" context
+writeContact globalContext = writePage 2 "/contact" context
   where context = M.unions [ M.singleton "title"     (T.StringValue "Contact Ruud van Asseldonk")
                            , M.singleton "mono-font" (T.StringValue "true")
                            , globalContext ]
@@ -148,10 +154,11 @@ main = do
   putStrLn "Writing posts..."
   postArtifacts <- writePosts (templates M.! "post.html") globalContext posts config
 
-  putStrLn "Writing archive..."
-  archiveArtifact <- writeArchive globalContext (templates M.! "archive.html") posts config
+  putStrLn "Writing other pages..."
+  indexArtifact   <- writeIndex   globalContext (templates M.! "index.html")   config
   contactArtifact <- writeContact globalContext (templates M.! "contact.html") config
+  archiveArtifact <- writeArchive globalContext (templates M.! "archive.html") posts config
 
   putStrLn "Subsetting fonts..."
-  let artifacts = archiveArtifact : contactArtifact : postArtifacts
+  let artifacts = indexArtifact : contactArtifact : archiveArtifact : postArtifacts
   subsetFontsForArtifacts artifacts "out/fonts/"
