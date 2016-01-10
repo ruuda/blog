@@ -35,8 +35,16 @@ article, #teaser, #footer
   margin-left: auto;
   margin-right: auto;
 
+  {{if !light}}
   /* With a width of 36em, there are 86 characters per line on average. */
   max-width: 36em;
+  {{end}}
+
+  /* For lightweight pages with little content, reduce the maximum width so
+   * there are more lines. */
+  {{if light}}
+  max-width: 20.4em;
+  {{end}}
 }
 
 article
@@ -294,6 +302,9 @@ img
   margin-bottom: -0.6em;
 }
 
+/* Light pages do not have a teaser or footer, no need to include the css. */
+{{if !light}}
+
 #teaser-section
 {
   background-color: #c36;
@@ -346,6 +357,21 @@ footer span
   margin-left: 0.25em;
   margin-right: 0.25em;
 }
+
+{{end}} /* !light */
+
+{{if light}}
+nav
+{
+  text-align: center;
+}
+
+nav a
+{
+  margin-left: 1em;
+  margin-right: 1em;
+}
+{{end}}
 
 /* Scale font size as the square root of the viewport width. 16px should be the
  * minimum font size, for a viewport width of 400px. At 1600px, the content

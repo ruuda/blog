@@ -104,6 +104,7 @@ writeIndex :: Template.Context -> Template.Template -> Config -> IO Artifact
 writeIndex globalContext = writePage 0 "/" context
   where context = M.unions [ Template.stringField "title"     "Ruud van Asseldonk"
                            , Template.stringField "bold-font" "true"
+                           , Template.stringField "light"     "true"
                            , globalContext ]
 
 -- Given the archive template and the global context, writes the archive page
@@ -121,6 +122,7 @@ writeContact :: Template.Context -> Template.Template -> Config -> IO Artifact
 writeContact globalContext = writePage 2 "/contact" context
   where context = M.unions [ Template.stringField "title"     "Contact Ruud van Asseldonk"
                            , Template.stringField "mono-font" "true"
+                           , Template.stringField "light"     "true"
                            , globalContext ]
 
 mapFst :: (a -> b) -> (a, c) -> (b, c)
