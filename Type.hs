@@ -377,15 +377,14 @@ usesBoldFont = not . null . filter isBoldSans . mapFontFull
 -- ellipsis (…).
 expandPunctuationRaw :: String -> String
 expandPunctuationRaw str = case str of
-  -- The code point U+2009 is a (breakable) thin space. The code point U+2014
-  -- is an em-dash (—), U+2013 an en-dash (–). Though they can be embedded in
-  -- string literals directly, they are escaped because they can be hard to
-  -- distinguish in an editor with monospace font.
+  -- The code point U+2014 is an em-dash (—), U+2013 an en-dash (–). Though
+  -- they can be embedded in string literals directly, they are escaped because
+  -- in an editor with a monospace font they can be difficult to distinguish.
   s1:'-':'-':s2:more -> if isSpace s1 && isSpace s2
-                          then "\x2009\x2014\x2009" ++ expandPunctuationRaw more
+                          then " \x2014 " ++ expandPunctuationRaw more
                           else s1 : '-' : '-' : s2 : expandPunctuationRaw more
   s1:'-':s2:more     -> if isSpace s1 && isSpace s2
-                          then "\x2009\x2013\x2009" ++ expandPunctuationRaw more
+                          then " \x2013 " ++ expandPunctuationRaw more
                           else s1 : '-' : s2 : expandPunctuationRaw more
   '.':'.':'.':more   -> '…' : expandPunctuationRaw more
   c:more             -> c : expandPunctuationRaw more
