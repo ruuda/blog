@@ -431,14 +431,6 @@ nav a
 @media(min-width: 1003px)
 {
   html { font-size: 20px; }
-
-  /* Align source code with text and pull borders into the margin, if there is
-   * space. TODO: How to handle this when there is no extra div? */
-  div.sourceCode
-  {
-    margin-left: -1.65em;
-    margin-right: -1.4em;
-  }
 }
 
 @media(min-width: 1225px)
