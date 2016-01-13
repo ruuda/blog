@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Scale</title>
+    <style type="text/css">
+    *
+    {
+      margin: 0;
+      padding: 0;
+    }
+
+    body
+    {
+      font-size: 48px;
+      margin: 2em;
+    }
+
+    div
+    {
+      background-color: #eee;
+      width: 0.5em;
+      float: left;
+      margin: 0.25em;
+    }
+
+    div:hover
+    {
+      background-color: #888;
+    }
+
+    div > div, div > div:hover
+    {
+      background-color: #444;
+      margin: 0;
+    }
+
+    span
+    {
+      font-size: 0.3em;
+      display: block;
+      width: 2rem;
+      margin-left: -0.5rem;
+      margin-top: 5em;
+      text-align: center;
+      float: left;
+    }
+
+    #pm20 > div { height: 0.25em; }
+    #pm20       { height: 1.4em;  }
+    #pm15 > div { height: 0.35em; }
+    #pm15       { height: 1.4em;  }
+    #pm10 > div { height: 0.5em;  }
+    #pm10       { height: 1.4em;  }
+    #pm5  > div { height: 0.7em;  }
+    #pm5        { height: 1.4em;  }
+    #p00  > div { height: 1em;    }
+    #p00        { height: 1.4em;  }
+    #p05  > div { height: 1.4em;  }
+    #p05        { height: 2.8em;  }
+    #p10  > div { height: 2em;    }
+    #p10        { height: 2.8em;  }
+    #p15  > div { height: 2.8em;  }
+    #p15        { height: 4.2em;  }
+    #p20  > div { height: 4em;    }
+    #p20        { height: 4.2em;  }
+    </style>
+  </head>
+  <body>
+    <div id="pm20"><div></div><span>0.25<br>1.15</span></div>
+    <div id="pm15"><div></div><span>0.35<br>1.05</span></div>
+    <div id="pm10"><div></div><span>0.5<br>0.9</span></div>
+    <div id="pm5"><div></div><span>0.7<br>0.7</span></div>
+    <div id="p00"><div></div><span>1.0<br>0.4</span></div>
+    <div id="p05"><div></div><span>1.4<br>1.4</span></div>
+    <div id="p10"><div></div><span>2.0<br>0.8</span></div>
+    <div id="p15"><div></div><span>2.8<br>1.4</span></div>
+    <div id="p20"><div></div><span>4.0<br>0.2</span></div>
+  </body>
+</html>
