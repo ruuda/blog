@@ -23,7 +23,7 @@ body
   font-family: Calluna Sans, sans-serif;
   /* Firefox applies ligatures automatically when they are available, but Chrome
    * needs to be told explicitly. Note: Blink will drop the -webkit prefix soon.
-   * See https://crbug.com/537293. */
+   * See https://crbug.com/537293. This is landing in Chrome 48. */
   -webkit-font-feature-settings: 'liga', 'kern';
   font-feature-settings: 'liga', 'kern';
   line-height: 1.4em;
@@ -129,18 +129,20 @@ h3 > a
 
 abbr, .smcp
 {
-  /* Use the caps-to-small-caps opentype feature, instead of 'smcp' (or even
-   * font-variant: small-caps) in combination with text-transform: lowercase.
-   * This allows for graceful fallback: if font feature settings are not
-   * supported, all caps will be shown. */
-  /* TODO: Remove prefixed version once Blink drops the prefix. */
-  -webkit-font-feature-settings: 'c2sc';
-  font-feature-settings: 'c2sc';
-  text-transform: uppercase;
+  /* Use the both the caps-to-small-caps (c2sc) opentype feature, and small
+   * normal lower case to small caps (smcp). This means that the text will
+   * render in all small caps if opentype features are supported, or in its
+   * original casing if they are not. I prefer to fall back to the original
+   * casing instead of all caps, because all caps are too shouty. For acronyms
+   * the original caps are still all caps, but for most .smcp things they are
+   * not. */
+  /* TODO: Remove prefixed version once Blink drops the prefix in Chrome 48. */
+  -webkit-font-feature-settings: 'smcp', 'c2sc';
+  font-feature-settings: 'smcp', 'c2sc';
 
-  /* Note: this breaks small caps in Blink. Enable once
-   * https://crrev.com/1416603005 goes mainstream, or live with the non-small
-   * caps? */
+  /* Note: Enabling letter spacing breaks small caps in Blink before version
+   * 48. I fixed it in https://crrev.com/1416603005 which will go mainstream
+   * with Chrome 48. */
   letter-spacing: 0.1em;
 }
 
@@ -159,7 +161,7 @@ abbr
   /* Use the 'smcp' feature instead of font-variant: small-caps, because not all
    * browsers will select the true small-caps with font-variant. For the run-in
    * it is fine if the fallback is to do nothing special at all. */
-  /* TODO: Remove prefixed version once Blink drops the prefix. */
+  /* TODO: Remove prefixed version once Blink drops the prefix in Chrome 48. */
   -webkit-font-feature-settings: 'smcp';
   font-feature-settings: 'smcp';
 
