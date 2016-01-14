@@ -171,6 +171,8 @@ main = do
   contactArtifact <- writeContact globalContext (templates M.! "contact.html") config
   archiveArtifact <- writeArchive globalContext (templates M.! "archive.html") posts config
 
+  copyFile "key/ruudvanasseldonk.asc" "out/contact/ruudvanasseldonk.asc"
+
   putStrLn "Writing atom feed..."
   writeFeed (templates M.! "feed.xml") posts config
 
