@@ -1,0 +1,109 @@
+SplineFontDB: 3.0
+FontName: CallunaSansMath-Regular
+FullName: Calluna Sans Math
+FamilyName: Calluna Sans Math
+Weight: Regular
+Copyright: Copyright 2016 Ruud van Asseldonk
+Version: 1
+ItalicAngle: 0
+UnderlinePosition: -100
+UnderlineWidth: 50
+Ascent: 750
+Descent: 250
+InvalidEm: 0
+sfntRevision: 0x00010000
+LayerCount: 2
+Layer: 0 0 "Back" 1
+Layer: 1 0 "Fore" 0
+XUID: [1021 203 -1014936935 6831600]
+StyleMap: 0x0000
+FSType: 8
+OS2Version: 2
+OS2_WeightWidthSlopeOnly: 0
+OS2_UseTypoMetrics: 0
+CreationTime: 1292841550
+ModificationTime: 1452904833
+PfmFamily: 17
+TTFWeight: 400
+TTFWidth: 5
+LineGap: 0
+VLineGap: 0
+Panose: 2 0 0 0 0 0 0 0 0 0
+OS2TypoAscent: 750
+OS2TypoAOffset: 0
+OS2TypoDescent: -250
+OS2TypoDOffset: 0
+OS2TypoLinegap: 200
+OS2WinAscent: 940
+OS2WinAOffset: 0
+OS2WinDescent: 260
+OS2WinDOffset: 0
+HheadAscent: 940
+HheadAOffset: 0
+HheadDescent: -260
+HheadDOffset: 0
+OS2SubXSize: 700
+OS2SubYSize: 650
+OS2SubXOff: 0
+OS2SubYOff: 140
+OS2SupXSize: 700
+OS2SupYSize: 650
+OS2SupXOff: 0
+OS2SupYOff: 477
+OS2StrikeYSize: 50
+OS2StrikeYPos: 250
+OS2CapHeight: 667
+OS2XHeight: 450
+OS2CodePages: 2000009b.00000000
+OS2UnicodeRanges: a000002f.5000206b.00000000.00000000
+MarkAttachClasses: 1
+DEI: 91125
+LangName: 1033 "" "" "" "" "" "" "" "" "" "Ruud van Asseldonk" "" "" "https://ruudvanasseldonk.com"
+Encoding: Custom
+UnicodeInterp: none
+NameList: AGL For New Fonts
+DisplaySize: -72
+AntiAlias: 1
+FitToEm: 0
+WinInfo: 105 21 8
+BeginPrivate: 6
+BlueValues 23 [-12 0 450 462 667 679]
+OtherBlues 11 [-237 -225]
+StdHW 4 [68]
+StdVW 4 [78]
+StemSnapH 10 [55 68 71]
+StemSnapV 13 [67 78 82 88]
+EndPrivate
+TeXData: 1 0 0 1048576 524288 349525 0 1048576 349525 783286 444596 497025 792723 393216 433062 380633 303038 157286 324010 404750 52429 2506097 1059062 262144
+BeginChars: 65573 1
+
+StartChar: u1D53D
+Encoding: 133 120125 0
+Width: 542
+Flags: HMW
+HStem: 0 21G<98 98 98 180> 299 73<180 419 180 419> 598 69<180 482 180 180>
+VStem: 98 82<0 299 372 598>
+LayerCount: 2
+Fore
+SplineSet
+98 0 m 1
+ 98 667 l 1
+ 532 667 l 1
+ 532 598 l 1
+ 290 598 l 1
+ 290 372 l 1
+ 469 372 l 1
+ 469 299 l 1
+ 290 299 l 1
+ 290 0 l 5
+ 98 0 l 1
+229 70 m 5
+ 229 598 l 1
+ 180 598 l 1
+ 180 70 l 1
+ 229 70 l 5
+EndSplineSet
+Validated: 1
+EndChar
+EndChars
+EndSplineFont
