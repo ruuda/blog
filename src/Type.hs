@@ -341,7 +341,6 @@ subsetFonts commands = do
 subsetArtifact :: FilePath -> String -> [SubsetCommand]
 subsetArtifact baseName html = filter isUseful commands
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
-        subset file suffix glyphs = SubsetCommand file (baseName ++ suffix) glyphs
         fontPieces = mapFontFull html
 
         serifItalicGlyphs = getGlyphs (Serif, Regular, Italic) WithDiscretionaryLigatures fontPieces
@@ -352,13 +351,16 @@ subsetArtifact baseName html = filter isUseful commands
         sansBoldGlyphs    = getGlyphs (Sans,  Bold,    Roman)  WithLigatures fontPieces
         monoGlyphs        = getGlyphs (Mono,  Regular, Roman)  NoLigatures   fontPieces
 
-        serifItalicCommand = subset "fonts/calluna-italic.otf"      "si" serifItalicGlyphs
-        serifRomanCommand  = subset "fonts/calluna.otf"             "sr" serifRomanGlyphs
-        serifBoldCommand   = subset "fonts/calluna-bold.otf"        "sb" serifBoldGlyphs
-        sansItalicCommand  = subset "fonts/calluna-sans-italic.otf" "i"  sansItalicGlyphs
-        sansRomanCommand   = subset "fonts/calluna-sans.otf"        "r"  sansRomanGlyphs
-        sansBoldCommand    = subset "fonts/calluna-sans-bold.otf"   "b"  sansBoldGlyphs
-        monoCommand        = subset "fonts/inconsolata.otf"         "m"  monoGlyphs
+        fontDir = "fonts/generated/"
+        subset file suffix glyphs = SubsetCommand (fontDir ++ file) (baseName ++ suffix) glyphs
+
+        serifItalicCommand = subset "calluna-italic.otf"      "si" serifItalicGlyphs
+        serifRomanCommand  = subset "calluna.otf"             "sr" serifRomanGlyphs
+        serifBoldCommand   = subset "calluna-bold.otf"        "sb" serifBoldGlyphs
+        sansItalicCommand  = subset "calluna-sans-italic.otf" "i"  sansItalicGlyphs
+        sansRomanCommand   = subset "calluna-sans.otf"        "r"  sansRomanGlyphs
+        sansBoldCommand    = subset "calluna-sans-bold.otf"   "b"  sansBoldGlyphs
+        monoCommand        = subset "inconsolata.otf"         "m"  monoGlyphs
 
         commands = [ serifItalicCommand, serifRomanCommand, serifBoldCommand
                    , sansItalicCommand,  sansRomanCommand,  sansBoldCommand

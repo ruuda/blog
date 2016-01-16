@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Copyright 2015 Ruud van Asseldonk
 #
 # This program is free software: you can redistribute it and/or modify
@@ -13,7 +15,7 @@ def subset(fontfile, outfile_basename, glyphs):
 
     # Fonttools has this "feature" that if you enable 'dlig', it will also give
     # you glyphs that you did not ask for, but if you do not enable 'dlig',
-    # then discretionary ligatures do not render properly. See
+    # then discretionary ligatures do not render properly.
     # See https://github.com/behdad/fonttools/issues/43.
     # As a workaround, only enable 'dlig' if there are glyphs for discretionary
     # ligatures.
@@ -22,10 +24,9 @@ def subset(fontfile, outfile_basename, glyphs):
     if len(dligs) > 0:
         options.layout_features.append('dlig')
     else:
-        # Why is is it even necessary to remove 'dlig', I hear you ask? It is
-        # not in there by default. Well, Fonttools is really the worst possible
-        # library that you can imagine. I filed
-        # https://github.com/behdad/fonttools/issues/413.
+        # Due to a bug in Fonttools, options are actually global, so the
+        # remnants of the previous instance are visible here.
+        # See https://github.com/behdad/fonttools/issues/413.
         if 'dlig' in options.layout_features:
             options.layout_features.remove('dlig')
 
@@ -39,14 +40,6 @@ def subset(fontfile, outfile_basename, glyphs):
             options.layout_features.remove('smcp')
         if 'c2sc' in options.layout_features:
             options.layout_features.remove('c2sc')
-
-    # TODO: What is the purpose of the font program table? It is rather large
-    # here, making up about a third of the final file size. Apparently it has
-    # something to do with hinting. It might have been inserted by the font
-    # vendor, one of those automatic "optimisations" ... It appears that
-    # without including digits, the table can be removed all right, but the
-    # digits require the table to be present.
-    # options.drop_tables.append("fpgm")
 
     font = load_font(fontfile, options)
 
