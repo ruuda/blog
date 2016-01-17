@@ -16,12 +16,12 @@ mozjpeg='/opt/mozjpeg/bin/cjpeg -quality'
 
 mkdir -p compressed
 
-$mozjpeg 88 resized/geomancer-soldier-under-attack-by-mage.png > compressed/geomancer-soldier-under-attack-by-mage.jpg
-$mozjpeg 88 resized/geomancer-move-mage.png   > compressed/geomancer-move-mage.jpg
-$mozjpeg 88 resized/geomancer-overview.png    > compressed/geomancer-overview.jpg
-$mozjpeg 99 resized/richys-groceries.png      > compressed/richys-groceries.jpg
-$mozjpeg 94 resized/robigo-luculenta.png      > compressed/robigo-luculenta.jpg
-$mozjpeg 85 resized/the-small-bang-theory.png > compressed/the-small-bang-theory.jpg
+$mozjpeg 88.0 resized/geomancer-soldier-under-attack-by-mage.png > compressed/geomancer-soldier-under-attack-by-mage.jpg
+$mozjpeg 88.0 resized/geomancer-move-mage.png   > compressed/geomancer-move-mage.jpg
+$mozjpeg 88.0 resized/geomancer-overview.png    > compressed/geomancer-overview.jpg
+$mozjpeg 99.0 resized/richys-groceries.png      > compressed/richys-groceries.jpg
+$mozjpeg 94.5 resized/robigo-luculenta.png      > compressed/robigo-luculenta.jpg
+$mozjpeg 85.0 resized/the-small-bang-theory.png > compressed/the-small-bang-theory.jpg
 
 # For this file, at the quality setting where the jpeg artifacts become mostly
 # unnoticeable, the jpeg is actually larger than the png, so opt for the png.
