@@ -15,16 +15,8 @@ import os
 # not a lossless process, and it only appears to reach a fixed point after the
 # third roundtrip. One difference after roundtripping is that FontForge adds an
 # FFTM table with timestamps of last modification. It also adds a GDEF table.
-# Some other tables (name, cmap, CFF, and GSUB) are modified as well, but I do
-# not know in what manner. The changes do not appear to be significant for
-# functionality, but they do increase the size of the fonts.
-#
-# The difference in the name table is not relevant, because after woff
-# compression the tables are the same again. Fontforge does add extra cmap
-# tables, but these are actually required for one of the glyphs that I add.
-# When they are not required, the subsetting script strips them. Apart from the
-# cmap table, there are no differences that can be seen with Fonttools' inspect,
-# yet the sizes of the woff2 files differ by roughly a kilobyte.
+# Furthermore, it modifies the programs and other values in the CCF table. The
+# new values are a different representation of the same data.
 
 
 # Removes some unnecessary data from an otf font.
