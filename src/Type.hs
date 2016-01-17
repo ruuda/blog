@@ -13,7 +13,7 @@ module Type ( SubsetCommand
             ) where
 
 import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter,
-                            isSpace, ord, toLower, toUpper)
+                            isSpace, ord, toLower)
 import           Data.Maybe (fromJust, isJust)
 import qualified Data.Set as Set
 import           System.IO (hClose, hPutStrLn)
@@ -288,14 +288,14 @@ getGlyphs :: Font -> IncludeLigatures -> [(String, FontAndCaps)] -> [String]
 getGlyphs font ligatures = unique . (concatMap mapGlyphs) . (filter matchesFont)
         -- Note: there are more small cap glyphs than just the letters, but for
         -- now I don't use them.
-  where makeSmcp glyph = case glyph of
-          -- For a small cap, include both the small cap and the regular
-          -- capital. Because of the way opentype works, the capital needs to be
-          -- included even if it is not used, because small caps follow a
-          -- substitution rule, and if the true capital is not there, there is
-          -- nothing to substitute.
-          g:[] | isAsciiLower g -> [g : ".smcp", [toUpper g]]
-          _                     -> [glyph]
+        -- For a small cap, include both the small cap and the regular letter.
+        -- Because of the way opentype works, the capital (for c2sc) or
+        -- lowercase letter (for smcp) needs to be included even if it is not
+        -- used, because small caps follow a substitution rule, and if the true
+        -- glyph is not there, there is nothing to substitute.
+  where makeSmcp predicate glyph = case glyph of
+          g:[] | predicate g -> [(toLower g) : ".smcp", glyph]
+          _                  -> [glyph]
         glyphsFor      = fmap getGlyphName . filter isGlyphSupported . unique
         ligasFor str   = case ligatures of
           NoLigatures -> []
@@ -306,8 +306,8 @@ getGlyphs font ligatures = unique . (concatMap mapGlyphs) . (filter matchesFont)
         matchesFont  (_,   (f, w, s, _   )) = (font == (f, w, s))
         mapGlyphs    (str, (_, _, _, caps)) = case caps of
           UnchangedCaps -> (glyphsFor str) ++ (ligasFor str) ++ (dligsFor str)
-          SmallCaps     -> concatMap makeSmcp $ glyphsFor str
-          AllSmallCaps  -> concatMap makeSmcp $ glyphsFor $ fmap toLower str
+          SmallCaps     -> concatMap (makeSmcp isAsciiLower) $ glyphsFor str
+          AllSmallCaps  -> concatMap (makeSmcp isAscii     ) $ glyphsFor str
 
 -- A subset command is the source font filename, the destination basename, and
 -- the glyph names of the glyphs to subset.
