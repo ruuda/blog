@@ -9,6 +9,22 @@
 from fontTools.subset import Options, Subsetter, load_font, save_font
 from sys import stdin
 
+# Removes format 12 cmap tables if they are not required. A format 4 table is
+# always included, but this format can only encode code points in the Basic
+# Multilingual Plane (BMP). One code point that I use (U+1D53D, a double-struck
+# F), is not in this plane, so if that code point is present, the format 12
+# table cannot be removed. In other cases it is a completely redundant copy of
+# the format 4 table, so strip it to save space.
+def prune_cmaps(font):
+    tables = font['cmap'].tables
+    min_len = min(len(table.cmap) for table in tables)
+    max_len = max(len(table.cmap) for table in tables)
+
+    # Type 12 tables should be a superset of the type 4 tables, so if there is
+    # no extra glyph in the type 12 table, the lengths should match.
+    if min_len == max_len:
+        tables[:] = [table for table in tables if table.format != 12]
+
 
 def subset(fontfile, outfile_basename, glyphs):
     options = Options()
@@ -46,6 +62,8 @@ def subset(fontfile, outfile_basename, glyphs):
     subsetter = Subsetter(options = options)
     subsetter.populate(glyphs = glyphs)
     subsetter.subset(font)
+
+    prune_cmaps(font)
 
     options.flavor = "woff"
     save_font(font, outfile_basename + ".woff", options)

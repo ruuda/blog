@@ -20,7 +20,11 @@ import os
 # functionality, but they do increase the size of the fonts.
 #
 # The difference in the name table is not relevant, because after woff
-# compression the tables are the same again.
+# compression the tables are the same again. Fontforge does add extra cmap
+# tables, but these are actually required for one of the glyphs that I add.
+# When they are not required, the subsetting script strips them. Apart from the
+# cmap table, there are no differences that can be seen with Fonttools' inspect,
+# yet the sizes of the woff2 files differ by roughly a kilobyte.
 
 
 # Removes some unnecessary data from an otf font.

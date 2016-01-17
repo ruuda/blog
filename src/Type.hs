@@ -118,7 +118,7 @@ makeAbbrs = Html.renderTags . Html.concatMapTagsWhere isBodyTag mkAbbr . Html.pa
 -- Returns whether Calluna or Inconsolata has a glyph for the character. This
 -- function is optimistic, so getGlyphName still fails for unexpected glyphs.
 isGlyphSupported :: Char -> Bool
-isGlyphSupported c = not $ c `elem` ['\n', 'φ', 'ψ', '≡', '𝔽']
+isGlyphSupported c = not $ c `elem` ['\n', 'φ', 'ψ', '≡']
 
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String
@@ -182,6 +182,7 @@ getGlyphName c = case c of
   '•' -> "bullet"
   '…' -> "ellipsis"
   '≈' -> "approxequal"
+  '𝔽' -> "u1D53D"
   _   -> error $ "no postscript glyph name for '" ++ [c] ++ "' " ++
                  "(code point " ++ (show $ ord c) ++ ")"
 
