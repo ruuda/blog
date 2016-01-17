@@ -4,7 +4,9 @@
  *
  * For other text, I use the fonts Calluna and Calluna Sans, designed by Jos
  * Buivenga, issued by Exljbris. The regular faces of these fonts are available
- * free of charge. See http://www.exljbris.com/calluna.html. */
+ * free of charge. See http://www.exljbris.com/calluna.html.
+ *
+ * See the file fonts/readme.md in this repository for more details. */
 
 {{if mono-font}}
 @font-face
