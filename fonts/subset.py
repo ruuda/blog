@@ -57,6 +57,12 @@ def subset(fontfile, outfile_basename, glyphs):
         if 'c2sc' in options.layout_features:
             options.layout_features.remove('c2sc')
 
+    # Fonts that went through the FontForge roundtrip will have subroutinized
+    # programs in the CFF table. This presumably reduces file size for full
+    # fonts, but on subsetted fonts it hurts file size and compressability, so
+    # desubroutinize.
+    options.desubroutinize = True
+
     font = load_font(fontfile, options)
 
     subsetter = Subsetter(options = options)
