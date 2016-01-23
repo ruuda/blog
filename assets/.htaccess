@@ -1,7 +1,8 @@
 # Set regular mime types.
-AddType image/jpeg .jpg
-AddType image/png  .png
-AddType text/html  .html
+AddType application/pgp-keys .asc
+AddType image/jpeg           .jpg
+AddType image/png            .png
+AddType text/html            .html
 
 # I have only one xml file, and that one is an atom feed.
 AddType application/atom+xml .xml
