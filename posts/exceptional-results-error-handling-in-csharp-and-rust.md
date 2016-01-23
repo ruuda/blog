@@ -92,7 +92,7 @@ An example: Kelvin versioning
 Suppose we want to implement a [Kelvin versioning][kelvinversioning] scheme.
 Kelvin versions are nonnegative integers
 that _decrease_ with every release.
-After 0&thinsp;K has been released, it is impossible to ever release a new version.
+After zero Kelvin has been released, it is impossible to ever release a new version.
 
 [kelvinversioning]: https://moronlab.blogspot.com/2010/01/urbit-functional-programming-from.html
 
