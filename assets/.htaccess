@@ -1,40 +1,62 @@
-# MIME types
-AddType text/css .css
-AddType text/html .html
-AddType text/xml .xml
-AddType application/font-woff .woff
+# Set regular mime types.
+AddType image/jpeg .jpg
+AddType image/png  .png
+AddType text/html  .html
 
-# The feed is an atom feed
-<Files "feed.xml">
-	AddType application/atom+xml .xml
-</Files>
+# I have only one xml file, and that one is an atom feed.
+AddType application/atom+xml .xml
 
-# Set the correct encodings and language
+# The correct mime type for woff is 'application/font-woff', but for woff2 it is
+# 'font/woff2'. For png it is 'image/png', so I am going with consistency here,
+# even though it is not standard. Browsers understand anyway.
+AddType font/woff  .woff
+AddType font/woff2 .woff2
+
+# Set encoding and language.
 DefaultLanguage en-GB
 AddDefaultCharset UTF-8
 AddCharset UTF-8 .html
-AddCharset UTF-8 .css
 AddCharset UTF-8 .xml
 
-# Allow caching of static resources
+# Allow caching of static resources.
 ExpiresActive on
-ExpiresDefault                      "access plus 1 week"
-ExpiresByType image/png             "access plus 1 month"
-ExpiresByType application/font-woff "access plus 1 month"
-ExpiresByType application/atom+xml  "access plus 1 hour"
-ExpiresByType text/html             "access plus 0 seconds"
+ExpiresByType image/png            "access plus 1 month"
+ExpiresByType image/jpeg           "access plus 1 month"
 
-# Enable strict transport security with a max age of 120 days
+# The feed is not updated that often, but when it is, the changes should be
+# visible as soon as possible. Trade latency for bandwith.
+ExpiresByType application/atom+xml "access plus 6 hours"
+
+# Do not allow caching pages themselves, in case I update something.
+ExpiresByType text/html            "access plus 0 seconds"
+
+# Because I subset fonts for every page specifically, a change in the page
+# likely causes a change in the font. (I optimize for initial page load, because
+# most visitors only visit one page.) The only use case for caching then, is
+# when you hit the back button on the browser, or when you are surfing. I assume
+# nobody stays on my site for longer than 45 minutes in one session.
+ExpiresByType font/woff            "access plus 45 minutes"
+ExpiresByType font/woff2           "access plus 45 minutes"
+
+# Enable strict transport security with a max age of 120 days.
 Header set Strict-Transport-Security "max-age=10368000" env=HTTPS
 
-# Security options
+# Reuse the connection for multiple requests.
+KeepAlive On
+
+# Do not expose the server version and installed software.
+ServerTokens Prod
+
+# Do not list directory contents.
 Options -MultiViews -Indexes
 
-# Trailing slash
-RewriteEngine On
-RewriteBase /
+# Pages should not end in a trailing slash.
 DirectorySlash Off
 
+# Redirect anything that ends in a slash to the page without slash.
+RewriteEngine On
+RewriteBase /
 RewriteRule ^(.*)\/$ $1 [R=301,L]
 
+# Internally, the document for /foo/bar is at /foo/bar/index.html.
 RewriteRule ^([\w\d\/-]+)$ $1/index.html [L,T=text/html]
