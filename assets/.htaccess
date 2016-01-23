@@ -41,12 +41,6 @@ ExpiresByType font/woff2           "access plus 45 minutes"
 # Enable strict transport security with a max age of 120 days.
 Header set Strict-Transport-Security "max-age=10368000" env=HTTPS
 
-# Reuse the connection for multiple requests.
-KeepAlive On
-
-# Do not expose the server version and installed software.
-ServerTokens Prod
-
 # Do not list directory contents.
 Options -MultiViews -Indexes
 
