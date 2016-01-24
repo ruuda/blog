@@ -10,6 +10,7 @@ import           Data.Time.Calendar (toGregorian)
 import           Data.Time.Clock (getCurrentTime, utctDay)
 import           System.Directory (doesFileExist, copyFile, createDirectoryIfMissing, getDirectoryContents)
 import           System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeFileName)
+import           System.Process
 
 import qualified Image
 import           Minification (minifyHtml)
@@ -62,6 +63,10 @@ pageIdContext i = Template.stringField "page-id" $ show i
 data Config = Config { outDir   :: FilePath
                      , imageDir :: FilePath }
 
+-- Compresses the given file to a new file with .gz appended to the filename.
+gzipFile :: FilePath -> IO ()
+gzipFile fname = System.Process.callProcess "zopfli" [fname]
+
 -- Given the post template and the global context, expands the template for all
 -- of the posts and writes them to the output directory. This also prints a list
 -- of processed posts to the standard output. Start numbering post artifacts at
@@ -85,6 +90,7 @@ writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelate
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
           writeFile destFile minified
+          gzipFile destFile
           return $ (i + 1, artifact:artifacts)
 
 -- Writes a general (non-post) page given a template and expansion context.
@@ -96,8 +102,10 @@ writePage pageId url pageContext template config = do
       html     = minifyHtml $ Template.apply template context
       artifact = (pageId, html)
       destDir  = (outDir config) </> (tail url)
+      destFile = destDir </> "index.html"
   createDirectoryIfMissing True destDir
-  writeFile (destDir </> "index.html") html
+  writeFile destFile html
+  gzipFile destFile
   return artifact
 
 writeIndex :: Template.Context -> Template.Template -> Config -> IO Artifact
@@ -134,6 +142,7 @@ writeFeed template posts config = do
       destFile = (outDir config) </> (tail url)
   createDirectoryIfMissing True (outDir config)
   writeFile destFile atom
+  gzipFile destFile
 
 mapFst :: (a -> b) -> (a, c) -> (b, c)
 mapFst f (x, y) = (f x, y)

@@ -53,4 +53,16 @@ RewriteBase /
 RewriteRule ^(.*)\/$ $1 [R=301,L]
 
 # Internally, the document for /foo/bar is at /foo/bar/index.html.
-RewriteRule ^([\w\d\/-]+)$ $1/index.html [L,T=text/html]
+RewriteRule ^([\w\d\/-]+)$ $1/index.html [T=text/html]
+
+# Do not serve files with .gz extension with a gzip mime type, but instead
+# make .gz set the encoding to gzip.
+RemoveType .gz
+AddEncoding gzip .gz
+
+# Serve gzipped files if the browser accepts them and if a non-empty .gz file
+# exists for the requested file. All html and xml files have a corresponding
+# .gz file.
+RewriteCond %{HTTP:Accept-Encoding} gzip
+RewriteCond %{REQUEST_FILENAME}\.gz -s
+RewriteRule ^(.*)$ $1.gz [L]
