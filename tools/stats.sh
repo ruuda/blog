@@ -25,6 +25,7 @@ total_size()
 echo        'Type       Median Mean'
 echo        '---------- ------ ------'
 print_stats 'html      ' '*.html'
+print_stats 'html gzip ' '*.html.gz'
 print_stats 'all woff  ' '*.woff'
 print_stats 'all woff2 ' '*.woff2'
 print_stats 'body woff ' '*[0-9]r.woff'
@@ -37,13 +38,18 @@ print_stats 'body woff2' '*[0-9]r.woff2'
 n_pages=$(find out -name '*.html' | wc -l)
 
 html_weight=$(total_size '*.html')
+gzip_weight=$(total_size '*.html.gz')
 woff_weight=$(total_size '*.woff')
 woff2_weight=$(total_size '*.woff2')
 image_weight=$(du -bc out/images/* | tail -1 | awk '{print $1}')
 
 woff_page_weight=$(expr $html_weight + $woff_weight)
 woff2_page_weight=$(expr $html_weight + $woff2_weight)
+gz_woff_page_weight=$(expr $gzip_weight + $woff_weight)
+gz_woff2_page_weight=$(expr $gzip_weight + $woff2_weight)
 
 echo
-echo "Mean page weight (woff):  $(expr $woff_page_weight / $n_pages)"
-echo "Mean page weight (woff2): $(expr $woff2_page_weight / $n_pages)"
+echo "Mean page weight (woff):       $(expr $woff_page_weight / $n_pages)"
+echo "Mean page weight (woff2):      $(expr $woff2_page_weight / $n_pages)"
+echo "Mean page weight (gz + woff):  $(expr $gz_woff_page_weight / $n_pages)"
+echo "Mean page weight (gz + woff2): $(expr $gz_woff2_page_weight / $n_pages)"
