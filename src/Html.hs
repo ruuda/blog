@@ -16,6 +16,8 @@ module Html ( Tag
             , hasMath
             , isA
             , isAbbr
+            , isArchive
+            , isArchiveLink
             , isArticle
             , isCode
             , isEm
@@ -92,6 +94,7 @@ mapText _ tag             = tag
 -- Various classifications for tags: inside body, inside code, etc.
 data TagClass = A
               | Abbr
+              | Archive -- Not an html tag, but an id.
               | Article
               | Code
               | Em
@@ -146,6 +149,7 @@ tagClassFromAttributes = msum . fmap fromAttr
   where fromAttr attr = case attr of
           ("class", "smcp")   -> Just Smcp
           ("class", "run-in") -> Just RunIn
+          ("id", "archive")   -> Just Archive
           ("id", "teaser")    -> Just Teaser
           _                   -> Nothing
 
@@ -172,6 +176,7 @@ tagStacks = fmap (concatMap snd) . scanl updateTagStack []
 
 data TagProperties = TagProperties { isA       :: Bool
                                    , isAbbr    :: Bool
+                                   , isArchive :: Bool
                                    , isArticle :: Bool
                                    , isCode    :: Bool
                                    , isEm      :: Bool
@@ -201,6 +206,9 @@ isHeading t = (isH1 t) || (isH2 t) || (isH3 t)
 isSubtitle :: TagProperties -> Bool
 isSubtitle t = (isHeader t) && (isH2 t)
 
+isArchiveLink :: TagProperties -> Bool
+isArchiveLink t = (isArchive t) && (isSmcp t) && (isA t)
+
 isTeaserLink :: TagProperties -> Bool
 isTeaserLink t = (isTeaser t) && (isA t)
 
@@ -209,6 +217,7 @@ getProperties ts =
   let test cls = (cls `elem` ts)
   in TagProperties { isA       = test A
                    , isAbbr    = test Abbr
+                   , isArchive = test Archive
                    , isArticle = test Article
                    , isCode    = test Code
                    , isEm      = test Em
