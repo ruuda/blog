@@ -375,6 +375,18 @@ nav a
 }
 {{end}}
 
+#archive p > a
+{
+  color: inherit;
+}
+
+#archive p > a:after
+{
+  /* U+00a0 is a non-breaking space. */
+  color: #c36;
+  content: '\a0»';
+}
+
 /* Scale font size as the square root of the viewport width. 16px should be the
  * minimum font size, for a viewport width of 400px. At 1600px, the content
  * should fill half of the viewport. That means 36em is 800px, so the font size
