@@ -59,8 +59,7 @@
        url(/fonts/{{page-id}}sb.woff)  format("woff");
 }
 
-/* The serif italic font is used only for the post subheading. */
-{{if subheader}}
+{{if serif-italic-font}}
 @font-face
 {
   font-family: Calluna;

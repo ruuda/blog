@@ -10,6 +10,7 @@ module Type ( SubsetCommand
             , subsetArtifact
             , subsetFonts
             , usesBoldFont
+            , usesSerifItalicFont
             ) where
 
 import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter,
@@ -48,6 +49,7 @@ getFamily :: TagProperties -> FontFamily
 getFamily t = case t of
   _ | Html.isCode t        -> Mono
   _ | Html.isH3 t          -> Sans
+  _ | Html.isBlockQuote t  -> Serif
   _ | Html.isArchiveLink t -> Serif
   _ | Html.isHeader t      -> Serif
   _ | Html.isHeading t     -> Serif
@@ -64,10 +66,11 @@ getWeight t = case t of
 
 getStyle :: TagProperties -> FontStyle
 getStyle t = case t of
-  _ | Html.isEm t       -> Italic
-  _ | Html.isSubtitle t -> Italic
-  _ | Html.isVar t      -> Italic
-  _ | otherwise         -> Roman
+  _ | Html.isBlockQuote t -> Italic
+  _ | Html.isEm t         -> Italic
+  _ | Html.isSubtitle t   -> Italic
+  _ | Html.isVar t        -> Italic
+  _ | otherwise           -> Roman
 
 getCaps :: TagProperties -> FontCaps
 getCaps t = case t of
@@ -373,6 +376,13 @@ usesBoldFont :: String -> Bool
 usesBoldFont = not . null . filter isBoldSans . mapFontFull
   where isBoldSans (_, (Sans, Bold, _, _)) = True
         isBoldSans _                       = False
+
+-- Returns whether the html contains text that must be set in the serif italic
+-- font.
+usesSerifItalicFont :: String -> Bool
+usesSerifItalicFont = not . null . filter isSerifItalic . mapFontFull
+  where isSerifItalic (_, (Serif, _, Italic, _)) = True
+        isSerifItalic _                          = False
 
 -- Replaces double dashes (--) surrounded by spaces with em-dashes (—)
 -- surrounded by thin spaces, and single dashes surrounded by spaces with

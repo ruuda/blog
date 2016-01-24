@@ -304,6 +304,14 @@ img
   margin-bottom: -0.6em;
 }
 
+blockquote
+{
+  font-family: Calluna, serif;
+  font-style: italic;
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
 /* Light pages do not have a teaser or footer, no need to include the css. */
 {{if !light}}
 

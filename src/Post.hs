@@ -21,7 +21,7 @@ module Post ( Post
             , year ) where
 
 import qualified Data.Map as M
-import           Data.Maybe (fromMaybe)
+import           Data.Maybe (fromMaybe, isJust)
 import qualified Data.Set as S
 import qualified Data.Text as Text
 import           Data.Time.Format
@@ -114,11 +114,14 @@ context p = fmap Template.StringValue ctx
                                , ("bold-font", boldFontField)
                                , ("italic-font", italicFontField)
                                , ("math", mathField)
-                               , ("mono-font", monoFontField) ]
-        boldFontField   = booleanField $ Type.usesBoldFont $ body p
-        italicFontField = booleanField $ usesItalicFont p
-        mathField       = booleanField $ Html.hasMath $ body p
-        monoFontField   = booleanField $ usesMonoFont p
+                               , ("mono-font", monoFontField)
+                               , ("serif-italic-font", serifItalicFontField) ]
+        usesSerifItalic      = (Type.usesSerifItalicFont $ body p) || (isJust $ subheader p)
+        boldFontField        = booleanField $ Type.usesBoldFont $ body p
+        italicFontField      = booleanField $ usesItalicFont p
+        mathField            = booleanField $ Html.hasMath $ body p
+        monoFontField        = booleanField $ usesMonoFont p
+        serifItalicFontField = booleanField $ usesSerifItalic
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.

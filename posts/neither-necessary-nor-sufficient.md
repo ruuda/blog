@@ -10,7 +10,7 @@ run-in: A few days ago
 A few days ago I stumbled upon a [blog post][when-rust-makes-sense]
 that raised the following question:
 
-> A language without garbage collection, in 2015?
+> “A language without garbage collection, in 2015?”
 
 The language referred to is Rust,
 but that is hardly relevant here.
@@ -20,7 +20,7 @@ in the form of a blog post.
 Quoting [Bjarne Stroustrup][bjarne-quote]
 the point can be summarised succinctly:
 
-> Garbage collection is neither necessary nor sufficient.
+> “Garbage collection is neither necessary nor sufficient.”
 
 [when-rust-makes-sense]: https://m50d.github.io/2015/09/28/when-rust-makes-sense.html
 [bjarne-quote]:          https://isocpp.org/blog/2015/09/bjarne-stroustrup-announces-cpp-core-guidelines
