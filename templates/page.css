@@ -377,13 +377,15 @@ nav a
 
 #archive p > a
 {
-  color: inherit;
+  font-family: Calluna, serif;
+
+  /* The next line is required to fix baseline alingnment in Firefox. */
+  line-height: 0;
 }
 
 #archive p > a:after
 {
   /* U+00a0 is a non-breaking space. */
-  color: #c36;
   content: '\a0»';
 }
 
