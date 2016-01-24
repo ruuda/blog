@@ -51,8 +51,9 @@ module Html ( Tag
 
 -- This module contains utility functions for dealing with html.
 
-import           Control.Monad (join, mplus, msum)
+import           Control.Monad (join, msum)
 import           Data.List (intersperse)
+import           Data.Maybe (catMaybes)
 import qualified Text.HTML.TagSoup as S
 
 type Tag = S.Tag String
@@ -148,19 +149,18 @@ tagClassFromAttributes = msum . fmap fromAttr
           ("id", "teaser")    -> Just Teaser
           _                   -> Nothing
 
--- Try to classify the tag based on the tag name, or based on the attributes
--- otherwise.
-tagClass :: String -> [(String, String)] -> Maybe TagClass
-tagClass name attrs = mplus (tagClassFromName name) (tagClassFromAttributes attrs)
+-- Try to classify the tag based on the tag name and based on the attributes.
+tagClass :: String -> [(String, String)] -> [TagClass]
+tagClass name attrs = catMaybes [tagClassFromName name, tagClassFromAttributes attrs]
 
 -- A stack of tag name (string) and classification.
-type TagStack = [(String, TagClass)]
+type TagStack = [(String, [TagClass])]
 
 updateTagStack :: TagStack -> Tag -> TagStack
 updateTagStack ts tag = case tag of
   S.TagOpen name attrs -> case tagClass name attrs of
-   Just classification -> (name, classification) : ts
-   Nothing             -> ts
+   []             -> ts
+   classification -> (name, classification) : ts
   S.TagClose name -> case ts of
     (topName, _) : more -> if topName == name then more else ts
     _                   -> ts
@@ -168,7 +168,7 @@ updateTagStack ts tag = case tag of
 
 -- Determines for every tag the nested tag classifications.
 tagStacks :: [Tag] -> [[TagClass]]
-tagStacks = fmap (fmap snd) . scanl updateTagStack []
+tagStacks = fmap (concatMap snd) . scanl updateTagStack []
 
 data TagProperties = TagProperties { isA       :: Bool
                                    , isAbbr    :: Bool
