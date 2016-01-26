@@ -42,9 +42,15 @@ mapImgAttributes f = mapM mapTag
 addDimensionsAll :: FilePath -> [Html.Tag] -> IO [Html.Tag]
 addDimensionsAll imgDir = mapImgAttributes $ addDimensions imgDir
 
+isImgCloseTag :: Html.Tag -> Bool
+isImgCloseTag tag = case tag of
+  S.TagClose "img" -> True
+  _                -> False
+
 -- Given a piece of html, inserts a placeholder background for every <img> tag,
 -- and adds the image dimensions to the attributes of the tag.
 processImages :: FilePath -> String -> IO String
 processImages imgDir = fmap Html.renderTags
                      . addDimensionsAll imgDir
+                     . filter (not . isImgCloseTag)
                      . Html.parseTags
