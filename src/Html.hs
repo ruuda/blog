@@ -39,6 +39,7 @@ module Html ( Tag
             , isSup
             , isStrong
             , isStyle
+            , isTable
             , isTeaser
             , isTeaserLink
             , isTh
@@ -115,6 +116,7 @@ data TagClass = A
               | Strong
               | Sub
               | Sup
+              | Table
               | Teaser -- Not an html tag, but an id.
               | Th
               | Ul
@@ -142,6 +144,7 @@ tagClassFromName name = case name of
   "strong"     -> Just Strong
   "sub"        -> Just Sub
   "sup"        -> Just Sup
+  "table"      -> Just Table
   "th"         -> Just Th
   "ul"         -> Just Ul
   "var"        -> Just Var
@@ -199,6 +202,7 @@ data TagProperties = TagProperties { isA          :: Bool
                                    , isStrong     :: Bool
                                    , isSub        :: Bool
                                    , isSup        :: Bool
+                                   , isTable      :: Bool
                                    , isTeaser     :: Bool
                                    , isTh         :: Bool
                                    , isUl         :: Bool
@@ -241,6 +245,7 @@ getProperties ts =
                    , isStrong     = test Strong
                    , isSub        = test Sub
                    , isSup        = test Sup
+                   , isTable      = test Table
                    , isTeaser     = test Teaser
                    , isTh         = test Th
                    , isUl         = test Ul
