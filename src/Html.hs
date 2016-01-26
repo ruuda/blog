@@ -9,6 +9,7 @@ module Html ( Tag
             , makeRunIn
             , applyTagsWhere
             , classifyTags
+            , cleanTables
             , concatMapTagsWhere
             , filterTags
             , getTextInTag
@@ -56,7 +57,7 @@ module Html ( Tag
 -- This module contains utility functions for dealing with html.
 
 import           Control.Monad (join, msum)
-import           Data.List (intersperse)
+import           Data.List (delete, intersperse)
 import           Data.Maybe (catMaybes)
 import qualified Text.HTML.TagSoup as S
 
@@ -313,3 +314,18 @@ makeRunIn :: String -> Int -> String
 makeRunIn html n  = prefix ++ (drop 3 runIn) ++ "</span>" ++ after
   where (runIn, after) = splitAt (n + 3) html
         prefix         = "<p><span class=\"run-in\">"
+
+-- Given a piece of html, strips the "align" attributes from table elements.
+-- Pandoc adds these alignment tags to tables, but they are deprecated in html5.
+-- If you tell Pandoc to write html5, it will just add style attributes instead.
+-- I always align left anyway, so strip the attribute altogether. Furthermore,
+-- I do not use the odd and even classes, so strip them to save space.
+cleanTables :: String -> String
+cleanTables = renderTags . mapTagsWhere isTable stripAttrs . parseTags
+  where filterAlign = filter $ (/= "align") . fst
+        filterEven  = delete ("class", "even")
+        filterOdd   = delete ("class", "odd")
+        filterAttrs = filterAlign . filterEven . filterOdd
+        stripAttrs tag = case tag of
+          S.TagOpen name attrs -> S.TagOpen name $ filterAttrs attrs
+          _                    -> tag
