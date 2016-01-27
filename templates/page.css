@@ -259,7 +259,7 @@ pre
    * between the top and the text baseline and between the bottom and the
    * x-height is both 1.6em. The code baseline is offset from the regular
    * baseline by 0.7em (half a line height). */
-  background-color: #eee;
+  background-color: #f8f7f4;
   border-left: 0.25rem solid #c36;
   margin-bottom: 0.6rem;
   margin-top: 0.2rem;
