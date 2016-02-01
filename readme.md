@@ -10,10 +10,10 @@ The generator includes a tiny templating engine, an html and css minifier, and
 an aggressive font subsetter. One of my objectives was to cut all the crap
 (which almost by definition includes javascript) without compromising on
 design. An average page of my site weighs less than jQuery alone (which
-jokingly describes itself as “lightweight footprint”.) That includes webfonts.
+jokingly describes itself as “lightweight footprint”). That includes webfonts.
 
 This is version three of my blog. Previously I used [Hakyll][hakyll] (available
-in the archived-hakyll branch), and before that I used [Jekyll][jekyll].
+in the `archived-hakyll` branch), and before that I used [Jekyll][jekyll].
 
 [ruudva]: https://ruudvanasseldonk.com
 [hakyll]: http://jaspervdj.be/hakyll/
@@ -24,7 +24,7 @@ in the archived-hakyll branch), and before that I used [Jekyll][jekyll].
 License
 -------
 The source code for this site is licensed under version 3 of the the
-[GNU General Public Licence][gpv3] See the `licence` file. The content of the
+[GNU General Public Licence][gplv3] See the `licence` file. The content of the
 posts is licensed under the [Creative Commons BY SA][cc] licence. For the font
 license details, see the readme in the fonts directory.
 

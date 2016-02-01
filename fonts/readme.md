@@ -7,9 +7,9 @@ The regular sans and serif are available free of charge, but otherwise it is a
 commercial family, so for obvious reasons the font files are not included in
 this repository.
 
-As monospace font I use [Inconsolata][inconsolata] by Raph Levien. It is
-inspired by my all-time favorite coding font Consolas, and it works very well
-in combination with Calluna. Inconsolata is a free font licensed under the
+As monospace font I use [Inconsolata][incons] by Raph Levien. It is inspired
+by my all-time favorite coding font Consolas, and it works very well in
+combination with Calluna. Inconsolata is a free font licensed under the
 [SIL Open Font License][ofl].
 
 [calluna]:  http://www.exljbris.com/calluna.html
@@ -31,10 +31,10 @@ Browsers fall back to the next font for characters not supported by a font, but
 the fallback font used by Chrome on Android does not have the double-struck F,
 so I designed my own. For the other glyphs a fallback is acceptable. Perhaps in
 the future I’ll roll my own for them too. The FontForge sources for custom
-glyphs are in the extra/ directory.
+glyphs are in the extra directory.
 
 The script generate.py adds the extra glyphs to the fonts and puts the result in
-the generated/ directory. I don’t mean to imply that the extra glyphs were part
+the generated directory. I don’t mean to imply that the extra glyphs were part
 of the original fonts. The reason for doing this is technical: for a font with
 a single glyph the metadata overhead is considerable, and the extra font would
 unneccessarily complicate my stylesheets and html.
