@@ -129,7 +129,6 @@ writeArchive globalContext template posts = writePage 1 "/writing" context templ
 writeContact :: Template.Context -> Template.Template -> Config -> IO Artifact
 writeContact globalContext = writePage 2 "/contact" context
   where context = M.unions [ Template.stringField "title"     "Contact Ruud van Asseldonk"
-                           , Template.stringField "mono-font" "true"
                            , Template.stringField "light"     "true"
                            , globalContext ]
 
