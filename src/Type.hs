@@ -385,8 +385,8 @@ usesSerifItalicFont = not . null . filter isSerifItalic . mapFontFull
         isSerifItalic _                          = False
 
 -- Replaces double dashes (--) surrounded by spaces with em-dashes (—)
--- surrounded by thin spaces, and single dashes surrounded by spaces with
--- en-dashes surrounded by thin spaces. Also replaces triple dots with an
+-- surrounded by spaces, and single dashes surrounded by spaces with
+-- en-dashes surrounded by spaces. Also replaces triple dots with an
 -- ellipsis (…).
 expandPunctuationRaw :: String -> String
 expandPunctuationRaw str = case str of
