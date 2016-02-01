@@ -33,12 +33,14 @@ license details, see the readme in the fonts directory.
 
 Compiling
 ---------
-Compiling the generator:
+Build the generator, then build the site (requires fonts to be present):
+
+    $ stack build
+    $ stack exec blog
+
+Or compile with good old Cabal:
 
     $ cabal update
     $ cabal sandbox init
     $ cabal install -j
-
-Compiling the site (requires fonts to be present):
-
     $ cabal run

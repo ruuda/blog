@@ -1,8 +1,20 @@
-sudo: false
-language: haskell
-ghc:
-  - 7.8
-  - 7.10
-install:
-  - cabal sandbox init
-  - cabal install -j --force-reinstalls
+# Based on the default default .travis.yml for usage with Stack.
+# See http://docs.haskellstack.org/en/stable/travis_ci.html.
+
+language: c
+
+addons:
+  apt:
+    packages:
+      - libgmp-dev
+
+before_install:
+  - mkdir -p ~/.local/bin
+  - export PATH=$HOME/.local/bin:$PATH
+  - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+
+script: stack --no-terminal --install-ghc build
+
+cache:
+  directories:
+    - $HOME/.stack

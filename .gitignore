@@ -1,16 +1,17 @@
 # Build output
-dist/
+/.stack-work
+/dist
 
 # Cabal sandbox
-cabal.sandbox.config
-.cabal-sandbox/
+/.cabal-sandbox
+/cabal.sandbox.config
 
 # Editor files
 *.swp
 
 # Fonts, original and processed
-fonts/generated
-fonts/original
+/fonts/generated
+/fonts/original
 
 # Generated blog output
-out/
+/out
