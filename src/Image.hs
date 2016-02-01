@@ -47,8 +47,8 @@ isImgCloseTag tag = case tag of
   S.TagClose "img" -> True
   _                -> False
 
--- Given a piece of html, inserts a placeholder background for every <img> tag,
--- and adds the image dimensions to the attributes of the tag.
+-- Given a piece of html, adds the image dimensions to the attributes of every
+-- <img> tag and ensures that there are no closing </img> tags.
 processImages :: FilePath -> String -> IO String
 processImages imgDir = fmap Html.renderTags
                      . addDimensionsAll imgDir
