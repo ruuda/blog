@@ -17,7 +17,7 @@ html
 body
 {
   background-color: #fffef8;
-  border-top: 0.5em solid #c36;
+  border-top: 0.5em solid #c35;
   padding-top: 0.2em;
   color: #456;
   font-family: Calluna Sans, sans-serif;
@@ -87,7 +87,7 @@ header > h2
 
 header > p
 {
-  color: #c36;
+  color: #c35;
   padding-top: 0.5em;
   padding-bottom: 0.9em;
   margin-bottom: 0;
@@ -109,7 +109,7 @@ p, nav
 
 a
 {
-  color: #c36;
+  color: #c35;
   text-decoration: none;
 }
 
@@ -241,7 +241,7 @@ th, td
 
 code
 {
-  color: #c36;
+  color: #c35;
   font-family: Inconsolata, Consolas, monospace;
 }
 
@@ -260,7 +260,7 @@ pre
    * x-height is both 1.6em. The code baseline is offset from the regular
    * baseline by 0.7em (half a line height). */
   background-color: #f8f7f4;
-  border-left: 0.25rem solid #c36;
+  border-left: 0.25rem solid #c35;
   margin-bottom: 0.6rem;
   margin-top: 0.2rem;
   overflow-x: auto;
@@ -318,7 +318,7 @@ blockquote
 
 #teaser-section
 {
-  background-color: #c36;
+  background-color: #c35;
   color: #f5b2c8;
 }
 
