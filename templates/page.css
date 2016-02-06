@@ -29,7 +29,7 @@ body
   line-height: 1.4em;
 }
 
-article, #teaser, #footer
+#content, #teaser, #footer
 {
   padding: 1.4em;
   margin-left: auto;
@@ -47,7 +47,7 @@ article, #teaser, #footer
   {{end}}
 }
 
-article
+#content
 {
   padding-top: 0;
 }
@@ -178,7 +178,8 @@ h2
   padding-top: 1.2rem;
 }
 
-#archive h2
+/* TODO: Split into conditionally-included css and remove the class. */
+.archive h2
 {
   color: #ccc; /* TODO: pick a unified color scheme. */
   font-size: 2.8em;
@@ -347,7 +348,7 @@ blockquote
 #teaser > h2
 {
   margin-bottom: 0.2rem;
-  padding-top: 0.5rem; /* Same vertical alignment as article h2. */
+  padding-top: 0.5rem; /* Same vertical alignment as #content h2. */
 }
 
 footer
@@ -384,7 +385,7 @@ nav a
 }
 {{end}}
 
-#archive p > a
+.archive p > a
 {
   font-family: Calluna, serif;
 
@@ -392,7 +393,7 @@ nav a
   line-height: 0;
 }
 
-#archive p > a:after
+.archive p > a:after
 {
   /* U+00a0 is a non-breaking space. */
   content: '\a0»';
@@ -463,7 +464,7 @@ nav a
   html { font-size: 21px; }
 
   /* At this width it becomes feasible to hang the year headers in the margin. */
-  #archive h2
+  .archive h2
   {
     text-align: right;
     letter-spacing: 0.5rem;
@@ -532,7 +533,7 @@ nav a
 /* Ideal width for 16px font size. */
 @media(min-width: 400px)
 {
-  article, #teaser, #footer
+  #content, #teaser, #footer
   {
     padding-left: 2em;
     padding-right: 2em;
@@ -542,7 +543,7 @@ nav a
 /* Ideal width for 18px font size. */
 @media(min-width: 544px)
 {
-  article, #teaser, #footer
+  #content, #teaser, #footer
   {
     padding-left: 2.8em;
     padding-right: 2.8em;
