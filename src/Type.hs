@@ -284,7 +284,7 @@ data IncludeLigatures = NoLigatures
                       | WithLigatures
                       | WithDiscretionaryLigatures
 
--- Given a font and wether to include ligatures, and content processed by
+-- Given a font and whether to include ligatures, and content processed by
 -- mapFont, returns a list of postscript glyph names required to typeset the
 -- content.
 getGlyphs :: Font -> IncludeLigatures -> [(String, FontAndCaps)] -> [String]
