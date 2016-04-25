@@ -12,7 +12,7 @@ is often one of the first things that you encounter when reading up on any langu
 Here it is in C++:
 
 ```cpp
-typedef std::uit64_t u64;
+typedef std::uint64_t u64;
 
 u64 fib(u64 n)
 {
