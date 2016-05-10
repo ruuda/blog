@@ -24,7 +24,7 @@ in the `archived-hakyll` branch), and before that I used [Jekyll][jekyll].
 License
 -------
 The source code for this site is licensed under version 3 of the the
-[GNU General Public Licence][gplv3] See the `licence` file. The content of the
+[GNU General Public Licence][gplv3]. See the `licence` file. The content of the
 posts is licensed under the [Creative Commons BY SA][cc] licence. For the font
 license details, see the readme in the fonts directory.
 
