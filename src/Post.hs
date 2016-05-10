@@ -108,6 +108,7 @@ context p = fmap Template.StringValue ctx
                                , ("long-date", longDate p)
                                , ("url", url p)
                                , ("synopsis", synopsis p)
+                               , ("synopsis-html", Type.makeAbbrs $ synopsis p)
                                , ("content", body p) ]
         optFields = M.fromList [ ("subheader", subheader p)
                                , ("part", fmap toRoman $ part p)
