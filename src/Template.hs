@@ -85,7 +85,7 @@ nestContext :: String -> Context -> Context
 nestContext key child = M.mapKeys ((key ++ ".") ++) child
 
 -- Applies the template (fragments) with given context until an end fragment is
--- encountered, at which point the currint string and the remaining fragments
+-- encountered, at which point the current string and the remaining fragments
 -- are returned.
 applyBlock :: [Fragment] -> Context -> (String, [Fragment])
 applyBlock fragments context = next fragments ""
