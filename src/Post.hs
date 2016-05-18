@@ -151,14 +151,13 @@ renderMarkdown :: String -> String
 renderMarkdown md = case fmap (writeHtmlString wopt) (readMarkdown ropt md) of
   Right result -> result
   Left  _      -> "Failed to parse markdown."
-  -- Enable inline LaTeX between dollars, and enable backtick code blocks. Also
-  -- accept tables. For output, enable syntax highlighting of code and write
-  -- math as MathML.
-  where ropt = def { readerExtensions     = S.insert Ext_backtick_code_blocks $
-                                            S.insert Ext_raw_html $
-                                            S.insert Ext_simple_tables $
-                                            def }
-        wopt = def { writerHighlight      = True }
+  -- Enable backtick code blocks and accept tables.
+  -- For output, enable syntax highlighting.
+  where ropt = def { readerExtensions = S.insert Ext_backtick_code_blocks $
+                                        S.insert Ext_raw_html $
+                                        S.insert Ext_simple_tables $
+                                        def }
+        wopt = def { writerHighlight  = True }
 
 -- Related content for a post, for the further reading section in the footer.
 data RelatedContent = Further Post
