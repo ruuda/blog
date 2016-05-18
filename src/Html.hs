@@ -29,7 +29,6 @@ module Html ( Tag
             , isHead
             , isHeader
             , isHeading
-            , isMath
             , isOl
             , isPre
             , isRunIn
@@ -107,7 +106,6 @@ data TagClass = A
               | H3
               | Head
               | Header
-              | Math
               | Ol
               | Pre
               | RunIn  -- Not an html tag, but a class.
@@ -137,7 +135,6 @@ tagClassFromName name = case name of
   "h3"         -> Just H3
   "head"       -> Just Head
   "header"     -> Just Header
-  "math"       -> Just Math
   "ol"         -> Just Ol
   "pre"        -> Just Pre
   "script"     -> Just Script
@@ -193,7 +190,6 @@ data TagProperties = TagProperties { isA          :: Bool
                                    , isH3         :: Bool
                                    , isHead       :: Bool
                                    , isHeader     :: Bool
-                                   , isMath       :: Bool
                                    , isOl         :: Bool
                                    , isPre        :: Bool
                                    , isRunIn      :: Bool
@@ -236,7 +232,6 @@ getProperties ts =
                    , isH3         = test H3
                    , isHead       = test Head
                    , isHeader     = test Header
-                   , isMath       = test Math
                    , isOl         = test Ol
                    , isPre        = test Pre
                    , isRunIn      = test RunIn

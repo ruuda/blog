@@ -40,7 +40,6 @@ type Font        = (FontFamily, FontWeight, FontStyle)
 needsFont :: TagProperties -> Bool
 needsFont t = case t of
   _ | Html.isHead t   -> False
-  _ | Html.isMath t   -> False
   _ | Html.isScript t -> False
   _ | Html.isStyle t  -> False
   _ | otherwise       -> True
