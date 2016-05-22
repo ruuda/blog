@@ -16,8 +16,8 @@ You can read about the details in the previous posts.
 In this post, I want to outline the process, and compare the final versions.
 
 [rust]:             http://rust-lang.org
-[luculentus]:       https://github.com/ruud-v-a/luculentus
-[robigo-luculenta]: https://github.com/ruud-v-a/robigo-luculenta
+[luculentus]:       https://github.com/ruuda/luculentus
+[robigo-luculenta]: https://github.com/ruuda/robigo-luculenta
 
 Eyecandy
 --------
@@ -29,7 +29,7 @@ The scene is hard-coded, and it looks like this:
 If you want to play with it,
 take a look at `set_up_scene` in [app.rs][apprs].
 
-[apprs]: https://github.com/ruud-v-a/robigo-luculenta/blob/master/src/app.rs
+[apprs]: https://github.com/ruuda/robigo-luculenta/blob/master/src/app.rs
 
 Getting started with Rust
 -------------------------

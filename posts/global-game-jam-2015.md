@@ -28,7 +28,7 @@ For the
 we made it into the top three with our game,
 finishing third out of the 32 games that were built in Breda this year.
 If you would like to play the game,
-you can grab the Windows or Android binaries from [GitHub](https://github.com/ruud-v-a/ggj15/releases).
+you can grab the Windows or Android binaries from [GitHub](https://github.com/ruuda/ggj15/releases).
 
 We used [Unity](http://unity3d.com) once more,
 which is a great environment for building a game quickly without bothering too much with boilerplate.

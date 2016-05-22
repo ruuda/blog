@@ -38,5 +38,5 @@ When I wrote the path tracer in 2012, there was only partial support for C++11,
 so Luculentus still uses a lot of raw pointers and non-default destructors.
 I hope to make a fair comparison of resource management in Rust and modern C++ down the line.
 
-[luculentus]:       https://github.com/ruud-v-a/luculentus
-[robigo-luculenta]: https://github.com/ruud-v-a/robigo-luculenta
+[luculentus]:       https://github.com/ruuda/luculentus
+[robigo-luculenta]: https://github.com/ruuda/robigo-luculenta

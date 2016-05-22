@@ -21,7 +21,7 @@ Every remote has a section here:
 
 ```ini
 [remote "github"]
-  url = git@github.com:ruud-v-a/blog
+  url = git@github.com:ruuda/blog
   fetch = +refs/heads/*:refs/remotes/github/*
 ```
 
@@ -31,8 +31,8 @@ change it as follows:
 
 ```ini
 [remote "github"]
-  pushurl = git@github.com:ruud-v-a/blog
-  url = https://github.com/ruud-v-a/blog
+  pushurl = git@github.com:ruuda/blog
+  url = https://github.com/ruuda/blog
   fetch = +refs/heads/*:refs/remotes/github/*
 ```
 

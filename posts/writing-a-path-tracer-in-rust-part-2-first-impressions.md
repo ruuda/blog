@@ -13,8 +13,8 @@ You can follow the port on [GitHub][robigo-luculenta].
 After porting a few files, these are my first impressions of Rust.
 
 [rust]:             http://rust-lang.org
-[luculentus]:       https://github.com/ruud-v-a/luculentus
-[robigo-luculenta]: https://github.com/ruud-v-a/robigo-luculenta
+[luculentus]:       https://github.com/ruuda/luculentus
+[robigo-luculenta]: https://github.com/ruuda/robigo-luculenta
 
 Ecosystem
 ---------

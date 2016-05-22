@@ -17,8 +17,8 @@ in the `archived-hakyll` branch), and before that I used [Jekyll][jekyll].
 
 [ruudva]: https://ruudvanasseldonk.com
 [hakyll]: http://jaspervdj.be/hakyll/
-[ci-img]: https://travis-ci.org/ruud-v-a/blog.svg
-[ci]:     https://travis-ci.org/ruud-v-a/blog
+[ci-img]: https://travis-ci.org/ruuda/blog.svg
+[ci]:     https://travis-ci.org/ruuda/blog
 [jekyll]: http://jekyllrb.com/
 
 License

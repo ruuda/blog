@@ -394,5 +394,5 @@ You can find my implementation of a more general function on [GitHub][github].
 
 Discuss this post on [Reddit][reddit].
 
-[github]: https://github.com/ruud-v-a/fibint
+[github]: https://github.com/ruuda/fibint
 [reddit]: http://reddit.com/r/programming/ruudvanasseldonk.com/2014/07/01/fibonacci-numbers-in-finite-fields

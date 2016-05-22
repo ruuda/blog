@@ -19,7 +19,7 @@ GitScrobbler
 ------------
 
 The next day, I hacked together
-[GitScrobbler](https://github.com/ruud-v-a/gitscrobbler). It is a
+[GitScrobbler](https://github.com/ruuda/gitscrobbler). It is a
 simple command-line program to which you pipe formatted `git log`
 output. It then retrieves the track that you listened to at the moment
 of the commit, using the Last.fm API. (An API-key is required to use the

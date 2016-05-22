@@ -14,8 +14,8 @@ This post will outline the vector and quaternion implementations,
 and I will highlight some of the differences between C++ and Rust.
 
 [rust]:             http://rust-lang.org
-[luculentus]:       https://github.com/ruud-v-a/luculentus
-[robigo-luculenta]: https://github.com/ruud-v-a/robigo-luculenta
+[luculentus]:       https://github.com/ruuda/luculentus
+[robigo-luculenta]: https://github.com/ruuda/robigo-luculenta
 
 Vector3
 -------
