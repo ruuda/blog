@@ -62,7 +62,7 @@ RewriteEngine On
 # in the end.
 RewriteCond %{HTTP_HOST} !=beta.ruudvanasseldonk.com
 RewriteCond %{HTTPS} off
-RewriteRule ^ https://ruudvanasseldonk.com/%{REQUEST_URI} [R=301,L]
+RewriteRule ^ https://ruudvanasseldonk.com%{REQUEST_URI} [R=301,L]
 
 # Redirect anything that ends in a slash to the page without slash.
 RewriteBase /
