@@ -44,7 +44,7 @@ Header set Strict-Transport-Security "max-age=10368000" env=HTTPS
 # Disable loading stuff from other domains to mitigate XSS attacks. (I have a
 # static stite anyway, but it doesn't hurt either, except maybe for the extra
 # header bytes.)
-Header set Content-Security-Policy-Report-Only: "default-src 'none'; font-src 'self'; img-src 'self'; style-src 'unsafe-inline'"
+Header set Content-Security-Policy: "default-src 'none'; font-src 'self'; img-src 'self'; style-src 'unsafe-inline'"
 
 # Do not list directory contents.
 Options -MultiViews -Indexes
