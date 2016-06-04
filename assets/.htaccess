@@ -38,14 +38,6 @@ ExpiresByType text/html            "access plus 2 hours"
 ExpiresByType font/woff            "access plus 2 hours"
 ExpiresByType font/woff2           "access plus 2 hours"
 
-# Redirect insecure connections to the https version. There are some downsides
-# to this (downgrading man in the middle attacks, etc.), but I’ve allowed the
-# insecure version for over a year (with a rel=canonical link pointing to the
-# secure version, and updating all links within my control), and I am still
-# seeing significant amounts of insecure traffic, so I think that this is best
-# in the end.
-Redirect permanent "/" "https://ruudvanasseldonk.com/"
-
 # Enable strict transport security with a max age of 120 days.
 Header set Strict-Transport-Security "max-age=10368000" env=HTTPS
 
@@ -60,8 +52,19 @@ Options -MultiViews -Indexes
 # Pages should not end in a trailing slash.
 DirectorySlash Off
 
-# Redirect anything that ends in a slash to the page without slash.
 RewriteEngine On
+
+# Redirect insecure connections to the https version. There are some downsides
+# to this (downgrading man in the middle attacks, etc.), but I’ve allowed the
+# insecure version for over a year (with a rel=canonical link pointing to the
+# secure version, and updating all links within my control), and I am still
+# seeing significant amounts of insecure traffic, so I think that this is best
+# in the end.
+RewriteCond %{HTTP_HOST} !=beta.ruudvanasseldonk.com
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://ruudvanasseldonk.com/%{REQUEST_URI} [R=301,L]
+
+# Redirect anything that ends in a slash to the page without slash.
 RewriteBase /
 RewriteRule ^(.*)\/$ $1 [R=301,L]
 
