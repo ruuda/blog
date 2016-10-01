@@ -1,8 +1,8 @@
 ---
 title: Working on a virtualenv without magic
 date: 2016-10-01
-minutes: ?
-synopsis: ?
+minutes: 5?
+synopsis: TODO virtualenv something something.
 run-in: To keep installed dependencies
 ---
 
@@ -76,4 +76,23 @@ should be stripped from the suggested paths.
 Decorating the prompt
 ---------------------
 
-TODO.
+One thing the `activate` script does in addition to setting environment variables,
+is putting the name of the virtualenv in the promt.
+This messes up the newlines in my prompt,
+and I can’t stand the lack of a space after the virtualenv name.
+I am glad to have gotten rid of this “feature”,
+although occasionally it can be useful to know whether you are inside a virtualenv.
+Putting that in the prompt is a nice indicator.
+Fortunately that is not hard to do at all:
+
+```sh
+if [ -n "$VIRTUAL_ENV" ]; then
+  VENV_PROMPT=" $(basename $VIRTUAL_ENV)"
+else
+  VENV_PROMPT=""
+fi
+```
+
+Inside a virtualenv, `$VENV_PROMPT` will be the name of the virtualenv, prefixed by a space.
+Outside of a virtualenv it will be empty.
+This variable can then be used in the prompt however you like.
