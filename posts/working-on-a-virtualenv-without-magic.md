@@ -28,18 +28,15 @@ and how to do that in a better way.
 Instead of repeating that here,
 I’ll share the solution that I derived from it here.
 
+[venvwrapper]: https://virtualenvwrapper.readthedocs.io/en/latest/index.html
+[inve-gist]:   https://gist.github.com/datagrok/2199506
+
+A simpler workon
+----------------
+
 It turns out that the only thing required to get the virtualenv working,
 is to set and unset a few environment variables.
-That is not too hard:
-
-```sh
-export VIRTUAL_ENV="$HOME/env/name-of-the-virtualenv"
-export PATH="$VIRTUAL_ENV/bin:$PATH"
-unset PYTHON_HOME
-```
-
-Note that I am storing my virtualenvs in `~/env`,
-like Virtualenvwrapper would do.
+That shouldn’t be too hard.
 The next thing to do is to start a new shell with this environment,
 so you can get out of the virtualenv simply with `exit` -- not some ad-hoc `deactivate` command.
 I put this all together in a `workon` function defined in my shell startup script:
@@ -57,7 +54,12 @@ function workon {
 
 It behaves similar to Virtualenvwrapper:
 `workon foo` will activate the `~/env/foo` virtualenv.
-I quickly grew tired of not having tab completion for this custom `workon` command,
+Note that I am storing my virtualenvs in `~/env`.
+
+Adding tab completion
+---------------------
+
+I quickly grew tired of not having tab completion for my custom `workon`,
 so I added the following Zsh completion definition right after the function:
 
 ```sh
@@ -67,9 +69,11 @@ compdef '_path_files -/ -g "$HOME/env/*" -W "$HOME/env/"' workon
 
 Here `_path_files` activates filename completion.
 The `-/` flag specifies that only directories should be completed,
-and `-g` specifies that only directories matching the given pattern should be completed.
+and `-g` specifies that only directories matching the given pattern should be suggested.
 Finally, the `-W` flag indicates that the prefix `$HOME/env/`
-should be removed from the suggested paths.
+should be stripped from the suggested paths.
 
-[venvwrapper]: https://virtualenvwrapper.readthedocs.io/en/latest/index.html
-[inve-gist]:   https://gist.github.com/datagrok/2199506
+Decorating the prompt
+---------------------
+
+TODO.
