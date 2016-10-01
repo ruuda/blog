@@ -171,6 +171,7 @@ getGlyphName c = case c of
   '{' -> "braceleft"
   '|' -> "bar"
   '}' -> "braceright"
+  '~' -> "asciitilde"
   '±' -> "plusminus"
   '·' -> "periodcentered"
   '»' -> "guillemotright" -- A typo in the postscript specification.
