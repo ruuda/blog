@@ -2,7 +2,7 @@
 title: Working on a virtualenv without magic
 date: 2016-10-02
 minutes: 3
-synopsis: The default way of activating a Python virtualenv has a number of issues. Here is a simpler, understandable method.
+synopsis: The standard way of activating a Python virtualenv has a number of issues. Here is a simpler, understandable method.
 run-in: To keep installed dependencies
 ---
 
@@ -15,7 +15,7 @@ Fortunately, there is [Virtualenvwrapper][venvwrapper].
 After all, any problem in computer science can be solved with another layer of indirection.
 Among other things, it provides a handy `workon` command to activate a virtualenv.
 But do we really *need* any of this?
-**And what is actually going on?**
+And what is actually going on?
 
 I don’t like tools that I don’t understand.
 That is not to say that I am wary of tools that hide complexity,
