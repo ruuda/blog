@@ -151,11 +151,11 @@ tagClassFromName name = case name of
 tagClassFromAttributes :: [(String, String)] -> Maybe TagClass
 tagClassFromAttributes = msum . fmap fromAttr
   where fromAttr attr = case attr of
-          ("class", "smcp")   -> Just Smcp
-          ("class", "run-in") -> Just RunIn
-          ("id", "archive")   -> Just Archive
-          ("id", "teaser")    -> Just Teaser
-          _                   -> Nothing
+          ("class", "smcp")    -> Just Smcp
+          ("class", "run-in")  -> Just RunIn
+          ("class", "archive") -> Just Archive
+          ("id", "teaser")     -> Just Teaser
+          _                    -> Nothing
 
 -- Try to classify the tag based on the tag name and based on the attributes.
 tagClass :: String -> [(String, String)] -> [TagClass]
