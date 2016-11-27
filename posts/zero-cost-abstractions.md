@@ -1,8 +1,8 @@
 ---
 title: Zero-cost abstractions
 date: 2016-11-27
-minutes: ??
-synopsis: ??
+minutes: 6
+synopsis: Rust claims to enable abstraction without overhead. How does that claim hold up in practice?
 run-in: If you read my blog
 ---
 
@@ -43,6 +43,9 @@ The snippet is part of a function that restores sample values from residues.
 This is something that happens a lot during decoding,
 and this particular loop makes up roughly 20% of the total decoding time.
 It had better be efficient.
+
+[error-model]: /2015/06/17/exceptional-results-error-handling-in-csharp-and-rust
+[claxon]:      https://github.com/ruuda/claxon
 
 Ingredients
 -----------
@@ -161,12 +164,18 @@ and I could not have written this better myself.
 
 I don’t want to end this post without at least touching briefly upon vectorisation.
 It might look like the compiler missed an opportunity for vectorisation here,
-but I do not think this is the case.
+but I do not think that this is the case.
 For various reasons
 the above snippet is not as obvious to vectorise as it might seem at first sight.
 In any case,
 a missed opportunity for vectorisation is just that: a missed opportunity.
 It is not abstraction overhead.
 
-[error-model]: /2015/06/17/exceptional-results-error-handling-in-csharp-and-rust
-[claxon]:      https://github.com/ruuda/claxon
+Conclusion
+----------
+
+In this post I’ve shown a small snippet of code
+that uses high-level constructs such as closures and zipping iterators,
+yet the code compiles down to the same instructions that a hand-written C program would compile to.
+Rust lives up to its promise:
+abstractions are truly zero-cost.
