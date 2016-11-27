@@ -47,6 +47,43 @@ It had better be efficient then!
 Ingredients
 -----------
 
+The snippet is computing a fixed-point arithmetic inner product
+between the coefficients and a window that slides over the buffer.
+This value is the prediction for a sample.
+After adding the residue to the prediction, the window is advanced.
+An inner product can be neatly expressed by zipping the coefficients with the window,
+mapping multiplication over the pairs,
+and then taking the sum.
+
+The snippet is short and clear -- in my opinion --
+but there is quite a bit going on behind the scenes.
+Let’s break it down.
+
+ * `12..buffer.len()` constructs a `Range` structure with an upper and lower bound.
+   Iterating over it with a for loop implicitly creates an iterator,
+   however in the case of `Range` that iterator is the structure itself.
+ * `coefficients().iter()` constructs a slice iterator,
+   and the call to `zip` implicitly constructs an iterator for the `buffer` slice as well.
+ * `zip` and `map` both wrap their input iterators in a new iterator structure.
+ * A closure is being passed to `map`.
+   The closure does not capture anything from its environment in this case.
+ * `sum` repeatedly calls `next()` on its input iterator,
+   pattern matches on the result,
+   and adds up the values until the iterator is exhausted.
+ * Indexing into and slicing `buffer` will panic if an index is out of bounds,
+   as Rust does not allow reading past the end of an array.
+
+It appears that these high-level constructs come at a price.
+Many intermediate structures are created
+which would not be present in a loop with a hand-written inner product.
+Fortunately these structures are not allocated on the heap,
+as they would likely be in a language like Java or Python.
+Iterators also introduce extra control flow:
+`zip` will terminate after one of its inner iterators is exhausted,
+so in principle it has to branch twice on every iteration.
+And of course iterating itself involves a call to `next()` on every iteration.
+Do we trade performance for convenience here?
+
 Generated code
 --------------
 
