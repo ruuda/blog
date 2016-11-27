@@ -3,11 +3,11 @@ title: Zero-cost abstractions
 date: 2016-11-27
 minutes: ??
 synopsis: ??
-run-in: ??
+run-in: If you read my blog
 ---
 
 If you read my blog,
-you can probably infer that I like Rust.
+you can probably guess that I like Rust.
 I like Rust for a variety of reasons.
 Its [error model][error-model], for example.
 But today I want to highlight a different reason:
@@ -16,7 +16,7 @@ zero-cost abstractions.
 Recently I had the opportunity
 to do some optimisation work on [Claxon][claxon],
 my FLAC decoder.
-In the process I encountered one piece of code
+In the process I encountered a piece of code
 which in my opinion demonstrates the power of Rust very well,
 and I would like to share that with you here:
 
@@ -34,26 +34,29 @@ for i in 12..buffer.len() {
 For context, the following variables are in scope:
 
 ```rust
-let buffer: &mut [i32];
-let coefficients: [i64; 12];
-let qlp_shift: i16;
+buffer: &mut [i32];
+coefficients: [i64; 12];
+qlp_shift: i16;
 ```
 
 The snippet is part of a function that restores sample values from residues.
 This is something that happens a lot during decoding,
 and this particular loop makes up roughly 20% of the total decoding time.
-It had better be efficient then!
+It had better be efficient then.
 
 Ingredients
 -----------
 
-The snippet is computing a fixed-point arithmetic inner product
+The snippet computes a fixed-point arithmetic inner product
 between the coefficients and a window that slides over the buffer.
 This value is the prediction for a sample.
 After adding the residue to the prediction, the window is advanced.
 An inner product can be neatly expressed by zipping the coefficients with the window,
 mapping multiplication over the pairs,
 and then taking the sum.
+I would call this an abstraction:
+it moves the emphasis away from how the value is computed,
+focusing on a declarative specification instead.
 
 The snippet is short and clear -- in my opinion --
 but there is quite a bit going on behind the scenes.
@@ -75,14 +78,14 @@ Let’s break it down.
 
 It appears that these high-level constructs come at a price.
 Many intermediate structures are created
-which would not be present in a loop with a hand-written inner product.
+which would not be present in a hand-written inner product.
 Fortunately these structures are not allocated on the heap,
 as they would likely be in a language like Java or Python.
 Iterators also introduce extra control flow:
 `zip` will terminate after one of its inner iterators is exhausted,
 so in principle it has to branch twice on every iteration.
 And of course iterating itself involves a call to `next()` on every iteration.
-Do we trade performance for convenience here?
+Are we trading performance for convenience here?
 
 Generated code
 --------------
