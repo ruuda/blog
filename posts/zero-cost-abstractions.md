@@ -16,7 +16,7 @@ zero-cost abstractions.
 Recently I had the opportunity
 to do some optimisation work on [Claxon][claxon],
 my FLAC decoder.
-In the process I encountered a piece of code
+In the process I found a piece of code
 which in my opinion demonstrates the power of Rust very well,
 and I would like to share that with you here:
 
@@ -93,7 +93,7 @@ Are we trading performance for convenience here?
 Generated code
 --------------
 
-The only proper way to reason about the cost of these abstractions,
+The only proper way to reason about the cost of these abstractions
 is to inspect the generated machine code.
 Claxon comes with a `decode` example program,
 which I compiled in release mode with Rustc 1.13 stable.
@@ -157,7 +157,7 @@ There are 12 multiplications and 12 additions,
 and one to add the delta
 after arithmetic shifting (`sar`) the sum right.
 Note that the coefficients are not even loaded inside the loop,
-they are kept in registers all the time.
+they are kept in registers at all times.
 The final three instructions handle control flow of the loop.
 Not a single instruction is redundant here,
 and I could not have written this better myself.
@@ -167,7 +167,7 @@ It might look like the compiler missed an opportunity for vectorisation here,
 but I do not think that this is the case.
 For various reasons
 the above snippet is not as obvious to vectorise as it might seem at first sight.
-In any case,
+But in any case,
 a missed opportunity for vectorisation is just that: a missed opportunity.
 It is not abstraction overhead.
 
@@ -175,7 +175,7 @@ Conclusion
 ----------
 
 In this post I’ve shown a small snippet of code
-that uses high-level constructs such as closures and zipping iterators,
+that uses high-level constructs such as closures and iterator combinators,
 yet the code compiles down to the same instructions that a hand-written C program would compile to.
 Rust lives up to its promise:
 abstractions are truly zero-cost.
