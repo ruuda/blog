@@ -1,6 +1,6 @@
 ---
 title: Zero-cost abstractions
-date: 2016-11-27
+date: 2016-11-30
 minutes: 6
 synopsis: Rust claims to enable abstraction without overhead. How does that claim hold up in practice?
 run-in: If you read my blog
@@ -158,6 +158,9 @@ and one to add the delta
 after arithmetic shifting (`sar`) the sum right.
 Note that the coefficients are not even loaded inside the loop,
 they are kept in registers at all times.
+After the sample has been computed,
+it is stored simply with a `mov`.
+All bounds checks have been elided.
 The final three instructions handle control flow of the loop.
 Not a single instruction is redundant here,
 and I could not have written this better myself.
