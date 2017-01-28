@@ -44,7 +44,7 @@ and the key can be generated wherever it is required.
 Even though several key derivation algorithms can convert passphrases of
 arbitrary length to arbitrary length keys, this does not mean that
 _entropy_ increases. If a passphrase would be limited to five different
-words, there would be only five diffent keys. A key derivation algorithm
+words, there would be only five different keys. A key derivation algorithm
 cannot directly increase the entropy of a passphrase.
 
 Typical passphrase entropy
