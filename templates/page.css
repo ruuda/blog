@@ -22,9 +22,7 @@ body
   color: #456;
   font-family: Calluna Sans, sans-serif;
   /* Firefox applies ligatures automatically when they are available, but Chrome
-   * needs to be told explicitly. Note: Blink will drop the -webkit prefix soon.
-   * See https://crbug.com/537293. This is landing in Chrome 48. */
-  -webkit-font-feature-settings: 'liga', 'kern';
+   * needs to be told explicitly. */
   font-feature-settings: 'liga', 'kern';
   line-height: 1.4em;
 }
@@ -75,7 +73,6 @@ h1
 
 header > h2
 {
-  -webkit-font-feature-settings: 'dlig';
   font-feature-settings: 'dlig';
   font-size: 1.4em;
   font-style: italic;
@@ -136,8 +133,6 @@ abbr, .smcp
    * casing instead of all caps, because all caps are too shouty. For acronyms
    * the original caps are still all caps, but for most .smcp things they are
    * not. */
-  /* TODO: Remove prefixed version once Blink drops the prefix in Chrome 48. */
-  -webkit-font-feature-settings: 'smcp', 'c2sc';
   font-feature-settings: 'smcp', 'c2sc';
 
   /* Note: Enabling letter spacing breaks small caps in Blink before version
@@ -161,8 +156,6 @@ abbr
   /* Use the 'smcp' feature instead of font-variant: small-caps, because not all
    * browsers will select the true small-caps with font-variant. For the run-in
    * it is fine if the fallback is to do nothing special at all. */
-  /* TODO: Remove prefixed version once Blink drops the prefix in Chrome 48. */
-  -webkit-font-feature-settings: 'smcp';
   font-feature-settings: 'smcp';
 
   /* Use a bit more modest letter spacing here than for .smcp. */
