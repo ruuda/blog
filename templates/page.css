@@ -1,3 +1,10 @@
+/* Copyright 2015 Ruud van Asseldonk
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3. See
+ * the licence file in the root of the repository.
+ */
+
 *
 {
   margin: 0;
@@ -110,6 +117,7 @@ a
   text-decoration: none;
 }
 
+{{if archive}}
 /* Used for post titles on the archive page. */
 h3
 {
@@ -123,6 +131,7 @@ h3 > a
 {
   color: inherit;
 }
+{{end}} /* if archive */
 
 abbr, .smcp
 {
@@ -171,10 +180,11 @@ h2
   padding-top: 1.2rem;
 }
 
-/* TODO: Split into conditionally-included css and remove the class. */
+{{if archive}}
 .archive h2
 {
-  color: #ccc; /* TODO: pick a unified color scheme. */
+  /* On the archive page, h2 is used for the year headers. */
+  color: #ccc;
   font-size: 2.8em;
   letter-spacing: 1rem;
 
@@ -182,6 +192,7 @@ h2
   margin-bottom: 0.6rem;
   padding-top: 0.8rem;
 }
+{{end}} /* if archive */
 
 ul, ol
 {
@@ -376,8 +387,9 @@ nav a
   margin-left: 1em;
   margin-right: 1em;
 }
-{{end}}
+{{end}} /* if light */
 
+{{if archive}}
 .archive p > a
 {
   font-family: Calluna, serif;
@@ -391,6 +403,7 @@ nav a
   /* U+00a0 is a non-breaking space. */
   content: '\a0»';
 }
+{{end}} /* if archive */
 
 /* Scale font size as the square root of the viewport width. 16px should be the
  * minimum font size, for a viewport width of 400px. At 1600px, the content
@@ -457,6 +470,7 @@ nav a
   html { font-size: 21px; }
 
   /* At this width it becomes feasible to hang the year headers in the margin. */
+  {{if archive}}
   .archive h2
   {
     text-align: right;
@@ -469,6 +483,7 @@ nav a
     margin-left: -9.5rem;
     margin-bottom: -0.8rem;
   }
+  {{end}} /* if archive */
 
   /* Move the footer navigation into the margin too, left of the "About me"
    * paragraph. */

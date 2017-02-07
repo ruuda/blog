@@ -122,6 +122,7 @@ writeArchive globalContext template posts = writePage 1 "/writing" context templ
   where context = M.unions [ P.archiveContext posts
                            , Template.stringField "title"     "Writing by Ruud van Asseldonk"
                            , Template.stringField "bold-font" "true"
+                           , Template.stringField "archive"   "true"
                            , globalContext ]
 
 -- Given the contact template and the global context, writes the contact page
