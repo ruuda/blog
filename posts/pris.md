@@ -1,9 +1,31 @@
 ---
 title: A language for designing slides
+break: language for
 date: 2017-02-19
 synopsis: I made something. To do.
-run-in: To do.
+run-in: It is my opinion
 ---
+
+It is my opinion that great slides are designed.
+Applying a nice template to a dull set of bullet points has never been easier than today.
+And good slides need not be beautiful.
+But great slides, are *designed*.
+As a programmer with a secret love for typography,
+and a slight control freak,
+none of the tools that I have used allow me to design slides in the way I would like.
+So I built my own.
+
+The status quo
+--------------
+
+Design requires absolute control of where graphics are placed.
+This level of control has traditionally been reserved for graphical editors
+such as Powerpoint and Illustrator.
+Although these editors allow full control,
+they come with a few serious drawbacks.
+
+Old stuff
+---------
 
 Lately I’ve been pondering a lot on what makes a good presentation,
 and especially how to make good slides.
