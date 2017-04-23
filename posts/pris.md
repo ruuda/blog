@@ -9,7 +9,7 @@ run-in: It is my opinion
 It is my opinion that great slides are designed.
 Applying a nice template to a dull set of bullet points has never been easier than today.
 And good slides need not be beautiful.
-But great slides, are *designed*.
+But great slides -- great slides are *designed*.
 As a programmer with a secret love for typography,
 and a slight control freak,
 none of the tools that I have used allow me to design slides in the way I would like.
@@ -34,7 +34,7 @@ The way it is done, is rougly like this:
 2. Copy it onto a few slides.
 3. Edit every copy to create the individual frames.
 
-And if after that you want to change the color of a piece of text
+And if after that you want to change the colour of a piece of text
 that occurs on all slides,
 or move it a bit ...
 then well, you are stuck.
@@ -49,15 +49,47 @@ is to not edit the diagram directly,
 but to generate it from some kind of specification.
 TikZ in a Beamer presentation is a good example of this,
 and it solves the diagram problem well.
-I have used them with success for presentations about Git,
+I have used it with success for presentations about Git,
 with intricate graph drawings to explain how operations manipulate the DAG.
 The Fontspec package gives me full typographic control,
 and TeX files are friendly to source control.
-Getting to an initial version of a drawing is more work with TikZ
+Getting to an initial version of a drawing is more work
 due to the longer feedback loop,
 but that is the tradeoff for being able to make edits later on.
 But although Beamer satisfies many of my needs,
 it is fundametally not the tool that I wish for.
+
+Beamer is a LaTeX package,
+and as such it does not offer precise control over lay-out.
+The entire point of TeX is that it takes care of lay-out for you.
+For long documents full of text this makes sense.
+But for slides with little text, I want control.
+Manually placing line breaks is fine,
+I would do that anyway.
+One could do everything in an embedded TikZ drawing,
+but this is tedious.
+TikZ and similar systems such as Metapost are great for complex drawings,
+but not ergonomic for typographic design.
+Although the basic drawing primitives compose,
+**parametrising and reusing graphics is difficult**.
+Macros are awkward and in many ways limited.
+
+Different fundamentals
+----------------------
+
+TikZ/TeX/Metapost get this wrong: direct drawing, procedural (and ugly macros).
+
+Need first-class scripting,
+functions,
+and graphics as first-class values.
+
+Pris
+----
+
+Tell a little (very little) bit about Pris.
+Show the hello world.
+Github.
+Stress it is a work in progress.
 
 Old stuff
 ---------
