@@ -50,7 +50,7 @@ but to generate it from some kind of specification.
 TikZ in a Beamer presentation is a good example of this,
 and it solves the diagram problem well.
 I have used it with success for presentations about Git,
-with intricate graph drawings to explain how operations manipulate the DAG.
+with graph drawings to explain how operations manipulate the DAG.
 The Fontspec package gives me full typographic control,
 and TeX files are friendly to source control.
 Getting to an initial version of a drawing is more work
@@ -77,11 +77,30 @@ Macros are awkward and in many ways limited.
 Different fundamentals
 ----------------------
 
-TikZ/TeX/Metapost get this wrong: direct drawing, procedural (and ugly macros).
+The problem with TikZ and similar systems is twofold.
+Firstly, they are too domain-specific to make automating things viable.
+Macro definitions are no substitute for variables or functions,
+beause they deal with tokens, not values.
+It is like a C without functions, but only preprocessor macros.
+Secondly, all of the drawing DSLs that I have seen manipulate a canvas directly.
+This means that the only available mechanism for reuse is necessarily procedural.
+Draw calls might be grouped in a procedure and parametrised over some inputs,
+but this approach is fundamentally limited.
 
-Need first-class scripting,
-functions,
-and graphics as first-class values.
+Let me demonstrate this limitation with an example.
+Say I have a procedure that draws a rectangle
+with its top-left corner at a given coordinate.
+How do I draw it with the centre at a given coordinate?
+I would have to know its size beforehand,
+and modify the input to the procedure.
+But what if the size is not known beforehand?
+What if the size depends in a complex way on the inputs?
+The issue with the procedural approach
+is that once graphics are drawn,
+they are set in stone.
+What I would like instead,
+is a system where graphics are first-class,
+where they can be inspected and manipulated *after* being drawn.
 
 Pris
 ----
