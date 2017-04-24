@@ -7,7 +7,7 @@ run-in: It is my opinion
 ---
 
 It is my opinion that great slides are designed.
-Applying a nice template to a dull set of bullet points has never been easier than today.
+Applying a fancy template to a dull set of bullet points has never been easier than today.
 And good slides need not be beautiful.
 But great slides -- great slides are *designed*.
 As a programmer with a secret love for typography,
@@ -24,8 +24,7 @@ such as Powerpoint and Illustrator.
 Although these editors allow full control,
 they come with a few serious drawbacks.
 Their binary formats are not friendly to source control, for instance.
-This is a superficial complaint however.
-The real problem is that **operations in a visual editor do not compose**.
+But the real problem is that **operations in a visual editor do not compose**.
 Anyone who has ever tried to animate a diagram in Powerpoint
 should understand what I mean here.
 The way it is done, is rougly like this:
@@ -82,7 +81,7 @@ Firstly, they are too domain-specific to make automating things viable.
 Macro definitions are no substitute for variables or functions,
 beause they deal with tokens, not values.
 It is like a C without functions, but only preprocessor macros.
-Secondly, all of the drawing DSLs that I have seen manipulate a canvas directly.
+Secondly, all of the drawing DSL<!---->s that I have seen manipulate a canvas directly.
 This means that the only available mechanism for reuse is necessarily procedural.
 Draw calls might be grouped in a procedure and parametrised over some inputs,
 but this approach is fundamentally limited.
@@ -90,17 +89,29 @@ but this approach is fundamentally limited.
 Let me demonstrate this limitation with an example.
 Say I have a procedure that draws a rectangle
 with its top-left corner at a given coordinate.
-How do I draw it with the centre at a given coordinate?
+How do I draw it with its centre at a given coordinate?
 I would have to know its size beforehand,
-and modify the input to the procedure.
-But what if the size is not known beforehand?
-What if the size depends in a complex way on the inputs?
+and offset the input coordinates appropriately.
+For a rectangle this is doable,
+but for more complex shapes,
+computing the size beforehand quickly becomes impractical.
+
 The issue with the procedural approach
 is that once graphics are drawn,
 they are set in stone.
 What I would like instead,
-is a system where graphics are first-class,
-where they can be inspected and manipulated *after* being drawn.
+is a system where graphics are first-class.
+Where they can be inspected and manipulated *after* being drawn.
+And I want full scripting with proper functions.
+
+I started writing down things in a hypothetical language,
+to get a clear picture of what my ideal tool would look like.
+For a while I investigated building an embedded DSL
+in a general-purpose scripting language like Python or Lua,
+but it quickly became clear to me
+that these were going to be too noisy to be practical.
+And so I started working on an interpreter for that hypothetical language.
+Today it is no longer hypothetical.
 
 Pris
 ----
