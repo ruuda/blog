@@ -7,8 +7,8 @@ run-in: It is my opinion
 ---
 
 It is my opinion that great slides are designed.
-Applying a fancy template to a dull set of bullet points has never been easier than today.
-And good slides need not be beautiful.
+Applying a fancy template to a dull set of bullet points has never been easier than today,
+and good slides need not be beautiful.
 But great slides -- great slides are *designed*.
 As a programmer with a secret love for typography,
 and a slight control freak,
@@ -63,8 +63,6 @@ and as such it does not offer precise control over lay-out.
 The entire point of TeX is that it takes care of lay-out for you.
 For long documents full of text this makes sense.
 But for slides with little text, I want control.
-Manually placing line breaks is fine,
-I would do that anyway.
 One could do everything in an embedded TikZ drawing,
 but this is tedious.
 TikZ and similar systems such as Metapost are great for complex drawings,
@@ -80,7 +78,7 @@ The problem with TikZ and similar systems is twofold.
 Firstly, they are too domain-specific to make automating things viable.
 Macro definitions are no substitute for variables or functions,
 beause they deal with tokens, not values.
-It is like a C without functions, but only preprocessor macros.
+It is like C without functions, only preprocessor macros.
 Secondly, all of the drawing DSL<!---->s that I have seen manipulate a canvas directly.
 This means that the only available mechanism for reuse is necessarily procedural.
 Draw calls might be grouped in a procedure and parametrised over some inputs,
