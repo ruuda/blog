@@ -114,10 +114,55 @@ Today it is no longer hypothetical.
 Pris
 ----
 
-Tell a little (very little) bit about Pris.
-Show the hello world.
-Github.
-Stress it is a work in progress.
+So how does Pris
+-- which is what I called my DSL
+-- solve the rectangle problem?
+Drawing a rectangle with its top-left corner at a given location
+is not so different from other tools:
+
+    {
+      at (1em, 1em) put fill_rectangle((1em, 1em))
+    }
+
+The challenge now is to put the rectangle
+with its centre at `(1em, 1em)`,
+without using the knowledge that its sides are `1em` long.
+In Pris, that is done as follows:
+
+    {
+      rect = fill_rectangle((1em, 1em))
+      at (1em, 1em) - rect.size * 0.5 put rect
+    }
+
+This example shows that graphics are *first class*:
+they can be assigned to variables,
+and their size can be queried.
+Nothing is drawn until something is `put` on the canvas.
+Coordinate arithmetic is also supported out of the box.
+
+To take this one step further,
+we might extract the alignment logic into a function:
+
+    center = function(frame)
+    {
+      at frame.size * -0.5 put frame
+    }
+
+    {
+      at (1em, 1em) put center(fill_rectangle((1em, 1em)))
+    }
+
+This time there is a `put` inside the function,
+but it does not draw anything on the main canvas like a procedure would do.
+Functions in Pris are pure, free of side effects.
+The `put` only places a graphic locally in the scope of the function.
+The result of calling the function is itself a new graphic,
+which can be placed on the main canvas (demarked by bare braces).
+This example also shows that functions are first-class.
+
+Small caveat: the `center` function will do the wrong thing
+if the bounding box extends to the left of, or above `(0,` `0)`.
+The variables for doing proper alignment in that case are not yet exposed.
 
 Old stuff
 ---------
