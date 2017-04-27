@@ -79,7 +79,7 @@ Firstly, they are too domain-specific to make automating things viable.
 Macro definitions are no substitute for variables or functions,
 beause they deal with tokens, not values.
 It is like C without functions, only preprocessor macros.
-Secondly, all of the drawing DSL<!---->s that I have seen manipulate a canvas directly.
+Secondly, all of the drawing DSL<!---->s that I have used manipulate a canvas directly.
 This means that the only available mechanism for reuse is necessarily procedural.
 Draw calls might be grouped in a procedure and parametrised over some inputs,
 but this approach is fundamentally limited.
@@ -158,45 +158,35 @@ Functions in Pris are pure, free of side effects.
 The `put` only places a graphic locally in the scope of the function.
 The result of calling the function is itself a new graphic,
 which can be placed on the main canvas (demarked by bare braces).
-This example also shows that functions are first-class.
+This example also shows that functions are first-class values.
 
 Small caveat: the `center` function will do the wrong thing
 if the bounding box extends to the left of, or above `(0,` `0)`.
 The variables for doing proper alignment in that case are not yet exposed.
 
-Old stuff
----------
-
-Lately I’ve been pondering a lot on what makes a good presentation,
-and especially how to make good slides.
-Most slides I see range from pretty bad to okay-ish.
-Some are good.
-Few are great.
-A good presentation can have pretty standard slides.
-Bullet points are not necessarily bad.
-(How do I say this?)
-Great slides are *designed*.
-
-So when making slides, what do I want?
-I want to be in control.
-I want full control of where graphics and text are placed,
-and over the typographic details.
-Typesetting large paragraphs of text can and should be automated,
-but good slides contain very little text.
-Automatic line breaking is not actually that useful here.
-Being a programmer,
-I would like a system that plays nice with source control.
-And finally,
-I want to be able to tweak my slides with little effort.
-
-Available tools
+Progress report
 ---------------
 
-There is a plethora of tools for making slides.
-I grew up with Powerpoint.
-I’ve only recently come to realise that a graphical tool like Powerpoint
-is actually very close to what I would want.
+An exprerimental implementation of Pris exists.
+It is free software,
+[available on GitHub](https://github.com/ruuda/pris#readme).
+The current feature set is limited,
+and I intend to make changes to the syntax and exposed functions still.
+Nonetheless, I have used it to do one set of slides so far.
+This helped me prioritise features,
+and to sort out what works and what doesn’t.
+The number of implemented primitives is small,
+but placing SVG graphics and rendering text is supported,
+which for many things is sufficent.
+I plan to continue in the same way:
+implement features as I need them,
+and make things more ergonomic when they start to become unwieldy.
 
-
-A language for designing slides
--------------------------------
+If Pris seems useful to you,
+then please go ahead and try it.
+I will have to invest more in diagnostics and documentation;
+for now there are only [the examples](https://github.com/ruuda/pris/tree/master/examples).
+There are no binaries available yet,
+but the build process is straightforward.
+If you get stuck somewhere then feel free to [reach out](/contact) to me.
+And if you have any insights, please do share them.
