@@ -113,13 +113,14 @@ but it quickly became clear to me
 that these were going to be too noisy to be practical.
 And so I started working on an interpreter for that hypothetical language.
 Today it is no longer hypothetical.
+I called the DSL *Pris*.
+The interpreter is written in Rust,
+and it uses Cairo and Harfbuzz for rendering and font shaping.
 
 Pris
 ----
 
-So how does Pris
--- which is what I called my DSL
--- solve the rectangle problem?
+So how does Pris solve the rectangle problem?
 Drawing a rectangle with its top-left corner at a given location
 is not so different from other tools:
 
@@ -176,7 +177,7 @@ It is free software,
 The current feature set is limited,
 and I intend to make changes to the syntax and exposed functions still.
 Nonetheless, I have used it to do one set of slides so far.
-This helped me prioritise features,
+This has helped me prioritise features,
 and to sort out what works and what doesn’t.
 The number of implemented primitives is small,
 but placing SVG graphics and rendering text is supported,
