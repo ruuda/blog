@@ -8,7 +8,7 @@ module Image (processImages) where
 
 import           Codec.Picture.Types (dynamicMap)
 import           Codec.Picture (DynamicImage(..), imageWidth, imageHeight, readImage)
-import           Data.List (find)
+import           Data.List (find, isSuffixOf)
 import           Data.Maybe (fromJust)
 import           System.FilePath ((</>), takeFileName)
 import qualified Text.HTML.TagSoup as S
@@ -29,8 +29,16 @@ makeDimensions img = [ ("width",  show $ dynamicMap imageWidth  img)
 -- adds width and height attributes.
 addDimensions :: FilePath -> Attributes -> IO Attributes
 addDimensions imgDir attrs = fmap (attrs ++) dimensions
-  where imgPath    = imgDir </> (takeFileName $ getSrc attrs)
-        dimensions = fmap (either error makeDimensions) (readImage imgPath)
+  where
+    src        = getSrc attrs
+    imgPath    = imgDir </> (takeFileName src)
+    dimensions =
+      if ".svg" `isSuffixOf` src
+        -- Do not check the size for svg images, because Juicy Pixels cannot
+        -- handle those. I could extract the size from the svg in a different
+        -- way, but meh.
+        then pure []
+        else fmap (either error makeDimensions) (readImage imgPath)
 
 -- Maps an IO-performing function over the attributes of all <img> tags.
 mapImgAttributes :: (Attributes -> IO Attributes) -> [Html.Tag] -> IO [Html.Tag]

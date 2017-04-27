@@ -26,3 +26,6 @@ $mozjpeg 85.0 resized/the-small-bang-theory.png > compressed/the-small-bang-theo
 # For this file, at the quality setting where the jpeg artifacts become mostly
 # unnoticeable, the jpeg is actually larger than the png, so opt for the png.
 cp resized/tristar-cyan.png compressed/tristar-cyan.png
+
+# The SVG file has been optimised already. It is quite bad still, but it's ok.
+cp original/rectangles.svg compressed/rectangles.svg
