@@ -1,7 +1,8 @@
 ---
 title: A language for designing slides
 break: language for
-date: 2017-02-19
+date: 2017-04-27
+minutes: 6
 synopsis: No existing tool allowed me to design slides in the way I would like. So I built my own.
 run-in: It is my opinion that
 ---
@@ -98,7 +99,7 @@ The issue with the procedural approach
 is that once graphics are drawn,
 they are set in stone.
 What I would like instead,
-is a system where graphics are first-class.
+is a system where graphics are first class.
 Where they can be inspected and manipulated *after* being drawn.
 And I want full scripting with proper functions.
 
@@ -158,7 +159,7 @@ Functions in Pris are pure, free of side effects.
 The `put` only places a graphic locally in the scope of the function.
 The result of calling the function is itself a new graphic,
 which can be placed on the main canvas (demarked by bare braces).
-This example also shows that functions are first-class values.
+This example also shows that functions are first class values.
 
 Small caveat: the `center` function will do the wrong thing
 if the bounding box extends to the left of, or above `(0,` `0)`.
@@ -177,7 +178,7 @@ This helped me prioritise features,
 and to sort out what works and what doesn’t.
 The number of implemented primitives is small,
 but placing SVG graphics and rendering text is supported,
-which for many things is sufficent.
+which for many things is sufficient.
 I plan to continue in the same way:
 implement features as I need them,
 and make things more ergonomic when they start to become unwieldy.
