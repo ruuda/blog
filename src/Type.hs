@@ -325,7 +325,7 @@ subsetFonts commands = do
   mapM_ (uncurry pushCommand) (zip (cycle stdins) commands)
   mapM_ hClose stdins
   mapM_ P.waitForProcess pids -- Wait, but ignore the exit codes.
-  where subsetScript = P.proc "python3" ["fonts/subset.py"]
+  where subsetScript = P.proc "/usr/bin/env" ["python3", "fonts/subset.py"]
         -- The Python interpreter needs to have a pipe for stdin because we
         -- want to write to it.
         subsetScriptPiped = subsetScript { P.std_in = P.CreatePipe }
