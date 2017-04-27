@@ -2,8 +2,8 @@
 title: A language for designing slides
 break: language for
 date: 2017-02-19
-synopsis: I made something. To do.
-run-in: It is my opinion
+synopsis: No existing tool allowed me to design slides in the way I would like. So I built my own.
+run-in: It is my opinion that
 ---
 
 It is my opinion that great slides are designed.
