@@ -95,6 +95,8 @@ For a rectangle this is doable,
 but for more complex shapes,
 computing the size beforehand quickly becomes impractical.
 
+![Two rectangles, aligned top-left, and centre.](/images/rectangles.svg)
+
 The issue with the procedural approach
 is that once graphics are drawn,
 they are set in stone.
