@@ -33,14 +33,14 @@ license details, see the readme in the fonts directory.
 
 Compiling
 ---------
+Install Python requirements (for font subsetting) in a virtualenv:
+
+    $ virtualenv venv
+    $ source venv/bin/activate
+    $ pip install -r requirements.txt
+
 Build the generator, then build the site (requires fonts to be present):
 
+    $ stack setup
     $ stack build
     $ stack exec blog
-
-Or compile with good old Cabal:
-
-    $ cabal update
-    $ cabal sandbox init
-    $ cabal install -j
-    $ cabal run

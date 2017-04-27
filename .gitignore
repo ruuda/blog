@@ -8,6 +8,7 @@
 
 # Editor files
 *.swp
+*.swo
 
 # Fonts, original and processed
 /fonts/generated
@@ -15,3 +16,6 @@
 
 # Generated blog output
 /out
+
+# Python virtualenv
+/venv
