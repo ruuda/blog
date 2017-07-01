@@ -84,31 +84,44 @@ We have to quantify them and deal with it.
 A statistical test
 ------------------
 
-Let’s say we set out to answer the question “is program B faster than program A?”.
-In this form the question is still too vague.
-When the runtime is different for every run,
-simply comparing times could lead to an inconclusive situation
-were in some runs A is faster,
-and sometimes B is faster.
-A more mathematical way to ask the question would be:
+Let’s say we set out to answer the question
+“is program B faster than program A?”
+The proper way to answer such a question is with a statistical test.
+A statistical test always has the same form.
+First we state the null hypothesis,
+the claim that we assume to be true without sufficient evidence of the contrary.
+Then we measure.
+If the measured data is unlikely
+under the assumption that the null hypothesis is true,
+we reject the null hypothesis.
+Concretely, we might go about that as follows:
 
-> Assuming that the runtimes of A and B follow a normal distribution with
-> means <var>μ<sub>A</sub></var> and <var>μ<sub>B</sub></var> respectively,
-> and variance <var>σ<sup>2</sup></var>,
-> is it the case that <var>μ<sub>A</sub></var> = <var>μ<sub>B</sub></var>?
+Assume that the runtimes of A and B follow a normal distribution with
+means <var>μ<sub>A</sub></var> and <var>μ<sub>B</sub></var>
+and variance <var>σ<sub>A</sub><sup>2</sup></var>
+and <var>σ<sub>B</sub><sup>2</sup></var> respectively.
+We take as null hypothesis <var>μ<sub>A</sub></var> = <var>μ<sub>B</sub></var>,
+i.e. neither program is faster than the other.
+By extension, the alternative hypothesis is
+<var>μ<sub>A</sub></var> ≠ <var>μ<sub>B</sub></var>.
+The alternative hypothesis does not favour any program,
+it is simply the negation of the null hypothesis.
 
-Note the assumptions here.
-We assume that the runtime follows a normal distribution --
+Note that we assume that the runtime follows a normal distribution --
 which might not always be a valid assumption!
-For runtime in particular, a normal distribution can be a bad approximation,
-because runtimes are always positive,
-and because most sources of noise are biased towards increasing the observed time,
-so the distribution should not be symmetric.
-There is a good reason to opt for a normal distribution though:
+Still, there is a good reason to opt for a normal distribution:
 it has been well-studied and it is easy to work with.
 If the variance is small with respect to the runtime,
 the approximation can be acceptable.
-Furthermore, we assume that the variance is the same for both programs.
 
-Under the assumption that
-<var>μ<sub>A</sub></var> = <var>μ<sub>B</sub></var>,
+Under the above assumptions,
+we can apply Welch’s t-test to measured data to obtain a _p-value_:
+the probability of an observation at least as extreme as the actual data,
+under the assumption that the null hypothesis is true.
+If that probability is small, we reject the null hypothesis,
+and conclude that one program is significantly faster than the other.
+How small? That is for you to decide, _before_ you do any measurements.
+But please think about it,
+and don’t blindly take 0.05 because you have seen that value [elsewhere][nova].
+
+[nova]: https://www.xkcd.com/1132/
