@@ -1,0 +1,107 @@
+SplineFontDB: 3.0
+FontName: CallunaSansMath-Italic
+FullName: Calluna Sans Math
+FamilyName: Calluna Sans Math
+Weight: Regular
+Copyright: Copyright 2017 Ruud van Asseldonk
+Version: 1
+ItalicAngle: 0
+UnderlinePosition: -100
+UnderlineWidth: 50
+Ascent: 750
+Descent: 250
+InvalidEm: 0
+sfntRevision: 0x00010000
+LayerCount: 2
+Layer: 0 0 "Back" 1
+Layer: 1 0 "Fore" 0
+XUID: [1021 203 -1014936935 6831600]
+StyleMap: 0x0000
+FSType: 8
+OS2Version: 2
+OS2_WeightWidthSlopeOnly: 0
+OS2_UseTypoMetrics: 0
+CreationTime: 1292841550
+ModificationTime: 1498933262
+PfmFamily: 17
+TTFWeight: 400
+TTFWidth: 5
+LineGap: 0
+VLineGap: 0
+Panose: 2 0 0 0 0 0 0 0 0 0
+OS2TypoAscent: 750
+OS2TypoAOffset: 0
+OS2TypoDescent: -250
+OS2TypoDOffset: 0
+OS2TypoLinegap: 200
+OS2WinAscent: 940
+OS2WinAOffset: 0
+OS2WinDescent: 260
+OS2WinDOffset: 0
+HheadAscent: 940
+HheadAOffset: 0
+HheadDescent: -260
+HheadDOffset: 0
+OS2SubXSize: 700
+OS2SubYSize: 650
+OS2SubXOff: 0
+OS2SubYOff: 140
+OS2SupXSize: 700
+OS2SupYSize: 650
+OS2SupXOff: 0
+OS2SupYOff: 477
+OS2StrikeYSize: 50
+OS2StrikeYPos: 250
+OS2CapHeight: 667
+OS2XHeight: 450
+OS2Vendor: 'PfEd'
+OS2CodePages: 2000009b.00000000
+OS2UnicodeRanges: a000002f.5000206b.00000000.00000000
+MarkAttachClasses: 1
+DEI: 91125
+LangName: 1033 "" "" "" "" "" "" "" "" "" "Ruud van Asseldonk" "" "" "https://ruudvanasseldonk.com"
+Encoding: Custom
+UnicodeInterp: none
+NameList: AGL For New Fonts
+DisplaySize: -96
+AntiAlias: 1
+FitToEm: 0
+WinInfo: 825 25 10
+BeginPrivate: 6
+BlueValues 23 [-12 0 450 462 667 679]
+OtherBlues 11 [-237 -225]
+StdHW 4 [68]
+StdVW 4 [78]
+StemSnapH 10 [55 68 71]
+StemSnapV 13 [67 78 82 88]
+EndPrivate
+TeXData: 1 0 0 1048576 524288 349525 0 1048576 349525 783286 444596 497025 792723 393216 433062 380633 303038 157286 324010 404750 52429 2506097 1059062 262144
+BeginChars: 66290 1
+
+StartChar: sigma
+Encoding: 963 963 0
+Width: 504
+Flags: HMW
+HStem: -12 65<173.5 260.5 173.5 282.5> 397 65<234 314>
+LayerCount: 2
+Fore
+SplineSet
+110 182 m 0
+ 110 107 139 53 208 53 c 0
+ 313 53 377 173 377 275 c 0
+ 377 344 348 397 280 397 c 0
+ 188 397 110 304 110 182 c 0
+418 400 m 1
+ 444 366 457 322 457 278 c 0
+ 457 160 363 -12 202 -12 c 0
+ 86 -12 30 79 30 179 c 0
+ 30 317 137 462 284 462 c 2
+ 518 462 l 1
+ 504 400 l 1
+ 422 400 l 0
+ 418 400 l 1
+EndSplineSet
+Validated: 1
+EndChar
+EndChars
+EndSplineFont
