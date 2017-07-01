@@ -4,6 +4,7 @@ date: 2017-07-01
 minutes: ??
 synopsis: ??
 run-in: Measuring performance is hard
+math: true
 ---
 
 Measuring performance is hard.
@@ -42,7 +43,8 @@ B        5721
 With only a single measurement,
 it is impossible to tell in which situation we are.
 In the second case,
-it is not even clear what the conclusion should be.
+the presentation gives a false sense of millisecond precision,
+and it is not even clear what the conclusion should be.
 Fortunately statistics can provide an answer here.
 
 Measurement complications
@@ -81,3 +83,16 @@ We have to quantify it and deal with it.
 
 A statistical test
 ------------------
+
+Let’s say we set out to answer the question “is program B faster than program A?”.
+In this form the question is still too vague.
+When the runtime is different for every run,
+simply comparing times could lead to an inconclusive situation
+were in some runs A is faster,
+and sometimes B is faster.
+A more mathematical way to ask the question would be:
+
+> Assuming that the runtimes of A and B follow a normal distribution with
+> means <var>μ<sub>A</sub></var> and <var>μ<sub>B</sub></var> respectively,
+> and standard deviation <var>σ</var>,
+> is it the case that <var>μ<sub>A</sub></var> < <var>μ<sub>B</sub></var>?
