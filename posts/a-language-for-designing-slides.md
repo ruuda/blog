@@ -171,7 +171,7 @@ The variables for doing proper alignment in that case are not yet exposed.
 Progress report
 ---------------
 
-An exprerimental implementation of Pris exists.
+An experimental implementation of Pris exists.
 It is free software,
 [available on GitHub](https://github.com/ruuda/pris#readme).
 The current feature set is limited,
