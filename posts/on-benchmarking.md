@@ -22,7 +22,7 @@ Quickly others joined posting the results for their systems.
 At some point somebody questioned the measurement setup.
 But at no point did anybody question the conclusion
 that B is the faster program.
-In fact, from this data it is impossible to tell.
+Yet, from this data it is impossible to tell.
 **A single sample for every scenario provides insufficient information.**
 
 Suppose we would run the benchmark again, with the following results:
@@ -44,7 +44,7 @@ With only a single measurement,
 it is impossible to tell in which situation we are.
 In the second case,
 the presentation gives a false sense of millisecond precision,
-and it is not even clear what the conclusion should be.
+and it is not clear what the conclusion should be.
 Fortunately statistics can provide an answer here.
 
 Measurement complications
@@ -78,8 +78,8 @@ This post is not a measurement guide.
 For the remainder of the post I will assume
 that we know exactly what we want to measure,
 and that we have decided on a setup to measure that value reliably.
-But even with a good setup, noise is going to be inevitable.
-We have to quantify it and deal with it.
+But even with a good setup, noise and imprecision are going to be inevitable.
+We have to quantify them and deal with it.
 
 A statistical test
 ------------------
@@ -94,5 +94,21 @@ A more mathematical way to ask the question would be:
 
 > Assuming that the runtimes of A and B follow a normal distribution with
 > means <var>μ<sub>A</sub></var> and <var>μ<sub>B</sub></var> respectively,
-> and standard deviation <var>σ</var>,
-> is it the case that <var>μ<sub>A</sub></var> < <var>μ<sub>B</sub></var>?
+> and variance <var>σ<sup>2</sup></var>,
+> is it the case that <var>μ<sub>A</sub></var> = <var>μ<sub>B</sub></var>?
+
+Note the assumptions here.
+We assume that the runtime follows a normal distribution --
+which might not always be a valid assumption!
+For runtime in particular, a normal distribution can be a bad approximation,
+because runtimes are always positive,
+and because most sources of noise are biased towards increasing the observed time,
+so the distribution should not be symmetric.
+There is a good reason to opt for a normal distribution though:
+it has been well-studied and it is easy to work with.
+If the variance is small with respect to the runtime,
+the approximation can be acceptable.
+Furthermore, we assume that the variance is the same for both programs.
+
+Under the assumption that
+<var>μ<sub>A</sub></var> = <var>μ<sub>B</sub></var>,
