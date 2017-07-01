@@ -5,6 +5,7 @@
 sub, sup, var
 {
   line-height: 0;
+  font-family: 'Calluna Sans';
 }
 
 sub, sup
