@@ -7,7 +7,7 @@ run-in: Measuring performance is hard
 ---
 
 Measuring performance is hard.
-Interpreting the data may be even harder.
+Interpreting measurements may be even harder.
 I recently stumbled upon a Reddit thread
 where people attempted to compare performance of a few programs.
 The results went something like this:
@@ -19,10 +19,9 @@ B        5116
 
 Quickly others joined posting the results for their systems.
 At some point somebody questioned the measurement setup.
-But at no point did somebody question the conclusion.
-Clearly program B is the faster one, right?
-
-Not so fast -- from this data it is impossible to tell.
+But at no point did anybody question the conclusion
+that B is the faster program.
+In fact, from this data it is impossible to tell.
 **A single sample for every scenario provides insufficient information.**
 
 Suppose we would run the benchmark again, with the following results:
@@ -44,4 +43,41 @@ With only a single measurement,
 it is impossible to tell in which situation we are.
 In the second case,
 it is not even clear what the conclusion should be.
-Fortunately, statistics provides an answer here.
+Fortunately statistics can provide an answer here.
+
+Measurement complications
+-------------------------
+
+I started this post by claiming that measuring performance is hard.
+There are two main reasons for this.
+The various sources of noise that affect measurements are one reason.
+Examples include CPU frequency scaling,
+thermal throttling,
+cache trashing by other processes,
+quantisation noise,
+and many, many more that deserve a post of their own.
+Once you are aware of these
+it might be posible to eliminate or mitigate some of them.
+Failing to do so will make it harder to draw conclusions from your data,
+but if you get the statistics right,
+that at least will not result in *wrong* conclusions.
+
+The second reason is much more dangerous:
+it is often not obvious that you are measuring the thing you think you are measuring.
+Optimising compilers that eagerly optimise away your computation;
+measuring disk or RAM bandwidth rather than compute performance;
+and again many more complications that warrant an entire post of their own.
+Often the question of what the thing to measure should be is left implicit.
+Do you want to measure the best-case performance of a component in isolation,
+with warm caches, nothing else running on the system, etc.?
+Or do you want to measure performance in the typical use case?
+
+This post is not a measurement guide.
+For the remainder of the post I will assume
+that we know exactly what we want to measure,
+and that we have decided on a setup to measure that value reliably.
+But even with a good setup, noise is going to be inevitable.
+We have to quantify it and deal with it.
+
+A statistical test
+------------------
