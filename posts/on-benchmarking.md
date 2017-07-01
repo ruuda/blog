@@ -108,8 +108,8 @@ The alternative hypothesis does not favour any program,
 it is simply the negation of the null hypothesis.
 
 Note that we assume that the runtime follows a normal distribution --
-which might not always be a valid assumption!
-Still, there is a good reason to opt for a normal distribution:
+which might not be a valid assumption!
+Still, there is a compelling reason to opt for a normal distribution:
 it has been well-studied and it is easy to work with.
 If the variance is small with respect to the runtime,
 the approximation can be acceptable.
@@ -123,5 +123,45 @@ and conclude that one program is significantly faster than the other.
 How small? That is for you to decide, _before_ you do any measurements.
 But please think about it,
 and don’t blindly take 0.05 because you have seen that value [elsewhere][nova].
+Especially when there is no shortage of data
+because measurements can be automated,
+we can have much higher standards.
+
+The math behind the Welch’s t-test is beyond the scope of this post,
+but fortunately applying the test is easy.
+Many implementations exist, for instance in SciPy or R:
+
+```r
+# Generate random data; actual measurements go here when available.
+runtimesA <- rnorm(mean = 5800, sd = 600, n = 10)
+runtimesB <- rnorm(mean = 5400, sd = 500, n = 10)
+t.test(runtimesA, runtimesB)
+# Output:
+#
+#    Welch Two Sample t-test
+#
+# data:  runtimesA and runtimesB
+# t = 0.81516, df = 17.69, p-value = 0.4258
+# alternative hypothesis: true difference in means is not equal to 0
+# 95 percent confidence interval:
+#  -327.9776  742.9935
+# sample estimates:
+# mean of x mean of y
+#  5733.310  5525.802
+```
+
+Even though B was actually faster by construction,
+in this case we cannot conclude from the data
+that either program was significantly faster.
+To gain more confidence,
+we could increase the number of samples,
+or try to reduce the variance.
 
 [nova]: https://www.xkcd.com/1132/
+
+Presentation
+------------
+
+Something something significant digits tables.
+
+Minimum vs mean (throughput, continuous) vs median (latency, one-off).
