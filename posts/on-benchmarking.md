@@ -81,6 +81,24 @@ and that we have decided on a setup to measure that value reliably.
 But even with a good setup, noise and imprecision are going to be inevitable.
 We have to quantify them and deal with it.
 
+Presentation
+------------
+
+We have seen that one measurement per scenario is too little;
+with only one sample we don’t know what the distribution will look like.
+So we do multiple measurements.
+Then the issue becomes one of presentation:
+how do we distil the raw data into a few *useful* numbers?
+
+Arguably the best thing to do is to make a histogram.
+It captures the entire shape of the distribution,
+and other properties such as standard deviation and quantiles can be derived from it.
+A histogram contains a lot of information,
+which can sometimes make it impractical.
+A detailed histogram requires many measurements,
+and comparing two histograms by hand can be difficult.
+A statistical test can help there, which I will discuss later in this post.
+
 A statistical test
 ------------------
 
