@@ -87,7 +87,7 @@ Presentation
 We have seen that one measurement per scenario is too little;
 with only one sample we don’t know what the distribution will look like.
 So we do multiple measurements.
-Then the issue becomes one of presentation:
+Then the issue is one of presentation:
 how do we distil the raw data into a few *useful* numbers?
 
 Arguably the best thing to do is to make a histogram.
@@ -98,6 +98,32 @@ which can sometimes make it impractical.
 A detailed histogram requires many measurements,
 and comparing two histograms by hand can be difficult.
 A statistical test can help there, which I will discuss later in this post.
+
+A bit more compact is a set of quantiles.
+These admit an intuitive interpretation:
+for example, the 0.25-quantile of a data set
+is the value such that 25% of the data is smaller than that.
+The 0.5-quantile is the median.
+The choice of quantiles depends on your use case;
+0.25, 0.5, and 0.75 will give you a good idea of the spread of a distribution,
+but they say little about how bad outliers may be.
+Using 0.05, 0.5, and 0.95 will give you a good idea of outliers,
+but not whether that 90% of the data in between the 0.05 and 0.95-quantile
+is distributed evenly between the outliers,
+or highly clustered in between.
+Of course you can include more quantiles in between
+to get a more accurate description of the distribution,
+but the point was to condense the data down to a few numbers.
+Another caveat of quantiles is that you need sufficient data
+to be able to reliably compute extreme quantiles:
+If you have less than 100 data points,
+the 0.01-quantile must be estimated, rather than computed, from the data.
+And even if you have that many data points,
+extreme quantiles are very sensitive to noise.
+The 0.5-quantile on the other hand is very stable and insensitive to outliers
+even for few data points.
+
+Make a plot here, of the distribution of the 0.9-quantile and 0.5-quantile?
 
 A statistical test
 ------------------
