@@ -125,6 +125,53 @@ even for few data points.
 
 Make a plot here, of the distribution of the 0.9-quantile and 0.5-quantile?
 
+I started this post by arguing that a single number
+is not sufficient to present measurement results.
+The minimum we can distil the data to is two numbers.
+Which two?
+One approach is to summarise the data in one number,
+and to also give a deviation from that number.
+For example, we could take the mean and the standard deviation,
+but there are alternatives too,
+such as the median and the width of a 95% confidence interval.
+
+What is the best way to summarise a set of benchmark measurements in one number?
+Andrei Alexandrescu [argues][minimum] that it is the minimum:
+it is the best-case performance that you might achieve.
+While I agree that the minimum is a good summary
+if best-case performance is what you are after,
+I think that best-case performance is not always that interesting.
+When optimising a small part of a program in isolation,
+then yes, best-case performance is the thing to measure:
+everything else is noise caused by other components,
+cluttering the thing you are trying to assess.
+But if your application uses a cache that has an 80% hit rate in production,
+is it fair to discard those 20% of slower results?
+It depends on what you want to measure.
+
+* **When best-case performance of a small,
+  isolated component is what you are after,
+  use the minimum.**
+* **When throughput is what you are after,
+  use the mean.**
+  The mean is related to totals.
+  After all it is just the sum of all values scaled by a constant.
+  An interpretation of the mean is
+  “if you run the program <var>x</var> times,
+  where <var>x</var> is large,
+  the expected runtime is <var>x</var> times the mean.”
+  For a single run however, the mean can be misleading,
+  because it includes amortized outliers.
+  The mean is not necessarily representative of a typical run.
+* **If you care about latency, use the median.**
+  An interpretation of the median is
+  “if you run the program once,
+  it will be faster than the median with 50% probability.”
+  The median is less sensitive to outliers than the mean,
+  and may be a much better reflection of a typical run.
+  However, the median cannot be used to assess throughput,
+  because it fails to account for the outliers.
+
 A statistical test
 ------------------
 
@@ -201,7 +248,6 @@ To gain more confidence,
 we could increase the number of samples,
 or try to reduce the variance.
 
-[nova]: https://www.xkcd.com/1132/
 
 Presentation
 ------------
@@ -209,3 +255,6 @@ Presentation
 Something something significant digits tables.
 
 Minimum vs mean (throughput, continuous) vs median (latency, one-off).
+
+[nova]:    https://www.xkcd.com/1132/
+[minimum]: ???
