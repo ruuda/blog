@@ -257,4 +257,4 @@ Something something significant digits tables.
 Minimum vs mean (throughput, continuous) vs median (latency, one-off).
 
 [nova]:    https://www.xkcd.com/1132/
-[minimum]: ???
+[minimum]: https://youtu.be/vrfYLlR8X8k?t=15m15s
