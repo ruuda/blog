@@ -325,14 +325,17 @@ subsetFonts commands = do
   mapM_ (uncurry pushCommand) (zip (cycle stdins) commands)
   mapM_ hClose stdins
   mapM_ P.waitForProcess pids -- Wait, but ignore the exit codes.
-  where subsetScript = P.proc "/usr/bin/env" ["python3", "fonts/subset.py"]
-        -- The Python interpreter needs to have a pipe for stdin because we
-        -- want to write to it.
-        subsetScriptPiped = subsetScript { P.std_in = P.CreatePipe }
-        pushCommand stdin (SubsetCommand src dst glyphs) = do
-          hPutStrLn stdin src
-          hPutStrLn stdin dst
-          hPutStrLn stdin $ unwords glyphs
+  where
+    -- Run the Python in the virtualenv rather than the system-wide one -- I
+    -- forget to activate the virtualenv all the time. Now it is automatic.
+    subsetScript = P.proc "/usr/bin/env" ["venv/bin/python3", "fonts/subset.py"]
+    -- The Python interpreter needs to have a pipe for stdin because we
+    -- want to write to it.
+    subsetScriptPiped = subsetScript { P.std_in = P.CreatePipe }
+    pushCommand stdin (SubsetCommand src dst glyphs) = do
+      hPutStrLn stdin src
+      hPutStrLn stdin dst
+      hPutStrLn stdin $ unwords glyphs
 
 -- Given font file basename and html contents, generates subset commands that
 -- will output subsetted fonts with the given basename, and a suffix:
