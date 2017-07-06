@@ -85,48 +85,21 @@ Presentation
 ------------
 
 We have seen that one measurement per scenario is too little;
-with only one sample we don’t know what the distribution will look like.
-So we do multiple measurements.
-Then the issue is one of presentation:
+with only one sample we cannot estimate the accuracy of the measurement.
+So we measure multiple times.
+The issue then, is one of presentation:
 how do we distil the raw data into a few *useful* numbers?
-
-One way to distil a distribution into a few numbers,
-is to use quantiles.
-The 0.25-quantile of a data set for example,
-is the value such that 25% of the data is smaller than that.
-The 0.5-quantile is the median.
-The choice of quantiles depends on your use case;
-0.25, 0.5, and 0.75 will give you a good idea of the spread of a distribution,
-but they say little about how bad outliers may be.
-Using 0.05, 0.5, and 0.95 will give you a good idea of outliers,
-but not whether that 90% of the data in between the 0.05 and 0.95-quantile
-is distributed evenly between the outliers,
-or highly clustered in between.
-Of course you can include more quantiles
-to get a more accurate description of the distribution,
-but the point was to condense the data down to a few numbers.
-A caveat of quantiles is that you need sufficient data
-to be able to reliably compute extreme quantiles:
-If you have less than 100 data points,
-the 0.01-quantile must be estimated from the data, rather than computed.
-And even if you have that many data points,
-extreme quantiles are sensitive to noise.
-The 0.5-quantile on the other hand is very stable and insensitive to outliers
-even for few data points.
-
-Make a plot here, of the distribution of the 0.9-quantile and 0.5-quantile?
 
 I started this post by arguing that a single number
 is not sufficient to present measurement results.
 The minimum we can distil the data to is two numbers.
 Which two?
 One approach is to summarise the data in one number,
-and to also quantify the spread around that number.
+and to also give the spread around that number.
 For example, we could take the mean and the standard deviation,
-but there are alternatives too,
-such as the median and the width of a 95% confidence interval.
+or the median and the width of a 95% confidence interval.
 The particular measure of deviation is not very important.
-Its main role is to assess the accuracy of the summary.
+Its main role is to quantify the accuracy of the summary.
 
 What is the best way to summarise a set of benchmark measurements in one number?
 Andrei Alexandrescu [argues][minimum] that for optimisation purposes,
@@ -150,7 +123,7 @@ It depends on what you want to measure.
   The minimum might not be representative of a typical run.
 * **When throughput is what you are after,
   use the mean.**
-  The mean is related the total.
+  A mean is like a total.
   After all it is just the sum of all values scaled by a constant.
   An interpretation of the mean is
   “if you run the program <var>x</var> times,
@@ -167,6 +140,28 @@ It depends on what you want to measure.
   and may be a much better reflection of a typical run.
   However, the median cannot be used to assess throughput,
   because it fails to account for the outliers.
+
+The minimum and median are special cases of quantiles:
+the 0-quantile and 0.5-quantile.
+Other quantiles can be useful too.
+If you don’t care about latency of a typical run,
+but rather about worst-case performance,
+the 0.9 or even 0.99-quantile may be a good summary.
+(The maximum is rarely a good idea,
+because a program can experience
+an unbounded amount of slowdown in unlucky cases,
+whereas there is a limit to how quickly a program can run.)
+A caveat of extreme quantiles is that you need sufficient data
+to be able to compute them reliably:
+if you have less than 100 data points,
+the 0.01-quantile must be extrapolated from the data, rather than computed.
+And even if you have that many data points,
+extreme quantiles are sensitive to noise.
+The 0.5-quantile on the other hand
+is usually very stable and insensitive to outliers
+even for few data points.
+
+Make a plot here, of the distribution of the 0.9-quantile and 0.5-quantile?
 
 A statistical test
 ------------------
