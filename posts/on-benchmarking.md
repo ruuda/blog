@@ -199,7 +199,9 @@ it is simply the negation of the null hypothesis.
 Note that we assume that the runtime follows a normal distribution --
 which might not be a valid assumption!
 Still, there is a compelling reason to opt for a normal distribution:
-it has been well-studied and it is easy to work with.
+it has been well-studied,
+it is easy to work with,
+and the tools for that are readily available.
 If the variance is small with respect to the runtime,
 the approximation can be acceptable.
 
