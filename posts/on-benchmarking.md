@@ -166,9 +166,16 @@ Make a plot here, of the distribution of the 0.9-quantile and 0.5-quantile?
 A statistical test
 ------------------
 
-Let’s say we set out to answer the question
-“is program B faster than program A?”
-The proper way to answer such a question is with a statistical test.
+Suppose that we measured properly,
+and we end up with the following results (mean and standard deviation):
+
+Program  Runtime (s)
+-------  -----------
+A        5.88 ± 0.69
+B        5.56 ± 0.51
+
+Can we now conclude that B is faster than A?
+The proper way to settle the matter is with a statistical test.
 A statistical test always has the same form.
 First we state the null hypothesis,
 the claim that we assume to be true without sufficient evidence of the contrary.
@@ -197,7 +204,7 @@ If the variance is small with respect to the runtime,
 the approximation can be acceptable.
 
 Under the above assumptions,
-we can apply Welch’s t-test to measured data to obtain a _p-value_:
+we can apply Welch’s t-test to obtain a _p-value_:
 the probability of an observation at least as extreme as the actual data,
 under the assumption that the null hypothesis is true.
 If that probability is small, we reject the null hypothesis,
@@ -211,7 +218,7 @@ we can have much higher standards.
 
 The math behind the Welch’s t-test is beyond the scope of this post,
 but fortunately applying the test is easy.
-Many implementations exist, for instance in SciPy or R:
+Many implementations exist, for instance in R:
 
 ```r
 # Generate random data; actual measurements go here when available.
