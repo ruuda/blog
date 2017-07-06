@@ -90,18 +90,9 @@ So we do multiple measurements.
 Then the issue is one of presentation:
 how do we distil the raw data into a few *useful* numbers?
 
-Arguably the best thing to do is to make a histogram.
-It captures the entire shape of the distribution,
-and other properties such as standard deviation and quantiles can be derived from it.
-A histogram contains a lot of information,
-which can sometimes make it impractical.
-A detailed histogram requires many measurements,
-and comparing two histograms by hand can be difficult.
-A statistical test can help there, which I will discuss later in this post.
-
-A bit more compact is a set of quantiles.
-These admit an intuitive interpretation:
-for example, the 0.25-quantile of a data set
+One way to distil a distribution into a few numbers,
+is to use quantiles.
+The 0.25-quantile of a data set for example,
 is the value such that 25% of the data is smaller than that.
 The 0.5-quantile is the median.
 The choice of quantiles depends on your use case;
@@ -111,15 +102,15 @@ Using 0.05, 0.5, and 0.95 will give you a good idea of outliers,
 but not whether that 90% of the data in between the 0.05 and 0.95-quantile
 is distributed evenly between the outliers,
 or highly clustered in between.
-Of course you can include more quantiles in between
+Of course you can include more quantiles
 to get a more accurate description of the distribution,
 but the point was to condense the data down to a few numbers.
-Another caveat of quantiles is that you need sufficient data
+A caveat of quantiles is that you need sufficient data
 to be able to reliably compute extreme quantiles:
 If you have less than 100 data points,
-the 0.01-quantile must be estimated, rather than computed, from the data.
+the 0.01-quantile must be estimated from the data, rather than computed.
 And even if you have that many data points,
-extreme quantiles are very sensitive to noise.
+extreme quantiles are sensitive to noise.
 The 0.5-quantile on the other hand is very stable and insensitive to outliers
 even for few data points.
 
@@ -130,17 +121,20 @@ is not sufficient to present measurement results.
 The minimum we can distil the data to is two numbers.
 Which two?
 One approach is to summarise the data in one number,
-and to also give a deviation from that number.
+and to also quantify the spread around that number.
 For example, we could take the mean and the standard deviation,
 but there are alternatives too,
 such as the median and the width of a 95% confidence interval.
+The particular measure of deviation is not very important.
+Its main role is to assess the accuracy of the summary.
 
 What is the best way to summarise a set of benchmark measurements in one number?
-Andrei Alexandrescu [argues][minimum] that it is the minimum:
+Andrei Alexandrescu [argues][minimum] that for optimisation purposes,
+it is the minimum:
 it is the best-case performance that you might achieve.
 While I agree that the minimum is a good summary
 if best-case performance is what you are after,
-I think that best-case performance is not always that interesting.
+the best case is not always that interesting.
 When optimising a small part of a program in isolation,
 then yes, best-case performance is the thing to measure:
 everything else is noise caused by other components,
@@ -149,12 +143,14 @@ But if your application uses a cache that has an 80% hit rate in production,
 is it fair to discard those 20% of slower results?
 It depends on what you want to measure.
 
-* **When best-case performance of a small,
-  isolated component is what you are after,
-  use the minimum.**
+* **When optimising a component in isolation,
+  take the minimum.**
+  If you are timing a deterministic computation,
+  anything other than the minimum is external interference.
+  The minimum might not be representative of a typical run.
 * **When throughput is what you are after,
   use the mean.**
-  The mean is related to totals.
+  The mean is related the total.
   After all it is just the sum of all values scaled by a constant.
   An interpretation of the mean is
   “if you run the program <var>x</var> times,
