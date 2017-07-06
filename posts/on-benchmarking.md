@@ -20,7 +20,7 @@ B        5116
 
 Quickly others joined posting the results for their systems.
 At some point somebody questioned the measurement setup.
-But at no point did anybody question the conclusion
+But at no point did anybody question the idea
 that B is the faster program.
 Yet, from this data it is impossible to tell.
 **A single sample for every scenario provides insufficient information.**
@@ -32,7 +32,7 @@ Program  Runtime (ms)
 A        6358
 B        5123
 
-Such a result would increase our confidence in the conclusion.
+Such a result would increase our confidence in the hypothesis that B is faster.
 On the other hand, a result like the following would lead us to question it:
 
 Program  Runtime (ms)
@@ -153,8 +153,8 @@ an unbounded amount of slowdown in unlucky cases,
 whereas there is a limit to how quickly a program can run.)
 A caveat of extreme quantiles is that you need sufficient data
 to be able to compute them reliably:
-if you have less than 100 data points,
-the 0.01-quantile must be extrapolated from the data, rather than computed.
+if you have less than 50 data points,
+the 0.98 and 0.99-quantiles are interpolated from the same two samples.
 And even if you have that many data points,
 extreme quantiles are sensitive to noise.
 The 0.5-quantile on the other hand
@@ -238,14 +238,6 @@ that either program was significantly faster.
 To gain more confidence,
 we could increase the number of samples,
 or try to reduce the variance.
-
-
-Presentation
-------------
-
-Something something significant digits tables.
-
-Minimum vs mean (throughput, continuous) vs median (latency, one-off).
 
 [nova]:    https://www.xkcd.com/1132/
 [minimum]: https://youtu.be/vrfYLlR8X8k?t=15m15s
