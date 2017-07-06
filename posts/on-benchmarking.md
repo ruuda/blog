@@ -8,8 +8,8 @@ math: true
 ---
 
 Measuring performance is hard.
-Interpreting measurements may be even harder.
-I recently stumbled upon a Reddit thread
+Presenting measurements may be even harder.
+Recently I stumbled upon a Reddit thread
 where people attempted to compare performance of a few programs.
 The results went something like this:
 
@@ -171,8 +171,8 @@ and we end up with the following results (mean and standard deviation):
 
 Program  Runtime (s)
 -------  -----------
-A        5.88 ± 0.69
-B        5.56 ± 0.51
+A        5.73 ± 0.69
+B        5.53 ± 0.51
 
 Can we now conclude that B is faster than A?
 The proper way to settle the matter is with a statistical test.
@@ -245,6 +245,18 @@ that either program was significantly faster.
 To gain more confidence,
 we could increase the number of samples,
 or try to reduce the variance.
+
+Conclusion
+----------
+
+Measuring performance is hard.
+Presenting measurements may be even harder.
+With only one sample, you cannot estimate the accuracy of a measurement.
+Measure many times,
+and include an estimate of the variance in the results.
+Finally,
+don’t trust your judgement when comparing measurements.
+Use a statistical test instead.
 
 [nova]:    https://www.xkcd.com/1132/
 [minimum]: https://youtu.be/vrfYLlR8X8k?t=15m15s
