@@ -2,7 +2,7 @@
 title: On benchmarking
 date: 2017-07-01
 minutes: ??
-synopsis: ??
+synopsis: Measuring performance is hard. Presenting measurements may be even harder. Here is my advice on judging software performance data.
 run-in: Measuring performance is hard
 math: true
 ---
