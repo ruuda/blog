@@ -20,8 +20,8 @@
 @font-face
 {
   font-family: Calluna Sans;
-  src: url(/fonts/r{{roman-hash}}.woff2) format("woff2"),
-       url(/fonts/r{{roman-hash}}.woff)  format("woff");
+  src: url(/fonts/r{{sans-roman-hash}}.woff2) format("woff2"),
+       url(/fonts/r{{sans-roman-hash}}.woff)  format("woff");
 }
 
 {{if bold-font}}
@@ -29,8 +29,8 @@
 {
   font-family: Calluna Sans;
   font-weight: bold;
-  src: url(/fonts/b{{bold-hash}}.woff2) format("woff2"),
-       url(/fonts/b{{bold-hash}}.woff)  format("woff");
+  src: url(/fonts/b{{sans-bold-hash}}.woff2) format("woff2"),
+       url(/fonts/b{{sans-bold-hash}}.woff)  format("woff");
 }
 {{end}}
 
@@ -39,8 +39,8 @@
 {
   font-family: Calluna Sans;
   font-style: italic;
-  src: url(/fonts/i{{italic-hash}}.woff2) format("woff2"),
-       url(/fonts/i{{italic-hash}}.woff)  format("woff");
+  src: url(/fonts/i{{sans-italic-hash}}.woff2) format("woff2"),
+       url(/fonts/i{{sans-italic-hash}}.woff)  format("woff");
 }
 {{end}}
 

@@ -20,11 +20,13 @@ import Data.Maybe (fromJust, isJust)
 import Numeric (showHex)
 import System.IO (hClose, hPutStrLn)
 
+import qualified Data.Map as Map
 import qualified Data.Set as Set
 import qualified System.Process as P
 import qualified Text.HTML.TagSoup as S
 
 import qualified Html
+import qualified Template
 
 --type Tag = Html.Tag
 type TagProperties = Html.TagProperties
@@ -360,7 +362,7 @@ subsetFonts commands = do
 --
 -- Then I want the collision probability to be at most 10e-5 or so, so taking 32
 -- bits works. 28 might work as well, but I'll take 32 to be safe.
-contentName :: [String] -> FilePath
+contentName :: [String] -> String
 contentName glyphNames =
   let
     signedHash = fromIntegral (hash glyphNames) :: Word32
@@ -370,17 +372,18 @@ contentName glyphNames =
   in
     prefix ++ name
 
--- Given font file basename and html contents, generates subset commands that
--- will output subsetted fonts with the given basename and a content-based
+-- Given font destination directory and html contents, generates subset commands
+-- that will output subsetted fonts with the given basename and a content-based
 -- suffix:
 --
 --  * "m" for monospace, subset of Inconsolata.
 --  * "sr", "si", and "sb" for the roman, italic, and bold subset of Calluna.
 --  * "r", "i", and "b" for their sans-serif variants, subset of Calluna Sans.
 --
---  Both a woff and woff2 file will be written.
-subsetArtifact :: FilePath -> String -> [SubsetCommand]
-subsetArtifact baseName html = filter isUseful commands
+-- Both a woff and woff2 file will be written. Also returns a template context
+-- that contains the font file basenames.
+subsetArtifact :: FilePath -> String -> (Template.Context, [SubsetCommand])
+subsetArtifact fontOutDir html = (fontContext, filter isUseful commands)
   where isUseful (SubsetCommand _ _ glyphs) = not $ null glyphs
         fontPieces = mapFontFull html
 
@@ -392,9 +395,9 @@ subsetArtifact baseName html = filter isUseful commands
         sansBoldGlyphs    = getGlyphs (Sans,  Bold,    Roman)  WithLigatures fontPieces
         monoGlyphs        = getGlyphs (Mono,  Regular, Roman)  NoLigatures   fontPieces
 
-        fontDir = "fonts/generated/"
+        fontInDir = "fonts/generated/"
         subset file prefix glyphs =
-          SubsetCommand (fontDir ++ file) (baseName ++ prefix ++ contentName glyphs) glyphs
+          SubsetCommand (fontInDir ++ file) (fontOutDir ++ prefix ++ contentName glyphs) glyphs
 
         serifItalicCommand = subset "calluna-italic.otf"      "si" serifItalicGlyphs
         serifRomanCommand  = subset "calluna.otf"             "sr" serifRomanGlyphs
@@ -403,6 +406,16 @@ subsetArtifact baseName html = filter isUseful commands
         sansRomanCommand   = subset "calluna-sans.otf"        "r"  sansRomanGlyphs
         sansBoldCommand    = subset "calluna-sans-bold.otf"   "b"  sansBoldGlyphs
         monoCommand        = subset "inconsolata.otf"         "m"  monoGlyphs
+
+        fontContext = Map.unions
+          [ Template.stringField "serif-italic-hash" $ contentName serifItalicGlyphs
+          , Template.stringField "serif-roman-hash"  $ contentName serifRomanGlyphs
+          , Template.stringField "serif-bold-hash"   $ contentName serifBoldGlyphs
+          , Template.stringField "sans-italic-hash"  $ contentName sansItalicGlyphs
+          , Template.stringField "sans-roman-hash"   $ contentName sansRomanGlyphs
+          , Template.stringField "sans-bold-hash"    $ contentName sansBoldGlyphs
+          , Template.stringField "mono-hash"         $ contentName monoGlyphs
+          ]
 
         commands = [ serifItalicCommand, serifRomanCommand, serifBoldCommand
                    , sansItalicCommand,  sansRomanCommand,  sansBoldCommand

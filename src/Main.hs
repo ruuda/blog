@@ -14,11 +14,12 @@ import System.Process
 
 import qualified Data.Map as M
 
+import Type (SubsetCommand, subsetArtifact, subsetFonts)
+import Minification (minifyHtml)
+
 import qualified Image
-import           Minification (minifyHtml)
 import qualified Post as P
 import qualified Template
-import           Type (subsetArtifact, subsetFonts)
 
 -- Applies the IO-performing function f to every file in a given directory if
 -- the filename satisfies the predicate p.
@@ -55,9 +56,6 @@ readPost fname = fmap makePost $ readFile fname
 readPosts :: FilePath -> IO [P.Post]
 readPosts = mapFilesIf ((== ".md") . takeExtension) readPost
 
--- An artifact is the html content of a page.
-type Artifact = String
-
 -- Holds the output directory and input image directory.
 data Config = Config { outDir   :: FilePath
                      , imageDir :: FilePath }
@@ -70,38 +68,46 @@ gzipFile fname = System.Process.callProcess "zopfli" [fname]
 -- of the posts and writes them to the output directory. This also prints a list
 -- of processed posts to the standard output. Start numbering post artifacts at
 -- 53, lower indices are reserved for other pages.
-writePosts :: Template.Template -> Template.Context -> [P.Post] -> Config -> IO [Artifact]
-writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelated
+writePosts :: Template.Template -> Template.Context -> [P.Post] -> Config -> IO [SubsetCommand]
+writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1 :: Int, []) withRelated
   where total       = length posts
         withRelated = P.selectRelated posts
-        writePost (i, artifacts) (post, related) = do
+        writePost (i, commands) (post, related) = do
           let destFile = (outDir config) </> (drop 1 $ P.url post) </> "index.html"
               context  = M.unions [ P.context post
                                   , P.relatedContext related
                                   , ctx]
-              html     = Template.apply tmpl context
+              -- Generating the html is a two-stage process: first we render the
+              -- template without knowing the font filenames, as those are based
+              -- on the hash of the glyphs. Then we scan which glyphs occur in
+              -- there to determine the hash, and then we can render again.
+              baseHtml = Template.apply tmpl context
+              (fontCtx, subsetCmds) = Type.subsetArtifact "out/fonts/" baseHtml
+              html = Template.apply tmpl (context <> fontCtx)
           withImages  <- Image.processImages (imageDir config) html
           let minified = minifyHtml withImages
-              artifact = minified
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
           writeFile destFile minified
           gzipFile destFile
-          return $ (i + 1, artifact:artifacts)
+          return $ (i + 1, subsetCmds ++ commands)
 
 -- Writes a general (non-post) page given a template and expansion context.
-writePage :: String -> Template.Context -> Template.Template -> Config -> IO Artifact
+-- Returns the subset commands that need to be executed for that page.
+writePage :: String -> Template.Context -> Template.Template -> Config -> IO [SubsetCommand]
 writePage url pageContext template config = do
   let context  = Template.stringField "url" url <> pageContext
-      html     = minifyHtml $ Template.apply template context
+      baseHtml = Template.apply template context
+      (fontCtx, subsetCmds) = Type.subsetArtifact "out/fonts/" baseHtml
+      html     = minifyHtml $ Template.apply template (context <> fontCtx)
       destDir  = (outDir config) </> (tail url)
       destFile = destDir </> "index.html"
   createDirectoryIfMissing True destDir
   writeFile destFile html
   gzipFile destFile
-  pure html
+  pure subsetCmds
 
-writeIndex :: Template.Context -> Template.Template -> Config -> IO Artifact
+writeIndex :: Template.Context -> Template.Template -> Config -> IO [SubsetCommand]
 writeIndex globalContext = writePage "/" context
   where context = M.unions [ Template.stringField "title"     "Ruud van Asseldonk"
                            , Template.stringField "bold-font" "true"
@@ -110,7 +116,7 @@ writeIndex globalContext = writePage "/" context
 
 -- Given the archive template and the global context, writes the archive page
 -- to the destination directory.
-writeArchive :: Template.Context -> Template.Template -> [P.Post] -> Config -> IO Artifact
+writeArchive :: Template.Context -> Template.Template -> [P.Post] -> Config -> IO [SubsetCommand]
 writeArchive globalContext template posts = writePage "/writing" context template
   where context = M.unions [ P.archiveContext posts
                            , Template.stringField "title"     "Writing by Ruud van Asseldonk"
@@ -120,7 +126,7 @@ writeArchive globalContext template posts = writePage "/writing" context templat
 
 -- Given the contact template and the global context, writes the contact page
 -- to the destination directory.
-writeContact :: Template.Context -> Template.Template -> Config -> IO Artifact
+writeContact :: Template.Context -> Template.Template -> Config -> IO [SubsetCommand]
 writeContact globalContext = writePage "/contact" context
   where context = M.unions [ Template.stringField "title" "Contact Ruud van Asseldonk"
                            , Template.stringField "light" "true"
@@ -136,13 +142,6 @@ writeFeed template posts config = do
   createDirectoryIfMissing True (outDir config)
   writeFile destFile atom
   gzipFile destFile
-
--- Subsets fonts for every page, putting subsetted fonts in the specified
--- directory with a name based on the post number and a font-specific suffix.
-subsetFontsForArtifacts :: [Artifact] -> FilePath -> IO ()
-subsetFontsForArtifacts artifacts fontDir = do
-  createDirectoryIfMissing True fontDir
-  subsetFonts $ concatMap (subsetArtifact fontDir) artifacts
 
 main :: IO ()
 main = do
@@ -162,12 +161,12 @@ main = do
   copyFiles "images/compressed/" "out/images/"
 
   putStrLn "Writing posts..."
-  postArtifacts <- writePosts (templates M.! "post.html") globalContext posts config
+  postCmds <- writePosts (templates M.! "post.html") globalContext posts config
 
   putStrLn "Writing other pages..."
-  indexArtifact   <- writeIndex   globalContext (templates M.! "index.html")   config
-  contactArtifact <- writeContact globalContext (templates M.! "contact.html") config
-  archiveArtifact <- writeArchive globalContext (templates M.! "archive.html") posts config
+  indexCmd   <- writeIndex   globalContext (templates M.! "index.html")   config
+  contactCmd <- writeContact globalContext (templates M.! "contact.html") config
+  archiveCmd <- writeArchive globalContext (templates M.! "archive.html") posts config
 
   copyFile "assets/.htaccess"            "out/.htaccess"
   copyFile "assets/favicon.png"          "out/favicon.png"
@@ -177,5 +176,7 @@ main = do
   writeFeed (templates M.! "feed.xml") posts config
 
   putStrLn "Subsetting fonts..."
-  let artifacts = indexArtifact : contactArtifact : archiveArtifact : postArtifacts
-  subsetFontsForArtifacts artifacts "out/fonts/"
+  createDirectoryIfMissing True "out/fonts"
+  let cmds = concat [indexCmd, contactCmd, archiveCmd, postCmds]
+  -- TODO: Filter existing.
+  subsetFonts cmds
