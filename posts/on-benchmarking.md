@@ -185,8 +185,8 @@ Concretely, we might go about that as follows:
 
 Assume that the runtimes of A and B follow a normal distribution with
 means <var>μ<sub>A</sub></var> and <var>μ<sub>B</sub></var>
-and variance <var>σ<sub>A</sub><sup>2</sup></var>
-and <var>σ<sub>B</sub><sup>2</sup></var> respectively.
+and variance <var>σ<sub>A</sub></var><sup>2</sup>
+and <var>σ<sub>B</sub></var><sup>2</sup> respectively.
 We take as null hypothesis <var>μ<sub>A</sub></var> = <var>μ<sub>B</sub></var>,
 i.e. neither program is faster than the other.
 By extension, the alternative hypothesis is
