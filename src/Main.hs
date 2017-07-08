@@ -144,16 +144,12 @@ writeFeed template posts config = do
   writeFile destFile atom
   gzipFile destFile
 
-mapFst :: (a -> b) -> (a, c) -> (b, c)
-mapFst f (x, y) = (f x, y)
-
 -- Subsets fonts for every page, putting subsetted fonts in the specified
 -- directory with a name based on the post number and a font-specific suffix.
 subsetFontsForArtifacts :: [Artifact] -> FilePath -> IO ()
 subsetFontsForArtifacts artifacts fontDir = do
   createDirectoryIfMissing True fontDir
-  subsetFonts $ concatMap (uncurry subsetArtifact) namedArtifacts
-  where namedArtifacts = fmap (mapFst $ \i -> fontDir ++ (show i)) artifacts
+  subsetFonts $ concatMap (subsetArtifact fontDir . snd) artifacts
 
 main :: IO ()
 main = do

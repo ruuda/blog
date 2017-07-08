@@ -13,11 +13,14 @@ module Type ( SubsetCommand
             , usesSerifItalicFont
             ) where
 
-import           Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter,
-                            isSpace, ord, toLower)
-import           Data.Maybe (fromJust, isJust)
+import Data.Word (Word32)
+import Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter, isSpace, ord, toLower)
+import Data.Hashable (hash)
+import Data.Maybe (fromJust, isJust)
+import Numeric (showHex)
+import System.IO (hClose, hPutStrLn)
+
 import qualified Data.Set as Set
-import           System.IO (hClose, hPutStrLn)
 import qualified System.Process as P
 import qualified Text.HTML.TagSoup as S
 
@@ -337,8 +340,39 @@ subsetFonts commands = do
       hPutStrLn stdin dst
       hPutStrLn stdin $ unwords glyphs
 
+-- Given a list of glyph names, return a short filename based on a hash of the
+-- content, such that if the content changes, the name is different. Subsetted
+-- fonts are stored "content-addressable". The file contents are immutable. The
+-- advantage of this is that the content is stable, so if the file exists, it
+-- does not need to be generated, and also that if the content does change, the
+-- filename is different, which means there are no issues with cache
+-- invalidation.
+--
+-- There is one question: how long to make the hash? It should be short, because
+-- the filename will essentially be random. Including a few random file names in
+-- my pages will increase the page size, so the hashes should not be longer than
+-- necessary. On the other hand, they should be long enough to be practically
+-- unique and avoid collisions. It's an instance of the birthday problem. I have
+-- about 30 pages on my blog at the moment of writing. Let's say I will have at
+-- most 200 pages ever. The collision probability can be computed as
+--
+--     1 - (1 - 1/2^bits) ^ choose(npages, 2)
+--
+-- Then I want the collision probability to be at most 10e-5 or so, so taking 32
+-- bits works. 28 might work as well, but I'll take 32 to be safe.
+contentName :: [String] -> FilePath
+contentName glyphNames =
+  let
+    signedHash = fromIntegral (hash glyphNames) :: Word32
+    appendHexHash = showHex signedHash
+    name = appendHexHash ""
+    prefix = take (8 - (length name)) (repeat '0') -- Left-pad with zeros.
+  in
+    prefix ++ name
+
 -- Given font file basename and html contents, generates subset commands that
--- will output subsetted fonts with the given basename, and a suffix:
+-- will output subsetted fonts with the given basename and a content-based
+-- suffix:
 --
 --  * "m" for monospace, subset of Inconsolata.
 --  * "sr", "si", and "sb" for the roman, italic, and bold subset of Calluna.
@@ -359,7 +393,8 @@ subsetArtifact baseName html = filter isUseful commands
         monoGlyphs        = getGlyphs (Mono,  Regular, Roman)  NoLigatures   fontPieces
 
         fontDir = "fonts/generated/"
-        subset file suffix glyphs = SubsetCommand (fontDir ++ file) (baseName ++ suffix) glyphs
+        subset file prefix glyphs =
+          SubsetCommand (fontDir ++ file) (baseName ++ prefix ++ contentName glyphs) glyphs
 
         serifItalicCommand = subset "calluna-italic.otf"      "si" serifItalicGlyphs
         serifRomanCommand  = subset "calluna.otf"             "sr" serifRomanGlyphs
