@@ -70,8 +70,11 @@ gzipFile fname = System.Process.callProcess "zopfli" [fname]
 -- 53, lower indices are reserved for other pages.
 writePosts :: Template.Template -> Template.Context -> [P.Post] -> Config -> IO [SubsetCommand]
 writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1 :: Int, []) withRelated
-  where total       = length posts
-        withRelated = P.selectRelated posts
+  where total = length posts
+        -- Reverse the list of posts, so the most recent one is rendered first.
+        -- This makes the preview workflow faster, because the most recent post
+        -- in the list is likely the one that I want to view.
+        withRelated = reverse $ P.selectRelated posts
         writePost (i, commands) (post, related) = do
           let destFile = (outDir config) </> (drop 1 $ P.url post) </> "index.html"
               context  = M.unions [ P.context post
