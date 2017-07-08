@@ -4,13 +4,15 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-import           Control.Monad (filterM, foldM, void)
+import Control.Monad (filterM, foldM, void)
+import Data.Monoid ((<>))
+import Data.Time.Calendar (toGregorian)
+import Data.Time.Clock (getCurrentTime, utctDay)
+import System.Directory (doesFileExist, copyFile, createDirectoryIfMissing, getDirectoryContents)
+import System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeFileName)
+import System.Process
+
 import qualified Data.Map as M
-import           Data.Time.Calendar (toGregorian)
-import           Data.Time.Clock (getCurrentTime, utctDay)
-import           System.Directory (doesFileExist, copyFile, createDirectoryIfMissing, getDirectoryContents)
-import           System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeFileName)
-import           System.Process
 
 import qualified Image
 import           Minification (minifyHtml)
@@ -53,11 +55,8 @@ readPost fname = fmap makePost $ readFile fname
 readPosts :: FilePath -> IO [P.Post]
 readPosts = mapFilesIf ((== ".md") . takeExtension) readPost
 
--- An artifact is a numbered page plus its html contents.
-type Artifact = (Int, String)
-
-pageIdContext :: Int -> Template.Context
-pageIdContext i = Template.stringField "page-id" $ show i
+-- An artifact is the html content of a page.
+type Artifact = String
 
 -- Holds the output directory and input image directory.
 data Config = Config { outDir   :: FilePath
@@ -74,19 +73,16 @@ gzipFile fname = System.Process.callProcess "zopfli" [fname]
 writePosts :: Template.Template -> Template.Context -> [P.Post] -> Config -> IO [Artifact]
 writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelated
   where total       = length posts
-        pageIdSeed  = 52
         withRelated = P.selectRelated posts
         writePost (i, artifacts) (post, related) = do
           let destFile = (outDir config) </> (drop 1 $ P.url post) </> "index.html"
-              pageId   = pageIdSeed + i
               context  = M.unions [ P.context post
                                   , P.relatedContext related
-                                  , pageIdContext pageId
                                   , ctx]
               html     = Template.apply tmpl context
           withImages  <- Image.processImages (imageDir config) html
           let minified = minifyHtml withImages
-              artifact = (pageId, minified)
+              artifact = minified
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
           writeFile destFile minified
@@ -94,22 +90,19 @@ writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1, []) withRelate
           return $ (i + 1, artifact:artifacts)
 
 -- Writes a general (non-post) page given a template and expansion context.
-writePage :: Int -> String -> Template.Context -> Template.Template -> Config -> IO Artifact
-writePage pageId url pageContext template config = do
-  let context  = M.unions [ Template.stringField "url" url
-                          , pageIdContext pageId
-                          , pageContext ]
+writePage :: String -> Template.Context -> Template.Template -> Config -> IO Artifact
+writePage url pageContext template config = do
+  let context  = Template.stringField "url" url <> pageContext
       html     = minifyHtml $ Template.apply template context
-      artifact = (pageId, html)
       destDir  = (outDir config) </> (tail url)
       destFile = destDir </> "index.html"
   createDirectoryIfMissing True destDir
   writeFile destFile html
   gzipFile destFile
-  return artifact
+  pure html
 
 writeIndex :: Template.Context -> Template.Template -> Config -> IO Artifact
-writeIndex globalContext = writePage 0 "/" context
+writeIndex globalContext = writePage "/" context
   where context = M.unions [ Template.stringField "title"     "Ruud van Asseldonk"
                            , Template.stringField "bold-font" "true"
                            , Template.stringField "light"     "true"
@@ -118,7 +111,7 @@ writeIndex globalContext = writePage 0 "/" context
 -- Given the archive template and the global context, writes the archive page
 -- to the destination directory.
 writeArchive :: Template.Context -> Template.Template -> [P.Post] -> Config -> IO Artifact
-writeArchive globalContext template posts = writePage 1 "/writing" context template
+writeArchive globalContext template posts = writePage "/writing" context template
   where context = M.unions [ P.archiveContext posts
                            , Template.stringField "title"     "Writing by Ruud van Asseldonk"
                            , Template.stringField "bold-font" "true"
@@ -128,9 +121,9 @@ writeArchive globalContext template posts = writePage 1 "/writing" context templ
 -- Given the contact template and the global context, writes the contact page
 -- to the destination directory.
 writeContact :: Template.Context -> Template.Template -> Config -> IO Artifact
-writeContact globalContext = writePage 2 "/contact" context
-  where context = M.unions [ Template.stringField "title"     "Contact Ruud van Asseldonk"
-                           , Template.stringField "light"     "true"
+writeContact globalContext = writePage "/contact" context
+  where context = M.unions [ Template.stringField "title" "Contact Ruud van Asseldonk"
+                           , Template.stringField "light" "true"
                            , globalContext ]
 
 -- Given the feed template and list of posts, writes an atom feed.
@@ -149,7 +142,7 @@ writeFeed template posts config = do
 subsetFontsForArtifacts :: [Artifact] -> FilePath -> IO ()
 subsetFontsForArtifacts artifacts fontDir = do
   createDirectoryIfMissing True fontDir
-  subsetFonts $ concatMap (subsetArtifact fontDir . snd) artifacts
+  subsetFonts $ concatMap (subsetArtifact fontDir) artifacts
 
 main :: IO ()
 main = do

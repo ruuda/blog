@@ -12,16 +12,16 @@
 @font-face
 {
   font-family: Inconsolata;
-  src: url(/fonts/{{page-id}}m.woff2) format("woff2"),
-       url(/fonts/{{page-id}}m.woff)  format("woff");
+  src: url(/fonts/m{{mono-hash}}.woff2) format("woff2"),
+       url(/fonts/m{{mono-hash}}.woff)  format("woff");
 }
 {{end}}
 
 @font-face
 {
   font-family: Calluna Sans;
-  src: url(/fonts/{{page-id}}r.woff2) format("woff2"),
-       url(/fonts/{{page-id}}r.woff)  format("woff");
+  src: url(/fonts/r{{roman-hash}}.woff2) format("woff2"),
+       url(/fonts/r{{roman-hash}}.woff)  format("woff");
 }
 
 {{if bold-font}}
@@ -29,8 +29,8 @@
 {
   font-family: Calluna Sans;
   font-weight: bold;
-  src: url(/fonts/{{page-id}}b.woff2) format("woff2"),
-       url(/fonts/{{page-id}}b.woff)  format("woff");
+  src: url(/fonts/b{{bold-hash}}.woff2) format("woff2"),
+       url(/fonts/b{{bold-hash}}.woff)  format("woff");
 }
 {{end}}
 
@@ -39,24 +39,24 @@
 {
   font-family: Calluna Sans;
   font-style: italic;
-  src: url(/fonts/{{page-id}}i.woff2) format("woff2"),
-       url(/fonts/{{page-id}}i.woff)  format("woff");
+  src: url(/fonts/i{{italic-hash}}.woff2) format("woff2"),
+       url(/fonts/i{{italic-hash}}.woff)  format("woff");
 }
 {{end}}
 
 @font-face
 {
   font-family: Calluna;
-  src: url(/fonts/{{page-id}}sr.woff2) format("woff2"),
-       url(/fonts/{{page-id}}sr.woff)  format("woff");
+  src: url(/fonts/sr{{serif-roman-hash}}.woff2) format("woff2"),
+       url(/fonts/sr{{serif-roman-hash}}.woff)  format("woff");
 }
 
 @font-face
 {
   font-family: Calluna;
   font-weight: bold;
-  src: url(/fonts/{{page-id}}sb.woff2) format("woff2"),
-       url(/fonts/{{page-id}}sb.woff)  format("woff");
+  src: url(/fonts/sb{{serif-bold-hash}}.woff2) format("woff2"),
+       url(/fonts/sb{{serif-bold-hash}}.woff)  format("woff");
 }
 
 {{if serif-italic-font}}
@@ -64,7 +64,7 @@
 {
   font-family: Calluna;
   font-style: italic;
-  src: url(/fonts/{{page-id}}si.woff2) format("woff2"),
-       url(/fonts/{{page-id}}si.woff)  format("woff");
+  src: url(/fonts/si{{serif-italic-hash}}.woff2) format("woff2"),
+       url(/fonts/si{{serif-italic-hash}}.woff)  format("woff");
 }
 {{end}}
