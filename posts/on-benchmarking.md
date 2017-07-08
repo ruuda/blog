@@ -141,27 +141,25 @@ It depends on what you want to measure.
   However, the median cannot be used to assess throughput,
   because it fails to account for the outliers.
 
-The minimum and median are special cases of quantiles:
-the 0-quantile and 0.5-quantile.
-Other quantiles can be useful too.
+The minimum and median are special cases of percentiles:
+the 0th percentile and 50th percentile.
+Other percentiles can be useful too.
 If you don’t care about latency of a typical run,
 but rather about worst-case performance,
-the 0.9 or even 0.99-quantile may be a good summary.
+the 90th or even 99th percentile may be a good summary.
 (The maximum is rarely a good idea,
 because a program can experience
 an unbounded amount of slowdown in unlucky cases,
 whereas there is a limit to how quickly a program can run.)
-A caveat of extreme quantiles is that you need sufficient data
+A caveat of extreme percentiles is that you need sufficient data
 to be able to compute them reliably:
 if you have less than 50 data points,
-the 0.98 and 0.99-quantiles are interpolated from the same two samples.
+the 98th and 99th percentiles are interpolated from the same two samples.
 And even if you have that many data points,
-extreme quantiles are sensitive to noise.
-The 0.5-quantile on the other hand
+extreme percentiles are sensitive to noise.
+The median on the other hand
 is usually very stable and insensitive to outliers
 even for few data points.
-
-Make a plot here, of the distribution of the 0.9-quantile and 0.5-quantile?
 
 A statistical test
 ------------------
