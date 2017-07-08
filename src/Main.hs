@@ -180,6 +180,5 @@ main = do
 
   putStrLn "Subsetting fonts..."
   createDirectoryIfMissing True "out/fonts"
-  let cmds = concat [indexCmd, contactCmd, archiveCmd, postCmds]
-  -- TODO: Filter existing.
-  subsetFonts cmds
+  nSubsetted <- subsetFonts $ concat [indexCmd, contactCmd, archiveCmd, postCmds]
+  putStrLn $ "Subsetted " ++ show nSubsetted ++ " new fonts."

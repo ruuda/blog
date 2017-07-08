@@ -13,12 +13,14 @@ module Type ( SubsetCommand
             , usesSerifItalicFont
             ) where
 
+import Control.Monad (filterM)
 import Data.Word (Word32)
 import Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter, isSpace, ord, toLower)
 import Data.Hashable (hash)
 import Data.Maybe (fromJust, isJust)
 import Numeric (showHex)
 import System.IO (hClose, hPutStrLn)
+import System.Directory (doesFileExist)
 
 import qualified Data.Map as Map
 import qualified Data.Set as Set
@@ -28,7 +30,6 @@ import qualified Text.HTML.TagSoup as S
 import qualified Html
 import qualified Template
 
---type Tag = Html.Tag
 type TagProperties = Html.TagProperties
 
 unique :: Ord a => [a] -> [a]
@@ -321,15 +322,23 @@ getGlyphs font ligatures = unique . (concatMap mapGlyphs) . (filter matchesFont)
 -- the glyph names of the glyphs to subset.
 data SubsetCommand = SubsetCommand FilePath FilePath [String] deriving (Show)
 
-subsetFonts :: [SubsetCommand] -> IO ()
+-- Execute the subset commands against a pool of subsetting processes. Returns
+-- the number of subsetted fonts that did not exist yet.
+subsetFonts :: [SubsetCommand] -> IO Int
 subsetFonts commands = do
+  -- The subsetted fonts are immutable, with content-based filenames. This means
+  -- that if the file exists already, there is no need to re-generate it,
+  -- because the contents will be the same. So filter out existing files.
+  let doesExist (SubsetCommand _ dest _) = doesFileExist (dest ++ ".woff")
+  commandsNew <- filterM (fmap not . doesExist) commands
   -- Divide the workload over eight processes to speed up subsetting.
   procs <- sequence $ replicate 8 $ P.createProcess subsetScriptPiped
   let stdins = fmap (\(Just stdin, _, _, _) -> stdin) procs
       pids   = fmap (\(_, _, _, pid) -> pid) procs
-  mapM_ (uncurry pushCommand) (zip (cycle stdins) commands)
+  mapM_ (uncurry pushCommand) (zip (cycle stdins) commandsNew)
   mapM_ hClose stdins
   mapM_ P.waitForProcess pids -- Wait, but ignore the exit codes.
+  pure $ length commandsNew
   where
     -- Run the Python in the virtualenv rather than the system-wide one -- I
     -- forget to activate the virtualenv all the time. Now it is automatic.
