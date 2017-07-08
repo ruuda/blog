@@ -28,8 +28,8 @@ print_stats 'html      ' '*.html'
 print_stats 'html gzip ' '*.html.gz'
 print_stats 'all woff  ' '*.woff'
 print_stats 'all woff2 ' '*.woff2'
-print_stats 'body woff ' '*[0-9]r.woff'
-print_stats 'body woff2' '*[0-9]r.woff2'
+print_stats 'body woff ' 'r[0-9a-f]*.woff'
+print_stats 'body woff2' 'r[0-9a-f]*.woff2'
 
 # Average page weight. (No medians here because matching the html file to the
 # font file after generation is hard. No image sizes included because averaging
