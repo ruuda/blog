@@ -54,7 +54,7 @@ I started this post by claiming that measuring performance is hard.
 There are two main reasons for this.
 The various sources of noise that affect measurements are one reason.
 Examples include CPU frequency scaling,
-thermal throttling,
+interrupts,
 cache trashing by other processes,
 quantisation noise,
 and many, many more that deserve a post of their own.
@@ -66,8 +66,9 @@ that at least will not result in *wrong* conclusions.
 
 The second reason is much more dangerous:
 it is often not obvious that you are measuring the thing you think you are measuring.
-Optimising compilers that eagerly optimise away your computation;
+Optimising compilers that eagerly optimise away the computation you intended to benchmark;
 measuring disk or RAM bandwidth rather than compute performance;
+instrumentation that affects program behaviour;
 and again many more complications that warrant an entire post of their own.
 Often the question of what the thing to measure should be is left implicit.
 Do you want to measure the best-case performance of a component in isolation,
