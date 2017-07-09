@@ -46,13 +46,20 @@ def main():
 
     prune_font('generated/calluna-sans.otf', 'generated/')
 
+    # Merge math-italic (which contains a sigma) into Calluna Sans Italic.
+    calluna_sansi = fontforge.open('original/calluna-sans-italic.otf')
+    calluna_sansi.mergeFonts('extra/math-italic.sfd')
+    calluna_sansi.generate('generated/calluna-sans-italic.otf', flags = 'opentype')
+    calluna_sansi.close()
+
+    prune_font('generated/calluna-sans-italic.otf', 'generated/')
+
     # Just copy over the other fonts, prune them in the process.
-    prune_font('original/calluna-bold.otf',        'generated/')
-    prune_font('original/calluna-italic.otf',      'generated/')
-    prune_font('original/calluna.otf',             'generated/')
-    prune_font('original/calluna-sans-bold.otf',   'generated/')
-    prune_font('original/calluna-sans-italic.otf', 'generated/')
-    prune_font('original/inconsolata.otf',         'generated/')
+    prune_font('original/calluna-bold.otf',      'generated/')
+    prune_font('original/calluna-italic.otf',    'generated/')
+    prune_font('original/calluna.otf',           'generated/')
+    prune_font('original/calluna-sans-bold.otf', 'generated/')
+    prune_font('original/inconsolata.otf',       'generated/')
 
 
 main()

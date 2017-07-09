@@ -54,6 +54,7 @@ getFamily :: TagProperties -> FontFamily
 getFamily t = case t of
   _ | Html.isCode t        -> Mono
   _ | Html.isH3 t          -> Sans
+  _ | Html.isVar t         -> Sans
   _ | Html.isBlockQuote t  -> Serif
   _ | Html.isArchiveLink t -> Serif
   _ | Html.isHeader t      -> Serif
@@ -183,6 +184,8 @@ getGlyphName c = case c of
   '»' -> "guillemotright" -- A typo in the postscript specification.
   'é' -> "eacute"
   'ë' -> "edieresis"
+  'μ' -> "mu" -- For some reason called  uni03C2 in Minion, but I just call it mu.
+  'σ' -> "sigma"
   '√' -> "radical"
   '‘' -> "quoteleft"
   '’' -> "quoteright"
@@ -191,6 +194,7 @@ getGlyphName c = case c of
   '•' -> "bullet"
   '…' -> "ellipsis"
   '≈' -> "approxequal"
+  '≠' -> "notequal"
   '𝔽' -> "u1D53D"
   _   -> error $ "no postscript glyph name for '" ++ [c] ++ "' " ++
                  "(code point " ++ (show $ ord c) ++ ")"
