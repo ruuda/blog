@@ -60,9 +60,11 @@ readPosts = mapFilesIf ((== ".md") . takeExtension) readPost
 data Config = Config { outDir   :: FilePath
                      , imageDir :: FilePath }
 
--- Compresses the given file to a new file with .gz appended to the filename.
-gzipFile :: FilePath -> IO ()
-gzipFile fname = System.Process.callProcess "zopfli" [fname]
+-- Compresses the given file to a new file with .gz/br appended to the filename.
+compressFile :: FilePath -> IO ()
+compressFile fname = do
+  System.Process.callProcess "zopfli" [fname]
+  System.Process.callProcess "bro" ["--force", "--input", fname, "--output", fname ++ ".br"]
 
 -- Given the post template and the global context, expands the template for all
 -- of the posts and writes them to the output directory. This also prints a list
@@ -92,7 +94,7 @@ writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1 :: Int, []) wit
           putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
           createDirectoryIfMissing True $ takeDirectory destFile
           writeFile destFile minified
-          gzipFile destFile
+          compressFile destFile
           return $ (i + 1, subsetCmds ++ commands)
 
 -- Writes a general (non-post) page given a template and expansion context.
@@ -107,7 +109,7 @@ writePage url pageContext template config = do
       destFile = destDir </> "index.html"
   createDirectoryIfMissing True destDir
   writeFile destFile html
-  gzipFile destFile
+  compressFile destFile
   pure subsetCmds
 
 writeIndex :: Template.Context -> Template.Template -> Config -> IO [SubsetCommand]
@@ -144,7 +146,7 @@ writeFeed template posts config = do
       destFile = (outDir config) </> (tail url)
   createDirectoryIfMissing True (outDir config)
   writeFile destFile atom
-  gzipFile destFile
+  compressFile destFile
 
 main :: IO ()
 main = do
