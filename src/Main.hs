@@ -4,7 +4,7 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-import Control.Monad (filterM, foldM, void)
+import Control.Monad (filterM, void)
 import Data.Monoid ((<>))
 import Data.Time.Calendar (toGregorian)
 import Data.Time.Clock (getCurrentTime, utctDay)
@@ -13,6 +13,7 @@ import System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeF
 import System.Process
 
 import qualified Data.Map as M
+import qualified Control.Concurrent.Async as Async
 
 import Type (SubsetCommand, subsetArtifact, subsetFonts)
 import Minification (minifyHtml)
@@ -71,31 +72,38 @@ compressFile fname = do
 -- of processed posts to the standard output. Start numbering post artifacts at
 -- 53, lower indices are reserved for other pages.
 writePosts :: Template.Template -> Template.Context -> [P.Post] -> Config -> IO [SubsetCommand]
-writePosts tmpl ctx posts config = fmap snd $ foldM writePost (1 :: Int, []) withRelated
-  where total = length posts
-        -- Reverse the list of posts, so the most recent one is rendered first.
-        -- This makes the preview workflow faster, because the most recent post
-        -- in the list is likely the one that I want to view.
-        withRelated = reverse $ P.selectRelated posts
-        writePost (i, commands) (post, related) = do
-          let destFile = (outDir config) </> (drop 1 $ P.url post) </> "index.html"
-              context  = M.unions [ P.context post
-                                  , P.relatedContext related
-                                  , ctx]
-              -- Generating the html is a two-stage process: first we render the
-              -- template without knowing the font filenames, as those are based
-              -- on the hash of the glyphs. Then we scan which glyphs occur in
-              -- there to determine the hash, and then we can render again.
-              baseHtml = Template.apply tmpl context
-              (fontCtx, subsetCmds) = Type.subsetArtifact "out/fonts/" baseHtml
-              html = Template.apply tmpl (context <> fontCtx)
-          withImages  <- Image.processImages (imageDir config) html
-          let minified = minifyHtml withImages
-          putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
-          createDirectoryIfMissing True $ takeDirectory destFile
-          writeFile destFile minified
-          compressFile destFile
-          return $ (i + 1, subsetCmds ++ commands)
+writePosts tmpl ctx posts config =
+  let
+    total = length posts
+    -- Reverse the list of posts, so the most recent one is rendered first.
+    -- This makes the preview workflow faster, because the most recent post
+    -- in the list is likely the one that I want to view.
+    withRelated = zip [1 :: Int ..] $ reverse $ P.selectRelated posts
+    writePostAsync (i, (post, related)) = do
+      putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
+      Async.async $ writePost post related
+    writePost post related = do
+      let destFile = (outDir config) </> (drop 1 $ P.url post) </> "index.html"
+          context  = M.unions [ P.context post
+                              , P.relatedContext related
+                              , ctx]
+          -- Generating the html is a two-stage process: first we render the
+          -- template without knowing the font filenames, as those are based
+          -- on the hash of the glyphs. Then we scan which glyphs occur in
+          -- there to determine the hash, and then we can render again.
+          baseHtml = Template.apply tmpl context
+          (fontCtx, subsetCmds) = Type.subsetArtifact "out/fonts/" baseHtml
+          html = Template.apply tmpl (context <> fontCtx)
+      withImages  <- Image.processImages (imageDir config) html
+      let minified = minifyHtml withImages
+      createDirectoryIfMissing True $ takeDirectory destFile
+      writeFile destFile minified
+      compressFile destFile
+      pure subsetCmds
+  in do
+    subsetCmdsAsync <- mapM writePostAsync withRelated
+    subsetCmds <- mapM Async.wait subsetCmdsAsync
+    pure (concat subsetCmds)
 
 -- Writes a general (non-post) page given a template and expansion context.
 -- Returns the subset commands that need to be executed for that page.
