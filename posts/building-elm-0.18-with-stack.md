@@ -1,6 +1,6 @@
 ---
-title: Building Elm 0.18 with Stack
-break: 0.18 with
+title: Building Elm with Stack
+break: Elm with
 date: 2017-09-18
 minutes: ??
 synopsis: ??
@@ -11,34 +11,34 @@ I pulled out [Elm][elm] this weekend for a Hackathon.
 
 Prelude
 -------
-Summary of this paragraph.
+My first attempt to get version 0.18 of the Elm platform on my Arch Linux system was not succesful.
 The last time I used Elm was about a year ago,
-and I still had an installation of the Elm Platform 0.17 on my machine,
-courtesey of the [`elm-platform`][elm-platform] package from the AUR.
-Unfortunately updating did not do the trick.
-Elm does not compile under GHC 8.2.1,
-which is what Arch currently ships.
-And frankly I did not want to install the GHC and Cabal packages either.
+and I still had an installation of the Elm platform 0.17 on my machine,
+courtesey of the source-based [`elm-platform`][elm-platform] package from the Arch User Repository.
+A new version of the package was available,
+but it failed to build,
+because Arch currently ships a newer version of GHC than the one Elm requires to build.
+And frankly I did not want to install the GHC and Cabal packages in the first place.
 A few months ago their Arch maintainer started packaging all Haskell dependencies as individual packages,
 which causes a large amount of churn during updates,
-and requires additional disk space.
+and requires significant additional disk space.
 I uninstalled them because I use Stack for Haskell development,
 which can manage GHC anyway.
 It has a fine [`stack-static`][stack-static] package in the AUR.
 
 With no working package in the official Arch repositories or the AUR,
-I turned to the Elm website to check out the recommended installation instructions.
+I turned to the Elm website to check out the recommended installation method.
 It told me to `npm install` or build from source.
 My system already has a package manager that I use to keep programs up to date,
 and I refuse to install yet another package manager that I would have to run to perform updates.
 (Especially if that involves running Javascript outside of a browser.)
 The role of a language package manager should be to manage build-time dependencies,
 not to distribute binaries to end users.
-Building from source it was then.
+Building from source was the only option left.
 
 Building Elm from source is a fairly well-documented process,
 and [a script][fromsource] that automates it is provided.
-It runs on GHC 7.10,
+It demands GHC 7.10,
 so I checked out [stackage.org][stackage] to find a Stackage snaphot based on that compiler,
 and I ran the script with with the right version of `runghc`:
 
@@ -60,7 +60,7 @@ Reproducible builds
 -------------------
 This adventure with Elm is in my opinion a good example of a bigger issue with reproducible builds,
 or builds that are *producible* at all.
-When a program is tied tighly to a specific compiler,
+When a program is tied tightly to a specific compiler,
 builds break if the compiler version is not pinned.
 If a given commit compiles today,
 I want it to still compile three years from now.
@@ -76,6 +76,19 @@ by having a version manager manage the package manager and compiler or runtime.
 But I think Stack got it right here:
 `stack build` just works,
 and it always does the right thing.
+
+The irony of it all,
+is that Elm itself suffers from the same problem.
+Elm makes no backward compatibility guarantees,
+and the `elm` tool does not manage the compiler.
+So if I want to compile multiple projects that use different Elm versions,
+I will need to be able to switch Elm binaries.
+Fortunately I now have a way to obtain the binaries for a given release that is not too painful,
+and while manually updating the `PATH` is a nuisance,
+it is not the end of the world.
+Some conclusion here.
+Should I mention the distinction between languages that break often,
+and stable languages as well?
 
 [elm]:          http://elm-lang.org/ <!-- 2017 and not https? D: -->
 [elm-platform]: https://aur.archlinux.org/packages/elm-platform/
