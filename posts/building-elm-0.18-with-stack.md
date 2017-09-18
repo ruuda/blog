@@ -55,6 +55,28 @@ I figured I might try to make the packages build with Stack.
 Building Elm with Stack
 -----------------------
 
+
+Reproducible builds
+-------------------
+This adventure with Elm is in my opinion a good example of a bigger issue with reproducible builds,
+or builds that are *producible* at all.
+When a program is tied tighly to a specific compiler,
+builds break if the compiler version is not pinned.
+If a given commit compiles today,
+I want it to still compile three years from now.
+Ideally it should compile to a bitwise identical binary,
+although that is often difficult for unfortunate reasons.
+Making a build reproducible
+requires not only pinning the versions of all dependencies,
+but also pinning the compiler to a specific version.
+And while casually mentioning that version in a readme is sufficient in theory,
+it can be difficult to obtain the right version in practice.
+Some languages solve this with another layer of indirection,
+by having a version manager manage the package manager and compiler or runtime.
+But I think Stack got it right here:
+`stack build` just works,
+and it always does the right thing.
+
 [elm]:          http://elm-lang.org/ <!-- 2017 and not https? D: -->
 [elm-platform]: https://aur.archlinux.org/packages/elm-platform/
 [stack-static]: https://aur.archlinux.org/packages/stack-static/
