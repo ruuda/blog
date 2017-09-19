@@ -4,17 +4,24 @@ break: Elm with
 date: 2017-09-18
 minutes: ??
 synopsis: ??
-run-in: ??
+run-in: The hackathon I joined
 ---
 
-I pulled out [Elm][elm] this weekend for a Hackathon.
+The hackathon I joined last weekend was a nice opportunity to try the [Elm][elm] language.
+Getting the `elm` tool on my system proved harder than expected though,
+and I ended up building it from source.
+It is a nice excuse for me to share a few thoughts on package management and reproducible builds.
+If you just want to build Elm 0.18 from source,
+you can skip straight to the [`stack.yaml`](#building-elm-with-stack).
 
 Prelude
 -------
-My first attempt to get version 0.18 of the Elm platform on my Arch Linux system was not succesful.
-The last time I used Elm was about a year ago,
-and I still had an installation of the Elm platform 0.17 on my machine,
-courtesey of the source-based [`elm-platform`][elm-platform] package from the Arch User Repository.
+My first attempt to get the Elm platform on my Arch Linux system was not succesful.
+The last time I tried Elm was about a year ago,
+and I still had an installation of an older version of the Elm platform on my machine,
+courtesey of the [`elm-platform`][elm-platform] package from the Arch User Repository.
+The Elm compiler is written in Haskell,
+and the `elm-platform` package builds its from source.
 A new version of the package was available,
 but it failed to build,
 because Arch currently ships a newer version of GHC than the one Elm requires to build.
@@ -34,7 +41,7 @@ and I refuse to install yet another package manager that I would have to run to 
 (Especially if that involves running Javascript outside of a browser.)
 The role of a language package manager should be to manage build-time dependencies,
 not to distribute binaries to end users.
-Building from source was the only option left.
+I decided to build from source.
 
 Building Elm from source is a fairly well-documented process,
 and [a script][fromsource] that automates it is provided.
@@ -49,12 +56,34 @@ After commenting out a check that verifies that `cabal` is available,
 it cloned the Elm repositories.
 Then it failed,
 because indeed I did not have a `cabal` binary.
-Rather than trying to obtain the right version of Cabal,
-I figured I might try to make the packages build with Stack.
+A bit disappointed I installed Arch’s Cabal package after all,
+but this got me no further;
+building now failed with a complaint about GHC package paths.
+Rather than descending down Cabal hell,
+I figured it would be easier to make the projects build with Stack.
 
-Building Elm with Stack
------------------------
+<h2 id="building-elm-with-stack">Building Elm with Stack</h2>
 
+I added the following `stack.yaml` to the directory that contained the various Elm repositories:
+
+```yaml
+resolver: lts-6.35
+allow-newer: true
+packages:
+  - elm-compiler
+  - elm-make
+  - elm-package
+  - elm-reactor
+  - elm-repl
+```
+
+This was all that was required, really.
+A few of Elm’s Cabal files contain conservative version bounds,
+but they can be ignored with `allow-newer`.
+After a single `stack build`,
+the binaries were in `$(stack path --local-install-root)/bin`.
+It is a bit embarassing how easy this was,
+after the things I had tried before.
 
 Reproducible builds
 -------------------
