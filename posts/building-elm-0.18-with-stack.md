@@ -43,10 +43,9 @@ The role of a language package manager should be to manage build-time dependenci
 not to distribute binaries to end users.
 I decided to build from source.
 
-Building Elm from source is a fairly well-documented process,
-and [a script][fromsource] that automates it is provided.
+Elm provides [a script][fromsource] that automates building from source.
 It demands GHC 7.10,
-so I checked out [stackage.org][stackage] to find a Stackage snaphot based on that compiler,
+so I checked [stackage.org][stackage] to find a Stackage snaphot based on that compiler,
 and I ran the script with with the right version of `runghc`:
 
     $ stack setup --resolver lts-6.35
@@ -77,13 +76,23 @@ packages:
   - elm-repl
 ```
 
-This was all that was required, really.
+**This was all that was required, really.**
 A few of Elm’s Cabal files contain conservative version bounds,
 but they can be ignored with `allow-newer`.
 After a single `stack build`,
 the binaries were in `$(stack path --local-install-root)/bin`.
 It is a bit embarassing how easy this was,
-after the things I had tried before.
+after all the things I had tried before.
+
+If you want to try this yourself,
+there is no need to use the script to clone the repositories,
+you can just clone them directly:
+
+```sh
+for project in compiler make package reactor repl; do
+  git clone https://github.com/elm-lang/elm-$project --branch 0.18.0
+done
+```
 
 Reproducible builds
 -------------------
@@ -104,20 +113,20 @@ Some languages solve this with another layer of indirection,
 by having a version manager manage the package manager and compiler or runtime.
 But I think Stack got it right here:
 `stack build` just works,
-and it always does the right thing.
+and it does the right thing.
 
 The irony of it all,
-is that Elm itself suffers from the same problem.
-Elm makes no backward compatibility guarantees,
-and the `elm` tool does not manage the compiler.
-So if I want to compile multiple projects that use different Elm versions,
+is that if I want to compile multiple projects that use different Elm versions,
 I will need to be able to switch Elm binaries.
+The same problem all over again.
 Fortunately I now have a way to obtain the binaries for a given release that is not too painful,
 and while manually updating the `PATH` is a nuisance,
 it is not the end of the world.
-Some conclusion here.
-Should I mention the distinction between languages that break often,
-and stable languages as well?
+In many ways this is even preferable over having a single system-wide version,
+because Elm is not backwards compatible across releases,
+so just having having the most recent compiler is not sufficient.
+
+Some witty conclusion here.
 
 [elm]:          http://elm-lang.org/ <!-- 2017 and not https? D: -->
 [elm-platform]: https://aur.archlinux.org/packages/elm-platform/
