@@ -25,7 +25,7 @@ and the `elm-platform` package builds it from source.
 A new version of the package was available,
 but it failed to build,
 because Arch currently ships a newer version of GHC than the one Elm requires to build.
-And frankly I did not want to install the GHC and Cabal packages in the first place.
+And frankly I did not want to install the GHC and Cabal packages to build it either.
 A few months ago their Arch maintainer started packaging all Haskell dependencies as individual packages,
 which causes a large amount of churn during updates,
 and requires significant additional disk space.
@@ -55,7 +55,7 @@ After commenting out a check that verifies that Cabal is available,
 it cloned the Elm repositories.
 Then it failed,
 because indeed I did not have a `cabal` binary.
-A bit disappointed I installed Arch’s Cabal package after all,
+Reluctantly I installed Arch’s Cabal package after all,
 but this got me no further;
 building now failed with a complaint about GHC package paths.
 Rather than digging deeper,
@@ -100,15 +100,15 @@ If building a given commit produces a binary on one machine,
 I want it to produce the same binary on a different machine.
 Ideally it should be bitwise identical,
 although that is often difficult for unfortunate reasons.
-But at the very least it should compile the same code.
+But at the very least the source fed into the compiler should be identical.
 And if a given commit compiles today,
 I want it to still compile three years from now.
 Making a build reproducible in this sense
 requires pinning the versions of all dependencies.
 And if future compiler releases are not backwards compatible,
 the compiler must be pinned as well.
-Its version might be specified in a build file or readme,
-but it can be difficult to obtain the right version in practice.
+Recording that metadata is one thing,
+but obtaining the right compiler can be difficult in practice.
 Some languages solve this with another layer of indirection,
 by having a version manager manage the package manager and compiler or runtime.
 But I think Stack got it right here by making the build tool manage the compiler:
@@ -119,14 +119,12 @@ Somewhat ironically,
 if I want to compile multiple projects that use different Elm versions,
 I will need to be able to switch Elm binaries.
 Fortunately I now have a way to obtain the binaries for a given release that is not too painful,
-and while manually updating the `PATH` is a nuisance,
-it is not the end of the world.
+and I can live with having to modify the `PATH` occasionally.
 In many ways this is even preferable over having a single system-wide version,
 because multiple versions can coexist.
 
-In the end I got Elm working with just enough time left for the hackathon,
-and my system is still free of `npm`.
-Stack saved the day!
+In the end I got Elm working with just enough time left for the hackathon.
+More about that soon.
 
 [elm]:          http://elm-lang.org/ <!-- 2017 and not https? D: -->
 [elm-platform]: https://aur.archlinux.org/packages/elm-platform/
