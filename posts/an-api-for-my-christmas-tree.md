@@ -54,10 +54,38 @@ Beware of men in the middle messing with your Christmas lights.
 The client and server program are free software,
 [available on GitHub][ct-gh].
 Both are written in Haskell,
-so after a simple `stack build` you have two binaries
-with no runtime dependencies apart from a few common system libraries.
-You can just copy over the server binary to a server,
-and be good to go.
-An example systemd unit is included.
+so a simple `stack build` will produce two binaries
+with no runtime dependencies apart from a few system libraries.
+I copied over the server binary to a cheap cloud instance,
+set up a Letsencrypt certificate,
+and I was good to go.
+An example systemd unit is included in the repository.
 
 [ct-gh]: https://github.com/ruuda/christmas-tree
+
+Deployment
+----------
+
+At this point I could send an API call to the server,
+and the pattern in the tree would change.
+That was pretty cool --
+somehow making lights blink always feels magical.
+But what do you do with an internet-controlled Christmas tree?
+You hook it up to the build system, of course!
+
+I deployed the lights at work and put this in our `.travis.yml`:
+
+```yml
+after_success:
+  # Make the Christmas tree blink green.
+  - curl -X POST 'https://chainsaw:pass@tree.example.com/blink?color=00ff00&seconds=10'
+
+after_failure:
+  # Make the Christmas tree blink red.
+  - curl -X POST 'https://chainsaw:pass@tree.example.com/blink?color=ff0000&seconds=10'
+```
+
+This even turned out to be semi-useful for a short while
+-- until my colleagues found out
+that they could also make the tree blink red
+from their local workstations ...
