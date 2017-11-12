@@ -2,14 +2,15 @@
 title: An API for my Christmas tree
 break: my Christmas
 date: 2017-11-12
-synopsis: ???.
+minutes: 3
+synopsis: With a tiny server, and an Arduino to drive the lights, I connected my Christmas tree to the internet.
 run-in: It is almost
 ---
 
 It is almost that time of the year again.
 Time to bring out the Christmas tree,
-the Arduino, and the RGB LED strand.
-Let’s have a bit of fun by connecting my tree to the internet.
+the Arduino, and the RGB LED strands.
+Let’s have a bit of fun connecting my tree to the internet.
 
 Hardware
 --------
@@ -72,7 +73,6 @@ That was pretty cool --
 somehow making lights blink always feels magical.
 But what do you do with an internet-controlled Christmas tree?
 You hook it up to the build system, of course!
-
 I deployed the lights at work and put this in our `.travis.yml`:
 
 ```yml
@@ -89,3 +89,4 @@ This even turned out to be semi-useful for a short while
 -- until my colleagues found out
 that they could also make the tree blink red
 from their local workstations ...
+Anyways, happy holidays!
