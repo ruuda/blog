@@ -103,7 +103,8 @@ context :: Post -> Template.Context
 context p = fmap Template.StringValue ctx
   where ctx       = M.union fields (M.mapMaybe id optFields)
         fields    = M.fromList [ ("title", title p)
-                               , ("header", header p)
+                               , ("title-html", Type.makeAbbrs $ title p)
+                               , ("header", Type.makeAbbrs $ header p)
                                , ("short-date", shortDate p)
                                , ("long-date", longDate p)
                                , ("url", url p)
