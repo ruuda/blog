@@ -65,7 +65,7 @@ data Config = Config { outDir   :: FilePath
 compressFile :: FilePath -> IO ()
 compressFile fname = do
   System.Process.callProcess "zopfli" [fname]
-  System.Process.callProcess "bro" ["--force", "--input", fname, "--output", fname ++ ".br"]
+  System.Process.callProcess "brotli" ["--force", "--output=" ++ fname ++ ".br", fname]
 
 -- Given the post template and the global context, expands the template for all
 -- of the posts and writes them to the output directory. This also prints a list
