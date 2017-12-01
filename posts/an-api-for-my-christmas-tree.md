@@ -73,7 +73,7 @@ That was pretty cool --
 somehow making lights blink always feels magical.
 But what do you do with an internet-controlled Christmas tree?
 You hook it up to the build system, of course!
-I deployed the lights at work and put this in our `.travis.yml`:
+Last year I deployed the lights at work and put this in our `.travis.yml`:
 
 ```yml
 after_success:
