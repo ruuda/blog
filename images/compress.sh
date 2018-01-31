@@ -30,7 +30,10 @@ guetzli --quality 93 resized/richys-groceries.png compressed/richys-groceries.jp
 cp resized/tristar-cyan.png compressed/tristar-cyan.png
 
 # The SVG file has been optimised already. It is quite bad still, but it's ok.
+# Also precompress with Zopfli and Brotli.
 cp original/rectangles.svg compressed/rectangles.svg
+zopfli compressed/rectangles.svg
+brotli --force --output=compressed/rectangles.svg.br compressed/rectangles.svg
 
 # Guetzli experiments
 # -------------------
