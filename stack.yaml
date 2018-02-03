@@ -1,3 +1,1 @@
-resolver: lts-9.1
-extra-deps:
-  - JuicyPixels-3.2.8.3
+resolver: lts-9.21
