@@ -5,7 +5,7 @@ homepage:      https://ruudvanasseldonk.com
 author:        Ruud van Asseldonk <dev@veniogames.com>
 copyright:     Ruud van Asseldonk 2015
 license:       GPL-3
-license-file:  licence
+license-file:  license
 build-type:    Simple
 cabal-version: >= 1.10
 
