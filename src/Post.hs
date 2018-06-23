@@ -145,7 +145,11 @@ parse postSlug contents = let
           , date      = parseDate $ frontMatter M.! "date"
           , slug      = postSlug
           , synopsis  = frontMatter M.! "synopsis"
-          , body      = refineType $ Html.cleanTables $ renderMarkdown bodyContents }
+          , body      = refineType
+                      $ Html.cleanTables
+                      $ Html.addAnchors
+                      $ renderMarkdown bodyContents
+          }
 
 -- Renders markdown to html using Pandoc with my settings.
 renderMarkdown :: String -> String

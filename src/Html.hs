@@ -7,6 +7,7 @@
 module Html ( Tag
             , TagProperties
             , makeRunIn
+            , addAnchors
             , applyTagsWhere
             , classifyTags
             , cleanTables
@@ -324,3 +325,12 @@ cleanTables = renderTags . mapTagsWhere isTable stripAttrs . parseTags
         stripAttrs tag = case tag of
           S.TagOpen name attrs -> S.TagOpen name $ filterAttrs attrs
           _                    -> tag
+
+-- Add an empty <a> tag to every <h2> that has an id, and link it to that id.
+addAnchors :: String -> String
+addAnchors = renderTags . concatMap expandHeader . parseTags
+  where
+    emptyA href = [S.TagOpen "a" [("href", href)], S.TagClose "a"]
+    expandHeader tag = case tag of
+      h2 @ (S.TagOpen "h2" [("id", anchor)]) -> h2 : emptyA ('#' : anchor)
+      otherTag -> [otherTag]
