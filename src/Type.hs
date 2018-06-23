@@ -180,6 +180,7 @@ getGlyphName c = case c of
   '}' -> "braceright"
   '~' -> "asciitilde"
   '±' -> "plusminus"
+  '¶' -> "paragraph"
   '·' -> "periodcentered"
   '»' -> "guillemotright" -- A typo in the postscript specification.
   'é' -> "eacute"
@@ -270,6 +271,10 @@ synthesizeListNumbers html = concatMap show [1 .. Html.maxOlLength html]
 synthesizeListBullets :: String -> String
 synthesizeListBullets html = if Html.hasUl html then "•" else ""
 
+-- Given html, returns a pilcrow bullet if the html contains a h2 in body.
+synthesizePilcrow :: String -> String
+synthesizePilcrow html = if Html.hasH2 html then "¶" else ""
+
 -- Given html, returns a string with guillemets that are added by css.
 synthesizeGuillemets :: String -> String
 synthesizeGuillemets html = if hasMoreLink then "\x00a0»" else ""
@@ -284,7 +289,8 @@ synthesizeFont :: String -> [(String, FontAndCaps)]
 synthesizeFont html = filter (not . null . fst)
   [ (synthesizeListNumbers html, (Sans,  Bold,    Roman, UnchangedCaps))
   , (synthesizeListBullets html, (Sans,  Regular, Roman, UnchangedCaps))
-  , (synthesizeGuillemets  html, (Serif, Regular, Roman, AllSmallCaps )) ]
+  , (synthesizeGuillemets  html, (Serif, Regular, Roman, AllSmallCaps ))
+  , (synthesizePilcrow     html, (Serif, Bold,    Roman, UnchangedCaps))]
 
 -- Returns all the text that should be typeset and the font it should be set in.
 mapFontFull :: String -> [(String, FontAndCaps)]

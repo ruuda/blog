@@ -15,6 +15,7 @@ module Html ( Tag
             , filterTags
             , getTextInTag
             , hasUl
+            , hasH2
             , hasMath
             , isA
             , isAbbr
@@ -287,6 +288,14 @@ hasUl :: String -> Bool
 hasUl = not . null
       . filter (isArticle . snd)
       . filter (S.isTagOpenName "ul" . fst)
+      . classifyTags
+      . parseTags
+
+-- Returns whether a <h2> tag is present in the <article> in an html string.
+hasH2 :: String -> Bool
+hasH2 = not . null
+      . filter (isArticle . snd)
+      . filter (S.isTagOpenName "h2" . fst)
       . classifyTags
       . parseTags
 

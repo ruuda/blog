@@ -180,6 +180,35 @@ h2
   padding-top: 1.2rem;
 }
 
+{{if !light}}
+{{if !archive}}
+h2 > a:before
+{
+  content: '¶';
+  width: 1.2rem;
+  margin-left: -1.2rem;
+  display: inline-block;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+  color: #b4aaaa;
+}
+
+/* Show a subtle pilcrow on hover. */
+h2:hover > a:before
+{
+  opacity: 1;
+}
+
+/* Show the pilcrow in accent color when linked to directly. */
+h2:target > a:before
+{
+  opacity: 1;
+  color: #c36;
+}
+
+{{end}}
+{{end}}
+
 {{if archive}}
 .archive h2
 {
@@ -445,6 +474,16 @@ nav a
   {
     display: block;
   }
+
+  {{if !light}}
+  {{if !archive}}
+  h2 > a:before
+  {
+    width: 1.6rem;
+    margin-left: -1.6rem;
+  }
+  {{end}}
+  {{end}}
 }
 
 /* At this width, the viewport is wide enough to fit the content at its
