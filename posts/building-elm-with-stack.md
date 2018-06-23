@@ -61,7 +61,8 @@ building now failed with a complaint about GHC package paths.
 Rather than digging deeper,
 I figured it would be easier to make the projects build with Stack.
 
-<h2 id="building-elm-with-stack">Building Elm with Stack</h2>
+Building Elm with Stack
+-----------------------
 
 I added the following `stack.yaml` to the directory that contained the various Elm repositories:
 
