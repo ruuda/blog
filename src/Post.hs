@@ -157,6 +157,8 @@ renderMarkdown md = case fmap (writeHtmlString wopt) (readMarkdown ropt md) of
   where ropt = def { readerExtensions = S.insert Ext_backtick_code_blocks $
                                         S.insert Ext_raw_html $
                                         S.insert Ext_simple_tables $
+                                        S.insert Ext_auto_identifiers $
+                                        S.insert Ext_ascii_identifiers $
                                         def }
         wopt = def { writerHighlight  = True }
 
