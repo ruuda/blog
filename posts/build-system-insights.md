@@ -12,14 +12,14 @@ Why build systems?
 What do I want from a build system?
 
  * To type a single command to start the build.
-   After some time a build artifact should appear.
- * The build artifact does not depend on where or when I perform the build,
+   After some time a build artefact should appear.
+ * The build artefact does not depend on where or when I perform the build,
    only on the source code checked out
    and flags passed to the build command (such as `--debug`, `--profile` or `-c opt`).
  * When I check out a three-year old commit,
    all of the above should still be true,
-   and I should get the same build artifacts that I got three years ago.
- * It should produce the artifact quickly.
+   and I should get the same build artefacts that I got three years ago.
+ * It should produce the artefact quickly.
 
 Caching and incremental builds
 ------------------------------
@@ -28,6 +28,41 @@ Caching and incremental builds
   Incremental compilatin in rustc as well I believe.
   Build systems and toolchains are in conflict here though. How to collaborate?
 * Goma caches by hash as well.
+
+**Not reusing old names for new things eliminates the need for cache invalidation
+at the cost of requiring garbage collection.
+Deterministic names enable shared caches.**
+Applied to build systems,
+immutability and purity mean that the output path of a build step
+should be determined by the input to that build step.
+In other words, build artefacts should be stored in an *input-addressable store*.
+This has many advantages:
+
+* Different artefacts of a target can coexist in the cache.
+  In particular, building is a no-op after checking out a previously built commit
+  or after switching to a previously built configuration
+  (e.g. enabling and disabling optimisations).
+* The cache can safely be shared among multiple repositories.
+  A library that is used in two projects need not be built twice.
+* The cache can safely be shared among machines.
+  Artefacts that CI or a colleague have built already can be fetched from a remote cache.
+* There is less need to lock build directories,
+  for different builds no longer write to the same directory.
+
+If the path already exists,
+the build step can be skipped because the output would be the same anyway.
+Ideally the output of a repeated build step [should be bit by bit identical][repro] to the previous output,
+but for various reasons the output may be only functionally equivalent.
+If the output path does not exist,
+it may be obtained from a remote cache rather than by performing the build step.
+
+This insight is not specific to build systems:
+the advantages of immutability are *the* key insight of functional programming in general.
+Most of [Rich Hickey’s talks][hickey] are an application of this insight,
+be it to programming languages, software systems, versioning, or databases.
+[Stack realised that dependencies could be shared across repositories.]
+Nix and Bazel apply this principle to build systems.
+[Goma also works like this.]
 
 Target definitions
 ------------------
@@ -107,16 +142,20 @@ References
 ----------
 
  * The [Bazel][bazel] build system, the open source version of Google’s Blaze
- * The [GN][gn] meta-build system
- * The [Meson][meson] build system
- * The [Ninja][ninja] low-level build system, a target for GN and Meson
+ * The [Buck][buck] build system, very similar in spirit to Blaze
+ * The [GN][gn] meta-build system, used in Chromium
+ * The [Guix][guix] system package manager, inspired by Nix
+ * The [Meson][meson] meta-build system
+ * The [Ninja][ninja] low-level build system, targeted by GN and Meson
  * The [Nix][nix] system package manager
  * The [Pants][pants] build system, inspired by Blaze
  * The [Shake][shake] build system
  * The [Stack][stack] build tool and language package manager
 
 [bazel]:  https://bazel.build/
+[buck]:   https://buckbuild.com/
 [gn]:     https://chromium.googlesource.com/chromium/src/+/master/tools/gn/README.md
+[guix]:   https://www.gnu.org/software/guix/
 [hickey]: https://github.com/tallesl/Rich-Hickey-fanclub
 [meson]:  https://mesonbuild.com/
 [ninja]:  https://ninja-build.org/
