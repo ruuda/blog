@@ -38,42 +38,61 @@ Caching and incremental builds
 * Fine-grained is better: Scala Dotty does this.
   Incremental compilatin in rustc as well I believe.
   Build systems and toolchains are in conflict here though. How to collaborate?
-* Goma caches by hash as well.
 
+### 1
 **Not reusing old names for new things eliminates the need for cache invalidation
 at the cost of requiring garbage collection.
 Deterministic names enable shared caches.**
 Applied to build systems,
-immutability and purity mean that the output path of a build step
+this means that the output path of a build step
 should be determined by the input to that build step.
 In other words, build artefacts should be stored in an *input-addressable store*.
-This has many advantages:
-
-* Different artefacts of a target can coexist in the cache.
-  In particular, building is a no-op after checking out a previously built commit
-  or after switching to a previously built configuration
-  (e.g. enabling and disabling optimisations).
-* The cache can safely be shared among multiple repositories.
-  A library that is used in two projects need not be built twice.
-* The cache can safely be shared among machines.
-  Artefacts that CI or a colleague have built already can be fetched from a remote cache.
-* There is less need to lock build directories,
-  for different builds no longer write to the same directory.
-
 If the path already exists,
 the build step can be skipped because the output would be the same anyway.
-Ideally the output of a repeated build step [should be bit by bit identical][repro] to the previous output,
+Ideally the output of a repeated build step
+[should be bit by bit identical][repro] to the previous output,
 but for various reasons the output may be only functionally equivalent.
 If the output path does not exist,
 it may be obtained from a remote cache rather than by performing the build step.
+Caching rolls out naturally:
+
+* Different artefacts of a target can coexist in a cache.
+  In particular,
+  building is a no-op
+  when building a previously built revision
+  (for example when switching between topic branches)
+  or configuration
+  (such as enabling and then disabling optimisations).
+* The cache can safely be shared among multiple unrelated repositories.
+  A library that is used in two projects need not be built twice.
+* The cache can safely be shared among machines.
+  Artefacts that continuous integration
+  or a colleague have built already
+  can be fetched from a remote cache.
 
 This insight is not specific to build systems:
-the advantages of immutability are *the* key insight of functional programming in general.
+I would argue that
+the advantages of immutability are *the* key insight
+of functional programming in general.
+<!--
 Most of [Rich Hickey’s talks][hickey] are an application of this insight,
 be it to programming languages, software systems, versioning, or databases.
-[Stack realised that dependencies could be shared across repositories.]
-Nix and Bazel apply this principle to build systems.
-[Goma also works like this.]
+-->
+Most modern build tools
+use an immutable input-addressable cache
+in one way or another.
+[Nix][nix] applies the technique to system package management,
+[Bazel][bazel] to fine-grained build targets.
+[Stack][stack] realised that dependencies could be shared across repositories.
+[Goma][goma] caches build artefacts based on hashes of input files and the exact compile command.
+
+The major caveat is that it is difficult to capture *all* input to a build step.
+Many toolchains implicitly capture state from the environment,
+for instance by reading the `CXX` environment variable or discovering include paths.
+Indeed, Nix and Bazel go to great lengths
+to prevent accidentally capturing this state,
+and to provide a controlled and reproducible environment
+for toolchains that inevitably capture state.
 
 Target definitions
 ------------------
@@ -166,6 +185,7 @@ References
 [bazel]:  https://bazel.build/
 [buck]:   https://buckbuild.com/
 [gn]:     https://chromium.googlesource.com/chromium/src/+/master/tools/gn/README.md
+[goma]:   https://chromium.googlesource.com/infra/goma/client
 [guix]:   https://www.gnu.org/software/guix/
 [hickey]: https://github.com/tallesl/Rich-Hickey-fanclub
 [meson]:  https://mesonbuild.com/
