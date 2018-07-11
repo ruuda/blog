@@ -6,8 +6,19 @@ synopsis: ?
 run-in: ?
 ---
 
-Write some introduction.
-Why build systems?
+The past few years saw the rise of a new generation of build systems,
+adding to the already plentiful collection of build tools.
+Although these new build systems differ in origin and purpose,
+there are common themes to them.
+
+In the past month I ended up interacting with many different build systems,
+which got me thinking about the topic.
+At some point I realised that there are a few key principles
+that underlie a good build system.
+In this post I want to lay out some of the insights
+that advanced the state of the art in build tooling.
+
+The line between build tool and package manager became fuzzy.
 
 What do I want from a build system?
 
