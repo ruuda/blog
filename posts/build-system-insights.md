@@ -32,6 +32,14 @@ What do I want from a build system?
    and I should get the same build artefacts that I got three years ago.
  * It should produce the artefact quickly.
 
+A note on taxonomy:
+in this post I often refer to [Bazel][bazel],
+the open-source version of Google’s Blaze.
+Before Bazel was published,
+ex Googlers at other companies created Blaze clones,
+resulting in [Pants][pants], [Buck][buck], and [Please][please].
+Most of the discussion about Bazel applies equally well to these other build systems.
+
 Caching and incremental builds
 ------------------------------
 
@@ -39,10 +47,9 @@ Caching and incremental builds
   Incremental compilatin in rustc as well I believe.
   Build systems and toolchains are in conflict here though. How to collaborate?
 
-### 1
 **Not reusing old names for new things eliminates the need for cache invalidation
 at the cost of requiring garbage collection.
-Deterministic names enable shared caches.**
+Deterministic names enable shared caches.**<br>
 Applied to build systems,
 this means that the output path of a build step
 should be determined by the input to that build step.
@@ -97,15 +104,17 @@ for toolchains that inevitably capture state.
 Target definitions
 ------------------
 
-**Build target definitions should live as close to the source code as possible.**
+**Build target definitions should live as close to the source code as possible.**<br>
 Unlike a global makefile or other build definition in the repository root,
 a distributed approach with definitions scattered throughout the repository
 remains maintainable even in very large repositories.
 
-This is a lesson I learned from GN and Bazel.
-Pants, being inspired by Blaze (Google’s internal version of Bazel) also applies the principle.
+This is a lesson I learned from Chromium’s build system [GN][gn], and from Blaze.
+The Blaze derivatives Pants, Buck, and Please
+also apply this principle,
+as did GN’s predecessor [GYP][gyp].
 
-**Evaluate build target definitions lazily.**
+**Evaluate build target definitions lazily.**<br>
 Lazy evaluation enables good performance even in large repositories,
 because only the targets that are actually needed for a build are evaluated.
 The majority of build target definitions does not even need to be parsed.
@@ -125,7 +134,7 @@ Bazel applies this principle too by having many `BUILD` files,
 and aligning dependency paths with filesystem paths.
 Build files of targets that are not depended upon do not need to be loaded.
 
-**Build targets should be fine-grained.**
+**Build targets should be fine-grained.**<br>
 Having many small targets, rather than fewer large targets,
 allows for effective caching and enables parallelisation.
 If a change to an input of a target requires rebuilding the entire target,
@@ -141,14 +150,14 @@ Maybe give Stack example.)
 The importance of fine-grained targets is a lesson I learned from Bazel.
 Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
 given enough cores.
-Ninja is also able to exploid fine-grained dependencies to parallelise the build,
+Ninja is also able to exploit fine-grained dependencies to parallelise the build,
 but it relies on the meta build system to generate fine-grained dependencies.
 (Modulo C++ special case.)
 
 Ergonomics
 ----------
 
-**Startup time is important for command-line tools.**
+**Startup time is important for command-line tools.**<br>
 The overhead of interpreters or just in time compilers can be significant.
 
 My experience with Bazel is that although it builds quickly, it is slow to start.
@@ -174,13 +183,15 @@ References and further reading
 Tools mentioned throughout this post:
 
  * The [Bazel][bazel] build system, the open source version of Google’s Blaze
- * The [Buck][buck] build system, very similar in spirit to Blaze
+ * The [Buck][buck] build system, inspired by Blaze
  * The [GN][gn] meta-build system, used in Chromium
+ * The [GYP][gyp] meta-build system, the predecessor to GN
  * The [Guix][guix] system package manager, inspired by Nix
  * The [Meson][meson] meta-build system
  * The [Ninja][ninja] low-level build system, targeted by GN and Meson
  * The [Nix][nix] system package manager
  * The [Pants][pants] build system, inspired by Blaze
+ * The [Please][please] build system, inspired by Blaze
  * The [Shake][shake] build system
  * The [Stack][stack] build tool and language package manager
 
@@ -192,7 +203,9 @@ Further reading:
 
 [bazel]:  https://bazel.build/
 [buck]:   https://buckbuild.com/
+[carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
 [gn]:     https://chromium.googlesource.com/chromium/src/+/master/tools/gn/README.md
+[gyp]:    https://gyp.gsrc.io/
 [goma]:   https://chromium.googlesource.com/infra/goma/client
 [guix]:   https://www.gnu.org/software/guix/
 [hickey]: https://github.com/tallesl/Rich-Hickey-fanclub
@@ -200,7 +213,7 @@ Further reading:
 [ninja]:  https://ninja-build.org/
 [nix]:    https://nixos.org/nix/
 [pants]:  https://www.pantsbuild.org/
+[please]: https://please.build/
 [repro]:  https://reproducible-builds.org/
 [shake]:  https://shakebuild.com/
 [stack]:  https://haskellstack.org/
-[carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
