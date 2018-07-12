@@ -101,6 +101,30 @@ to prevent accidentally capturing this state,
 and to provide a controlled and reproducible environment
 for toolchains that inevitably capture state.
 
+Toolchains and dependencies
+---------------------------
+
+**The build tool should manage the compiler toolchain.**<br>
+When a toolchain or other dependency needs to be obtained externally,
+building devolves from a single-step command
+into hours of dependency hunting and configuration patching.
+Language package managers make this easy for language dependencies,
+but they often stop right there.
+Also, pinning.
+Hermeticity is one reason.
+Pinning another.
+The tools that do this are the only ones that "just work" (i.e. Nix).
+
+Learned from Stack (vs Cargo) at first,
+became very clear with Nix.
+
+**An exact toolchain version should be pinned as part of the build target definition.**
+Because reproducibility.
+Mention Stack vs Cargo example.
+
+Learned from Stack, I think.
+Bazel can do it.
+
 Target definitions
 ------------------
 
