@@ -168,8 +168,10 @@ just evaluating imports can take a significant amount of time,
 relative to executing the command itself.
 [Which is why Rust.]
 
-References
-----------
+References and further reading
+------------------------------
+
+Tools mentioned throughout this post:
 
  * The [Bazel][bazel] build system, the open source version of Google’s Blaze
  * The [Buck][buck] build system, very similar in spirit to Blaze
@@ -181,6 +183,12 @@ References
  * The [Pants][pants] build system, inspired by Blaze
  * The [Shake][shake] build system
  * The [Stack][stack] build tool and language package manager
+
+Further reading:
+
+ * [Build Systems à la Carte][carte]
+   by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
+   classifies build tools based on their rebuilding strategy and scheduling algorithm.
 
 [bazel]:  https://bazel.build/
 [buck]:   https://buckbuild.com/
@@ -195,3 +203,4 @@ References
 [repro]:  https://reproducible-builds.org/
 [shake]:  https://shakebuild.com/
 [stack]:  https://haskellstack.org/
+[carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
