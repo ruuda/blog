@@ -43,9 +43,13 @@ Most of the discussion about Bazel applies equally well to these other build sys
 Caching and incremental builds
 ------------------------------
 
+If you take away one thing from this post,
+let it be this:
+
 **Not reusing old names for new things eliminates the need for cache invalidation
 at the cost of requiring garbage collection.
-Deterministic names enable shared caches.**<br>
+Deterministic names enable shared caches.**
+
 Applied to build systems,
 this means that the output path of a build step
 should be determined by the input to that build step.
@@ -88,6 +92,7 @@ in one way or another.
 [Bazel][bazel] to fine-grained build targets.
 [Stack][stack] realised that dependencies could be shared across repositories.
 [Goma][goma] caches build artefacts based on hashes of input files and the exact compile command.
+Treating build steps as pure functions makes caching a breeze.
 
 The major caveat is that it is difficult to capture *all* input to a build step.
 Many toolchains implicitly capture state from the environment,
@@ -108,6 +113,13 @@ Scala’s Dotty compiler [implements this idea][dotty].
 Incremental compilation in Rust [is also based][rustc] on [lazy functional][rustc2] graph caching,
 although its cache is neither immutable nor iput-addressable,
 and requires invalidation.
+In any case,
+caching the output of pure functions in an immutable input-addressable store
+is a powerful concept
+at all levels of abstraction:
+from compiler internals to building modules,
+libraries,
+and even entire system packages.
 
 Toolchains and dependencies
 ---------------------------
