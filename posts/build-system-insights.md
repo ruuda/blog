@@ -224,16 +224,20 @@ Further reading:
  * [Build Systems à la Carte][carte]
    by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
    classifies build tools based on their rebuilding strategy and scheduling algorithm.
+ * [Houyhnhnm Computing Chapter 9: Build Systems][ngnghm],
+   part of an insightful series that reevaluates computing from a hypothetical alien perspective,
+   argues that functional reactive programming is a good fit for build systems.
 
 [bazel]:  https://bazel.build/
 [buck]:   https://buckbuild.com/
 [carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
 [gn]:     https://chromium.googlesource.com/chromium/src/+/master/tools/gn/README.md
-[gyp]:    https://gyp.gsrc.io/
 [goma]:   https://chromium.googlesource.com/infra/goma/client
 [guix]:   https://www.gnu.org/software/guix/
+[gyp]:    https://gyp.gsrc.io/
 [hickey]: https://github.com/tallesl/Rich-Hickey-fanclub
 [meson]:  https://mesonbuild.com/
+[ngnghm]: https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems/
 [ninja]:  https://ninja-build.org/
 [nix]:    https://nixos.org/nix/
 [pants]:  https://www.pantsbuild.org/
