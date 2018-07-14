@@ -89,18 +89,6 @@ in one way or another.
 [Stack][stack] realised that dependencies could be shared across repositories.
 [Goma][goma] caches build artefacts based on hashes of input files and the exact compile command.
 
-The idea of using an immutable store for caching
-does not need to stop at the module level.
-A compiler and its intermediate representations
-can be considered a build system,
-where functions or even individual expressions form a graph of build targets.
-Incremental compilation and the possibility of a responsive [language server][lngsrv]
-fall out naturally from this point of view.
-Scala’s Dotty compiler [implements this idea][dotty].
-Incremental compilation in Rust [is also based][rustc] on graph caching,
-although its cache is neither immutable nor iput-addressable,
-and requires complex invalidation logic.
-
 The major caveat is that it is difficult to capture *all* input to a build step.
 Many toolchains implicitly capture state from the environment,
 for instance by reading the `CXX` environment variable or discovering include paths.
@@ -108,6 +96,18 @@ Indeed, Nix and Bazel go to great lengths
 to prevent accidentally capturing this state,
 and to provide a controlled and reproducible environment
 for toolchains that inevitably capture state.
+
+The idea of using an immutable store for caching
+does not need to stop at the module level.
+A compiler can be considered a build system,
+where intermediate representations of functions
+or even individual expressions form a graph of build targets.
+Incremental compilation and the possibility of a responsive [language server][lngsrv]
+fall out naturally from this point of view.
+Scala’s Dotty compiler [implements this idea][dotty].
+Incremental compilation in Rust [is also based][rustc] on [lazy functional][rustc2] graph caching,
+although its cache is neither immutable nor iput-addressable,
+and requires invalidation.
 
 Toolchains and dependencies
 ---------------------------
@@ -232,6 +232,8 @@ Further reading:
  * [Build Systems à la Carte][carte]
    by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
    classifies build tools based on their rebuilding strategy and scheduling algorithm.
+ * [Compilers are Databases][dotty], a talk by Martin Odersky,
+   explains how functional reactive programming can be applied to compilers.
  * [Houyhnhnm Computing Chapter 9: Build Systems][ngnghm],
    part of an insightful series that reevaluates computing from a hypothetical alien perspective,
    argues that functional reactive programming is a good fit for build systems.
@@ -254,5 +256,6 @@ Further reading:
 [please]: https://please.build/
 [repro]:  https://reproducible-builds.org/
 [rustc]:  https://blog.rust-lang.org/2016/09/08/incremental.html
+[rustc2]: https://github.com/nikomatsakis/rustc-on-demand-incremental-design-doc/blob/e08b00408bb1ee912642be4c5f78704efd0eedc5/0000-rustc-on-demand-and-incremental.md
 [shake]:  https://shakebuild.com/
 [stack]:  https://haskellstack.org/
