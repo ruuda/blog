@@ -43,10 +43,6 @@ Most of the discussion about Bazel applies equally well to these other build sys
 Caching and incremental builds
 ------------------------------
 
-* Fine-grained is better: Scala Dotty does this.
-  Incremental compilatin in rustc as well I believe.
-  Build systems and toolchains are in conflict here though. How to collaborate?
-
 **Not reusing old names for new things eliminates the need for cache invalidation
 at the cost of requiring garbage collection.
 Deterministic names enable shared caches.**<br>
@@ -92,6 +88,18 @@ in one way or another.
 [Bazel][bazel] to fine-grained build targets.
 [Stack][stack] realised that dependencies could be shared across repositories.
 [Goma][goma] caches build artefacts based on hashes of input files and the exact compile command.
+
+The idea of using an immutable store for caching
+does not need to stop at the module level.
+A compiler and its intermediate representations
+can be considered a build system,
+where functions or even individual expressions form a graph of build targets.
+Incremental compilation and the possibility of a responsive [language server][lngsrv]
+fall out naturally from this point of view.
+Scala’s Dotty compiler [implements this idea][dotty].
+Incremental compilation in Rust [is also based][rustc] on graph caching,
+although its cache is neither immutable nor iput-addressable,
+and requires complex invalidation logic.
 
 The major caveat is that it is difficult to capture *all* input to a build step.
 Many toolchains implicitly capture state from the environment,
@@ -231,11 +239,13 @@ Further reading:
 [bazel]:  https://bazel.build/
 [buck]:   https://buckbuild.com/
 [carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
+[dotty]:  https://www.youtube.com/watch?v=WxyyJyB_Ssc
 [gn]:     https://chromium.googlesource.com/chromium/src/+/master/tools/gn/README.md
 [goma]:   https://chromium.googlesource.com/infra/goma/client
 [guix]:   https://www.gnu.org/software/guix/
 [gyp]:    https://gyp.gsrc.io/
 [hickey]: https://github.com/tallesl/Rich-Hickey-fanclub
+[lngsrv]: https://microsoft.github.io/language-server-protocol/
 [meson]:  https://mesonbuild.com/
 [ngnghm]: https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems/
 [ninja]:  https://ninja-build.org/
@@ -243,5 +253,6 @@ Further reading:
 [pants]:  https://www.pantsbuild.org/
 [please]: https://please.build/
 [repro]:  https://reproducible-builds.org/
+[rustc]:  https://blog.rust-lang.org/2016/09/08/incremental.html
 [shake]:  https://shakebuild.com/
 [stack]:  https://haskellstack.org/
