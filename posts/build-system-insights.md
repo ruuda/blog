@@ -138,8 +138,20 @@ The build tool that made me realise the importance
 of a build tool-managed compiler was [Stack][stack],
 a build tool for Haskell.
 Managing the compiler means
-that I can check out a two-year old commit from [this blog][src],
+that I can check out a two-year old commit of [my blog generator][src],
 and `stack build` still produces a binary.
+Rust’s version manager Rustup learned this lesson recently
+with the [introduction][rustup] of a toolchain file.
+
+Managing the compiler also removes
+much of the need for a traditional `configure` script.
+Libraries may want to support multiple toolchains,
+but for binaries a lot of complexity can be avoided.
+
+Try that on a two-year old [Rust project][convector] of mine:
+`cargo build` no longer works.
+(Was able to fix after an hour of trying toolchains from around that time ... I never wrote down the exact version.)
+
 When checking out v1.0.0 of a [Rust project][hound] of mine (released three years ago),
 a plain `cargo build` no longer works,
 because Rust chose to have an external “version manager” called Rustup
@@ -294,7 +306,9 @@ Further reading:
 [pants]:  https://www.pantsbuild.org/
 [please]: https://please.build/
 [repro]:  https://reproducible-builds.org/
-[rustc]:  https://blog.rust-lang.org/2016/09/08/incremental.html
 [rustc2]: https://github.com/nikomatsakis/rustc-on-demand-incremental-design-doc/blob/e08b00408bb1ee912642be4c5f78704efd0eedc5/0000-rustc-on-demand-and-incremental.md
+[rustc]:  https://blog.rust-lang.org/2016/09/08/incremental.html
 [shake]:  https://shakebuild.com/
+[src]:    https://github.com/ruuda/blog
 [stack]:  https://haskellstack.org/
+[rustup]: https://github.com/rust-lang-nursery/rustup.rs/commit/107d8e5f1ab83ce13cb33a7b4ca0f58198285ee8
