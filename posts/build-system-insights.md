@@ -16,7 +16,7 @@ which got me thinking about the topic.
 At some point I realised that there are a few key principles
 that underlie a good build system.
 In this post I want to lay out some of the insights
-that advanced the state of the art in build tooling.
+that changed my view about how build tooling should work.
 
 The line between build tool and package manager became fuzzy.
 
@@ -77,9 +77,9 @@ Caching rolls out naturally:
   or a colleague have built already
   can be fetched from a remote cache.
 
-This insight is not specific to build systems:
-I would argue that
-the advantages of immutability are *the* key insight
+The advantages of immutability and pure functions
+are not specific to build systems:
+I would argue that they are *the* key insight
 of functional programming in general.
 <!--
 Most of [Rich Hickey’s talks][hickey] are an application of this insight,
@@ -127,9 +127,34 @@ Toolchains and dependencies
 **The build tool should manage the compiler toolchain.**<br>
 When a toolchain or other dependency needs to be obtained externally,
 building devolves from a single-step command
-into hours of dependency hunting and configuration patching.
-Language package managers make this easy for language dependencies,
+into hours of dependency hunting and configuration fiddling.
+Language package managers make it easy to obtain language dependencies,
 but they often stop right there.
+When a readme informally specifies the toolchain,
+rather than a machine-enforcable build definition,
+reproducibility suffers.
+
+The build tool that made me realise the importance
+of a build tool-managed compiler was [Stack][stack],
+a build tool for Haskell.
+Managing the compiler means
+that I can check out a two-year old commit from [this blog][src],
+and `stack build` still produces a binary.
+When checking out v1.0.0 of a [Rust project][hound] of mine (released three years ago),
+a plain `cargo build` no longer works,
+because Rust chose to have an external “version manager” called Rustup
+on top of the build tool Cargo,
+and at that time Rustup did not support pinning the toolchain.
+
+Haskell libraries tend to put upper bounds
+on the version of the standard library (shipped with the compiler).
+Using a compiler from the system package repositories
+constrains the set of usable libraries significantly,
+and furthermore,
+your code might stop comiling suddenly.
+
+If you use a compiler from the system package repositories,
+
 Also, pinning.
 Hermeticity is one reason.
 Pinning another.
@@ -141,6 +166,8 @@ became very clear with Nix.
 **An exact toolchain version should be pinned as part of the build target definition.**
 Because reproducibility.
 Mention Stack vs Cargo example.
+Also, if using system package manager,
+code stops compiling suddenly.
 
 Learned from Stack, I think.
 Bazel can do it.
