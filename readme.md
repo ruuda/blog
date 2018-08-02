@@ -10,7 +10,7 @@ The generator includes a tiny templating engine, an html and css minifier, and
 an aggressive font subsetter. One of my objectives was to cut all the crap
 (which almost by definition includes javascript) without compromising on
 design. An average page of my site weighs less than jQuery alone (which
-jokingly describes itself as “lightweight footprint”). That includes webfonts.
+describes itself as “lightweight footprint”). That includes webfonts.
 
 This is version three of my blog. Previously I used [Hakyll][hakyll] (available
 in the `archived-hakyll` branch), and before that I used [Jekyll][jekyll].
