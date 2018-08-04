@@ -278,7 +278,7 @@ Tools mentioned throughout this post:
  * The [Shake][shake] build system
  * The [Stack][stack] build tool and language package manager
 
-Further reading:
+Further reading and other content:
 
  * [Build Systems à la Carte][carte]
    by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
@@ -288,6 +288,9 @@ Further reading:
  * [Houyhnhnm Computing Chapter 9: Build Systems][ngnghm],
    part of an insightful series that reevaluates computing from a hypothetical alien perspective,
    argues that functional reactive programming is a good fit for build systems.
+ * [The Purely Functional Software Deployment Model][thesis],
+   Eelco Dolstra’s doctoral thesis,
+   introduces Nix as a basis for building and deploying software.
 
 [bazel]:  https://bazel.build/
 [buck]:   https://buckbuild.com/
@@ -308,7 +311,8 @@ Further reading:
 [repro]:  https://reproducible-builds.org/
 [rustc2]: https://github.com/nikomatsakis/rustc-on-demand-incremental-design-doc/blob/e08b00408bb1ee912642be4c5f78704efd0eedc5/0000-rustc-on-demand-and-incremental.md
 [rustc]:  https://blog.rust-lang.org/2016/09/08/incremental.html
+[rustup]: https://github.com/rust-lang-nursery/rustup.rs/commit/107d8e5f1ab83ce13cb33a7b4ca0f58198285ee8
 [shake]:  https://shakebuild.com/
 [src]:    https://github.com/ruuda/blog
 [stack]:  https://haskellstack.org/
-[rustup]: https://github.com/rust-lang-nursery/rustup.rs/commit/107d8e5f1ab83ce13cb33a7b4ca0f58198285ee8
+[thesis]: https://nixos.org/~eelco/pubs/phd-thesis.pdf
