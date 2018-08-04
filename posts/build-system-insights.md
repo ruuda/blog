@@ -197,6 +197,26 @@ The Blaze derivatives Pants, Buck, and Please
 also apply this principle,
 as did GN’s predecessor [GYP][gyp].
 
+**Build targets should be fine-grained.**<br>
+Having many small targets, rather than fewer large targets,
+allows for effective caching and enables parallelisation.
+If a change to an input of a target requires rebuilding the entire target,
+then making targets smaller reduces the scope of the rebuild.
+Furthermore,
+a target must wait for all of its dependencies to be built completely
+before the target can be built.
+If the target actually requires only parts of its dependencies,
+then all parts that are not required unnecessarily extend the critical path.
+(Something something utilize parallel capacity.
+Maybe give Stack example.)
+
+The importance of fine-grained targets is a lesson I learned from Bazel.
+Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
+given enough cores.
+Ninja is also able to exploit fine-grained dependencies to parallelise the build,
+but it relies on the meta build system to generate fine-grained dependencies.
+(Modulo C++ special case.)
+
 **Evaluate build target definitions lazily.**<br>
 Lazy evaluation enables good performance even in large repositories,
 because only the targets that are actually needed for a build are evaluated.
@@ -218,26 +238,6 @@ In Nix evaluation feels instant.
 Bazel applies this principle too by having many `BUILD` files,
 and aligning dependency paths with filesystem paths.
 Build files of targets that are not depended upon do not need to be loaded.
-
-**Build targets should be fine-grained.**<br>
-Having many small targets, rather than fewer large targets,
-allows for effective caching and enables parallelisation.
-If a change to an input of a target requires rebuilding the entire target,
-then making targets smaller reduces the scope of the rebuild.
-Furthermore,
-a target must wait for all of its dependencies to be built completely
-before the target can be built.
-If the target actually requires only parts of its dependencies,
-then all parts that are not required unnecessarily extend the critical path.
-(Something something utilize parallel capacity.
-Maybe give Stack example.)
-
-The importance of fine-grained targets is a lesson I learned from Bazel.
-Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
-given enough cores.
-Ninja is also able to exploit fine-grained dependencies to parallelise the build,
-but it relies on the meta build system to generate fine-grained dependencies.
-(Modulo C++ special case.)
 
 Ergonomics
 ----------
