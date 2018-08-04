@@ -189,7 +189,7 @@ Target definitions
 
 **Build target definitions should live as close to the source code as possible.**<br>
 Unlike a global makefile or other build definition in the repository root,
-a distributed approach with definitions scattered throughout the repository
+a distributed approach with definitions placed throughout the repository
 remains maintainable even in very large repositories.
 
 This is a lesson I learned from Chromium’s build system [GN][gn], and from Blaze.
