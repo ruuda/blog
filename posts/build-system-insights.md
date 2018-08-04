@@ -201,21 +201,27 @@ as did GN’s predecessor [GYP][gyp].
 Having many small targets, rather than fewer large targets,
 allows for effective caching and enables parallelisation.
 If a change to an input of a target requires rebuilding the entire target,
-then making targets smaller reduces the scope of the rebuild.
+then making targets smaller reduces the scope of that rebuild.
+Targets that do not depend on eachother can be built in parallel,
+therefore more targets generally means more parallelism.
 Furthermore,
 a target must wait for all of its dependencies to be built completely
 before the target can be built.
-If the target actually requires only parts of its dependencies,
-then all parts that are not required unnecessarily extend the critical path.
-(Something something utilize parallel capacity.
-Maybe give Stack example.)
+If the target uses only a small part of a dependency,
+then the unused parts unnecessarily prolong the critical path.
+Given enough CPU cores,
+fine-grained targets can be significantly faster than coarse targets.
+
+(Add illustration of CPU occupation here.)
+
 
 The importance of fine-grained targets is a lesson I learned from Bazel.
 Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
 given enough cores.
 Ninja is also able to exploit fine-grained dependencies to parallelise the build,
 but it relies on the meta build system to generate fine-grained dependencies.
-(Modulo C++ special case.)
+Buck [cites][buckft] its ability to transform a coarse-grained graph of build targets
+into a more fine-grained action graph as one of the reasons for its speed.
 
 **Evaluate build target definitions lazily.**<br>
 Lazy evaluation enables good performance even in large repositories,
@@ -296,6 +302,7 @@ Further reading and other content:
 
 [bazel]:  https://bazel.build/
 [buck]:   https://buckbuild.com/
+[buckft]: https://buckbuild.com/concept/what_makes_buck_so_fast.html
 [carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
 [dotty]:  https://www.youtube.com/watch?v=WxyyJyB_Ssc
 [gn]:     https://gn.googlesource.com/gn/
