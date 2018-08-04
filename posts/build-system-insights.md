@@ -202,12 +202,14 @@ Lazy evaluation enables good performance even in large repositories,
 because only the targets that are actually needed for a build are evaluated.
 The majority of build target definitions does not even need to be parsed.
 
-Lazy evaluation of build definitions is a lesson I learned from Nix.
+Lazy evaluation of build definitions is a lesson I learned from [Nix][nix].
 It is what makes installing a package from Nixpkgs fast.
 Even though Nixpkgs is an expression that evaluates to
 a dictionary of thousands of interdependent packages (build targets),
-installing a single package reads very few package definitions from disk.
-Guix is an alternative to Nix that uses Scheme to define packages,
+installing a single package
+reads very few package definitions from disk,
+and only the necessary parts are evaluated.
+[Guix][guix] is an alternative to Nix that uses Scheme to define packages,
 rather than Nix’ custom language.
 After pulling a new version of GuixSD (the Guix equivalent of Nixpkgs),
 Guix spends several minutes compiling package definitions.
