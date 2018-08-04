@@ -296,7 +296,7 @@ Further reading and other content:
 [buck]:   https://buckbuild.com/
 [carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
 [dotty]:  https://www.youtube.com/watch?v=WxyyJyB_Ssc
-[gn]:     https://chromium.googlesource.com/chromium/src/+/master/tools/gn/README.md
+[gn]:     https://gn.googlesource.com/gn/
 [goma]:   https://chromium.googlesource.com/infra/goma/client
 [guix]:   https://www.gnu.org/software/guix/
 [gyp]:    https://gyp.gsrc.io/
