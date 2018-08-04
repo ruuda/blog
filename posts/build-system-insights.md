@@ -6,14 +6,14 @@ synopsis: ?
 run-in: ?
 ---
 
-The past few years saw the rise of a new generation of build systems,
-adding to the already plentiful collection of build tools.
+A new generation of build systems has been gaining popularity over the past few years,
+joining the already plentiful collection of build tools.
 Although these new build systems differ in origin and purpose,
 there are common themes to them.
 
-In the past month I ended up interacting with many different build systems,
+Lately I ended up interacting with many different build systems,
 which got me thinking about the topic.
-At some point I realised that there are a few key principles
+I started to realise that there are a few key principles
 that underlie a good build system.
 In this post I want to lay out some of the insights
 that changed my view about how build tooling should work.
@@ -33,7 +33,7 @@ What do I want from a build system?
  * It should produce the artefact quickly.
 
 A note on taxonomy:
-in this post I often refer to [Bazel][bazel],
+in this post I refer to [Bazel][bazel] a few times,
 the open-source version of Google’s Blaze.
 Before Bazel was published,
 ex Googlers at other companies created Blaze clones,
@@ -63,7 +63,7 @@ If the output path does not exist,
 it may be obtained from a remote cache rather than by performing the build step.
 Caching rolls out naturally:
 
-* Different artefacts of a target can coexist in a cache.
+* Different artefacts of a build target can coexist in a cache.
   In particular,
   building is a no-op
   when building a previously built revision
@@ -79,7 +79,7 @@ Caching rolls out naturally:
 
 The advantages of immutability and pure functions
 are not specific to build systems:
-I would argue that they are *the* key insight
+I would argue that they are the key insight
 of functional programming in general.
 <!--
 Most of [Rich Hickey’s talks][hickey] are an application of this insight,
@@ -104,7 +104,7 @@ for toolchains that inevitably capture state.
 
 The idea of using an immutable store for caching
 does not need to stop at the module level.
-A compiler can be considered a build system,
+A compiler can be thought of as a build system,
 where intermediate representations of functions
 or even individual expressions form a graph of build targets.
 Incremental compilation and the possibility of a responsive [language server][lngsrv]
