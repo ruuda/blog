@@ -203,7 +203,7 @@ h2:hover > a:before
 h2:target > a:before
 {
   opacity: 1;
-  color: #c36;
+  color: #c35;
 }
 
 {{end}}
