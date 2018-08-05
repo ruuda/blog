@@ -90,7 +90,7 @@ Most modern build tools
 use an immutable input-addressable cache
 in one way or another.
 [Nix][nix] applies the technique to system package management,
-[Bazel][bazel] to fine-grained build targets.
+[Bazel][bazel] and [SCons][scons] to fine-grained build targets.
 [Stack][stack] realised that dependencies could be shared across repositories.
 [Goma][goma] caches build artefacts based on hashes of input files and the exact compile command.
 Treating build steps as pure functions makes caching a breeze.
@@ -297,6 +297,7 @@ Tools mentioned throughout this post:
  * The [Nix][nix] system package manager
  * The [Pants][pants] build system, inspired by Blaze
  * The [Please][please] build system, inspired by Blaze
+ * The [SCons][scons] build system toolkit
  * The [Shake][shake] build system
  * The [Stack][stack] build tool and language package manager
 
@@ -335,6 +336,8 @@ Further reading and other content:
 [rustc2]: https://github.com/nikomatsakis/rustc-on-demand-incremental-design-doc/blob/e08b00408bb1ee912642be4c5f78704efd0eedc5/0000-rustc-on-demand-and-incremental.md
 [rustc]:  https://blog.rust-lang.org/2016/09/08/incremental.html
 [rustup]: https://github.com/rust-lang-nursery/rustup.rs/commit/107d8e5f1ab83ce13cb33a7b4ca0f58198285ee8
+[scons]:  https://scons.org/
+[sconsc]: https://scons.org/doc/3.0.1/HTML/scons-user/ch24.html
 [shake]:  https://shakebuild.com/
 [src]:    https://github.com/ruuda/blog
 [stack]:  https://haskellstack.org/
