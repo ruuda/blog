@@ -111,7 +111,7 @@ Incremental compilation and the possibility of a responsive [language server][ln
 fall out naturally from this point of view.
 Scala’s Dotty compiler [implements this idea][dotty].
 Incremental compilation in Rust [is also based][rustc] on [lazy functional][rustc2] graph caching,
-although its cache is neither immutable nor iput-addressable,
+although its cache is neither immutable nor input-addressable,
 and requires invalidation.
 In any case,
 caching the output of pure functions in an immutable input-addressable store
