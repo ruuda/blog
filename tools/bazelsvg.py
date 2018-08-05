@@ -125,7 +125,7 @@ print(
   'src:url(/fonts/r{{sans-roman-hash}}.woff2)format("woff2"),'
   'url(/fonts/r{{sans-roman-hash}}.woff)format("woff")}'
   ".bar{fill:#b4aaaa}"
-  ".label{font:4px 'Calluna Sans';font-variant-numeric:oldstyle-nums;fill:#b4aaaa;text-anchor:middle}"
+  ".label{font:4px 'Calluna Sans',sans-serif;font-variant-numeric:oldstyle-nums;fill:#b4aaaa;text-anchor:middle}"
   "</style>",
   end=''
 )
