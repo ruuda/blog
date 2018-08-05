@@ -95,13 +95,13 @@ def render_bars(fname: str, start_y: float) -> List[str]:
       # Deduplicate bars by coordinates. The critical path takes priority.
       bar = Bar(start_dsec, tid, duration_dsec)
       if is_on_critical_path:
-        bars[bar] = '#c35'
+        bars[bar] = 'fill="#c35"'
       elif bar not in bars:
-        bars[bar] = '#b4aaaa'
+        bars[bar] = 'class="bar"'
 
   return [
     f'<rect x="{bar.x * 0.1:0.1f}" y="{start_y + bar.y * 2.8:.1f}" '
-    f'width="{bar.w * 0.1:0.1f}" height="1.4" fill="{color}"/>'
+    f'width="{bar.w * 0.1:0.1f}" height="1.4" {color}/>'
     for bar, color in sorted(bars.items())
   ]
 
@@ -115,7 +115,20 @@ bars_after = render_bars(fname_after, 28.7)
 # 1.4em, and I want to fit two bars on a line, so I should make every bar 2.8
 # high.
 print(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.95 0 144 56.4">', end='')
-print("<style>.label{font:4px 'Calluna Sans';fill:#b4aaaa;text-anchor:middle}</style>", end='')
+
+# Minified style sheet template that will be rendered by the generator to
+# substitute the font hashes. This way we can refer to the same font as the html
+# body.
+print(
+  "<style>"
+  "@font-face{font-family:Calluna Sans;"
+  'src:url(/fonts/r{{sans-roman-hash}}.woff2)format("woff2"),'
+  'url(/fonts/r{{sans-roman-hash}}.woff)format("woff");}'
+  ".bar{fill:#b4aaaa}"
+  ".label{font:4px 'Calluna Sans';fill:#b4aaaa;text-anchor:middle}"
+  "</style>",
+  end=''
+)
 
 for t in range(0, 144, 10):
   # Lines in my math.css are 0.08em, those go well with the text stroke width,

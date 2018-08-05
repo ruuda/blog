@@ -4,7 +4,8 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-import Control.Monad (filterM, void)
+import Control.Monad (filterM)
+import Data.List (isSuffixOf)
 import Data.Monoid ((<>))
 import Data.Time.Calendar (toGregorian)
 import Data.Time.Clock (getCurrentTime, utctDay)
@@ -33,11 +34,6 @@ mapFilesIf p f dir = enumerateFiles >>= filterM doesFileExist >>= mapM f
 mapFiles :: (FilePath -> IO a) -> FilePath -> IO [a]
 mapFiles = mapFilesIf $ \_ -> True
 
--- Copies all files in the source directory to the destination directory.
-copyFiles :: FilePath -> FilePath -> IO ()
-copyFiles srcDir dstDir = void $ mapFiles copy srcDir
-  where copy fname = copyFile fname $ dstDir </> (takeFileName fname)
-
 -- Applies the IO-performing function f to every file in a given directory, and
 -- returns a map from the file name to the result.
 mapFilesFileName :: (FilePath -> IO a) -> FilePath -> IO (M.Map FilePath a)
@@ -57,9 +53,21 @@ readPost fname = fmap makePost $ readFile fname
 readPosts :: FilePath -> IO [P.Post]
 readPosts = mapFilesIf ((== ".md") . takeExtension) readPost
 
--- Holds the output directory and input image directory.
-data Config = Config { outDir   :: FilePath
-                     , imageDir :: FilePath }
+-- Copy over bitmap images, render svg images, so they can reference
+-- subsetted fonts. Svgs should be rendered with the font context of their post.
+writeImage :: Template.Context -> FilePath -> IO ()
+writeImage ctx fname =
+  let
+    inFile = "images/compressed" </> fname
+    outFile = "out/images" </> fname
+    copyBitmap = copyFile inFile outFile
+    renderSvg = do
+      template <- fmap Template.parse (readFile inFile)
+      -- TODO: Rendering the template is really slow for my build svg.
+      -- Speed that up.
+      writeFile outFile (Template.apply template ctx)
+  in do
+    if ".svg" `isSuffixOf` fname then renderSvg else copyBitmap
 
 -- Compresses the given file to a new file with .gz/br appended to the filename.
 compressFile :: FilePath -> IO ()
@@ -71,8 +79,8 @@ compressFile fname = do
 -- of the posts and writes them to the output directory. This also prints a list
 -- of processed posts to the standard output. Start numbering post artifacts at
 -- 53, lower indices are reserved for other pages.
-writePosts :: Template.Template -> Template.Context -> [P.Post] -> Config -> IO [SubsetCommand]
-writePosts tmpl ctx posts config =
+writePosts :: Template.Template -> Template.Context -> [P.Post] -> IO [SubsetCommand]
+writePosts tmpl ctx posts =
   let
     total = length posts
     -- Reverse the list of posts, so the most recent one is rendered first.
@@ -83,18 +91,21 @@ writePosts tmpl ctx posts config =
       putStrLn $ "[" ++ (show i) ++ " of " ++ (show total) ++ "] " ++ (P.slug post)
       Async.async $ writePost post related
     writePost post related = do
-      let destFile = (outDir config) </> (drop 1 $ P.url post) </> "index.html"
-          context  = M.unions [ P.context post
-                              , P.relatedContext related
-                              , ctx]
-          -- Generating the html is a two-stage process: first we render the
-          -- template without knowing the font filenames, as those are based
-          -- on the hash of the glyphs. Then we scan which glyphs occur in
-          -- there to determine the hash, and then we can render again.
-          baseHtml = Template.apply tmpl context
-          (fontCtx, subsetCmds) = Type.subsetArtifact "out/fonts/" baseHtml
-          html = Template.apply tmpl (context <> fontCtx)
-      (_svgPaths, withImages) <- Image.processImages (imageDir config) html
+      let
+        destFile = "out" </> (drop 1 $ P.url post) </> "index.html"
+        context  = M.unions [ P.context post
+                            , P.relatedContext related
+                            , ctx]
+        -- Generating the html is a two-stage process: first we render the
+        -- template without knowing the font filenames, as those are based
+        -- on the hash of the glyphs. Then we scan which glyphs occur in
+        -- there to determine the hash, and then we can render again.
+        baseHtml = Template.apply tmpl context
+        (fontCtx, subsetCmds) = Type.subsetArtifact "out/fonts/" baseHtml
+        html = Template.apply tmpl (context <> fontCtx)
+      (imgPaths, withImages) <- Image.processImages "images/compressed" html
+      -- Copy referenced bitmap images, render svg images as templates.
+      mapM_ (writeImage fontCtx) imgPaths
       let minified = minifyHtml withImages
       createDirectoryIfMissing True $ takeDirectory destFile
       writeFile destFile minified
@@ -107,20 +118,20 @@ writePosts tmpl ctx posts config =
 
 -- Writes a general (non-post) page given a template and expansion context.
 -- Returns the subset commands that need to be executed for that page.
-writePage :: String -> Template.Context -> Template.Template -> Config -> IO [SubsetCommand]
-writePage url pageContext template config = do
+writePage :: String -> Template.Context -> Template.Template -> IO [SubsetCommand]
+writePage url pageContext template = do
   let context  = Template.stringField "url" url <> pageContext
       baseHtml = Template.apply template context
       (fontCtx, subsetCmds) = Type.subsetArtifact "out/fonts/" baseHtml
       html     = minifyHtml $ Template.apply template (context <> fontCtx)
-      destDir  = (outDir config) </> (tail url)
+      destDir  = "out" </> (tail url)
       destFile = destDir </> "index.html"
   createDirectoryIfMissing True destDir
   writeFile destFile html
   compressFile destFile
   pure subsetCmds
 
-writeIndex :: Template.Context -> Template.Template -> Config -> IO [SubsetCommand]
+writeIndex :: Template.Context -> Template.Template -> IO [SubsetCommand]
 writeIndex globalContext = writePage "/" context
   where context = M.unions [ Template.stringField "title"     "Ruud van Asseldonk"
                            , Template.stringField "bold-font" "true"
@@ -129,7 +140,7 @@ writeIndex globalContext = writePage "/" context
 
 -- Given the archive template and the global context, writes the archive page
 -- to the destination directory.
-writeArchive :: Template.Context -> Template.Template -> [P.Post] -> Config -> IO [SubsetCommand]
+writeArchive :: Template.Context -> Template.Template -> [P.Post] -> IO [SubsetCommand]
 writeArchive globalContext template posts = writePage "/writing" context template
   where context = M.unions [ P.archiveContext posts
                            , Template.stringField "title"     "Writing by Ruud van Asseldonk"
@@ -139,20 +150,20 @@ writeArchive globalContext template posts = writePage "/writing" context templat
 
 -- Given the contact template and the global context, writes the contact page
 -- to the destination directory.
-writeContact :: Template.Context -> Template.Template -> Config -> IO [SubsetCommand]
+writeContact :: Template.Context -> Template.Template -> IO [SubsetCommand]
 writeContact globalContext = writePage "/contact" context
   where context = M.unions [ Template.stringField "title" "Contact Ruud van Asseldonk"
                            , Template.stringField "light" "true"
                            , globalContext ]
 
 -- Given the feed template and list of posts, writes an atom feed.
-writeFeed :: Template.Template -> [P.Post] -> Config -> IO ()
-writeFeed template posts config = do
+writeFeed :: Template.Template -> [P.Post] -> IO ()
+writeFeed template posts = do
   let url      = "/feed.xml"
       context  = P.feedContext posts
       atom     = Template.apply template context
-      destFile = (outDir config) </> (tail url)
-  createDirectoryIfMissing True (outDir config)
+      destFile = "out" </> (tail url)
+  createDirectoryIfMissing True "out"
   writeFile destFile atom
   compressFile destFile
 
@@ -167,25 +178,22 @@ main = do
   let yctx          = Template.stringField "year" $ show year
       tctx          = fmap Template.TemplateValue templates
       globalContext = M.union tctx yctx
-      config        = Config { outDir   = "out/"
-                             , imageDir = "images/compressed/" }
 
   createDirectoryIfMissing True  "out/images/"
-  copyFiles "images/compressed/" "out/images/"
 
   putStrLn "Writing posts..."
-  postCmds <- writePosts (templates M.! "post.html") globalContext posts config
+  postCmds <- writePosts (templates M.! "post.html") globalContext posts
 
   putStrLn "Writing other pages..."
-  indexCmd   <- writeIndex   globalContext (templates M.! "index.html")   config
-  contactCmd <- writeContact globalContext (templates M.! "contact.html") config
-  archiveCmd <- writeArchive globalContext (templates M.! "archive.html") posts config
+  indexCmd   <- writeIndex   globalContext (templates M.! "index.html")
+  contactCmd <- writeContact globalContext (templates M.! "contact.html")
+  archiveCmd <- writeArchive globalContext (templates M.! "archive.html") posts
 
   copyFile "assets/favicon.png"          "out/favicon.png"
   copyFile "assets/ruudvanasseldonk.asc" "out/contact/ruudvanasseldonk.asc"
 
   putStrLn "Writing atom feed..."
-  writeFeed (templates M.! "feed.xml") posts config
+  writeFeed (templates M.! "feed.xml") posts
 
   putStrLn "Subsetting fonts..."
   createDirectoryIfMissing True "out/fonts"

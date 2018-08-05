@@ -8,7 +8,7 @@ module Image (processImages) where
 
 import           Codec.Picture.Types (dynamicMap)
 import           Codec.Picture (DynamicImage(..), imageWidth, imageHeight, readImage)
-import           Data.List (find, isSuffixOf)
+import           Data.List (find, isSuffixOf, stripPrefix)
 import           Data.Maybe (fromJust)
 import           System.FilePath ((</>), takeFileName)
 import qualified Text.HTML.TagSoup as S
@@ -46,15 +46,15 @@ mapImgAttributes f = mapM mapTag
   where mapTag (S.TagOpen "img" attrs) = fmap (S.TagOpen "img") $ f attrs
         mapTag otherTag                = return otherTag
 
--- Extract "src=" attributes from images, where they end in ".svg".
-getSvgPaths :: [Html.Tag] -> [FilePath]
-getSvgPaths tags =
+-- Extract "src=" attributes from images, stripping the "/images/" prefix from
+-- the path.
+getSrcPaths :: [Html.Tag] -> [FilePath]
+getSrcPaths tags =
   let
     appendSrc (S.TagOpen "img" attrs) srcs = getSrc attrs : srcs
     appendSrc _ srcs = srcs
-    allSrcs = foldr appendSrc [] tags
   in
-    filter (".svg" `isSuffixOf`) allSrcs
+    fmap (fromJust . stripPrefix "/images/") $ foldr appendSrc [] tags
 
 -- Sets the width and height attributes of all <img> tags.
 addDimensionsAll :: FilePath -> [Html.Tag] -> IO [Html.Tag]
@@ -67,12 +67,12 @@ isImgCloseTag tag = case tag of
 
 -- Given a piece of html, adds the image dimensions to the attributes of every
 -- <img> tag and ensures that there are no closing </img> tags. Returns a list
--- of referenced svg file paths, and the new html.
+-- of referenced image file paths, and the new html.
 processImages :: FilePath -> String -> IO ([FilePath], String)
 processImages imgDir html =
   let
     tags = filter (not . isImgCloseTag) $ Html.parseTags html
-    svgPaths = getSvgPaths tags
+    srcPaths = getSrcPaths tags
   in do
     newHtml <- fmap Html.renderTags $ addDimensionsAll imgDir tags
-    pure (svgPaths, newHtml)
+    pure (srcPaths, newHtml)
