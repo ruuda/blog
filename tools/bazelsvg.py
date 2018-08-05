@@ -11,17 +11,25 @@
 
 
 import sys
-from typing import List
+from typing import Dict, List, NamedTuple, Set
 
-ns_per_sec = 1000 * 1000 * 1000
-max_sec = 0
+def ns_to_ds(time_ns: int) -> int:
+  """Return time rounded to deciseconds."""
+  return (time_ns + 50_000_000) // 100_000_000
+
+
+class Bar(NamedTuple):
+  x: int
+  y: int
+  w: int
 
 # Critical path information is all the way at the end, and does not reference
 # the actions by id. We cross-reference them by description instead.
-def get_critical_path(fname: str):
+def get_critical_path(fname: str) -> Set[str]:
   with open(fname, 'r') as f:
     critical_path_id = ''
-    descriptions = set()
+    descriptions: Set[str] = set()
+
     for line in f:
       thread_id, task_id, parent_id, start_ns, duration_ns, stats, ttype, description = line.split('|')
 
@@ -38,8 +46,10 @@ def get_critical_path(fname: str):
 
 
 def render_bars(fname: str, start_y: float) -> List[str]:
-  global max_sec
-  bars = []
+  # Collect bars in a dictionary to deduplicate them, there was some overlap
+  # that prevented the critical path from being visible because other bars were
+  # on top. The dictionary deduplicates them. Value is the color of the bar.
+  bars: Dict[Bar, str] = {}
 
   critical_path = get_critical_path(fname)
 
@@ -56,37 +66,44 @@ def render_bars(fname: str, start_y: float) -> List[str]:
       if parent_id != '0':
         continue
 
-      if ttype == 'SKYFRAME_EVAL':
+      if ttype in {'SKYFRAME_EVAL', 'CREATE_PACKAGE', 'SKYFUNCTION', 'SKYLARK_USER_FN'}:
         continue
 
-      duration_sec = int(duration_ns) / ns_per_sec
-      if duration_sec < 0.3:
+      start_ns = int(start_ns)
+      start_dsec = ns_to_ds(start_ns)
+      excess_ns = start_ns - start_dsec * 100_000_000
+
+      duration_dsec = ns_to_ds(int(duration_ns) - excess_ns)
+      if duration_dsec <= 3:
         continue
 
-      start_sec = int(start_ns) / ns_per_sec
+      start_dsec = ns_to_ds(int(start_ns))
 
       if start_x is not None:
-        start_sec -= start_x
+        start_dsec -= start_x
       else:
-        start_x = start_sec
-        start_sec = 0
+        start_x = start_dsec
+        start_dsec = 0
 
       if thread_id not in tids:
         tids[thread_id] = tid_i % 8
         tid_i += 1
       tid = tids[thread_id]
 
-      max_sec = max(max_sec, start_sec + duration_sec)
+      is_on_critical_path = description.strip() in critical_path
 
-      description = description.strip()
-      color = '#c35' if description in critical_path else '#456';
+      # Deduplicate bars by coordinates. The critical path takes priority.
+      bar = Bar(start_dsec, tid, duration_dsec)
+      if is_on_critical_path:
+        bars[bar] = '#c35'
+      elif bar not in bars:
+        bars[bar] = '#b4aaaa'
 
-      bars.append(
-          f'<rect x="{start_sec:0.1f}" y="{start_y + tid * 2.8:.1f}" width="{duration_sec:0.1f}" '
-        f'height="1.4" fill="{color}"/>'
-      )
-
-  return bars
+  return [
+    f'<rect x="{bar.x * 0.1:0.1f}" y="{start_y + bar.y * 2.8:.1f}" '
+    f'width="{bar.w * 0.1:0.1f}" height="1.4" fill="{color}"/>'
+    for bar, color in sorted(bars.items())
+  ]
 
 fname_before, fname_after = sys.argv[1:]
 bars_before = render_bars(fname_before, 0.7)
@@ -97,13 +114,13 @@ bars_after = render_bars(fname_after, 28.7)
 # means that 4 units in the svg coordinate system are 1 em. The line height is
 # 1.4em, and I want to fit two bars on a line, so I should make every bar 2.8
 # high.
-print(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.9 0 144 56.4">', end='')
-print("<style>.label{font:4px 'Calluna Sans';fill:#bbb;text-anchor:middle}</style>", end='')
+print(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.95 0 144 56.4">', end='')
+print("<style>.label{font:4px 'Calluna Sans';fill:#b4aaaa;text-anchor:middle}</style>", end='')
 
 for t in range(0, 144, 10):
   # Lines in my math.css are 0.08em, those go well with the text stroke width,
   # and 1 em is 4 units, so the stroke width for the time grid is 0.32 units.
-  print(f'<line x1="{t}" y1="0" x2="{t}" y2="50.4" stroke="#ddd" stroke-width="0.32"/>', end='')
+  print(f'<line x1="{t}" y1="0" x2="{t}" y2="50.4" stroke="#eee" stroke-width="0.32"/>', end='')
 
 for bar in bars_before + bars_after:
   print(bar, end='')

@@ -220,6 +220,7 @@ with Bazel on my eight-core machine.
 On the x-axis is time in seconds.
 The blocks indicate a target being built,
 every track represents one CPU core.
+Highlighted blocks are on the critical path.
 The top eight tracks show a naive build with coarse targets.
 I repeatedly analysed this graph,
 and broke up the targets on the critical path into smaller targets.
