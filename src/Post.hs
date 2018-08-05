@@ -9,6 +9,7 @@ module Post ( Post
             , body
             , context
             , date
+            , extraGlyphs
             , feedContext
             , longDate
             , parse
@@ -48,14 +49,20 @@ extractFrontMatter = parseFM M.empty . drop 1 . lines
           where (key, delimValue) = break (== ':') line
                 value = drop 2 delimValue -- Drop the colon and space.
 
-data Post = Post { title     :: String
-                 , header    :: String
-                 , subheader :: Maybe String
-                 , part      :: Maybe Int
-                 , date      :: Day
-                 , slug      :: String
-                 , synopsis  :: String
-                 , body      :: String } deriving (Show) -- TODO: This is for debugging only, remove.
+data Post = Post { title       :: String
+                 , header      :: String
+                 , subheader   :: Maybe String
+                 , part        :: Maybe Int
+                 , date        :: Day
+                 , slug        :: String
+                 , synopsis    :: String
+                 , body        :: String
+                 -- As a hack, if we need more glyphs in the body font than
+                 -- detected (because there is an svg image that shares the
+                 -- font), allow specifying more content to be considered for
+                 -- subsetting.
+                 , extraGlyphs :: String
+                 }
 
 -- Returns the post date, formatted like "17 April, 2015".
 longDate :: Post -> String
@@ -138,17 +145,18 @@ parse postSlug contents = let
   addRunIn html = foldl Html.makeRunIn html (fmap length runIn)
   refineType    = addRunIn . Type.expandPunctuation . Type.makeAbbrs
   parseDate     = parseTimeOrError True defaultTimeLocale "%F"
-  in Post { title     = postTitle
-          , header    = brokenHeading
-          , subheader = M.lookup "subheader" frontMatter
-          , part      = fmap read $ M.lookup "part" frontMatter
-          , date      = parseDate $ frontMatter M.! "date"
-          , slug      = postSlug
-          , synopsis  = frontMatter M.! "synopsis"
-          , body      = refineType
-                      $ Html.cleanTables
-                      $ Html.addAnchors
-                      $ renderMarkdown bodyContents
+  in Post { title       = postTitle
+          , header      = brokenHeading
+          , subheader   = M.lookup "subheader" frontMatter
+          , part        = fmap read $ M.lookup "part" frontMatter
+          , date        = parseDate $ frontMatter M.! "date"
+          , slug        = postSlug
+          , synopsis    = frontMatter M.! "synopsis"
+          , extraGlyphs = fromMaybe "" $ M.lookup "extra-glyphs" frontMatter
+          , body        = refineType
+                        $ Html.cleanTables
+                        $ Html.addAnchors
+                        $ renderMarkdown bodyContents
           }
 
 -- Renders markdown to html using Pandoc with my settings.
@@ -167,9 +175,9 @@ renderMarkdown md = case fmap (writeHtmlString wopt) (readMarkdown ropt md) of
         wopt = def { writerHighlight  = True }
 
 -- Related content for a post, for the further reading section in the footer.
-data RelatedContent = Further Post
-                    | Series [Post]
-                    deriving (Show) -- TODO: this is for debugging only, remove.
+data RelatedContent
+  = Further Post
+  | Series [Post]
 
 -- Returns the template expansion context for related content.
 relatedContext :: RelatedContent -> Template.Context

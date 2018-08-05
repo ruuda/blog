@@ -100,7 +100,7 @@ writePosts tmpl ctx posts =
         -- template without knowing the font filenames, as those are based
         -- on the hash of the glyphs. Then we scan which glyphs occur in
         -- there to determine the hash, and then we can render again.
-        baseHtml = Template.apply tmpl context
+        baseHtml = (Template.apply tmpl context) ++ (P.extraGlyphs post)
         (fontCtx, subsetCmds) = Type.subsetArtifact "out/fonts/" baseHtml
         html = Template.apply tmpl (context <> fontCtx)
       (imgPaths, withImages) <- Image.processImages "images/compressed" html
