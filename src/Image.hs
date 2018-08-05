@@ -10,6 +10,7 @@ import           Codec.Picture.Types (dynamicMap)
 import           Codec.Picture (DynamicImage(..), imageWidth, imageHeight, readImage)
 import           Data.List (find, isSuffixOf, stripPrefix)
 import           Data.Maybe (fromJust)
+import           Data.Foldable (foldrM)
 import           System.FilePath ((</>), takeFileName)
 import qualified Text.HTML.TagSoup as S
 
@@ -40,11 +41,31 @@ addDimensions imgDir attrs = fmap (attrs ++) dimensions
         then pure []
         else fmap (either error makeDimensions) (readImage imgPath)
 
--- Maps an IO-performing function over the attributes of all <img> tags.
+-- Maps an IO-performing function over the attributes of all <img> tags, and
+-- replaces <img> tags with an svg source with <object> tags instead, because
+-- <img> tags cannot load svg images that contain stylesheets, whereas <object>
+-- tags can.
 mapImgAttributes :: (Attributes -> IO Attributes) -> [Html.Tag] -> IO [Html.Tag]
-mapImgAttributes f = mapM mapTag
-  where mapTag (S.TagOpen "img" attrs) = fmap (S.TagOpen "img") $ f attrs
-        mapTag otherTag                = return otherTag
+mapImgAttributes f = foldrM mapTag []
+  where
+    mapTag tag more = case tag of
+      (S.TagOpen "img" attrs) | ".svg" `isSuffixOf` getSrc attrs ->
+        pure $
+          (S.TagOpen "object")
+            [ ("type", "image/svg+xml")
+            , ("data", getSrc attrs)
+            , ("role", "image")
+            ]
+          -- Alt-text turns int content of the tag.
+          : (S.TagText $ fromJust $ lookup "alt" attrs)
+          : (S.TagClose "object")
+          : more
+
+      (S.TagOpen "img" attrs) | otherwise -> do
+        newAttrs <- f attrs
+        pure $ (S.TagOpen "img") newAttrs : more
+
+      otherTag -> pure $ otherTag : more
 
 -- Extract "src=" attributes from images, stripping the "/images/" prefix from
 -- the path.
@@ -56,7 +77,8 @@ getSrcPaths tags =
   in
     fmap (fromJust . stripPrefix "/images/") $ foldr appendSrc [] tags
 
--- Sets the width and height attributes of all <img> tags.
+-- Sets the width and height attributes of all <img> tags, turn <img> tags for
+-- svg images into <object> tags.
 addDimensionsAll :: FilePath -> [Html.Tag] -> IO [Html.Tag]
 addDimensionsAll imgDir = mapImgAttributes $ addDimensions imgDir
 
