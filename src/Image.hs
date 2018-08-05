@@ -46,6 +46,16 @@ mapImgAttributes f = mapM mapTag
   where mapTag (S.TagOpen "img" attrs) = fmap (S.TagOpen "img") $ f attrs
         mapTag otherTag                = return otherTag
 
+-- Extract "src=" attributes from images, where they end in ".svg".
+getSvgPaths :: [Html.Tag] -> [FilePath]
+getSvgPaths tags =
+  let
+    appendSrc (S.TagOpen "img" attrs) srcs = getSrc attrs : srcs
+    appendSrc _ srcs = srcs
+    allSrcs = foldr appendSrc [] tags
+  in
+    filter (".svg" `isSuffixOf`) allSrcs
+
 -- Sets the width and height attributes of all <img> tags.
 addDimensionsAll :: FilePath -> [Html.Tag] -> IO [Html.Tag]
 addDimensionsAll imgDir = mapImgAttributes $ addDimensions imgDir
@@ -56,9 +66,13 @@ isImgCloseTag tag = case tag of
   _                -> False
 
 -- Given a piece of html, adds the image dimensions to the attributes of every
--- <img> tag and ensures that there are no closing </img> tags.
-processImages :: FilePath -> String -> IO String
-processImages imgDir = fmap Html.renderTags
-                     . addDimensionsAll imgDir
-                     . filter (not . isImgCloseTag)
-                     . Html.parseTags
+-- <img> tag and ensures that there are no closing </img> tags. Returns a list
+-- of referenced svg file paths, and the new html.
+processImages :: FilePath -> String -> IO ([FilePath], String)
+processImages imgDir html =
+  let
+    tags = filter (not . isImgCloseTag) $ Html.parseTags html
+    svgPaths = getSvgPaths tags
+  in do
+    newHtml <- fmap Html.renderTags $ addDimensionsAll imgDir tags
+    pure (svgPaths, newHtml)

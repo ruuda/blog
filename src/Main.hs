@@ -94,7 +94,7 @@ writePosts tmpl ctx posts config =
           baseHtml = Template.apply tmpl context
           (fontCtx, subsetCmds) = Type.subsetArtifact "out/fonts/" baseHtml
           html = Template.apply tmpl (context <> fontCtx)
-      withImages  <- Image.processImages (imageDir config) html
+      (_svgPaths, withImages) <- Image.processImages (imageDir config) html
       let minified = minifyHtml withImages
       createDirectoryIfMissing True $ takeDirectory destFile
       writeFile destFile minified
