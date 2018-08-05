@@ -212,7 +212,7 @@ then the unused parts unnecessarily prolong the critical path.
 Given enough CPU cores,
 fine-grained targets can be significantly faster than coarse targets.
 
-(Add illustration of CPU occupation here.)
+![CPU occupation during build with fine-grained targets.](/images/build.svg)
 
 
 The importance of fine-grained targets is a lesson I learned from Bazel.
