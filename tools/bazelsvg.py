@@ -16,9 +16,32 @@ from typing import List
 ns_per_sec = 1000 * 1000 * 1000
 max_sec = 0
 
+# Critical path information is all the way at the end, and does not reference
+# the actions by id. We cross-reference them by description instead.
+def get_critical_path(fname: str):
+  with open(fname, 'r') as f:
+    critical_path_id = ''
+    descriptions = set()
+    for line in f:
+      thread_id, task_id, parent_id, start_ns, duration_ns, stats, ttype, description = line.split('|')
+
+      if ttype == 'CRITICAL_PATH':
+        critical_path_id = task_id
+
+      if parent_id == critical_path_id:
+        if description.startswith("action '"):
+          # Turn "action 'foobar'\n" into "foobar".
+          description = description[len("action '"):-2]
+          descriptions.add(description)
+
+  return descriptions
+
+
 def render_bars(fname: str, start_y: float) -> List[str]:
   global max_sec
   bars = []
+
+  critical_path = get_critical_path(fname)
 
   with open(fname, 'r') as f:
     tids = {}
@@ -26,8 +49,10 @@ def render_bars(fname: str, start_y: float) -> List[str]:
     start_x = None
 
     for line in f:
-      thread_id, task_id, parent_id, start_ns, duration_ns, stats, ttype, _ = line.split('|')
+      thread_id, task_id, parent_id, start_ns, duration_ns, stats, ttype, description = line.split('|')
 
+      # Exclude subtasks because we already draw the parent, apart from the
+      # critical path components, which are children of the critical path.
       if parent_id != '0':
         continue
 
@@ -53,9 +78,12 @@ def render_bars(fname: str, start_y: float) -> List[str]:
 
       max_sec = max(max_sec, start_sec + duration_sec)
 
+      description = description.strip()
+      color = '#c35' if description in critical_path else '#456';
+
       bars.append(
           f'<rect x="{start_sec:0.1f}" y="{start_y + tid * 2.8:.1f}" width="{duration_sec:0.1f}" '
-        f'height="1.4" fill="#c35"/>'
+        f'height="1.4" fill="{color}"/>'
       )
 
   return bars
