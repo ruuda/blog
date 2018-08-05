@@ -210,10 +210,22 @@ before the target can be built.
 If the target uses only a small part of a dependency,
 then the unused parts unnecessarily prolong the critical path.
 Given enough CPU cores,
-fine-grained targets can be significantly faster than coarse targets.
+fine-grained targets can build significantly faster than coarse targets.
 
 ![CPU occupation during build with fine-grained targets.](/images/build.svg)
+<!--TODO: Highlight critical path -->
 
+The above graph shows a concrete example of building a project
+with Bazel on my eight-core machine.
+On the x-axis is time in seconds.
+The blocks indicate a target being built,
+every track represents one CPU core.
+The top eight tracks show a naive build with coarse targets.
+I repeatedly analysed this graph,
+and broke up the targets on the critical path into smaller targets.
+The bottom eight tracks show the final result:
+a build that is almost 30 seconds faster
+despite doing the same amount of work.
 
 The importance of fine-grained targets is a lesson I learned from Bazel.
 Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
@@ -248,7 +260,7 @@ Build files of targets that are not depended upon do not need to be loaded.
 Ergonomics
 ----------
 
-**Startup time is important for command-line tools.**<br>
+**Startup time matters.**<br>
 The overhead of interpreters or just in time compilers can be significant.
 
 My experience with Bazel is that although it builds quickly, it is slow to start.
