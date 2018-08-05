@@ -300,6 +300,7 @@ Tools mentioned throughout this post:
  * The [SCons][scons] build system toolkit
  * The [Shake][shake] build system
  * The [Stack][stack] build tool and language package manager
+ * The [Waf][waf] build system. TODO: Not actually mentioned
 
 Further reading and other content:
 
@@ -342,3 +343,4 @@ Further reading and other content:
 [src]:    https://github.com/ruuda/blog
 [stack]:  https://haskellstack.org/
 [thesis]: https://nixos.org/~eelco/pubs/phd-thesis.pdf
+[waf]:    https://waf.io/
