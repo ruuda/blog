@@ -43,18 +43,23 @@ import Data.Foldable (foldr')
 import qualified Data.Map.Strict as Map
 
 data Token
-  = Outer !String
-  | Inner !String
+  = Outer String
+  | Inner String
 
 -- Splits a string into things inside and outside of moustaches.
+-- Note: for the current token string, we accumulate in reverse, and then
+-- reverse the entire token at the end. This avoids quadratic time tokenization
+-- due to linear-time append.
 tokenize :: String -> [Token]
-tokenize str = next str (Outer "") []
-  where next :: String -> Token -> [Token] -> [Token]
-        next             []         token tokens = tokens ++ [token]
-        next ('{':'{':more) (Outer outer) tokens = next more (Inner "") (tokens ++ [Outer outer])
-        next (      c:more) (Outer outer) tokens = next more (Outer (outer ++ [c])) tokens
-        next ('}':'}':more) (Inner inner) tokens = next more (Outer "") (tokens ++ [Inner inner])
-        next (      c:more) (Inner inner) tokens = next more (Inner (inner ++ [c])) tokens
+tokenize str = next str (Outer "")
+  where
+    next :: String -> Token -> [Token]
+    next             [] (Outer outer) = [Outer $ reverse outer]
+    next             [] (Inner inner) = [Inner $ reverse inner]
+    next ('{':'{':more) (Outer outer) = (Outer $ reverse outer) : next more (Inner "")
+    next (      c:more) (Outer outer) = next more (Outer $ c : outer)
+    next ('}':'}':more) (Inner inner) = (Inner $ reverse inner) : next more (Outer "")
+    next (      c:more) (Inner inner) = next more (Inner $ c : inner)
 
 data Fragment
   = Conditional !String
@@ -68,9 +73,8 @@ type Template = [Fragment]
 
 -- Converts a string into fragments that can be fed into the interpreter.
 parse :: String -> Template
-parse template = strictMap toFragment $ tokenize template
+parse = fmap toFragment . tokenize
   where
-    strictMap f = foldr' (\x acc -> (f $! x) : acc) []
     toFragment (Outer str) = Raw str
     toFragment (Inner str) =
       case break (== ' ') str of

@@ -62,12 +62,8 @@ writeImage ctx fname =
     outFile = "out/images" </> fname
     copyBitmap = copyFile inFile outFile
     renderSvg = do
-      template <- fmap Template.parse (readFile inFile)
-      -- TODO: Rendering the template is really slow for my build svg.
-      -- Speed that up.
-      putStrLn "BEGIN applying template"
+      template <- Template.parse <$> readFile inFile
       writeFile outFile (Template.apply template ctx)
-      putStrLn "END applying template"
   in do
     if ".svg" `isSuffixOf` fname then renderSvg else copyBitmap
 
