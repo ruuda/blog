@@ -3,7 +3,7 @@ title: Build system insights
 date: 2018-06-30
 minutes: ?
 synopsis: ?
-run-in: ?
+run-in: A new generation of build systems
 extra-glyphs: 1234567890
 ---
 
@@ -11,34 +11,18 @@ A new generation of build systems has been gaining popularity over the past few 
 joining the already plentiful collection of build tools.
 Although these new build systems differ in origin and purpose,
 there are common themes to them.
-
 Lately I ended up interacting with many different build systems,
 which got me thinking about the topic.
-I started to realise that there are a few key principles
-that underlie a good build system.
+Slowly a few key principles that underlie a good build system emerged.
 In this post I want to lay out some of the insights
 that changed my view about how build tooling should work.
 
-The line between build tool and package manager became fuzzy.
-
-What do I want from a build system?
-
- * To type a single command to start the build.
-   After some time a build artefact should appear.
- * The build artefact does not depend on where or when I perform the build,
-   only on the source code checked out
-   and flags passed to the build command (such as `--debug`, `--profile` or `-c opt`).
- * When I check out a three-year old commit,
-   all of the above should still be true,
-   and I should get the same build artefacts that I got three years ago.
- * It should produce the artefact quickly.
-
 A note on taxonomy:
-in this post I refer to [Bazel][bazel] a few times,
-the open-source version of Google’s Blaze.
+in this post I refer to *Bazel* a few times,
+the open-source version *Blaze*, Google’s internal build system.
 Before Bazel was published,
 ex Googlers at other companies created Blaze clones,
-resulting in [Pants][pants], [Buck][buck], and [Please][please].
+resulting in *Pants*, *Buck*, and *Please*.
 Most of the discussion about Bazel applies equally well to these other build systems.
 
 Caching and incremental builds
