@@ -265,22 +265,25 @@ Ergonomics
 **Startup time matters.**<br>
 The overhead of interpreters or just in time compilers can be significant.
 
-My experience with Bazel is that although it builds quickly, it is slow to start.
-Bazel can take seconds to do a no-op build even in a small repository.
-The build tool runs on the JVM, which can achieve good performance at the cost of long warmup times.
-To keep startup time manageable,
-Bazel has to spawn a daemon that persists between builds,
-so the full startup time is paid only once.
-Ninja on the other hand is much snappier.
-It is a native binary,
-and starting quickly was an explicit design goal.
+My experience with Bazel is that although it builds large projects quickly,
+it is slow to start.
+The build tool runs on the JVM,
+and can sometimes take seconds to do a no-op build even in a small repository.
+*Please*
+— a build system that is very similar but implemented in Go —
+is much snappier.
+Build definitions that can be evaluated efficiently matter too:
+even though both Make and Ninja are native binaries,
+Ninja starts building faster.
+Ninja traded flexibility in the build file format for faster builds,
+deferring complex decisions to a meta build system.
 
-Another good example is the Mercurial source control system.
+Another telling example is the Mercurial source control system.
 Its `hg` command is written in Python for extensibility.
 This comes at the cost of responsiveness:
 just evaluating imports can take a significant amount of time,
-relative to executing the command itself.
-[Which is why Rust.]
+relative to executing the command itself,
+which is why parts of Mercurial are now [being rewritten][hgoxid] in Rust.
 
 References and further reading
 ------------------------------
@@ -325,6 +328,7 @@ Further reading and other content:
 [goma]:   https://chromium.googlesource.com/infra/goma/client
 [guix]:   https://www.gnu.org/software/guix/
 [gyp]:    https://gyp.gsrc.io/
+[hgoxid]: https://www.mercurial-scm.org/wiki/OxidationPlan
 [hickey]: https://github.com/tallesl/Rich-Hickey-fanclub
 [lngsrv]: https://microsoft.github.io/language-server-protocol/
 [meson]:  https://mesonbuild.com/
