@@ -288,6 +288,21 @@ which is why parts of Mercurial are now [being rewritten][hgoxid] in Rust.
 References and further reading
 ------------------------------
 
+Further reading and other related content:
+
+ * [Build Systems à la Carte][carte]
+   by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
+   classifies build tools based on their rebuilding strategy and scheduling algorithm.
+ * [Compilers are Databases][dotty],
+   a talk by Martin Odersky,
+   explains how functional reactive programming can be applied to compilers.
+ * [Houyhnhnm Computing Chapter 9: Build Systems][ngnghm],
+   part of an insightful series that reevaluates computing from a hypothetical alien perspective,
+   argues that functional reactive programming is a good fit for build systems.
+ * [The Purely Functional Software Deployment Model][thesis],
+   Eelco Dolstra’s doctoral thesis,
+   introduces Nix as a basis for building and deploying software.
+
 Tools mentioned throughout this post:
 
  * The [Bazel][bazel] build system, the open source version of Google’s Blaze
@@ -304,20 +319,6 @@ Tools mentioned throughout this post:
  * The [Shake][shake] build system
  * The [Stack][stack] build tool and language package manager
  * The [Waf][waf] build system. TODO: Not actually mentioned
-
-Further reading and other content:
-
- * [Build Systems à la Carte][carte]
-   by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
-   classifies build tools based on their rebuilding strategy and scheduling algorithm.
- * [Compilers are Databases][dotty], a talk by Martin Odersky,
-   explains how functional reactive programming can be applied to compilers.
- * [Houyhnhnm Computing Chapter 9: Build Systems][ngnghm],
-   part of an insightful series that reevaluates computing from a hypothetical alien perspective,
-   argues that functional reactive programming is a good fit for build systems.
- * [The Purely Functional Software Deployment Model][thesis],
-   Eelco Dolstra’s doctoral thesis,
-   introduces Nix as a basis for building and deploying software.
 
 [bazel]:  https://bazel.build/
 [buck]:   https://buckbuild.com/
