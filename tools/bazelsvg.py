@@ -93,7 +93,7 @@ def render_bars(fname: str, start_y: float) -> List[str]:
       is_on_critical_path = description.strip() in critical_path
 
       # Deduplicate bars by coordinates. The critical path takes priority.
-      bar = Bar(start_dsec, tid, duration_dsec)
+      bar = Bar(start_dsec, 7 - tid, duration_dsec)
       if is_on_critical_path:
         bars[bar] = 'fill="#c35"'
       elif bar not in bars:
