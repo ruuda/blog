@@ -125,6 +125,11 @@ a build tool for Haskell.
 Managing the compiler means
 that I can check out a two-year old commit of [my blog generator][src],
 and `stack build` still produces a binary.
+In the mean time,
+I had to reinstall the Python dependencies of my blog while writing this post,
+as Arch Linux started shipping Python 3.7 rather than 3.6,
+and the artefacts in my virtualenv suddenly became unrunnable,
+without me changing any code.
 Rust’s version manager Rustup learned this lesson recently
 with the [introduction][rustup] of a toolchain file.
 
