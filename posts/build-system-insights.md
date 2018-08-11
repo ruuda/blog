@@ -109,7 +109,7 @@ and even entire system packages.
 Toolchains and dependencies
 ---------------------------
 
-**The build tool should manage the compiler toolchain.**<br>
+**The build tool should manage the runtime or compiler toolchain.**<br>
 When a toolchain or other dependency needs to be obtained externally,
 building devolves from a single-step command
 into hours of dependency hunting and configuration fiddling.
@@ -125,11 +125,19 @@ a build tool for Haskell.
 Managing the compiler means
 that I can check out a two-year old commit of [my blog generator][src],
 and `stack build` still produces a binary.
-In the mean time,
+In contrast,
 I had to reinstall the Python dependencies of my blog while writing this post,
-as Arch Linux started shipping Python 3.7 rather than 3.6,
-and the artefacts in my virtualenv suddenly became unrunnable,
-without me changing any code.
+as the artefacts in my virtualenv suddenly became unrunnable
+after a system update had replaced Python 3.6 with 3.7.
+My first reinstallation attempt failed,
+because I had `CC` set to Clang,
+and the Python package tried to build native code that only compiled with GCC.
+I am confident that two years from now
+I will still be able to build the generator for this blog,
+but I am not sure whether I will be able
+to get the currently pinned versions of
+the Python dependencies to run.
+
 Rust’s version manager Rustup learned this lesson recently
 with the [introduction][rustup] of a toolchain file.
 
