@@ -18,7 +18,7 @@ In this post I want to lay out some of the insights
 that changed my view about how build tooling should work.
 
 A note on taxonomy:
-in this post I refer to *Bazel* a few times,
+in this post I refer to Bazel a few times,
 the open-source version *Blaze*, Google’s internal build system.
 Before Bazel was published,
 ex Googlers at other companies created Blaze clones,
@@ -315,6 +315,7 @@ Tools mentioned throughout this post:
 [gyp]:    https://gyp.gsrc.io/
 [hgoxid]: https://www.mercurial-scm.org/wiki/OxidationPlan
 [hickey]: https://github.com/tallesl/Rich-Hickey-fanclub
+[jussi]:  https://nibblestew.blogspot.com/2018/02/on-unoptimalities-of-language-specific.html
 [lngsrv]: https://microsoft.github.io/language-server-protocol/
 [meson]:  https://mesonbuild.com/
 [ngnghm]: https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems/
