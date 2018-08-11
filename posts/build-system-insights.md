@@ -188,7 +188,7 @@ allows for effective caching and enables parallelisation.
 If a change to an input of a target requires rebuilding the entire target,
 then making targets smaller reduces the scope of that rebuild.
 Targets that do not depend on eachother can be built in parallel,
-therefore more targets generally means more parallelism.
+therefore finer targets generally means more parallelism.
 Furthermore,
 a target must wait for all of its dependencies to be built completely
 before the target can be built.
@@ -216,9 +216,8 @@ despite doing the same amount of work.
 The importance of fine-grained targets is a lesson I learned from Bazel.
 Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
 given enough cores.
-Ninja is also able to exploit fine-grained dependencies to parallelise the build,
-but it relies on the meta build system to generate fine-grained dependencies.
-Buck [cites][buckft] its ability to transform a coarse-grained graph of build targets
+The similar build tool Buck
+[cites][buckft] its ability to transform a coarse-grained graph of build targets
 into a more fine-grained action graph as one of the reasons for its speed.
 
 **Evaluate build target definitions lazily.**<br>
@@ -254,20 +253,22 @@ it is slow to start.
 The build tool runs on the JVM,
 and can sometimes take seconds to do a no-op build even in a small repository.
 *Please*
-— a build system that is very similar but implemented in Go —
+— a very similar build system implemented in Go —
 is much snappier.
 Build definitions that can be evaluated efficiently matter too:
 even though both Make and Ninja are native binaries,
 Ninja starts building faster.
 Ninja traded flexibility in the build file format for faster builds,
-deferring complex decisions to a meta build system.
+deferring complex decisions to a meta build system
+such as Meson or GN.
 
 Another telling example is the Mercurial source control system.
 Its `hg` command is written in Python for extensibility.
 This comes at the cost of responsiveness:
-just evaluating imports can take a significant amount of time,
-relative to executing the command itself,
-which is why parts of Mercurial are now [being rewritten][hgoxid] in Rust.
+just evaluating imports
+can already take a significant percentage of total execution time,
+which is why parts of Mercurial are now
+[being replaced][hgoxid] with native binaries.
 
 References and further reading
 ------------------------------
@@ -285,16 +286,17 @@ Further reading and other related content:
    argues that functional reactive programming is a good fit for build systems.
  * [The Purely Functional Software Deployment Model][thesis],
    Eelco Dolstra’s doctoral thesis,
-   introduces Nix as a basis for building and deploying software.
+   introduces Nix and its immutable input-addressable store
+   as a basis for building and deploying software.
 
 Tools mentioned throughout this post:
 
  * The [Bazel][bazel] build system, the open source version of Google’s Blaze
  * The [Buck][buck] build system, inspired by Blaze
- * The [GN][gn] meta-build system, used in Chromium
- * The [GYP][gyp] meta-build system, the predecessor to GN
+ * The [GN][gn] meta build system, used in Chromium
+ * The [GYP][gyp] meta build system, the predecessor to GN
  * The [Guix][guix] system package manager, inspired by Nix
- * The [Meson][meson] meta-build system
+ * The [Meson][meson] meta build system
  * The [Ninja][ninja] low-level build system, targeted by GN and Meson
  * The [Nix][nix] system package manager
  * The [Pants][pants] build system, inspired by Blaze
