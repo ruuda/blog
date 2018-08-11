@@ -151,42 +151,21 @@ so the compiler version can be pinned
 as part of the build definition
 that is under source control.
 
+**A truly reproducible build requires pinning all dependencies.**<br>
+Not only language packages
+and toolchain,
+also native dependencies.
+Gets you Nix.
+Not always feasible,
+is a trade off.
+Alternatively build inside VM.
+
 Managing the compiler also removes
 much of the need for a traditional `configure` script.
 Libraries may want to support multiple toolchains,
 but for binaries a lot of complexity can be avoided.
 
-When checking out v1.0.0 of a [Rust project][hound] of mine (released three years ago),
-a plain `cargo build` no longer works,
-because Rust chose to have an external “version manager” called Rustup
-on top of the build tool Cargo,
-and at that time Rustup did not support pinning the toolchain.
-
-Haskell libraries tend to put upper bounds
-on the version of the standard library (shipped with the compiler).
-Using a compiler from the system package repositories
-constrains the set of usable libraries significantly,
-and furthermore,
-your code might stop comiling suddenly.
-
-If you use a compiler from the system package repositories,
-
-Also, pinning.
-Hermeticity is one reason.
-Pinning another.
-The tools that do this are the only ones that "just work" (i.e. Nix).
-
-Learned from Stack (vs Cargo) at first,
-became very clear with Nix.
-
-**An exact toolchain version should be pinned as part of the build target definition.**
-Because reproducibility.
-Mention Stack vs Cargo example.
-Also, if using system package manager,
-code stops compiling suddenly.
-
-Learned from Stack, I think.
-Bazel can do it.
+Nix is the only tool I have used that just works.
 
 Target definitions
 ------------------
