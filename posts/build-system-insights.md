@@ -131,24 +131,30 @@ as the artefacts in my virtualenv suddenly became unrunnable
 after a system update had replaced Python 3.6 with 3.7.
 My first reinstallation attempt failed,
 because I had `CC` set to Clang,
-and the Python package tried to build native code that only compiled with GCC.
+and a Python package tried to build native code that only compiled with GCC.
 I am confident that two years from now
 I will still be able to build the generator for this blog,
 but I am not sure whether I will be able
 to get the currently pinned versions of
 the Python dependencies to run.
 
-Rust’s version manager Rustup learned this lesson recently
-with the [introduction][rustup] of a toolchain file.
+To drive the point home:
+I recently tried to compile a two-year old [Rust project][convec] of mine,
+that compiled with a nightly toolchain at the time.
+I never wrote down the exact compiler version I used,
+so it took me an hour
+of trying nightly toolchains that were published around that time,
+before I found one that could compile the project.
+Fortunately Rust’s version manager recently
+[introduced][rustup] a toolchain file,
+so the compiler version can be pinned
+as part of the build definition
+that is under source control.
 
 Managing the compiler also removes
 much of the need for a traditional `configure` script.
 Libraries may want to support multiple toolchains,
 but for binaries a lot of complexity can be avoided.
-
-Try that on a two-year old [Rust project][convector] of mine:
-`cargo build` no longer works.
-(Was able to fix after an hour of trying toolchains from around that time ... I never wrote down the exact version.)
 
 When checking out v1.0.0 of a [Rust project][hound] of mine (released three years ago),
 a plain `cargo build` no longer works,
@@ -323,6 +329,7 @@ Tools mentioned throughout this post:
 [buck]:   https://buckbuild.com/
 [buckft]: https://buckbuild.com/concept/what_makes_buck_so_fast.html
 [carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
+[convec]: https://github.com/ruuda/convector
 [dotty]:  https://www.youtube.com/watch?v=WxyyJyB_Ssc
 [gn]:     https://gn.googlesource.com/gn/
 [goma]:   https://chromium.googlesource.com/infra/goma/client
