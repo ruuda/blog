@@ -258,7 +258,7 @@ even though both Make and Ninja are native binaries,
 Ninja starts building faster.
 Ninja traded flexibility in the build file format for faster builds,
 deferring complex decisions to a meta build system
-such as Meson or GN.
+such as CMake, Meson, or GN.
 
 Another telling example is the Mercurial source control system.
 Its `hg` command is written in Python for extensibility.
@@ -291,6 +291,7 @@ Tools mentioned throughout this post:
 
  * The [Bazel][bazel] build system, the open source version of Google’s Blaze
  * The [Buck][buck] build system, inspired by Blaze
+ * The [CMake][cmake] meta build system
  * The [GN][gn] meta build system, used in Chromium
  * The [GYP][gyp] meta build system, the predecessor to GN
  * The [Guix][guix] system package manager, inspired by Nix
@@ -308,6 +309,7 @@ Tools mentioned throughout this post:
 [buck]:   https://buckbuild.com/
 [buckft]: https://buckbuild.com/concept/what_makes_buck_so_fast.html
 [carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
+[cmake]:  https://cmake.org/
 [convec]: https://github.com/ruuda/convector
 [dotty]:  https://www.youtube.com/watch?v=WxyyJyB_Ssc
 [gn]:     https://gn.googlesource.com/gn/
