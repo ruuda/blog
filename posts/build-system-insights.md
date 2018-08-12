@@ -224,7 +224,7 @@ so the compiler version can now be pinned
 as part of the build definition
 that is under source control.
 
-**A truly reproducible build requires pinning all dependencies.**<br>
+**A truly reproducible build requires a controlled build environment.**<br>
 Pinning dependencies managed through a language package manager
 is a great first step towards reproducibility,
 and pinning the toolchain helps too.
@@ -232,9 +232,9 @@ However, as long as there are implicit dependencies on the build environment
 (such as libraries or tools installed through a system package manager),
 *works on my machine* issues persist.
 
-There are two ways to create a controlled build environment.
+There are two ways to create a controlled build environment:
 
-* The first is to track down *all* implicit dependencies and make them explicit.
+* Track down *all* implicit dependencies and make them explicit.
   Building inside a sandboxed environment
   can help identify such dependencies
   by making undeclared dependencies unavailable.
@@ -242,8 +242,8 @@ There are two ways to create a controlled build environment.
   if a build step does not specify a dependency on GCC,
   there will be no `gcc` on the `PATH`.
   Nix is an implementation of this approach.
-* The second approach is to admit defeat on tracking dependencies,
-  and to try and fix the entire environment instead,
+* Admit defeat on tracking dependencies,
+  and try and fix the entire environment instead,
   for example by building inside a specific container or virtual machine.
   Care must be taken to avoid
   mutating the environment in uncontrollable ways.
