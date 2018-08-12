@@ -19,7 +19,8 @@ that changed my view about how build tooling should work.
 
 A note on taxonomy:
 in this post I refer to Bazel a few times,
-the open-source version *Blaze*, Google’s internal build system.
+the open-source version of *Blaze*,
+Google’s internal build system.
 Before Bazel was published,
 ex Googlers at other companies created Blaze clones,
 resulting in *Pants*, *Buck*, and *Please*.
