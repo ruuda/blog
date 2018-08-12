@@ -189,7 +189,7 @@ into hours of dependency hunting and configuration fiddling.
 Language package managers make it easy to obtain language dependencies,
 but they often stop right there.
 When a readme informally specifies the toolchain,
-rather than a machine-enforcable build definition,
+rather than a machine-enforceable build definition,
 reproducibility suffers.
 
 The build tool that made me realise the importance
