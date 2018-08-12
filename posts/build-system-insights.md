@@ -106,6 +106,78 @@ from compiler internals to building modules,
 libraries,
 and even entire system packages.
 
+Target definitions
+------------------
+
+**Build target definitions should live as close to the source code as possible.**<br>
+Unlike a global makefile or other build definition in the repository root,
+a distributed approach with definitions placed throughout the repository
+remains maintainable even in very large repositories.
+
+This is a lesson I learned from Chromium’s build system [GN][gn], and from Blaze.
+The Blaze derivatives Pants, Buck, and Please
+also apply this principle,
+as did GN’s predecessor [GYP][gyp].
+
+**Build targets should be fine-grained.**<br>
+Having many small targets, rather than fewer large targets,
+allows for effective caching and enables parallelisation.
+If a change to an input of a target requires rebuilding the entire target,
+then making targets smaller reduces the scope of that rebuild.
+Targets that do not depend on eachother can be built in parallel,
+therefore finer targets generally means more parallelism.
+Furthermore,
+a target must wait for all of its dependencies to be built completely
+before the target can be built.
+If the target uses only a small part of a dependency,
+then the unused parts unnecessarily prolong the critical path.
+Given enough CPU cores,
+fine-grained targets can build significantly faster than coarse targets.
+
+![CPU occupation during build with coarse and fine-grained targets.](/images/build.svg)
+
+The above graph shows a concrete example of building a project
+with Bazel on my eight-core machine.
+On the x-axis is time in seconds.
+The blocks indicate a target being built,
+every track represents one CPU core.
+Highlighted blocks are on the critical path.
+The top eight tracks show a naive build with coarse targets.
+I repeatedly analysed this graph,
+and broke up the targets on the critical path into smaller targets.
+The bottom eight tracks show the final result:
+a build that is almost 30 seconds faster
+despite doing the same amount of work.
+
+The importance of fine-grained targets is a lesson I learned from Bazel.
+Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
+given enough cores.
+The similar build tool Buck
+[cites][buckft] its ability to transform a coarse-grained graph of build targets
+into a more fine-grained action graph as one of the reasons for its speed.
+
+**Evaluate build target definitions lazily.**<br>
+Lazy evaluation enables good performance even in large repositories,
+because only the targets that are actually needed for a build are evaluated.
+The majority of build target definitions does not even need to be parsed.
+
+Lazy evaluation of build definitions is a lesson I learned from [Nix][nix].
+It is what makes installing a package from Nixpkgs fast.
+Even though Nixpkgs is an expression that evaluates to
+a dictionary of thousands of interdependent packages (build targets),
+installing a single package
+reads very few package definitions from disk,
+and only the necessary parts are evaluated.
+[Guix][guix] is an alternative to Nix that uses Scheme to define packages,
+rather than Nix’ custom language.
+After pulling a new version of GuixSD (the Guix equivalent of Nixpkgs),
+Guix spends several minutes compiling package definitions.
+In Nix evaluation feels instant.
+
+Bazel applies this principle too by having many `BUILD` files,
+and aligning dependency paths with filesystem paths.
+Build files of targets that are not depended upon do not need to be loaded.
+
 Toolchains and dependencies
 ---------------------------
 
@@ -167,78 +239,6 @@ but for binaries a lot of complexity can be avoided.
 
 Nix is the only tool I have used that just works.
 
-Target definitions
-------------------
-
-**Build target definitions should live as close to the source code as possible.**<br>
-Unlike a global makefile or other build definition in the repository root,
-a distributed approach with definitions placed throughout the repository
-remains maintainable even in very large repositories.
-
-This is a lesson I learned from Chromium’s build system [GN][gn], and from Blaze.
-The Blaze derivatives Pants, Buck, and Please
-also apply this principle,
-as did GN’s predecessor [GYP][gyp].
-
-**Build targets should be fine-grained.**<br>
-Having many small targets, rather than fewer large targets,
-allows for effective caching and enables parallelisation.
-If a change to an input of a target requires rebuilding the entire target,
-then making targets smaller reduces the scope of that rebuild.
-Targets that do not depend on eachother can be built in parallel,
-therefore finer targets generally means more parallelism.
-Furthermore,
-a target must wait for all of its dependencies to be built completely
-before the target can be built.
-If the target uses only a small part of a dependency,
-then the unused parts unnecessarily prolong the critical path.
-Given enough CPU cores,
-fine-grained targets can build significantly faster than coarse targets.
-
-![CPU occupation during build with fine-grained targets.](/images/build.svg)
-<!--TODO: Highlight critical path -->
-
-The above graph shows a concrete example of building a project
-with Bazel on my eight-core machine.
-On the x-axis is time in seconds.
-The blocks indicate a target being built,
-every track represents one CPU core.
-Highlighted blocks are on the critical path.
-The top eight tracks show a naive build with coarse targets.
-I repeatedly analysed this graph,
-and broke up the targets on the critical path into smaller targets.
-The bottom eight tracks show the final result:
-a build that is almost 30 seconds faster
-despite doing the same amount of work.
-
-The importance of fine-grained targets is a lesson I learned from Bazel.
-Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
-given enough cores.
-The similar build tool Buck
-[cites][buckft] its ability to transform a coarse-grained graph of build targets
-into a more fine-grained action graph as one of the reasons for its speed.
-
-**Evaluate build target definitions lazily.**<br>
-Lazy evaluation enables good performance even in large repositories,
-because only the targets that are actually needed for a build are evaluated.
-The majority of build target definitions does not even need to be parsed.
-
-Lazy evaluation of build definitions is a lesson I learned from [Nix][nix].
-It is what makes installing a package from Nixpkgs fast.
-Even though Nixpkgs is an expression that evaluates to
-a dictionary of thousands of interdependent packages (build targets),
-installing a single package
-reads very few package definitions from disk,
-and only the necessary parts are evaluated.
-[Guix][guix] is an alternative to Nix that uses Scheme to define packages,
-rather than Nix’ custom language.
-After pulling a new version of GuixSD (the Guix equivalent of Nixpkgs),
-Guix spends several minutes compiling package definitions.
-In Nix evaluation feels instant.
-
-Bazel applies this principle too by having many `BUILD` files,
-and aligning dependency paths with filesystem paths.
-Build files of targets that are not depended upon do not need to be loaded.
 
 Ergonomics
 ----------
