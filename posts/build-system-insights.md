@@ -200,7 +200,7 @@ that I can check out a two-year old commit of [my blog generator][src],
 and `stack build` still produces a binary.
 In contrast,
 I had to reinstall the Python dependencies of my blog while writing this post,
-as the artefacts in my virtualenv suddenly became unrunnable
+as the artefacts in my virtualenv suddenly became unusable
 after a system update had replaced Python 3.6 with 3.7.
 My first reinstallation attempt failed,
 because I had `CC` set to Clang,
@@ -211,7 +211,7 @@ but I am not sure whether I will be able
 to get the currently pinned versions of
 the Python dependencies to run.
 
-To drive the point home:
+To add another example:
 I recently tried to compile a two-year old [Rust project][convec] of mine,
 that compiled with a nightly toolchain at the time.
 I never wrote down the exact compiler version I used,
@@ -220,11 +220,37 @@ of trying nightly toolchains that were published around that time,
 before I found one that could compile the project.
 Fortunately Rust’s version manager recently
 [introduced][rustup] a toolchain file,
-so the compiler version can be pinned
+so the compiler version can now be pinned
 as part of the build definition
 that is under source control.
 
 **A truly reproducible build requires pinning all dependencies.**<br>
+Pinning dependencies managed through a language package manager
+is a great first step towards reproducibility,
+and pinning the toolchain helps too.
+However, as long as there are implicit dependencies on the build environment
+(such as libraries or tools installed through a system package manager),
+*works on my machine* issues persist.
+
+There are two ways to create a controlled build environment.
+
+* The first is to track down *all* implicit dependencies and make them explicit.
+  Building inside a sandboxed environment
+  can help identify such dependencies
+  by making undeclared dependencies unavailable.
+  For example,
+  if a build step does not specify a dependency on GCC,
+  there will be no `gcc` on the `PATH`.
+  Nix is an implementation of this approach.
+* The second approach is to admit defeat on tracking dependencies,
+  and to try and fix the entire environment instead,
+  for example by building inside a specific container or virtual machine.
+  Care must be taken to avoid
+  mutating the environment in uncontrollable ways.
+  For example,
+  running `apt update` would put an initially pinned
+  file system in an indeterminate state again.
+
 Not only language packages
 and toolchain,
 also native dependencies.
