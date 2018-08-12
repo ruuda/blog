@@ -162,7 +162,7 @@ because only the targets that are actually needed for a build are evaluated.
 The majority of build target definitions does not even need to be parsed.
 
 Lazy evaluation of build definitions is a lesson I learned from [Nix][nix].
-It is what makes installing a package from Nixpkgs fast.
+It is what makes installing a package from [Nixpkgs][nixpkg] fast.
 Even though Nixpkgs is an expression that evaluates to
 a dictionary of thousands of interdependent packages (build targets),
 installing a single package
@@ -174,7 +174,8 @@ After pulling a new version of GuixSD (the Guix equivalent of Nixpkgs),
 Guix spends several minutes compiling package definitions.
 In Nix evaluation feels instant.
 
-Bazel applies this principle too by having many `BUILD` files,
+Bazel uses lazy target definitions too,
+by having many `BUILD` files,
 and aligning dependency paths with filesystem paths.
 Build files of targets that are not depended upon do not need to be loaded.
 
@@ -324,6 +325,7 @@ Tools mentioned throughout this post:
 [ngnghm]: https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems/
 [ninja]:  https://ninja-build.org/
 [nix]:    https://nixos.org/nix/
+[nixpkg]: https://nixos.org/nixpkgs/
 [pants]:  https://www.pantsbuild.org/
 [please]: https://please.build/
 [repro]:  https://reproducible-builds.org/
