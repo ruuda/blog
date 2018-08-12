@@ -303,6 +303,11 @@ Further reading and other related content:
  * [Build Systems à la Carte][carte]
    by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
    classifies build tools based on their rebuilding strategy and scheduling algorithm.
+ * [Build Tools as Pure Functional Programs][bpfunc],
+   gets to the heart of what a build tool is,
+   and draws analogies with functional programming,
+   in particular between higher-order functions
+   and building toolchains as part of the build.
  * [Compilers are Databases][dotty],
    a talk by Martin Odersky,
    explains how functional reactive programming can be applied to compilers.
@@ -333,6 +338,7 @@ Tools mentioned throughout this post:
  * The [Waf][waf] build system. TODO: Not actually mentioned
 
 [bazel]:  https://bazel.build/
+[bpfunc]: https://www.lihaoyi.com/post/BuildToolsasPureFunctionalPrograms.html
 [buck]:   https://buckbuild.com/
 [buckft]: https://buckbuild.com/concept/what_makes_buck_so_fast.html
 [carte]:  https://www.microsoft.com/en-us/research/publication/build-systems-la-carte/
