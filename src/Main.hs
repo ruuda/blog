@@ -64,6 +64,7 @@ writeImage ctx fname =
     renderSvg = do
       template <- Template.parse <$> readFile inFile
       writeFile outFile (Template.apply template ctx)
+      compressFile outFile
   in do
     if ".svg" `isSuffixOf` fname then renderSvg else copyBitmap
 
