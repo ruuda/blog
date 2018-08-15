@@ -71,6 +71,10 @@ writeImage ctx fname =
 -- Compresses the given file to a new file with .gz/br appended to the filename.
 compressFile :: FilePath -> IO ()
 compressFile fname = do
+  -- NOTE: I could squeeze out a few more bytes here with "zopfli --i1000"
+  -- rather than the default number of iterations, but it's really no more
+  -- than ten bytes per page, and it does increase the build time by 20 seconds
+  -- or so, so I don't think that is really worth it.
   System.Process.callProcess "zopfli" [fname]
   System.Process.callProcess "brotli" ["--force", "--output=" ++ fname ++ ".br", fname]
 
