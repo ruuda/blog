@@ -45,7 +45,7 @@ def get_critical_path(fname: str) -> Set[str]:
   return descriptions
 
 
-def render_bars(fname: str, start_y: float) -> List[str]:
+def render_bars(fname: str, start_y: int) -> List[str]:
   # Collect bars in a dictionary to deduplicate them, there was some overlap
   # that prevented the critical path from being visible because other bars were
   # on top. The dictionary deduplicates them. Value is the color of the bar.
@@ -100,21 +100,22 @@ def render_bars(fname: str, start_y: float) -> List[str]:
         bars[bar] = 'class="bar"'
 
   return [
-    f'<rect x="{bar.x * 0.1:0.1f}" y="{start_y + bar.y * 2.8:.1f}" '
-    f'width="{bar.w * 0.1:0.1f}" height="1.4" {color}/>'
+    f'<rect x="{bar.x:.0f}" y="{start_y + bar.y * 28:.0f}" '
+    f'width="{bar.w:.0f}" height="14" {color}/>'
     for bar, color in sorted(bars.items())
   ]
 
 fname_before, fname_after = sys.argv[1:]
-bars_before = render_bars(fname_before, 0.7)
-bars_after = render_bars(fname_after, 28.7)
+bars_before = render_bars(fname_before, 7)
+bars_after = render_bars(fname_after, 287)
 
 # We show 144 seconds in the graph, the last target finishes at 141.7 seconds,
 # but 144 is a multiple of 36. # On max width the image is 36em wide, which
 # means that 4 units in the svg coordinate system are 1 em. The line height is
 # 1.4em, and I want to fit two bars on a line, so I should make every bar 2.8
-# high.
-print(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.95 0 144 56.4">', end='')
+# high. Also multiply everything by 10, so we don't have to include the decimal
+# dot, that saves a few bytes.
+print(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="-9.5 0 1440 564">', end='')
 
 # Minified style sheet template that will be rendered by the generator to
 # substitute the font hashes. This way we can refer to the same font as the html
@@ -125,7 +126,7 @@ print(
   'src:url(/fonts/r{{sans-roman-hash}}.woff2)format("woff2"),'
   'url(/fonts/r{{sans-roman-hash}}.woff)format("woff")}'
   ".bar{fill:#b4aaaa}"
-  ".label{font:4px 'Calluna Sans',sans-serif;font-variant-numeric:oldstyle-nums;fill:#b4aaaa;text-anchor:middle}"
+  ".label{font:40px 'Calluna Sans',sans-serif;font-variant-numeric:oldstyle-nums;fill:#b4aaaa;text-anchor:middle}"
   "</style>",
   end=''
 )
@@ -133,12 +134,12 @@ print(
 for t in range(0, 144, 10):
   # Lines in my math.css are 0.08em, those go well with the text stroke width,
   # and 1 em is 4 units, so the stroke width for the time grid is 0.32 units.
-  print(f'<line x1="{t}" y1="0" x2="{t}" y2="50.4" stroke="#eee" stroke-width="0.32"/>', end='')
+  print(f'<line x1="{t * 10}" y1="0" x2="{t * 10}" y2="504" stroke="#eee" stroke-width="3.2"/>', end='')
 
 for bar in bars_before + bars_after:
   print(bar, end='')
 
 for t in range(0, 144, 10):
-  print(f'<text x="{t}" y="55" class="label">{t}</text>', end='')
+  print(f'<text x="{t * 10}" y="550" class="label">{t}</text>', end='')
 
 print('</svg>', end='')
