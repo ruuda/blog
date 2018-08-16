@@ -38,7 +38,6 @@ where
 --  * Variables: "{{<var>}}" expands to the value of <var> if that is a string.
 
 import Control.Monad (join)
-import Data.Foldable (foldr')
 
 import qualified Data.Map.Strict as Map
 
