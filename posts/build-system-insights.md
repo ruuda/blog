@@ -228,7 +228,7 @@ that is under source control.
 **A truly reproducible build requires a controlled build environment.**<br>
 Pinning dependencies managed through a language package manager
 is a great first step towards reproducibility,
-and pinning the toolchain helps too.
+and pinning the toolchain is another big leap.
 However, as long as there are implicit dependencies on the build environment
 (such as libraries or tools installed through a system package manager),
 *works on my machine* issues persist.
