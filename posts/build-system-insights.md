@@ -204,7 +204,7 @@ In contrast,
 I had to reinstall the Python dependencies of my blog while writing this post,
 as the artefacts in my virtualenv became unusable
 after a system update had replaced Python 3.6 with 3.7.
-My first reinstallation attempt failed,
+Then my first reinstallation attempt failed,
 because I had `CC` set to Clang,
 and a Python package tried to build native code that only compiled with GCC.
 I am confident that two years from now
@@ -218,7 +218,7 @@ I recently tried to compile a two-year old [Rust project][convec] of mine,
 that compiled with a nightly toolchain at the time.
 I never wrote down the exact compiler version I used,
 so it took me an hour
-of trying nightly toolchains that were published around that time,
+of trying toolchains that were published around that time,
 before I found one that could compile the project.
 Fortunately Rust’s version manager recently
 [introduced][rustup] a toolchain file,
@@ -249,7 +249,7 @@ There are two ways to create a controlled build environment:
   for example by building inside a specific container or virtual machine.
   Care must be taken to avoid
   mutating the environment in uncontrollable ways.
-  For example,
+  For instance,
   running `apt update` would put an initially pinned
   file system in an indeterminate state again.
 
@@ -258,8 +258,10 @@ controlling the entire build environment is not always feasible,
 and might not even be desirable.
 If you are both the author and distributor of a piece of software,
 then you can exercise full control over the build environment.
-This removes the need for complications such a `configure` script too,
+This removes the need for complications such a `configure` script,
 because all variables are fixed.
+If you are also the operator then you
+additionally get to control the runtime environment.
 But if your software is consumed by downstream packagers,
 or if you are building a library,
 you might not be in a position to choose the toolchain
@@ -270,6 +272,16 @@ and flexibility for the user,
 and if the two coincide,
 that is a tremendous opportunity
 to improve reproducibility and reduce complexity.
+
+Software where the user is not the author,
+has traditionally leaned towards flexibility for the user,
+by shifting the burden of compatibility onto the author.
+Recently the trend has shifted towards
+authors making more demands about the build and runtime environment,
+by redistributing specific dependencies
+rather than relying on the user’s system to provide them,
+and making more modest demands on the users’s system,
+such as requiring only a specific kernel and container runtime or hypervisor.
 
 Ergonomics
 ----------
