@@ -351,7 +351,6 @@ Tools mentioned throughout this post:
  * The [SCons][scons] build system toolkit
  * The [Shake][shake] build system
  * The [Stack][stack] build tool and language package manager
- * The [Waf][waf] build system. TODO: Not actually mentioned
 
 [bazel]:  https://bazel.build/
 [bpfunc]: https://www.lihaoyi.com/post/BuildToolsasPureFunctionalPrograms.html
@@ -386,4 +385,3 @@ Tools mentioned throughout this post:
 [src]:    https://github.com/ruuda/blog
 [stack]:  https://haskellstack.org/
 [thesis]: https://nixos.org/~eelco/pubs/phd-thesis.pdf
-[waf]:    https://waf.io/
