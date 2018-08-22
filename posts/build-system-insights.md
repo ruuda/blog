@@ -1,7 +1,7 @@
 ---
 title: Build system insights
 date: 2018-06-30
-minutes: ?
+minutes: 9
 synopsis: ?
 run-in: A new generation of build systems
 extra-glyphs: 1234567890
@@ -63,9 +63,9 @@ Caching rolls out naturally:
   or a colleague have built already
   can be fetched from a remote cache.
 
-The advantages of immutability and pure functions
+The benefits of immutability and pure functions
 are not specific to build systems:
-I would argue that they are the key insight
+I would argue that they are a key advantage
 of functional programming in general.
 <!--
 Most of [Rich Hickey’s talks][hickey] are an application of this insight,
@@ -126,7 +126,7 @@ allows for effective caching and enables parallelisation.
 If a change to an input of a target requires rebuilding the entire target,
 then making targets smaller reduces the scope of that rebuild.
 Targets that do not depend on eachother can be built in parallel,
-therefore finer targets generally means more parallelism.
+therefore finer targets generally mean more parallelism.
 Furthermore,
 a target must wait for all of its dependencies to be built completely
 before the target can be built.
