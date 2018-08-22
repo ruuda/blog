@@ -202,7 +202,7 @@ that I can check out a two-year old commit of [my blog generator][src],
 and `stack build` still produces a binary.
 In contrast,
 I had to reinstall the Python dependencies of my blog while writing this post,
-as the artefacts in my virtualenv suddenly became unusable
+as the artefacts in my virtualenv became unusable
 after a system update had replaced Python 3.6 with 3.7.
 My first reinstallation attempt failed,
 because I had `CC` set to Clang,
@@ -236,7 +236,7 @@ However, as long as there are implicit dependencies on the build environment
 
 There are two ways to create a controlled build environment:
 
-* Track down *all* implicit dependencies and make them explicit.
+* Track down all implicit dependencies and make them explicit.
   Building inside a sandboxed environment
   can help identify such dependencies
   by making undeclared dependencies unavailable.
@@ -245,7 +245,7 @@ There are two ways to create a controlled build environment:
   there will be no `gcc` on the `PATH`.
   Nix is an implementation of this approach.
 * Admit defeat on tracking dependencies,
-  and try and fix the entire environment instead,
+  and try and pin the entire environment instead,
   for example by building inside a specific container or virtual machine.
   Care must be taken to avoid
   mutating the environment in uncontrollable ways.
@@ -253,21 +253,23 @@ There are two ways to create a controlled build environment:
   running `apt update` would put an initially pinned
   file system in an indeterminate state again.
 
-Not only language packages
-and toolchain,
-also native dependencies.
-Gets you Nix.
-Not always feasible,
-is a trade off.
-Alternatively build inside VM.
-
-Managing the compiler also removes
-much of the need for a traditional `configure` script.
-Libraries may want to support multiple toolchains,
-but for binaries a lot of complexity can be avoided.
-
-Nix is the only tool I have used that just works.
-
+As an author,
+controlling the entire build environment is not always feasible,
+and might not even be desirable.
+If you are both the author and distributor of a piece of software,
+then you can exercise full control over the build environment.
+This removes the need for complications such a `configure` script too,
+because all variables are fixed.
+But if your software is consumed by downstream packagers,
+or if you are building a library,
+you might not be in a position to choose the toolchain
+or specific dependency versions.
+Yet, you cannot test against every possible build environment either.
+There is a trade off between flexibility for the author
+and flexibility for the user,
+and if the two coincide,
+that is a tremendous opportunity
+to improve reproducibility and reduce complexity.
 
 Ergonomics
 ----------
