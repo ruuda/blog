@@ -171,7 +171,8 @@ reads very few package definitions from disk,
 and only the necessary parts are evaluated.
 [Guix][guix] is an alternative to Nix that uses Scheme to define packages,
 rather than Nix’ custom language.
-After pulling a new version of GuixSD (the Guix equivalent of Nixpkgs),
+Scheme can be compiled ahead of time,
+and indeed after pulling a new version of GuixSD (the Guix equivalent of Nixpkgs),
 Guix spends several minutes compiling package definitions.
 In Nix evaluation feels instant.
 
