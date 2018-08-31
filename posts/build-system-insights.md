@@ -289,10 +289,13 @@ a controlled build environment simplifies development.
 Ergonomics
 ----------
 
-**Performance is a feature.**<br>
-Startup time matters.
+**Performance is a feature, startup time matters.**<br>
+A common operation during development
+is rebuilding after a small change.
+For this use case it is crucial to quickly
+determine the build steps to perform.
 The overhead of interpreters or just in time compilers can be significant,
-and the design of the build language affects how quickly a build can start.
+and the design of the build language affects how quickly a build can start as well.
 
 My experience with Bazel is that although it builds large projects quickly,
 it is slow to start.
@@ -315,10 +318,28 @@ can take a human-noticeable amount of time,
 which is why parts of Mercurial are now
 [being replaced][hgoxid] with native binaries.
 
-References and further reading
-------------------------------
+Conclusion
+----------
 
-Further reading and other related content:
+In this post I have laid out a number of insights about build systems,
+some deep and some superficial.
+A common theme is that principles from functional programming
+apply very well to build tools.
+In particular,
+by treating build steps as pure functions
+and artefacts as immutable values,
+effective and correct caching rolls out naturally.
+To keep large repositories maintainable
+it helps to keep build definitions close to the source code,
+and to make builds fast,
+fine-grained build targets can unlock parallelism.
+
+Further reading
+---------------
+
+There is only so much I can put in a single blog post.
+While reading up on build systems,
+I found the following resources to be insightful.
 
  * [Build Systems à la Carte][carte]
    by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
@@ -343,7 +364,7 @@ Tools mentioned throughout this post:
 
  * The [Bazel][bazel] build system, the open source version of Google’s Blaze
  * The [Buck][buck] build system, inspired by Blaze
- * The [CMake][cmake] meta build system
+ * The [<abbr>CM</abbr>ake][cmake] meta build system
  * The [GN][gn] meta build system, used in Chromium
  * The [GYP][gyp] meta build system, the predecessor to GN
  * The [Guix][guix] system package manager, inspired by Nix
