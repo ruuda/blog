@@ -374,7 +374,6 @@ Tools mentioned throughout this post:
  * The [Pants][pants] build system, inspired by Blaze
  * The [Please][please] build system, inspired by Blaze
  * The [SCons][scons] build system toolkit
- * The [Shake][shake] build system
  * The [Stack][stack] build tool and language package manager
 
 [bazel]:  https://bazel.build/
