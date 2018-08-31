@@ -163,21 +163,22 @@ Lazy evaluation enables good performance even in large repositories,
 because only the targets that are actually needed for a build are evaluated.
 The majority of build target definitions does not even need to be parsed.
 
-Lazy evaluation of build definitions is a lesson I learned from [Nix][nix].
-It is what makes installing a package from [Nixpkgs][nixpkg] fast.
+[Nix][nix] is a build system with lazy evaluation at its core.
+Build targets (packages in Nix) are defined using a custom lazy functional language.
+Laziness is what makes installing a package from [Nixpkgs][nixpkg] fast.
 Even though Nixpkgs is an expression that evaluates to
-a dictionary of thousands of interdependent packages (build targets),
+a dictionary of thousands of interdependent packages,
 installing a single package
 reads very few package definitions from disk,
 and only the necessary parts are evaluated.
 [Guix][guix] is an alternative to Nix that uses Scheme to define packages,
-rather than Nix’ custom language.
+rather than a custom language.
 Scheme can be compiled ahead of time,
 and indeed after pulling a new version of GuixSD (the Guix equivalent of Nixpkgs),
 Guix spends several minutes compiling package definitions.
 In Nix evaluation feels instant.
 
-Bazel uses lazy target definitions too,
+Bazel makes use of lazy target definitions too,
 by having many `BUILD` files,
 and aligning dependency paths with filesystem paths.
 Build files of targets that are not depended upon do not need to be loaded.
@@ -202,10 +203,9 @@ Managing the compiler means
 that I can check out a two-year old commit of [my blog generator][src],
 and `stack build` still produces a binary.
 In contrast,
-I had to reinstall the Python dependencies of my blog while writing this post,
-as the artefacts in my virtualenv became unusable
+I had to reinstall the Python dependencies of my blog while writing this very post,
 after a system update had replaced Python 3.6 with 3.7.
-Then my first reinstallation attempt failed,
+My first reinstallation attempt failed,
 because I had `CC` set to Clang,
 and a Python package tried to build native code that only compiled with GCC.
 I am confident that two years from now
@@ -268,9 +268,9 @@ or if you are building a library,
 you might not be in a position to choose the toolchain
 or specific dependency versions.
 Yet, you cannot test against every possible build environment either.
-There is a trade off between flexibility for the author
+There is a trade off between author flexibility
 and flexibility for the user,
-and if the two coincide,
+and if the author and user coincide,
 that is a tremendous opportunity
 to improve reproducibility and reduce complexity.
 
@@ -278,11 +278,13 @@ Software where the user is not the author,
 has traditionally leaned towards flexibility for the user,
 by shifting the burden of compatibility onto the author.
 Recently the trend has shifted towards
-authors making more demands about the build and runtime environment,
-by redistributing specific dependencies
-rather than relying on the user’s system to provide them,
+authors making more demands about the build and runtime environment
+— by redistributing most dependencies,
+rather than relying on the user’s system to provide them —
 and making more modest demands on the users’s system,
 such as requiring only a specific kernel and container runtime or hypervisor.
+Regardless of target audience,
+a controlled build environment simplifies development.
 
 Ergonomics
 ----------
