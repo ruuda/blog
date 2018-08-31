@@ -151,7 +151,7 @@ The bottom eight tracks show the final result:
 a build that is almost 30 seconds faster
 despite doing the same amount of work.
 
-The importance of fine-grained targets became clear to me because of Bazel.
+The importance of fine-grained targets became clear to me when using Bazel.
 Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
 given enough cores.
 The similar build tool Buck
