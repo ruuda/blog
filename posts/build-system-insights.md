@@ -328,11 +328,11 @@ apply very well to build tools.
 In particular,
 by treating build steps as pure functions
 and artefacts as immutable values,
-effective and correct caching rolls out naturally.
+effective and correct caching emerges naturally.
 To keep large repositories maintainable
 it helps to keep build definitions close to the source code,
-and to make builds fast,
-fine-grained build targets can unlock parallelism.
+and fine-grained build targets can unlock parallelism
+to make builds fast.
 
 Further reading
 ---------------
