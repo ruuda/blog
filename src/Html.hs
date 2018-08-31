@@ -17,6 +17,7 @@ module Html ( Tag
             , hasUl
             , hasH2
             , hasMath
+            , hasImg
             , isA
             , isAbbr
             , isArchive
@@ -305,6 +306,14 @@ hasMath = any (\t -> isSub t || isSup t || isVar t)
         . fmap snd
         . classifyTags
         . parseTags
+
+-- Returns whether a <img> tag is present in the html string. Note that although
+-- we later replace <img> with <object> for svg images, at the time when this
+-- scan runs, we still have the <img>.
+hasImg :: String -> Bool
+hasImg = not . null
+       . filter (S.isTagOpenName "img")
+       . parseTags
 
 -- Returns the length of the longest ordered list in an html string.
 maxOlLength :: String -> Int

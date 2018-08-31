@@ -6,11 +6,11 @@
 
 module Image (processImages) where
 
-import           Codec.Picture.Types (dynamicMap)
 import           Codec.Picture (DynamicImage(..), imageWidth, imageHeight, readImage)
+import           Codec.Picture.Types (dynamicMap)
+import           Data.Foldable (foldrM)
 import           Data.List (find, isSuffixOf, stripPrefix)
 import           Data.Maybe (fromJust)
-import           Data.Foldable (foldrM)
 import           System.FilePath ((</>), takeFileName)
 import qualified Text.HTML.TagSoup as S
 
@@ -20,7 +20,9 @@ type Attributes = [(String, String)]
 
 -- Returns the value of the "src" attribute.
 getSrc :: Attributes -> String
-getSrc = snd . fromJust . find ((== "src") . fst)
+getSrc attrs = case find ((== "src") . fst) attrs of
+  Just (_src, value) -> value
+  Nothing -> error $ "img tag without src attribute"
 
 makeDimensions :: DynamicImage -> Attributes
 makeDimensions img = [ ("width",  show $ dynamicMap imageWidth  img)

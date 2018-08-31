@@ -324,6 +324,8 @@ code.sourceCode
 .ch, .st           { color: #d80; } /* Character, string */
 .co                { color: #789; } /* Comment */
 
+{{if img}}
+
 img
 {
   width: 100%;
@@ -341,7 +343,7 @@ img
   margin-bottom: -0.6em;
 }
 
-/* <object>, which I use for svgs rather than <img>, has a similar alignment,
+/* "object", which I use for svgs rather than "img", has a similar alignment,
  * except for a different margin below. When the image height at 100% width
  * (36em) is a multiple of the em size, this ensures that we keep the vertical
  * rhythem. For my "Build system insights" post, this aligns the bars and the
@@ -353,6 +355,8 @@ object
   margin-top: -0.2em;
   margin-bottom: -0.3em;
 }
+
+{{end}} /* if img */
 
 blockquote
 {
