@@ -7,7 +7,7 @@ run-in: A new generation of build systems
 extra-glyphs: 1234567890
 ---
 
-A new generation of build systems has been gaining popularity over the past few years,
+A new generation of build systems has been gaining popularity,
 joining the already plentiful collection of build tools.
 Although these new build systems differ in origin and purpose,
 there are common themes to them.
@@ -22,7 +22,7 @@ in this post I refer to Bazel a few times,
 the open-source version of *Blaze*,
 Google’s internal build system.
 Before Bazel was published,
-ex Googlers at other companies created Blaze clones,
+ex googlers at other companies created Blaze clones,
 resulting in *Pants*, *Buck*, and *Please*.
 Most of the discussion about Bazel applies equally well to these other build systems.
 
@@ -111,14 +111,15 @@ Target definitions
 ------------------
 
 **Build target definitions should live as close to the source code as possible.**<br>
-Unlike a global makefile or other build definition in the repository root,
+Unlike a global makefile or other build description in the repository root,
 a distributed approach with definitions placed throughout the repository
 remains maintainable even in very large repositories.
 
-This is a lesson I learned from Chromium’s build system [GN][gn], and from Blaze.
-The Blaze derivatives Pants, Buck, and Please
-also apply this principle,
-as did GN’s predecessor [GYP][gyp].
+Build systems used in the largest repositories that I know of all apply this principle.
+Chromium’s build system [GN][gn] does,
+as did its predecessor [GYP][gyp].
+Blaze and its derivatives Pants and Buck scale to *very* large monorepos
+by keeping build definitions close to the source.
 
 **Build targets should be fine-grained.**<br>
 Having many small targets, rather than fewer large targets,
@@ -126,12 +127,12 @@ allows for effective caching and enables parallelisation.
 If a change to an input of a target requires rebuilding the entire target,
 then making targets smaller reduces the scope of that rebuild.
 Targets that do not depend on eachother can be built in parallel,
-therefore finer targets generally mean more parallelism.
+therefore finer targets can unlock more parallelism.
 Furthermore,
 a target must wait for all of its dependencies to be built completely
 before the target can be built.
 If the target uses only a small part of a dependency,
-then the unused parts unnecessarily prolong the critical path.
+then building the unused parts unnecessarily prolongs the critical path.
 Given enough CPU cores,
 fine-grained targets can build significantly faster than coarse targets.
 
@@ -150,12 +151,12 @@ The bottom eight tracks show the final result:
 a build that is almost 30 seconds faster
 despite doing the same amount of work.
 
-The importance of fine-grained targets is a lesson I learned from Bazel.
+The importance of fine-grained targets became clear to me because of Bazel.
 Fine-grained targets are the reason that Bazel can build large dependency graphs quickly,
 given enough cores.
 The similar build tool Buck
 [cites][buckft] its ability to transform a coarse-grained graph of build targets
-into a more fine-grained action graph as one of the reasons for its speed.
+into a more fine-grained graph internally as one of the reasons for its speed.
 
 **Evaluate build target definitions lazily.**<br>
 Lazy evaluation enables good performance even in large repositories,
