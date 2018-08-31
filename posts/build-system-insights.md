@@ -289,15 +289,16 @@ a controlled build environment simplifies development.
 Ergonomics
 ----------
 
-**Startup time matters.**<br>
-The overhead of interpreters or just in time compilers can be significant.
+**Performance is a feature.**<br>
+Startup time matters.
+The overhead of interpreters or just in time compilers can be significant,
+and the design of the build language affects how quickly a build can start.
 
 My experience with Bazel is that although it builds large projects quickly,
 it is slow to start.
 The build tool runs on the JVM,
 and can sometimes take seconds to do a no-op build even in a small repository.
-*Please*
-— a very similar build system implemented in Go —
+*Please*, a very similar build system implemented in Go,
 is much snappier.
 Build definitions that can be evaluated efficiently matter too:
 even though both Make and Ninja are native binaries,
@@ -310,7 +311,7 @@ Another telling example is the Mercurial source control system.
 Its `hg` command is written in Python for extensibility.
 This comes at the cost of responsiveness:
 just evaluating imports
-can already take a significant percentage of total execution time,
+can take a human-noticeable amount of time,
 which is why parts of Mercurial are now
 [being replaced][hgoxid] with native binaries.
 
