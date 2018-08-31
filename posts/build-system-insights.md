@@ -360,11 +360,11 @@ I found the following resources to be insightful.
    introduces Nix and its immutable input-addressable store
    as a basis for building and deploying software.
 
-Tools mentioned throughout this post:
+Tools mentioned in this post:
 
  * The [Bazel][bazel] build system, the open source version of Google’s Blaze
  * The [Buck][buck] build system, inspired by Blaze
- * The [<abbr>CM</abbr>ake][cmake] meta build system
+ * The [CMake][cmake] meta build system
  * The [GN][gn] meta build system, used in Chromium
  * The [GYP][gyp] meta build system, the predecessor to GN
  * The [Guix][guix] system package manager, inspired by Nix
