@@ -323,14 +323,14 @@ Further reading and other related content:
  * [Build Systems à la Carte][carte]
    by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
    classifies build tools based on their rebuilding strategy and scheduling algorithm.
+   It also clarifies the trade offs
+   between knowing the entire build graph ahead of time,
+   and having the build graph depend on build targets itself.
  * [Build Tools as Pure Functional Programs][bpfunc],
    gets to the heart of what a build tool is,
    and draws analogies with functional programming,
    in particular between higher-order functions
    and building toolchains as part of the build.
- * [Compilers are Databases][dotty],
-   a talk by Martin Odersky,
-   explains how functional reactive programming can be applied to compilers.
  * [Houyhnhnm Computing Chapter 9: Build Systems][ngnghm],
    part of an insightful series that reevaluates computing from a hypothetical alien perspective,
    argues that functional reactive programming is a good fit for build systems.
