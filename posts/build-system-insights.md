@@ -327,19 +327,22 @@ A common theme is that principles from functional programming
 apply very well to build tools.
 In particular,
 by treating build steps as pure functions
-and artefacts as immutable values,
+and artefacts as immutable,
 effective and correct caching emerges naturally.
-To keep large repositories maintainable
-it helps to keep build definitions close to the source code,
+On the more practical side,
+keeping build definitions close to the source code
+helps to keep large repositories maintainable,
 and fine-grained build targets can unlock parallelism
 to make builds fast.
+As with all good ideas,
+these insights seem obvious in hindsight.
+I hope to see them being applied more often going forward.
 
 Further reading
 ---------------
 
-There is only so much I can put in a single blog post.
 While reading up on build systems,
-I found the following resources to be insightful.
+I found the following resources to be insightful:
 
  * [Build Systems à la Carte][carte]
    by Andrey Mokhov, Neil Mitchell, and Simon Peyton Jones,
