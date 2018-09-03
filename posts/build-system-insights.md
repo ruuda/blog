@@ -29,6 +29,7 @@ Most of the discussion about Bazel applies equally well to these other build sys
 Caching and incremental builds
 ------------------------------
 
+The first and most fundamenal insight is one about caching.
 If you take away one thing from this post,
 let it be this:
 
