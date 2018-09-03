@@ -37,7 +37,7 @@ Install Python requirements (for font subsetting) in a virtualenv:
 
     $ virtualenv venv
     $ source venv/bin/activate
-    $ pip install -r requirements.txt
+    $ CC=gcc CXX=g++ pip install -r requirements.txt
 
 Build the generator, then build the site (requires fonts to be present):
 

@@ -4,15 +4,20 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-module Template ( Context
-                , ContextValue(ListValue, StringValue, TemplateValue)
-                , Template
-                , apply
-                , listField
-                , nestContext
-                , parse
-                , stringField
-                ) where
+{-# LANGUAGE BangPatterns #-}
+
+module Template
+(
+  Context,
+  ContextValue (ListValue, StringValue, TemplateValue),
+  Template,
+  apply,
+  listField,
+  nestContext,
+  parse,
+  stringField
+)
+where
 
 -- This file implements a tiny templating engine inspired by Moustache. A
 -- context for applying templates resembles json. It features strings, lists,
@@ -32,77 +37,88 @@ module Template ( Context
 --
 --  * Variables: "{{<var>}}" expands to the value of <var> if that is a string.
 
-import           Control.Monad (join)
-import qualified Data.Map as M
+import Control.Monad (join)
 
-data Token = Outer String | Inner String
+import qualified Data.Map.Strict as Map
+
+data Token
+  = Outer String
+  | Inner String
 
 -- Splits a string into things inside and outside of moustaches.
+-- Note: for the current token string, we accumulate in reverse, and then
+-- reverse the entire token at the end. This avoids quadratic time tokenization
+-- due to linear-time append.
 tokenize :: String -> [Token]
-tokenize str = next str (Outer "") []
-  where next :: String -> Token -> [Token] -> [Token]
-        next             []         token tokens = tokens ++ [token]
-        next ('{':'{':more) (Outer outer) tokens = next more (Inner "") (tokens ++ [Outer outer])
-        next (      c:more) (Outer outer) tokens = next more (Outer (outer ++ [c])) tokens
-        next ('}':'}':more) (Inner inner) tokens = next more (Outer "") (tokens ++ [Inner inner])
-        next (      c:more) (Inner inner) tokens = next more (Inner (inner ++ [c])) tokens
+tokenize str = next str (Outer "")
+  where
+    next :: String -> Token -> [Token]
+    next             [] (Outer outer) = [Outer $ reverse outer]
+    next             [] (Inner inner) = [Inner $ reverse inner]
+    next ('{':'{':more) (Outer outer) = (Outer $ reverse outer) : next more (Inner "")
+    next (      c:more) (Outer outer) = next more (Outer $ c : outer)
+    next ('}':'}':more) (Inner inner) = (Inner $ reverse inner) : next more (Outer "")
+    next (      c:more) (Inner inner) = next more (Inner $ c : inner)
 
-data Fragment = Conditional String
-              | End
-              | Include String
-              | Loop String
-              | Raw String
-              | Variable String
-  deriving (Show) -- TODO This is for debugging only, remove.
+data Fragment
+  = Conditional !String
+  | End
+  | Include !String
+  | Loop !String
+  | Raw !String
+  | Variable !String
 
 type Template = [Fragment]
 
 -- Converts a string into fragments that can be fed into the interpreter.
 parse :: String -> Template
 parse = fmap toFragment . tokenize
-  where toFragment (Outer str) = Raw str
-        toFragment (Inner str) = case break (== ' ') str of
-          ("if", condition) -> Conditional $ tail condition
-          ("end", "")       -> End
-          ("include", tmpl) -> Include $ tail tmpl
-          ("foreach", list) -> Loop $ tail list
-          (variable, _)     -> Variable variable
+  where
+    toFragment (Outer str) = Raw str
+    toFragment (Inner str) =
+      case break (== ' ') str of
+        ("if", condition) -> Conditional $ tail condition
+        ("end", "")       -> End
+        ("include", tmpl) -> Include $ tail tmpl
+        ("foreach", list) -> Loop $ tail list
+        (variable, _)     -> Variable variable
 
-type Context      = M.Map String ContextValue
-data ContextValue = ListValue [Context]
-                  | StringValue String
-                  | TemplateValue Template
+type Context = Map.Map String ContextValue
+data ContextValue
+  = ListValue ![Context]
+  | StringValue !String
+  | TemplateValue !Template
 
 stringField :: String -> String -> Context
-stringField key value = M.singleton key (StringValue value)
+stringField key value = Map.singleton key (StringValue value)
 
 listField :: String -> [Context] -> Context
-listField key values = M.singleton key (ListValue values)
+listField key values = Map.singleton key (ListValue values)
 
 -- Fakes nested context fields by prepending "<key>." to the keys of the child
 -- context.
 nestContext :: String -> Context -> Context
-nestContext key child = M.mapKeys ((key ++ ".") ++) child
+nestContext key child = Map.mapKeys ((key ++ ".") ++) child
 
 -- Applies the template (fragments) with given context until an end fragment is
 -- encountered, at which point the current string and the remaining fragments
 -- are returned.
 applyBlock :: [Fragment] -> Context -> (String, [Fragment])
 applyBlock fragments context = next fragments ""
-  where expand variable = case M.lookup variable context of
+  where expand variable = case Map.lookup variable context of
           Just (StringValue str) -> str
           Just _                 -> variable ++ " is not a string"
           Nothing                -> "undefined"
-        include name = case M.lookup name context of
+        include name = case Map.lookup name context of
           Just (TemplateValue tmpl) -> apply tmpl context
           Just _                    -> name ++ " is not a template"
           Nothing                   -> "undefined"
-        getList name = case M.lookup name context of
+        getList name = case Map.lookup name context of
           Just (ListValue list) -> list
           _                     -> []
         isTrue condition = if (head condition) == '!' then negated else present
-          where present  = M.member condition context
-                negated  = not $ M.member (tail condition) context
+          where present  = Map.member condition context
+                negated  = not $ Map.member (tail condition) context
         next :: [Fragment] -> String -> (String, [Fragment])
         next              [] str = (str, [])
         next (fragment:more) str = case fragment of
