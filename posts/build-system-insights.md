@@ -1,6 +1,6 @@
 ---
 title: Build system insights
-date: 2018-06-30
+date: 2018-09-03
 minutes: 9
 synopsis: I like to share a few insights about build systems, some deep and some superficial. In particular, immutability and purity are tremendously beneficial for a build system.
 run-in: A new generation of build systems
