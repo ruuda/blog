@@ -127,7 +127,7 @@ Having many small targets, rather than fewer large targets,
 allows for effective caching and enables parallelisation.
 If a change to an input of a target requires rebuilding the entire target,
 then making targets smaller reduces the scope of that rebuild.
-Targets that do not depend on eachother can be built in parallel,
+Targets that do not depend on each other can be built in parallel,
 therefore finer targets can unlock more parallelism.
 Furthermore,
 a target must wait for all of its dependencies to be built completely
