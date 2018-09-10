@@ -29,12 +29,14 @@ def prune_cmaps(font):
 def subset(fontfile, outfile_basename, glyphs):
     options = Options()
 
-    # Fonttools has this "feature" that if you enable 'dlig', it will also give
+    # Fonttools has this feature that if you enable 'dlig', it will also give
     # you glyphs that you did not ask for, but if you do not enable 'dlig',
     # then discretionary ligatures do not render properly.
     # See https://github.com/behdad/fonttools/issues/43.
     # As a workaround, only enable 'dlig' if there are glyphs for discretionary
     # ligatures.
+    # TODO: This should be fixed, consider upgrading.
+    # https://github.com/fonttools/fonttools/commit/022536212be4cf022a2cb9a286fec8be1931d19b.
     dligs = set(glyphs).intersection(['c_b', 'c_h', 'c_k', 'c_p', 'ct', 'g_i',
                                       'q_u', 's_b', 's_h', 's_k', 's_p', 'st'])
     if len(dligs) > 0:
