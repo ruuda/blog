@@ -120,7 +120,7 @@ This is infectious, in the way that `const` is in C++: now everything that owns 
 also takes a lifetime parameter, and suddenly there are lifetimes everywhere.
 
 I struggeld some more with this, stumbling from compiler error to compiler error.
-Rusts forces you to get ownership right, and I think in the end it also led to a better design.
+Rust forces you to get ownership right, and I think in the end it also led to a better design.
 I finally settled for the `render` method taking a pointer to the scene.
 This moves burden of ownership to the caller of `render`.
 As there can be various threads rendering, every thread has its own `Arc<Scene>`.
