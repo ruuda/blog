@@ -1,3 +1,0 @@
-# Later versions produce fonts which don't load correctly in IE 9.
-fonttools==3.0.0
-brotli==0.6.0

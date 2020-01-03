@@ -9,6 +9,11 @@
 from fontTools.subset import Options, Subsetter, load_font, save_font
 from sys import stdin
 
+# We expect to be using the pinned version. If it differs, we are probably not
+# running from the Nix profile.
+import fontTools
+assert fontTools.version == '3.0'
+
 # Removes format 12 cmap tables if they are not required. A format 4 table is
 # always included, but this format can only encode code points in the Basic
 # Multilingual Plane (BMP). One code point that I use (U+1D53D, a double-struck

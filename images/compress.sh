@@ -9,11 +9,17 @@
 # where the artifacts become unnoticeable, sometimes png actually outperforms
 # jpeg.
 
-# Mozjpeg insists on conflicting with libjpeg-turbo, but many packages depend on
-# libjpeg-turbo and I don't want to replace it system-wide. Fortunately there
-# is an aur package that installs mozjpeg to /opt. Mozjpeg version used is 3.1,
-# version 3.2 produces much bigger images at the same quality settings.
-mozjpeg='/opt/mozjpeg/bin/cjpeg -quality'
+# Fail as soon as any command fails.
+set -e
+
+# Verify that we really have Mozjpeg and not regular libjpeg-turbo, as they
+# share the same binary name. Mozjpeg prints its version to stderr.
+cjpeg -version 2>&1 | grep mozjpeg
+
+# TODO: With mozjpeg 3.1, images were much smaller at the same quality settings
+# than with later versions. Figure out which settings compress to the same size
+# (or quality!).
+mozjpeg='cjpeg -quality'
 
 mkdir -p compressed
 

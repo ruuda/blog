@@ -33,14 +33,18 @@ license details, see the readme in the fonts directory.
 
 Compiling
 ---------
-Install Python requirements (for font subsetting) in a virtualenv:
 
-    $ virtualenv venv
-    $ source venv/bin/activate
-    $ CC=gcc CXX=g++ pip install -r requirements.txt
+All dependencies are available in a [Nix][nix] profile that you can enter with
+
+    $ nix run --command $SHELL
+
+This will bring a `python3` on the path with the right requirements for font
+subsetting, as well as Stack, and tools for compressing images.
 
 Build the generator, then build the site (requires fonts to be present):
 
     $ stack setup
     $ stack build
     $ stack exec blog
+
+[nix]: https://nixos.org/nix/

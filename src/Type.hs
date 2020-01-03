@@ -351,9 +351,9 @@ subsetFonts commands = do
   mapM_ P.waitForProcess pids -- Wait, but ignore the exit codes.
   pure $ length commandsNew
   where
-    -- Run the Python in the virtualenv rather than the system-wide one -- I
-    -- forget to activate the virtualenv all the time. Now it is automatic.
-    subsetScript = P.proc "/usr/bin/env" ["venv/bin/python3", "fonts/subset.py"]
+    -- When run from the Nix profile, Python has access to the right
+    -- dependencies.
+    subsetScript = P.proc "/usr/bin/env" ["python3", "fonts/subset.py"]
     -- The Python interpreter needs to have a pipe for stdin because we
     -- want to write to it.
     subsetScriptPiped = subsetScript { P.std_in = P.CreatePipe }
