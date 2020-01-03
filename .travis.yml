@@ -1,20 +1,26 @@
-# Based on the default default .travis.yml for usage with Stack.
-# See http://docs.haskellstack.org/en/stable/travis_ci.html.
+language: nix
 
-language: c
-
-addons:
-  apt:
-    packages:
-      - libgmp-dev
-
-before_install:
-  - mkdir -p ~/.local/bin
-  - export PATH=$HOME/.local/bin:$PATH
-  - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-
-script: stack --no-terminal --install-ghc build
+# Do not spam me with build status emails.
+notifications:
+  email: false
 
 cache:
   directories:
-    - $HOME/.stack
+  - $HOME/.stack
+  - $TRAVIS_BUILD_DIR/.stack-work
+
+before_install:
+  # Bring all the tools from the pinned build environment into the PATH.
+  - export PATH=$(nix-build --no-out-link default.nix)/bin:$PATH
+
+  # Binaries in the profile built above may need locales, that they can't find
+  # unless we point LOCALE_ARCHIVE at the archive that contains them.
+  - export LOCALE_ARCHIVE=$(nix-build --no-out-link locale.nix)/lib/locale/locale-archive
+
+install:
+  # Set up the Haskell toolchain.
+  - stack setup
+
+script:
+  - stack --no-terminal build
+  - stack --no-terminal test
