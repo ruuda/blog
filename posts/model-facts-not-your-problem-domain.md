@@ -11,7 +11,7 @@ an append-only data model of immutable facts is more useful
 than a mutable data model that models the problem domain.
 
 When I started building [a plant watering tracker](https://github.com/ruuda/sempervivum)
-a little over month ago,
+about six weeks ago,
 I almost made the mistake of giving its database a mutable ‘last watered’ column.
 Fortunately I realised in time to use an append-only table with watering events.
 At the time I had no use for historical data,
@@ -21,7 +21,7 @@ When mutability is the default,
 storing all watering events seems ridiculous.
 But when immutable is your default,
 keeping historical data is the natural thing to do:
-mutating rows in place is a storage space optimization,
+mutating rows in place is a storage space optimisation,
 and in my case it would be entirely premature.
 
 Now, a few weeks later, I want to make the watering schedule adaptive.
