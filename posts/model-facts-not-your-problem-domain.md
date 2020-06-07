@@ -21,7 +21,7 @@ When mutability is the default,
 storing all watering events seems ridiculous.
 But when immutable is your default,
 keeping historical data is the natural thing to do:
-mutating things in place is a storage space optimization,
+mutating rows in place is a storage space optimization,
 and in my case it would be entirely premature.
 
 Now, a few weeks later, I want to make the watering schedule adaptive.
