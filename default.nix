@@ -1,5 +1,5 @@
 let
-  pkgs = import (import ./nixpkgs-pinned.nix) {};
+  pkgs = import ./nixpkgs-pinned.nix {};
 
   # Even though Nixpkgs ships a recent fonttools, pin to version 3.0.
   # Later versions produce fonts which don't load correctly in IE 9.
