@@ -11,6 +11,7 @@ module Html ( Tag
             , applyTagsWhere
             , classifyTags
             , cleanTables
+            , cleanOl
             , concatMapTagsWhere
             , filterTags
             , getTextInTag
@@ -343,6 +344,15 @@ cleanTables = renderTags . mapTagsWhere isTable stripAttrs . parseTags
         stripAttrs tag = case tag of
           S.TagOpen name attrs -> S.TagOpen name $ filterAttrs attrs
           _                    -> tag
+
+-- Pandoc started adding 'type="1"' or 'style="..." attributes to <ol> tags.
+-- This is not needed, because I style them with css anyway.
+cleanOl :: String -> String
+cleanOl = renderTags . fmap cleanOlImpl . parseTags
+  where
+    cleanOlImpl tag = case tag of
+      S.TagOpen "ol" _ -> S.TagOpen "ol" []
+      somethingElse    -> somethingElse
 
 -- Add an empty <a> tag to every <h2> that has an id, and link it to that id.
 addAnchors :: String -> String
