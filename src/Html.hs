@@ -12,6 +12,7 @@ module Html ( Tag
             , classifyTags
             , cleanTables
             , cleanOl
+            , cleanCodeBlocks
             , concatMapTagsWhere
             , filterTags
             , getTextInTag
@@ -353,6 +354,22 @@ cleanOl = renderTags . fmap cleanOlImpl . parseTags
     cleanOlImpl tag = case tag of
       S.TagOpen "ol" _ -> S.TagOpen "ol" []
       somethingElse    -> somethingElse
+
+-- Pandoc inserts anchors for every line in a code block. These take up a lot of
+-- space because they look like
+--
+--   <a href="cb1-1" aria-hidden="true" tabindex="-1"></a>
+--
+-- And they add zero value in my case; they are not displayed, and the ids to
+-- link to are present on the enclosing span either way, so you can still link
+-- to lines if you like. So delete these <a> tags inside code blocks.
+cleanCodeBlocks :: String -> String
+cleanCodeBlocks = renderTags . concatMapTagsWhere isCode stripAnchor . parseTags
+  where
+    stripAnchor tag = case tag of
+      S.TagOpen "a" _ -> []
+      S.TagClose "a"  -> []
+      somethingElse   -> [somethingElse]
 
 -- Add an empty <a> tag to every <h2> that has an id, and link it to that id.
 addAnchors :: String -> String

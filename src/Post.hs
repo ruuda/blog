@@ -161,6 +161,7 @@ parse postSlug contents = let
           , extraGlyphs = fromMaybe "" $ M.lookup "extra-glyphs" frontMatter
           , body        = refineType
                         $ Html.cleanTables
+                        $ Html.cleanCodeBlocks
                         $ Html.cleanOl
                         $ Html.addAnchors
                         $ renderMarkdown bodyContents
