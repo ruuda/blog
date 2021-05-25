@@ -12,6 +12,7 @@ import Data.Time.Clock (getCurrentTime, utctDay)
 import System.Directory (doesFileExist, copyFile, createDirectoryIfMissing, getDirectoryContents)
 import System.FilePath ((</>), takeBaseName, takeDirectory, takeExtension, takeFileName)
 import System.Process
+import System.IO (IOMode (ReadMode, WriteMode), hClose, hGetContents, hPutStr, hSetEncoding, openFile, utf8)
 
 import qualified Data.Map as M
 import qualified Control.Concurrent.Async as Async
@@ -22,6 +23,21 @@ import Minification (minifyHtml)
 import qualified Image
 import qualified Post as P
 import qualified Template
+
+-- Read a file in UTF-8 encoding.
+readUtf8 :: FilePath -> IO String
+readUtf8 path = do
+  handle <- openFile path ReadMode
+  hSetEncoding handle utf8
+  hGetContents handle
+
+-- Write a file in UTF-8 encoding.
+writeUtf8 :: FilePath -> String -> IO ()
+writeUtf8 path contents = do
+  handle <- openFile path WriteMode
+  hSetEncoding handle utf8
+  hPutStr handle contents
+  hClose handle
 
 -- Applies the IO-performing function f to every file in a given directory if
 -- the filename satisfies the predicate p.
@@ -42,11 +58,11 @@ mapFilesFileName f = (fmap M.fromList) . (mapFiles makePair)
 
 -- Reads and parses all templates in the given directory.
 readTemplates :: FilePath -> IO (M.Map FilePath Template.Template)
-readTemplates = mapFilesFileName $ (fmap Template.parse) . readFile
+readTemplates = mapFilesFileName $ (fmap Template.parse) . readUtf8
 
 -- Reads a post from a file.
 readPost :: FilePath -> IO P.Post
-readPost fname = fmap makePost $ readFile fname
+readPost fname = fmap makePost $ readUtf8 fname
   where makePost body = P.parse (takeBaseName fname) body
 
 -- Reads and renders all posts in the given directory.
@@ -62,8 +78,8 @@ writeImage ctx fname =
     outFile = "out/images" </> fname
     copyBitmap = copyFile inFile outFile
     renderSvg = do
-      template <- Template.parse <$> readFile inFile
-      writeFile outFile (Template.apply template ctx)
+      template <- Template.parse <$> readUtf8 inFile
+      writeUtf8 outFile (Template.apply template ctx)
       compressFile outFile
   in do
     if ".svg" `isSuffixOf` fname then renderSvg else copyBitmap
@@ -111,7 +127,7 @@ writePosts tmpl ctx posts =
       mapM_ (writeImage fontCtx) imgPaths
       let minified = minifyHtml withImages
       createDirectoryIfMissing True $ takeDirectory destFile
-      writeFile destFile minified
+      writeUtf8 destFile minified
       compressFile destFile
       pure subsetCmds
   in do
@@ -130,7 +146,7 @@ writePage url pageContext template = do
       destDir  = "out" </> (tail url)
       destFile = destDir </> "index.html"
   createDirectoryIfMissing True destDir
-  writeFile destFile html
+  writeUtf8 destFile html
   compressFile destFile
   pure subsetCmds
 
@@ -167,7 +183,7 @@ writeFeed template posts = do
       atom     = Template.apply template context
       destFile = "out" </> (tail url)
   createDirectoryIfMissing True "out"
-  writeFile destFile atom
+  writeUtf8 destFile atom
   compressFile destFile
 
 main :: IO ()

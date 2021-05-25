@@ -29,6 +29,10 @@ import           Data.Time.Format
 import           Data.Time.Calendar (Day, showGregorian, toGregorian)
 import           GHC.Exts (groupWith, sortWith)
 import           Text.Pandoc
+import           Text.Pandoc.Highlighting (pygments)
+import           Text.Pandoc.Extensions (enableExtension, pandocExtensions)
+import           Text.Pandoc.Class
+import           Control.Error (runExceptT)
 
 import qualified Html
 import qualified Template
@@ -163,18 +167,28 @@ parse postSlug contents = let
 
 -- Renders markdown to html using Pandoc with my settings.
 renderMarkdown :: String -> String
-renderMarkdown md = case fmap (writeHtmlString wopt) (readMarkdown ropt md) of
-  Right result -> result
-  Left  _      -> "Failed to parse markdown."
-  -- Enable backtick code blocks and accept tables.
-  -- For output, enable syntax highlighting.
-  where ropt = def { readerExtensions = S.insert Ext_backtick_code_blocks $
-                                        S.insert Ext_raw_html $
-                                        S.insert Ext_simple_tables $
-                                        S.insert Ext_auto_identifiers $
-                                        S.insert Ext_ascii_identifiers $
-                                        def }
-        wopt = def { writerHighlight  = True }
+renderMarkdown md =
+  let
+    -- Enable backtick code blocks and accept tables.
+    -- For output, enable syntax highlighting.
+    ropt = def
+      { readerExtensions
+          = disableExtension Ext_implicit_figures
+          $ disableExtension Ext_smart -- I handle dashes etc. myself.
+          $ enableExtension Ext_backtick_code_blocks
+          $ enableExtension Ext_raw_html
+          $ enableExtension Ext_simple_tables
+          $ enableExtension Ext_auto_identifiers
+          $ enableExtension Ext_ascii_identifiers
+          $ pandocExtensions
+      }
+    wopt = def { writerHighlightStyle = Just pygments }
+  in case runPure $ readMarkdown ropt $ Text.pack md of
+    Left  _      -> "Failed to parse markdown."
+    Right result -> case runPure $ writeHtml4String wopt result of
+      Left _     -> "Failed to render document."
+      Right txt  -> Text.unpack txt
+
 
 -- Related content for a post, for the further reading section in the footer.
 data RelatedContent
