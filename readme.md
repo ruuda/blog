@@ -39,12 +39,14 @@ All dependencies are available in a [Nix][nix] profile that you can enter with
     $ nix run --command $SHELL
 
 This will bring a `python3` on the path with the right requirements for font
-subsetting, as well as Stack, and tools for compressing images.
+subsetting, as well as the blog generator itself, and tools for compressing
+images.
 
-Build the generator, then build the site (requires fonts to be present):
+The generator gets built as part of the development environment, but you can
+also compile it manually with GHC if you like. Then build the site (requires
+fonts to be present):
 
-    $ stack setup
-    $ stack build
-    $ stack exec blog
+    $ ghc -o blog src/*.hs # Optional
+    $ blog
 
 [nix]: https://nixos.org/nix/

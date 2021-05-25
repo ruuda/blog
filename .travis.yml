@@ -4,23 +4,5 @@ language: nix
 notifications:
   email: false
 
-cache:
-  directories:
-  - $HOME/.stack
-  - $TRAVIS_BUILD_DIR/.stack-work
-
-before_install:
-  # Bring all the tools from the pinned build environment into the PATH.
-  - export PATH=$(nix-build --no-out-link default.nix)/bin:$PATH
-
-  # Binaries in the profile built above may need locales, that they can't find
-  # unless we point LOCALE_ARCHIVE at the archive that contains them.
-  - export LOCALE_ARCHIVE=$(nix-build --no-out-link locale.nix)/lib/locale/locale-archive
-
-install:
-  # Set up the Haskell toolchain.
-  - stack setup
-
 script:
-  - stack --no-terminal build
-  - stack --no-terminal test
+  - nix build
