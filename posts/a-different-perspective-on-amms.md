@@ -11,7 +11,7 @@ Often the way we first formulate an idea,
 is in hindsight not the simplest or the most elegant way,
 and a change of perspective can lead to new understanding.
 I think we are in this situation with automated market makers right now,
-and MEV (miner/maximum extractable value) is forcing a perspective shift.
+and MEV ([miner/maximum extractable value][mev]) is forcing a perspective shift.
 
 Automated market makers (<abbr>AMM</abbr>s for short) are a relatively recent development,
 and although the math behind swaps is well understood,
@@ -19,12 +19,13 @@ I don’t think that this is the full picture.
 Even if the swap itself is well understood, the mechanism can be flawed.
 
 [Flash liquidity in Uniswap v3][flashlp] is a clear example of this:
-it’s a mechanism that admits a profitable stategy which was not intended by the developers,
+it’s a mechanism that admits a profitable strategy which was not intended by the developers,
 and this profit comes at the expense of the intended users (regular liquidity providers).
 In a sense, it’s a game-theoretic vulnerability in the protocol.
 Sometimes these flaws can be fixed at the protocol level,
 but sometimes they indicate a flaw in our understanding.
 
+[mev]:     https://ethereum.org/en/developers/docs/mev/
 [flashlp]: https://twitter.com/revertfinance/status/1409642606082940930
 
 Swaps are limit orders, not market orders
@@ -42,7 +43,7 @@ If the pool price is above your maximum when the swap executes,
 the transaction fails.
 I think the intent of the max slippage was just that:
 to limit slippage at busy times,
-when the price can change slightly due to other swaps executing before yours.
+when the price can change due to other swaps executing before yours.
 
 All was well for a while,
 until miners discovered _miner extractable value_
