@@ -1,8 +1,8 @@
 ---
-title: A perspective shift on automated market makers and MEV
+title: A perspective shift on automated market makers through MEV
 date: 2021-12-07
-minutes: ?
-synopsis: TODO
+minutes: 4
+synopsis: A swap at an automated market maker is not like a market order, it behaves more like a limit order. This is the change of perspective that MEV is forcing us to make.
 run-in: It takes time
 ---
 
