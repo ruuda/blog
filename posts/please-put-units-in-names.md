@@ -1,9 +1,10 @@
 ---
 title: Please put units in names
 break: put units
+subheader: or use strong types
 date: 2022-03-20
-minutes: ?
-synopsis: TODO
+minutes: 4
+synopsis: Using strong types, or putting units in names, is a small effort that can make a tremendous difference for code readability.
 run-in: There is one
 ---
 
@@ -33,8 +34,8 @@ You just have to know by heart that `time.sleep` takes seconds,
 while `threadDelay` takes microseconds.
 If you look it up often enough,
 eventually that knowledge will stick,
-but it’s easy to keep the code readable
-even for people who haven’t encountered `time.sleep` before.
+but how can we keep the code readable
+even for people who haven’t encountered `time.sleep` before?
 
 Option 1: put the unit in the name
 ----------------------------------
@@ -61,7 +62,7 @@ In the first case, we can’t even tell at the call site that 300 is a timeout,
 but even if we knew that, it’s a timeout of 300 what? Milliseconds? Seconds?
 Martian days? In contrast, the second call site is completely self-explanatory.
 
-Using named arguments like is nice for languages that support it,
+Using named arguments is nice for languages that support it,
 but this is not always a possibility.
 Even in Python, where `time.sleep` is defined with a single argument named `secs`,
 we can’t call `sleep(secs=300)` due to implementation reasons.
@@ -122,9 +123,12 @@ Scope
 
 The advice to use strong types or to put units in names
 is not limited to variables and function arguments,
-it’s applicable to many <abbr>API</abbr>&thinsp;s,
+it’s applicable to <abbr>API</abbr>&thinsp;s,
 [metric names](https://prometheus.io/docs/practices/naming/#metric-names),
-serialization formats, configuration files, etc.
+serialization formats, configuration files, command-line flags, etc.
+And although duration values are the most common case,
+this advice is not limited to those either,
+it also applies to monetary amounts, lengths, data sizes, etc.
 
 For example, don’t return this:
 ```json
@@ -144,7 +148,7 @@ Return this instead:
 }
 ```
 
-And don’t design your config file like this:
+Don’t design your config file like this:
 ```
 request_timeout = 10
 ```
@@ -153,4 +157,15 @@ Accept one of these instead:
 ```
 request_timeout = 10s
 request_timeout_seconds = 10
+```
+
+And don’t design your CLI accounting app like this:
+```
+show-transactions --minimum-amount 32
+```
+
+Accept one of these instead:
+```
+show-transactions --minimum-amount-eur 32
+show-transactions --minimum-amount "32 EUR"
 ```
