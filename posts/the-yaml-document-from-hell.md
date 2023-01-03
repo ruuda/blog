@@ -22,7 +22,7 @@ It’s a simple data format with a simple syntax and that’s all there is to it
 Yaml on the other hand, is complex.
 So complex,
 that [its specification][yaml-spec] consists of _10 chapters_
-with sections numbered four levels deeps,
+with sections numbered four levels deep
 and a dedicated [errata page][yaml-errata].
 
 The json spec is not versioned.
@@ -51,15 +51,23 @@ was [a multi-year effort by a team of experts][yaml-122-blog]:
 
 Furthermore this team plans to actively evolve yaml, rather than to freeze it.
 
-Now, when you work with format this complex,
-it is extremely difficult to know how it will behave.
+When you work with a format as complex as yaml,
+it is difficult to be aware of all the features and subtle behaviors it has.
+There is [an entire website][yaml-multiline]
+dedicated to picking one of [the 63 different multi-line string syntaxes][yaml-63].
+This means that it is generally very difficult for a human to predict
+how a particular document will parse.
+In certain situations documents can behave in surprising ways.
+Let’s look an example to highlight some of those.
 
-[json-spec]:     https://www.json.org/json-en.html
-[yaml-spec]:     https://yaml.org/spec/1.2.2/
-[yaml-errata]:   https://yaml.org/spec/1.2/errata.html
-[json-saga]:     https://www.youtube.com/watch?v=-C-JoyNuQJs
-[json-change]:   https://youtu.be/-C-JoyNuQJs?t=965
-[yaml-122-blog]: https://yaml.com/blog/2021-10/new-yaml-spec/
+[json-spec]:      https://www.json.org/json-en.html
+[yaml-spec]:      https://yaml.org/spec/1.2.2/
+[yaml-errata]:    https://yaml.org/spec/1.2/errata.html
+[json-saga]:      https://www.youtube.com/watch?v=-C-JoyNuQJs
+[json-change]:    https://youtu.be/-C-JoyNuQJs?t=965
+[yaml-122-blog]:  https://yaml.com/blog/2021-10/new-yaml-spec/
+[yaml-multiline]: https://yaml-multiline.info/
+[yaml-63]:        https://stackoverflow.com/a/21699210/135889
 
 <!--
 This is the last version without scientific notation, 2005-07-21:
@@ -80,8 +88,8 @@ The YAML document from hell
 
 Consider the following document.
 
-```yaml
-loadbalancer_config:
+```
+server_config:
   port_mapping:
     # Expose only ssh and http to the public internet.
     - 22:22
@@ -102,6 +110,12 @@ loadbalancer_config:
     - is
     - no
     - se
+
+  allow_postgres_versions:
+    - 9.5.25
+    - 9.6.24
+    - 10.23
+    - 12.13
 ```
 
 The YAML spec
@@ -115,6 +129,13 @@ its goals are, in order of decreasing priority:
 In other words, YAML is explicitly not designed to be easy to use.
 
 [spec1.1]: https://yaml.org/spec/1.2.2/#11-goals
+
+Syntax highlighting
+-------------------
+It will not save you, because yaml is impossible to highlight properly.
+My blog highlights it differently from my editor.
+Both highlight the sexagesimal literal in a different color,
+even though it has no special meaning in yaml 1.2.
 
 Templating YAML
 ---------------
