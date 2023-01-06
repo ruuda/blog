@@ -34,7 +34,7 @@ The yaml spec on the other hand is versioned.
 The latest revision is fairly recent, 1.2.2 from October 2021.
 Yaml 1.2 differs substantially from 1.1:
 the same document can parse differently under different yaml versions.
-We will see an example of this later.
+We will see multiple examples of this later.
 
 Json is so obvious that
 Douglas Crockford claims [to have discovered it][json-saga] — not invented.
@@ -87,7 +87,7 @@ The yaml document from hell
 
 Consider the following document.
 
-```yaml
+```
 server_config:
   port_mapping:
     # Expose only ssh and http to the public internet.
@@ -123,13 +123,17 @@ server_config:
 
 Let’s break this down section by section and see how the data maps to json.
 
-**Sexagesimal numbers**
+## Sexagesimal numbers
+
+Let’s start with something that you might find in any container runtime configuration:
+
 ```
 port_mapping:
   - 22:22
   - 80:80
   - 443:443
-
+```
+```json
 {"port_mapping": [1342, "80:80", "443:443"]}
 ```
 Huh, what happened here?
@@ -149,7 +153,10 @@ implements yaml 1.1 and parses `22:22` as `1342`.
 [sexagesimal]: https://yaml.org/spec/1.1/#id858600
 [pyyaml60]: https://pypi.org/project/PyYAML/6.0/
 
-**Anchors, aliases, and tags**
+## Anchors, aliases, and tags
+
+The following snippet is actually invalid:
+
 ```
 serve:
   - /robots.txt
@@ -158,12 +165,13 @@ serve:
   - *.png
   - !.git
 ```
-This snippet is invalid.
+
 Yaml allows you to create an _anchor_
 by adding an `&` and a name in front of a value,
-and then you can later reference that value with a `*` followed by the name.
+and then you can later reference that value with an _alias_:
+a `*` followed by the name.
 In this case no anchors are defined,
-so the references are invalid.
+so the aliases are invalid.
 Let’s avoid them for now and see what happens.
 
 ```
@@ -171,30 +179,36 @@ serve:
   - /robots.txt
   - /favicon.ico
   - !.git
-
+```
+```json
 {"serve": ["/robots.txt", "/favicon.ico", ""]}
 ```
 Now the interpretation depends on the parser you are using.
-The value starting with `!` is a [tag][tag].
+The element starting with `!` is a [tag][tag].
 This feature is intended to enable a parser to convert
 the fairly limited yaml data types
 into richer types that might exist in the host language.
 A tag starting with `!` is up to the parser to interpret,
-often by calling a constructor with the given name.
+often by calling a constructor with the given name
+and providing it the value that follows after the tag.
 This means that
-_loading an untrusted yaml document is generally unsafe_,
+**loading an untrusted yaml document is generally unsafe**,
 as it may lead to arbitrary code execution.
 (In Python,
-you have to use `yaml.safe_load` instead of `yaml.load` to avoid this pitfall.)
+you can avoid this pitfall by using `yaml.safe_load` instead of `yaml.load`.)
 In our case above,
 PyYAML fails to load the document because it doesn’t know the `.git` tag.
-[Go’s yaml package][goyaml301] is less strict,
-and treats it as an empty string.
+Go’s yaml package is less strict
+and returns an empty string.
 
 [tag]: https://yaml.org/spec/1.2.2/#3212-tags
 [goyaml301]: https://github.com/go-yaml/yaml/tree/v3.0.1
 
-**The Norway problem**
+## The Norway problem
+
+This pitfall is so infamous
+that it became known as “[the Norway problem][norway-problem]”:
+
 ```
 geoblock_regions:
   - dk
@@ -202,7 +216,8 @@ geoblock_regions:
   - is
   - no
   - se
-
+```
+```json
 {"geoblock_regions": ["dk", "fi", "is", false, "se"]}
 ```
 What is that `false` doing there?
@@ -210,8 +225,6 @@ The literals `off`, `no`, and `n`,
 in various capitalizations ([but not any capitalization][yaml-bool]!),
 are all `false` in yaml 1.1,
 while `on`, `yes`, and `y` are true.
-This pitfall is so infamous that it became known as
-“[the Norway problem][norway-problem]”.
 In yaml 1.2 these alternative spellings of the boolean literals are no longer allowed,
 but they are so pervasive in the wild
 that a compliant parser would have a hard time reading many documents.
@@ -234,12 +247,18 @@ which was released in May 2022.
 [norway-problem]: https://hitchdev.com/strictyaml/why/implicit-typing-removed/
 [yaml-bool]: https://yaml.org/type/bool.html
 
-**Non-string keys**
+## Non-string keys
+
+While keys in json are always strings,
+in yaml they can be any value,
+including booleans.
+
 ```
 flush_cache:
   on: [push, memory_pressure]
   priority: background
-
+```
+```json
 {
   "flush_cache": {
     "True": ["push", "memory_pressure"],
@@ -247,19 +266,19 @@ flush_cache:
   }
 }
 ```
-While keys in json are always strings,
-in yaml they can be any value,
-including booleans.
+
 Combined with the previous feature of interpreting `on` as a boolean,
 this leads to a dictionary with `true` as one of the keys.
-It depends on the language how that maps to json (if at all);
-in Python it becomes the string `True`.
+It depends on the language how that maps to json — if at all.
+In Python it becomes the string `"True"`.
 I would be really curious to know whether [GitHub Actions’ parser][gha-on]
 looks at `"on"` or `true` under the hood.
 
 [gha-on]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
 
-**Accidental numbers**
+## Accidental numbers
+
+Leaving strings unquoted can easily lead to unintentional numbers.
 
 ```
 allow_postgres_versions:
@@ -267,18 +286,16 @@ allow_postgres_versions:
   - 9.6.24
   - 10.23
   - 12.13
-
+```
+```json
 {"allow_postgres_versions": ["9.5.25", "9.6.24", 10.23, 12.13]}
 ```
-It may be tempting to leave strings unquoted,
-but this can easily lead to accidental numbers.
 If you think the list is a contrived example,
-imagine updating a config file that lists a single value of 9.6.24,
+imagine updating a config file that lists a single value of 9.6.24
 and changing it to 10.23.
 Would you remember to add the quotes?
 What makes this even more insidious
 is that many dynamically typed applications
-— such as Ansible —
 implicitly convert the number to a string when needed,
 so your document works fine most of the time,
 except in some contexts is doesn’t.
@@ -287,11 +304,13 @@ the following Jinja template accepts both
 `version: "0.0"` and `version: 0.0`,
 but it only emits output for the former.
 
-    {% if version %}Latest version: {{ version }}{% endif %}
+```
+{% if version %}Latest version: {{ version }}{% endif %}
+```
 
-**Runners-up**<br>
+## Runners-up
 There is only so much I can fit into one artifical example.
-Some other arcane features that I did not manage to fit in
+Some arcane behaviors that did not make it in
 are [directives][directives],
 integers starting with `0` being octal literals (but only in yaml 1.1),
 `~` being an alternative spelling of `null`,
@@ -304,8 +323,14 @@ Syntax highlighting will not save you
 -------------------------------------
 You may have noticed that none of my examples have syntax highlighting enabled.
 Maybe I am being unfair to yaml,
-because syntax highlighting would highlight special values,
+because syntax highlighting would highlight special constructs,
 so you can at least see that some values are not normal strings.
+However, due to multiple yaml versions being prevalent,
+and highlighters having various levels of sophistication,
+you can’t rely on this.
+Vim, my blog generator, GitHub, and Codeberg,
+all have a unique way to highlight the example document from this post.
+No two of them pick out the same subset of values as non-strings!
 
 The YAML spec
 -------------
