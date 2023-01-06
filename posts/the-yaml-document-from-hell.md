@@ -3,15 +3,15 @@ title: The yaml document from hell
 date: 2023-01-02
 minutes: ?
 synopsis: As a data format, YAML is an extremely complicated and has many footguns. In this post I explain some of those pitfalls by means of an example.
-run-in: For a data format, YAML is extremely complicated.
+run-in: For a data format
 ---
 
-For a data format, YAML is extremely complicated.
+For a data format, yaml is extremely complicated.
 It aims to be a more human-friendly alternative to json,
 but in striving for that it introduces so much complexity,
 that I would argue it achieves the opposite result.
 Yaml is full of footguns and its friendliness is deceptive.
-In this post I want to explain this through an example.
+In this post I want to demonstrate this through an example.
 
 Yaml is really, really complex
 ------------------------------
@@ -31,9 +31,8 @@ There were [two changes][json-change] to it in 2005
 but it has been frozen since
 — almost two decades now.
 The yaml spec on the other hand is versioned.
-The latest revision, 1.2.2 from October 2021,
-merely provides clarification over 1.2.1.
-But yaml 1.2 differs substantially from 1.1:
+The latest revision is fairly recent, 1.2.2 from October 2021.
+Yaml 1.2 differs substantially from 1.1:
 the same document can parse differently under different yaml versions.
 We will see an example of this later.
 
@@ -57,7 +56,7 @@ There is [an entire website][yaml-multiline]
 dedicated to picking one of [the 63 different multi-line string syntaxes][yaml-63].
 This means that it is generally very difficult for a human to predict
 how a particular document will parse.
-In certain situations documents can behave in surprising ways.
+This can lead to surprises.
 Let’s look an example to highlight some of those.
 
 [json-spec]:      https://www.json.org/json-en.html
@@ -83,7 +82,7 @@ This is the first version to no longer feature comments, 2005-08-23:
 https://web.archive.org/web/20050823002712/http://www.crockford.com:80/JSON/index.html
 -->
 
-The YAML document from hell
+The yaml document from hell
 ---------------------------
 
 Consider the following document.
@@ -118,6 +117,34 @@ server_config:
     - 12.13
 ```
 
+Let’s break this down section by section and see how the data maps to json.
+
+```
+port_mapping:
+  - 22:22
+  - 80:80
+  - 443:443
+```
+```json
+{"port_mapping": [1342, "80:80", "443:443"]}
+```
+Huh, what happened here?
+As it turns out,
+numbers from 0 to 59 separated by colons
+are [sexagesimal (base 60) integer literals][sexagesimal].
+This arcane feature was present in yaml 1.1,
+but silently removed from yaml 1.2,
+so the list element will parse as `1342` or `"22:22"`
+depending on which version your parser uses.
+Although yaml 1.2 is more than 10 years old by now,
+you would be mistaken to think that it is widely supported:
+the latest version of [PyYAML][pyyaml60] at the time of writing
+implements yaml 1.1,
+and parses `22:22` as `1342`.
+
+[sexagesimal]: https://yaml.org/spec/1.1/#id858600
+[pyyaml60]: https://pypi.org/project/PyYAML/6.0/
+
 The YAML spec
 -------------
 From [section 1.1 of the YAML spec][spec1.1],
@@ -129,6 +156,14 @@ its goals are, in order of decreasing priority:
 In other words, YAML is explicitly not designed to be easy to use.
 
 [spec1.1]: https://yaml.org/spec/1.2.2/#11-goals
+
+What about Go? Well, [go-yaml implements _neither_][go-yaml],
+instead it implements a custom mix of yaml 1.1 and 1.2:
+
+> The yaml package supports most of YAML 1.2,
+> but preserves some behavior from 1.1 for backwards compatibility.
+
+[go-yaml]: https://github.com/go-yaml/yaml#compatibility
 
 Syntax highlighting
 -------------------
