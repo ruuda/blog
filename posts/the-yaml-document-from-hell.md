@@ -87,7 +87,7 @@ The yaml document from hell
 
 Consider the following document.
 
-```
+```yaml
 server_config:
   port_mapping:
     # Expose only ssh and http to the public internet.
@@ -289,6 +289,24 @@ but it only emits output for the former.
 
     {% if version %}Latest version: {{ version }}{% endif %}
 
+**Runners-up**<br>
+There is only so much I can fit into one artifical example.
+Some other arcane features that I did not manage to fit in
+are [directives][directives],
+integers starting with `0` being octal literals (but only in yaml 1.1),
+`~` being an alternative spelling of `null`,
+and `?` introducing a [complex mapping key][complex-mapping-key].
+
+[directives]: https://yaml.org/spec/1.2.2/#68-directives
+[complex-mapping-key]: https://yaml.org/spec/1.2.2/#example-mapping-between-sequences
+
+Syntax highlighting will not save you
+-------------------------------------
+You may have noticed that none of my examples have syntax highlighting enabled.
+Maybe I am being unfair to yaml,
+because syntax highlighting would highlight special values,
+so you can at least see that some values are not normal strings.
+
 The YAML spec
 -------------
 From [section 1.1 of the YAML spec][spec1.1],
@@ -301,13 +319,6 @@ In other words, YAML is explicitly not designed to be easy to use.
 
 [spec1.1]: https://yaml.org/spec/1.2.2/#11-goals
 
-
-Syntax highlighting
--------------------
-It will not save you, because yaml is impossible to highlight properly.
-My blog highlights it differently from my editor.
-Both highlight the sexagesimal literal in a different color,
-even though it has no special meaning in yaml 1.2.
 
 Templating YAML
 ---------------
