@@ -13,8 +13,7 @@ that I would argue it achieves the opposite result.
 Yaml is full of footguns and its friendliness is deceptive.
 In this post I want to demonstrate this through an example.
 
-Yaml is really, really complex
-------------------------------
+## Yaml is really, really complex
 
 Json is simple.
 [The entire json spec][json-spec] consists of six railroad diagrams.
@@ -82,8 +81,7 @@ This is the first version to no longer feature comments, 2005-08-23:
 https://web.archive.org/web/20050823002712/http://www.crockford.com:80/JSON/index.html
 -->
 
-The yaml document from hell
----------------------------
+## The yaml document from hell
 
 Consider the following document.
 
@@ -309,6 +307,7 @@ but it only emits output for the former.
 ```
 
 ## Runners-up
+
 There is only so much I can fit into one artifical example.
 Some arcane behaviors that did not make it in
 are [directives][directives],
@@ -319,8 +318,8 @@ and `?` introducing a [complex mapping key][complex-mapping-key].
 [directives]: https://yaml.org/spec/1.2.2/#68-directives
 [complex-mapping-key]: https://yaml.org/spec/1.2.2/#example-mapping-between-sequences
 
-Syntax highlighting will not save you
--------------------------------------
+## Syntax highlighting will not save you
+
 You may have noticed that none of my examples have syntax highlighting enabled.
 Maybe I am being unfair to yaml,
 because syntax highlighting would highlight special constructs,
@@ -332,22 +331,51 @@ Vim, my blog generator, GitHub, and Codeberg,
 all have a unique way to highlight the example document from this post.
 No two of them pick out the same subset of values as non-strings!
 
-The YAML spec
--------------
-From [section 1.1 of the YAML spec][spec1.1],
-its goals are, in order of decreasing priority:
+## Templating yaml is a terrible, terrible idea
 
- 1. To be easily readable by humans.
- 7. To be easy to implement and use.
-
-In other words, YAML is explicitly not designed to be easy to use.
-
-[spec1.1]: https://yaml.org/spec/1.2.2/#11-goals
-
-
-Templating YAML
----------------
 Don’t. It’s impossible. Generate JSON instead.
+
+## Alternatives
+
+I think the main reason that yaml is so prevalent despite its pitfalls,
+is that people really want a config format that allows comments.
+As we saw before,
+json had comments very early on,
+but they were removed because people started putting parsing directives in there.
+I think this is the right call for a machine-generated serialization format,
+but it makes json unsuitable as a configuration language.
+So if what we really need is json with comments,
+and maybe trailing commas,
+what are some of the options?
+
+ * [**Toml**][toml] —
+   Toml is similar to yaml in many ways:
+   it has mostly the same data types
+   (json plus dates and times);
+   the syntax is not as verbose as json;
+   and it allows comments.
+   Unlike yaml it is not full of footguns,
+   mostly because strings are always quoted,
+   so you don’t have values that look like strings but aren’t.
+   Toml is widely supported,
+   you can probably find a toml parser for your favorite language.
+   It’s even in the Python standard library, unlike yaml.
+   A weak spot of toml is deeply nested data.
+ * [**Json with comments**][jsonc],
+   [**Json with commas and comments**][jwcc],
+   [**Hujson**][hujson] —
+   There exist various extensions of json that extend it just enough
+   to make it a usable config format
+   without introducing too much complexity.
+   I think json with comments is the most widespread,
+   as it is used as the config format for Visual Studio Code.
+   The main downside of these is that they haven’t really caught on (yet!),
+   so they aren’t as widely supported as json or yaml.
+
+[toml]: https://toml.io/en/
+[jsonc]: https://code.visualstudio.com/docs/languages/json#_json-with-comments
+[jwcc]: https://nigeltao.github.io/blog/2021/json-with-commas-comments.html
+[hujson]: https://github.com/tailscale/hujson
 
 Alternatives
 ------------
