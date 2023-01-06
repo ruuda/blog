@@ -183,7 +183,7 @@ as it may lead to arbitrary code execution.
 (In Python,
 you have to use `yaml.safe_load` instead of `yaml.load` to avoid this pitfall.)
 In our case above,
-PyYAML fails to load the document because it doesn’t know the tag `.git`.
+PyYAML fails to load the document because it doesn’t know the `.git` tag.
 [Go’s yaml package][goyaml301] is less strict,
 and treats it as an empty string.
 
