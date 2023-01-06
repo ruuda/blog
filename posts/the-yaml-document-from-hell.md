@@ -215,7 +215,7 @@ This pitfall is so infamous that it became known as
 In yaml 1.2 these alternative spellings of the boolean literals are no longer allowed,
 but they are so pervasive in the wild
 that a compliant parser would have a hard time reading many documents.
-Go’s yaml library [made the choice][go-yaml-compat]
+Go’s yaml library therefore [made the choice][go-yaml-compat]
 of implementing a custom variant somewhere in between yaml 1.1 and 1.2
 that behaves differently depending on the context:
 
@@ -254,10 +254,40 @@ Combined with the previous feature of interpreting `on` as a boolean,
 this leads to a dictionary with `true` as one of the keys.
 It depends on the language how that maps to json (if at all);
 in Python it becomes the string `True`.
-I am really curious to know whether [GitHub Actions’ parser][gha-on]
+I would be really curious to know whether [GitHub Actions’ parser][gha-on]
 looks at `"on"` or `true` under the hood.
 
 [gha-on]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
+
+**Accidental numbers**
+
+```
+allow_postgres_versions:
+  - 9.5.25
+  - 9.6.24
+  - 10.23
+  - 12.13
+
+{"allow_postgres_versions": ["9.5.25", "9.6.24", 10.23, 12.13]}
+```
+It may be tempting to leave strings unquoted,
+but this can easily lead to accidental numbers.
+If you think the list is a contrived example,
+imagine updating a config file that lists a single value of 9.6.24,
+and changing it to 10.23.
+Would you remember to add the quotes?
+What makes this even more insidious
+is that many dynamically typed applications
+— such as Ansible —
+implicitly convert the number to a string when needed,
+so your document works fine most of the time,
+except in some contexts is doesn’t.
+For example,
+the following Jinja template accepts both
+`version: "0.0"` and `version: 0.0`,
+but it only emits output for the former.
+
+    {% if version %}Latest version: {{ version }}{% endif %}
 
 The YAML spec
 -------------
