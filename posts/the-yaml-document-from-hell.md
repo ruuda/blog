@@ -110,6 +110,10 @@ server_config:
     - no
     - se
 
+  flush_cache:
+    on: [push, memory_pressure]
+    priority: background
+
   allow_postgres_versions:
     - 9.5.25
     - 9.6.24
@@ -138,9 +142,9 @@ so the list element will parse as `1342` or `"22:22"`
 depending on which version your parser uses.
 Although yaml 1.2 is more than 10 years old by now,
 you would be mistaken to think that it is widely supported:
-the latest version of [PyYAML][pyyaml60] at the time of writing
-implements yaml 1.1,
-and parses `22:22` as `1342`.
+the latest version libyaml at the time of writing
+(which is used among others by [PyYAML][pyyaml60])
+implements yaml 1.1 and parses `22:22` as `1342`.
 
 [sexagesimal]: https://yaml.org/spec/1.1/#id858600
 [pyyaml60]: https://pypi.org/project/PyYAML/6.0/
@@ -190,6 +194,71 @@ and treats it as an empty string.
 [tag]: https://yaml.org/spec/1.2.2/#3212-tags
 [goyaml301]: https://github.com/go-yaml/yaml/tree/v3.0.1
 
+**The Norway problem**
+```
+geoblock_regions:
+  - dk
+  - fi
+  - is
+  - no
+  - se
+
+{"geoblock_regions": ["dk", "fi", "is", false, "se"]}
+```
+What is that `false` doing there?
+The literals `off`, `no`, and `n`,
+in various capitalizations ([but not any capitalization][yaml-bool]!),
+are all `false` in yaml 1.1,
+while `on`, `yes`, and `y` are true.
+This pitfall is so infamous that it became known as
+“[the Norway problem][norway-problem]”.
+In yaml 1.2 these alternative spellings of the boolean literals are no longer allowed,
+but they are so pervasive in the wild
+that a compliant parser would have a hard time reading many documents.
+Go’s yaml library [made the choice][go-yaml-compat]
+of implementing a custom variant somewhere in between yaml 1.1 and 1.2
+that behaves differently depending on the context:
+
+> The yaml package supports most of YAML 1.2,
+> but preserves some behavior from 1.1 for backwards compatibility.
+> YAML 1.1 bools (yes/no, on/off) are supported
+> as long as they are being decoded into a typed bool value.
+> Otherwise they behave as a string.
+
+Note that it only does that since version 3.0.0,
+which was released in May 2022.
+[Earlier versions behave differently][go-yaml-off].
+
+[go-yaml-compat]: https://github.com/go-yaml/yaml/tree/v3.0.1#compatibility
+[go-yaml-off]: https://github.com/go-yaml/yaml/commit/b145382a4cda47600eceb779844b8090b5807c4f
+[norway-problem]: https://hitchdev.com/strictyaml/why/implicit-typing-removed/
+[yaml-bool]: https://yaml.org/type/bool.html
+
+**Non-string keys**
+```
+flush_cache:
+  on: [push, memory_pressure]
+  priority: background
+
+{
+  "flush_cache": {
+    "True": ["push", "memory_pressure"],
+    "priority": "background"
+  }
+}
+```
+While keys in json are always strings,
+in yaml they can be any value,
+including booleans.
+Combined with the previous feature of interpreting `on` as a boolean,
+this leads to a dictionary with `true` as one of the keys.
+It depends on the language how that maps to json (if at all);
+in Python it becomes the string `True`.
+I am really curious to know whether [GitHub Actions’ parser][gha-on]
+looks at `"on"` or `true` under the hood.
+
+[gha-on]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
+
 The YAML spec
 -------------
 From [section 1.1 of the YAML spec][spec1.1],
@@ -202,13 +271,6 @@ In other words, YAML is explicitly not designed to be easy to use.
 
 [spec1.1]: https://yaml.org/spec/1.2.2/#11-goals
 
-What about Go? Well, [go-yaml implements _neither_][go-yaml],
-instead it implements a custom mix of yaml 1.1 and 1.2:
-
-> The yaml package supports most of YAML 1.2,
-> but preserves some behavior from 1.1 for backwards compatibility.
-
-[go-yaml]: https://github.com/go-yaml/yaml#compatibility
 
 Syntax highlighting
 -------------------
