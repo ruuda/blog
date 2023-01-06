@@ -119,19 +119,19 @@ server_config:
 
 Let’s break this down section by section and see how the data maps to json.
 
+**Sexagesimal numbers**
 ```
 port_mapping:
   - 22:22
   - 80:80
   - 443:443
-```
-```json
+
 {"port_mapping": [1342, "80:80", "443:443"]}
 ```
 Huh, what happened here?
 As it turns out,
 numbers from 0 to 59 separated by colons
-are [sexagesimal (base 60) integer literals][sexagesimal].
+are [sexagesimal (base 60) number literals][sexagesimal].
 This arcane feature was present in yaml 1.1,
 but silently removed from yaml 1.2,
 so the list element will parse as `1342` or `"22:22"`
@@ -144,6 +144,51 @@ and parses `22:22` as `1342`.
 
 [sexagesimal]: https://yaml.org/spec/1.1/#id858600
 [pyyaml60]: https://pypi.org/project/PyYAML/6.0/
+
+**Anchors, aliases, and tags**
+```
+serve:
+  - /robots.txt
+  - /favicon.ico
+  - *.html
+  - *.png
+  - !.git
+```
+This snippet is invalid.
+Yaml allows you to create an _anchor_
+by adding an `&` and a name in front of a value,
+and then you can later reference that value with a `*` followed by the name.
+In this case no anchors are defined,
+so the references are invalid.
+Let’s avoid them for now and see what happens.
+
+```
+serve:
+  - /robots.txt
+  - /favicon.ico
+  - !.git
+
+{"serve": ["/robots.txt", "/favicon.ico", ""]}
+```
+Now the interpretation depends on the parser you are using.
+The value starting with `!` is a [tag][tag].
+This feature is intended to enable a parser to convert
+the fairly limited yaml data types
+into richer types that might exist in the host language.
+A tag starting with `!` is up to the parser to interpret,
+often by calling a constructor with the given name.
+This means that
+_loading an untrusted yaml document is generally unsafe_,
+as it may lead to arbitrary code execution.
+(In Python,
+you have to use `yaml.safe_load` instead of `yaml.load` to avoid this pitfall.)
+In our case above,
+PyYAML fails to load the document because it doesn’t know the `.git` tag.
+[Go’s yaml package][goyaml301] is less strict,
+and treats it as an empty string.
+
+[tag]: https://yaml.org/spec/1.2.2/#3212-tags
+[goyaml301]: https://github.com/go-yaml/yaml/tree/v3.0.1
 
 The YAML spec
 -------------
