@@ -281,10 +281,9 @@ code
   font-family: Inconsolata, Consolas, monospace;
 }
 
-div.sourceCode
+div.sourceCode, article>pre
 {
   /* Hang the border left of the pre in the margin. */
-  /* TODO: How do I handle this when there is no div? */
   margin-left: -0.25em;
   overflow: hidden;
 }
