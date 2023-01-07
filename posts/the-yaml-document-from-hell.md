@@ -372,10 +372,70 @@ what are some of the options?
    The main downside of these is that they haven’t really caught on (yet!),
    so they aren’t as widely supported as json or yaml.
 
-[toml]: https://toml.io/en/
-[jsonc]: https://code.visualstudio.com/docs/languages/json#_json-with-comments
-[jwcc]: https://nigeltao.github.io/blog/2021/json-with-commas-comments.html
-[hujson]: https://github.com/tailscale/hujson
+Often the choice is not ours to make,
+and an application only accepts yaml.
+Not all is lost though,
+because yaml is a superset of json,
+so any tool that can export json can be used to generate a yaml document.
+
+Sometimes an application will start out with a need for just a configuration format,
+but over time you end up with many many similar stanzas,
+and you would like to share parts between them,
+and abstract some repetition away.
+This happens for example with Kubernetes and GitHub Actions.
+When the configuration language does not support abstraction,
+people often reach for templating,
+which is a bad idea for the reasons explained before.
+Proper programming languages,
+possibly domain-specific ones,
+are a much better fit.
+Some of my favorites are Nix and Python:
+
+ * [**Nix**][nixlang] —
+   Nix is the language used by the [Nix package manager][nix].
+   It was created for writing package definitions,
+   but it works remarkably well as a configuration format
+   (and indeed it is used to configure NixOS).
+   Functions, let-bindings, and string interpolation
+   make it powerful for abstracting repetitive configuration.
+   The syntax is light like toml,
+   and it can [export to json][tojson] or xml.
+   It works well for simplifying a repetitive GitHub Actions workflow file,
+   for example.
+ * [**Python**][python] —
+   Most json documents are valid Python literals,
+   and Python supports trailing commas and comments.
+   It has variables and functions,
+   powerful string interpolation,
+   and [`json.dump`][pydump] built in.
+
+Finally there are some tools that I don’t personally use,
+but which deserve a honorable mention:
+
+ * [**Dhall**][dhall] —
+   Dhall is like Nix, but with types.
+   It is far less widespread,
+   and I personally find the built-in function names unwieldy.
+ * [**Cue**][cue] —
+   Like Dhall, Cue integrates type/schema information into the config format.
+   Cue is a superset of json,
+   but despite that,
+   I find the files that actually use Cue’s features to look foreign to me.
+ * [**Hashicorp Configuration Language**][hcl] —
+   TODO
+
+[cue]:     https://cuelang.org/
+[dhall]:   https://dhall-lang.org/
+[hcl]:     https://github.com/hashicorp/hcl
+[hujson]:  https://github.com/tailscale/hujson
+[jsonc]:   https://code.visualstudio.com/docs/languages/json#_json-with-comments
+[jwcc]:    https://nigeltao.github.io/blog/2021/json-with-commas-comments.html
+[nix]:     https://nixos.org/
+[nixlang]: https://nixos.org/manual/nix/stable/language/index.html
+[pydump]:  https://docs.python.org/3/library/json.html?highlight=json%20dump#json.dump
+[python]:  https://www.python.org/
+[tojson]:  https://nixos.org/manual/nix/stable/language/builtins.html#builtins-toJSON
+[toml]:    https://toml.io/en/
 
 Alternatives
 ------------
@@ -385,6 +445,8 @@ Alternatives
  * Hujson.
  * Nix.
  * Honorable mention: Cue, Dhall, maybe HCL.
+
+Mention that yaml is a superset of json.
 
 Conclusion
 ----------
