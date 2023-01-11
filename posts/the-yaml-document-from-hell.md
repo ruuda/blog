@@ -387,8 +387,7 @@ what are some of the options?
    It’s even in the Python standard library — unlike yaml!
    A weak spot of toml is deeply nested data.
  * [**Json with comments**][jsonc],
-   [**Json with commas and comments**][jwcc],
-   [**Hujson**][hujson] —
+   [**Json with commas and comments**][jwcc] —
    There exist various extensions of json that extend it just enough
    to make it a usable config format
    without introducing too much complexity.
@@ -396,12 +395,12 @@ what are some of the options?
    as it is used as the config format for Visual Studio Code.
    The main downside of these is that they haven’t really caught on (yet!),
    so they aren’t as widely supported as json or yaml.
- * **A simpler subset of yaml** —
+ * **A simple subset of yaml** —
    Many of the problems with yaml are caused by unquoted things
    that look like strings
    but behave differently.
    This is easy to avoid: always quote all strings.
-   (Indeed, you can tell when somebody is an experienced yaml engineer because
+   (Indeed, you can tell that somebody is an experienced yaml engineer when
    they defensively quote all the strings.)
    The challenge with this is that any construct not explicitly forbidden
    will eventually make it into your codebase,
@@ -460,15 +459,18 @@ but which deserve to be mentioned:
    Cue is a superset of json,
    but despite that,
    I find the files that actually use Cue’s features to look foreign to me.
+   Cue is on my radar to evaluate further,
+   but I haven’t encountered a problem
+   where Cue looked like the most suitable solution yet.
  * [**Hashicorp Configuration Language**][hcl] —
    I haven’t used HCL extensively enough to have a strong opinion on it,
    but so far in the places where I worked with it,
-   the potential for abstraction was limited.
+   the potential for abstraction was more limited
+   than what you can achieve with e.g. Nix.
 
 [cue]:     https://cuelang.org/
 [dhall]:   https://dhall-lang.org/
 [hcl]:     https://github.com/hashicorp/hcl
-[hujson]:  https://github.com/tailscale/hujson
 [jsonc]:   https://code.visualstudio.com/docs/languages/json#_json-with-comments
 [jwcc]:    https://nigeltao.github.io/blog/2021/json-with-commas-comments.html
 [nix]:     https://nixos.org/
