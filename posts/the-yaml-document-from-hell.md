@@ -382,8 +382,20 @@ what are some of the options?
    as it is used as the config format for Visual Studio Code.
    The main downside of these is that they haven’t really caught on (yet!),
    so they aren’t as widely supported as json or yaml.
+ * **A simpler subset of yaml** —
+   Many of the problems with yaml are caused by unquoted things
+   that look like strings
+   but behave differently.
+   This is easy to avoid: always quote all strings.
+   (Indeed, you can tell when somebody is an experienced yaml engineer because
+   they defensively quote all the strings.)
+   The challenge with this is that any construct not explicitly forbidden
+   will eventually make it into your codebase,
+   and I am not aware of any good tool to enforce a sane yaml subset.
 
-Often the choice is not ours to make,
+## Generating json as a better yaml
+
+Often the choice of format is not ours to make,
 and an application only accepts yaml.
 Not all is lost though,
 because yaml is a superset of json,
@@ -396,7 +408,7 @@ and abstract some repetition away.
 This tends to happen in for example Kubernetes and GitHub Actions.
 When the configuration language does not support abstraction,
 people often reach for templating,
-which is a bad idea for the reasons explained before.
+which is a bad idea for the reasons explained earlier.
 Proper programming languages,
 possibly domain-specific ones,
 are a better fit.
@@ -427,7 +439,7 @@ but which deserve to be mentioned:
 
  * [**Dhall**][dhall] —
    Dhall is like Nix, but with types.
-   It is far less widespread,
+   It is less widespread,
    and personally I find the built-in function names unwieldy.
  * [**Cue**][cue] —
    Like Dhall, Cue integrates type/schema information into the config format.
@@ -435,10 +447,9 @@ but which deserve to be mentioned:
    but despite that,
    I find the files that actually use Cue’s features to look foreign to me.
  * [**Hashicorp Configuration Language**][hcl] —
-   I haven’t used this enough to have a strong opinion on it,
+   I haven’t used HCL extensively enough to have a strong opinion on it,
    but so far in the places where I worked with it,
-   the configurations looked quite repetitive still,
-   and the potential for abstraction was limited.
+   the potential for abstraction was limited.
 
 [cue]:     https://cuelang.org/
 [dhall]:   https://dhall-lang.org/
