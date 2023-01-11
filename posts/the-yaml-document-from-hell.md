@@ -1,8 +1,8 @@
 ---
 title: The yaml document from hell
-date: 2023-01-02
-minutes: ?
-synopsis: As a data format, yaml is an extremely complicated and has many footguns. In this post I explain some of those pitfalls by means of an example.
+date: 2023-01-11
+minutes: 14
+synopsis: As a data format, yaml is an extremely complicated and has many footguns. In this post I explain some of those pitfalls by means of an example, and I suggest a few less dangerous yaml alternatives.
 run-in: For a data format
 ---
 
@@ -56,7 +56,7 @@ When you work with a format as complex as yaml,
 it is difficult to be aware of all the features and subtle behaviors it has.
 There is [an entire website][yaml-multiline]
 dedicated to picking one of [the 63 different multi-line string syntaxes][yaml-63].
-This means that it is generally very difficult for a human to predict
+This means that it can be very difficult for a human to predict
 how a particular document will parse.
 Let’s look an example to highlight this.
 
@@ -342,14 +342,14 @@ No two of them pick out the same subset of values as non-strings!
 
 ## Templating yaml is a terrible, terrible idea
 
-I hope it is clear by now that writing yaml is subtle at the very least.
+I hope it is clear by now that working with yaml is subtle at the very least.
 What is even more subtle
 is concatenating and escaping arbitrary text fragments in such a way
 that the result is a valid yaml document,
 let alone one that does what you expect.
 Add to this the fact that whitespace is significant in yaml,
 and the result is a format that is
-[meme-worthy][memenetes] difficult to template correctly.
+[meme-worthily][memenetes] difficult to template correctly.
 I truly do not understand
 why [tools based on such an error-prone practice][helm]
 have gained so much mindshare,
@@ -405,6 +405,9 @@ what are some of the options?
    This is easy to avoid: always quote all strings.
    (Indeed, you can tell that somebody is an experienced yaml engineer when
    they defensively quote all the strings.)
+   We can choose to always use `true` and `false`
+   rather than `yes` and `no`,
+   and generally stay away from the arcane features.
    The challenge with this is that any construct not explicitly forbidden
    will eventually make it into your codebase,
    and I am not aware of any good tool that can enforce a sane yaml subset.
@@ -415,7 +418,7 @@ Often the choice of format is not ours to make,
 and an application only accepts yaml.
 Not all is lost though,
 because yaml is a superset of json,
-so any tool that can export json can be used to generate a yaml document.
+so any tool that can produce json can be used to generate a yaml document.
 
 Sometimes an application will start out with a need for just a configuration format,
 but over time you end up with many many similar stanzas,
@@ -442,7 +445,7 @@ Some of my favorites are Nix and Python:
    It works well for simplifying a repetitive GitHub Actions workflow file,
    for example.
  * [**Python**][python] —
-   Most json documents are valid Python literals,
+   Json documents double as valid Python literals with minimal adaptation,
    and Python supports trailing commas and comments.
    It has variables and functions,
    powerful string interpolation,
@@ -450,7 +453,8 @@ Some of my favorites are Nix and Python:
    A self-contained Python file that prints json to stdout
    goes a long way!
 
-Finally there are some tools in this category that I don’t personally use,
+Finally there are some tools in this category that I
+haven’t used enough to confidently recommend,
 but which deserve to be mentioned:
 
  * [**Dhall**][dhall] —
@@ -467,8 +471,8 @@ but which deserve to be mentioned:
    where Cue looked like the most suitable solution yet.
  * [**Hashicorp Configuration Language**][hcl] —
    I haven’t used HCL extensively enough to have a strong opinion on it,
-   but so far in the places where I worked with it,
-   the potential for abstraction was more limited
+   but in the places where I worked with it,
+   the potential for abstraction seemed more limited
    than what you can achieve with e.g. Nix.
 
 [cue]:     https://cuelang.org/
