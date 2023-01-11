@@ -55,8 +55,7 @@ There is [an entire website][yaml-multiline]
 dedicated to picking one of [the 63 different multi-line string syntaxes][yaml-63].
 This means that it is generally very difficult for a human to predict
 how a particular document will parse.
-This can lead to surprises.
-Let’s look an example to highlight some of those.
+Let’s look an example to highlight this.
 
 [json-spec]:      https://www.json.org/json-en.html
 [yaml-spec]:      https://yaml.org/spec/1.2.2/
@@ -123,7 +122,7 @@ Let’s break this down section by section and see how the data maps to json.
 
 ## Sexagesimal numbers
 
-Let’s start with something that you might find in any container runtime configuration:
+Let’s start with something that you might find in a container runtime configuration:
 
 ```
 port_mapping:
@@ -315,7 +314,7 @@ but it only takes the true-branch for the former.
 ## Runners-up
 
 There is only so much I can fit into one artifical example.
-Some arcane behaviors that did not make it in
+Some arcane yaml behaviors that did not make it in
 are [directives][directives],
 integers starting with `0` being octal literals (but only in yaml 1.1),
 `~` being an alternative spelling of `null`,
@@ -340,12 +339,27 @@ No two of them pick out the same subset of values as non-strings!
 
 ## Templating yaml is a terrible, terrible idea
 
-Don’t. It’s impossible. Generate JSON instead.
+I hope it is clear by now that writing yaml is subtle at the very least.
+What is even more subtle
+is concatenating and escaping arbitrary text fragments in such a way
+that the result is a valid yaml document,
+let alone one that does what you expect.
+Add to this the fact that whitespace is significant in yaml,
+and the result is a format that is
+[meme-worthy][memenetes] difficult to template correctly.
+I truly do not understand
+why [tools based on such an error-prone practice][helm]
+have gained so much mindshare,
+when there is a safer, easier, and more powerful alternative:
+generating json.
 
-## Alternatives
+[memenetes]: https://twitter.com/memenetes/status/1600898397279502336
+[helm]:      https://helm.sh/docs/chart_best_practices/templates/
+
+## Alternative configuration formats
 
 I think the main reason that yaml is so prevalent despite its pitfalls,
-is that for a long time it was the only viable config format.
+is that for a long time it was the only viable configuration format.
 Often we need lists and nested data,
 which rules out flat formats like ini.
 Xml is noisy and annoying to write by hand.
@@ -354,7 +368,7 @@ which rules out json.
 (As we saw before,
 json had comments very early on,
 but they were removed because people started putting parsing directives in there.
-I think this is the right call for a machine-generated serialization format,
+I think this is the right call for a serialization format,
 but it makes json unsuitable as a configuration language.)
 So if what we really need is the json data model
 but a syntax that allows comments,
@@ -391,7 +405,7 @@ what are some of the options?
    they defensively quote all the strings.)
    The challenge with this is that any construct not explicitly forbidden
    will eventually make it into your codebase,
-   and I am not aware of any good tool to enforce a sane yaml subset.
+   and I am not aware of any good tool that can enforce a sane yaml subset.
 
 ## Generating json as a better yaml
 
