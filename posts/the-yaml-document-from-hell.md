@@ -267,9 +267,11 @@ flush_cache:
 
 Combined with the previous feature of interpreting `on` as a boolean,
 this leads to a dictionary with `true` as one of the keys.
-It depends on the language how that maps to json — if at all.
+It depends on the language how that maps to json, if at all.
 In Python it becomes the string `"True"`.
-I would be really curious to know whether [GitHub Actions’ parser][gha-on]
+The key `on` is common in the wild
+because [it is used in GitHub Actions][gha-on].
+I would be really curious to know whether GitHub Actions’ parser
 looks at `"on"` or `true` under the hood.
 
 [gha-on]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#on
@@ -288,22 +290,26 @@ allow_postgres_versions:
 ```json
 {"allow_postgres_versions": ["9.5.25", "9.6.24", 10.23, 12.13]}
 ```
-If you think the list is a contrived example,
-imagine updating a config file that lists a single value of 9.6.24
+Maybe the list is a contrived example,
+but imagine updating a config file that lists a single value of 9.6.24
 and changing it to 10.23.
 Would you remember to add the quotes?
 What makes this even more insidious
 is that many dynamically typed applications
 implicitly convert the number to a string when needed,
 so your document works fine most of the time,
-except in some contexts is doesn’t.
+except in some contexts it doesn’t.
 For example,
 the following Jinja template accepts both
 `version: "0.0"` and `version: 0.0`,
-but it only emits output for the former.
+but it only takes the true-branch for the former.
 
 ```
-{% if version %}Latest version: {{ version }}{% endif %}
+{% if version %}
+  Latest version: {{ version }}
+{% else %}
+  Version not specified
+{% endif %}
 ```
 
 ## Runners-up
@@ -325,8 +331,9 @@ Maybe I am being unfair to yaml,
 because syntax highlighting would highlight special constructs,
 so you can at least see that some values are not normal strings.
 However, due to multiple yaml versions being prevalent,
-and highlighters having various levels of sophistication,
+and highlighters having different levels of sophistication,
 you can’t rely on this.
+I’m not trying to nitpick here:
 Vim, my blog generator, GitHub, and Codeberg,
 all have a unique way to highlight the example document from this post.
 No two of them pick out the same subset of values as non-strings!
@@ -338,20 +345,24 @@ Don’t. It’s impossible. Generate JSON instead.
 ## Alternatives
 
 I think the main reason that yaml is so prevalent despite its pitfalls,
-is that people really want a config format that allows comments.
-As we saw before,
+is that for a long time it was the only viable config format.
+Often we need lists and nested data,
+which rules out flat formats like ini.
+Xml is noisy and annoying to write by hand.
+But most of all, we need comments,
+which rules out json.
+(As we saw before,
 json had comments very early on,
 but they were removed because people started putting parsing directives in there.
 I think this is the right call for a machine-generated serialization format,
-but it makes json unsuitable as a configuration language.
-So if what we really need is json with comments,
-and maybe trailing commas,
+but it makes json unsuitable as a configuration language.)
+So if what we really need is the json data model
+but a syntax that allows comments,
 what are some of the options?
 
  * [**Toml**][toml] —
    Toml is similar to yaml in many ways:
-   it has mostly the same data types
-   (json plus dates and times);
+   it has mostly the same data types;
    the syntax is not as verbose as json;
    and it allows comments.
    Unlike yaml it is not full of footguns,
@@ -359,7 +370,7 @@ what are some of the options?
    so you don’t have values that look like strings but aren’t.
    Toml is widely supported,
    you can probably find a toml parser for your favorite language.
-   It’s even in the Python standard library, unlike yaml.
+   It’s even in the Python standard library — unlike yaml!
    A weak spot of toml is deeply nested data.
  * [**Json with comments**][jsonc],
    [**Json with commas and comments**][jwcc],
@@ -367,7 +378,7 @@ what are some of the options?
    There exist various extensions of json that extend it just enough
    to make it a usable config format
    without introducing too much complexity.
-   I think json with comments is the most widespread,
+   Json with comments is probably the most widespread,
    as it is used as the config format for Visual Studio Code.
    The main downside of these is that they haven’t really caught on (yet!),
    so they aren’t as widely supported as json or yaml.
@@ -382,13 +393,13 @@ Sometimes an application will start out with a need for just a configuration for
 but over time you end up with many many similar stanzas,
 and you would like to share parts between them,
 and abstract some repetition away.
-This happens for example with Kubernetes and GitHub Actions.
+This tends to happen in for example Kubernetes and GitHub Actions.
 When the configuration language does not support abstraction,
 people often reach for templating,
 which is a bad idea for the reasons explained before.
 Proper programming languages,
 possibly domain-specific ones,
-are a much better fit.
+are a better fit.
 Some of my favorites are Nix and Python:
 
  * [**Nix**][nixlang] —
@@ -408,21 +419,26 @@ Some of my favorites are Nix and Python:
    It has variables and functions,
    powerful string interpolation,
    and [`json.dump`][pydump] built in.
+   A self-contained Python file that prints json to stdout
+   goes a long way!
 
-Finally there are some tools that I don’t personally use,
-but which deserve a honorable mention:
+Finally there are some tools in this category that I don’t personally use,
+but which deserve to be mentioned:
 
  * [**Dhall**][dhall] —
    Dhall is like Nix, but with types.
    It is far less widespread,
-   and I personally find the built-in function names unwieldy.
+   and personally I find the built-in function names unwieldy.
  * [**Cue**][cue] —
    Like Dhall, Cue integrates type/schema information into the config format.
    Cue is a superset of json,
    but despite that,
    I find the files that actually use Cue’s features to look foreign to me.
  * [**Hashicorp Configuration Language**][hcl] —
-   TODO
+   I haven’t used this enough to have a strong opinion on it,
+   but so far in the places where I worked with it,
+   the configurations looked quite repetitive still,
+   and the potential for abstraction was limited.
 
 [cue]:     https://cuelang.org/
 [dhall]:   https://dhall-lang.org/
@@ -436,17 +452,6 @@ but which deserve a honorable mention:
 [python]:  https://www.python.org/
 [tojson]:  https://nixos.org/manual/nix/stable/language/builtins.html#builtins-toJSON
 [toml]:    https://toml.io/en/
-
-Alternatives
-------------
-
- * Json.
- * TOML.
- * Hujson.
- * Nix.
- * Honorable mention: Cue, Dhall, maybe HCL.
-
-Mention that yaml is a superset of json.
 
 Conclusion
 ----------
