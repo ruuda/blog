@@ -13,6 +13,9 @@ that I would argue it achieves the opposite result.
 Yaml is full of footguns and its friendliness is deceptive.
 In this post I want to demonstrate this through an example.
 
+This post is a rant,
+and more opinionated than my usual writing.
+
 ## Yaml is really, really complex
 
 Json is simple.
@@ -480,7 +483,16 @@ but which deserve to be mentioned:
 [tojson]:  https://nixos.org/manual/nix/stable/language/builtins.html#builtins-toJSON
 [toml]:    https://toml.io/en/
 
-Conclusion
-----------
+## Conclusion
 
-TODO.
+Yaml aims to be a more human-friendly alternative to json,
+but with all of its features,
+it became such a complex format with so many bizarre and unexpected behaviors,
+that it is difficult for humans to predict how a given yaml document will parse.
+If you are looking for a configuration format,
+toml is a friendly format without yaml’s footguns.
+For cases where you are stuck with yaml,
+generating json from a more suitable language
+can be a viable approach.
+Generating json also opens op the possibility for abstraction and reuse,
+in a way that is difficult to achieve safely by templating yaml.
