@@ -281,11 +281,18 @@ code
   font-family: Inconsolata, Consolas, monospace;
 }
 
-div.sourceCode, article>pre
+div.sourceCode
 {
   /* Hang the border left of the pre in the margin. */
   margin-left: -0.25em;
   overflow: hidden;
+}
+
+/* Same for top-level unhighlighted code blocks. But these don't have the
+ * wrapper div, so they should not have the overflow:hidden! */
+article > pre
+{
+  margin-left: -0.25em;
 }
 
 pre
