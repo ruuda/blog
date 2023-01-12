@@ -2,7 +2,7 @@
 title: The yaml document from hell
 date: 2023-01-11
 minutes: 14
-synopsis: As a data format, yaml is an extremely complicated and has many footguns. In this post I explain some of those pitfalls by means of an example, and I suggest a few less dangerous yaml alternatives.
+synopsis: As a data format, yaml is extremely complicated and it has many footguns. In this post I explain some of those pitfalls by means of an example, and I suggest a few simpler and safer yaml alternatives.
 run-in: For a data format
 ---
 
