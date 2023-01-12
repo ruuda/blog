@@ -7,7 +7,7 @@ run-in: For a data format
 ---
 
 For a data format, yaml is extremely complicated.
-It aims to be a more human-friendly alternative to json,
+It aims to be a human-friendly format,
 but in striving for that it introduces so much complexity,
 that I would argue it achieves the opposite result.
 Yaml is full of footguns and its friendliness is deceptive.
