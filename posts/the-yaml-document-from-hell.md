@@ -377,6 +377,7 @@ So if what we really need is the json data model
 but a syntax that allows comments,
 what are some of the options?
 
+ * [**Tree**][tree] - put your opinion here, please
  * [**Toml**][toml] —
    Toml is similar to yaml in many ways:
    it has mostly the same data types;
@@ -486,6 +487,7 @@ but which deserve to be mentioned:
 [python]:  https://www.python.org/
 [tojson]:  https://nixos.org/manual/nix/stable/language/builtins.html#builtins-toJSON
 [toml]:    https://toml.io/en/
+[tree]:    https://dev.to/ninjin/tree-ast-which-kills-json-xml-yaml-toml-3kid
 
 ## Conclusion
 
