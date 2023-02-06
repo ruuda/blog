@@ -58,7 +58,7 @@ There is [an entire website][yaml-multiline]
 dedicated to picking one of [the 63 different multi-line string syntaxes][yaml-63].
 This means that it can be very difficult for a human to predict
 how a particular document will parse.
-Let’s look an example to highlight this.
+Let’s look at an example to highlight this.
 
 [json-spec]:      https://www.json.org/json-en.html
 [yaml-spec]:      https://yaml.org/spec/1.2.2/
