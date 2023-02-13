@@ -16,8 +16,8 @@ description = "An immutable append-only database."
 slug = "pris"
 description = "A language for designing slides."
 
-[Pris]
-slug = "pris"
+[Squiller]
+slug = "squiller"
 description = "Generate boilerplate from annotated <abbr>SQL</abbr> queries."
 
 [Tako]
