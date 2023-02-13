@@ -2,16 +2,16 @@
 <html>
 <head>
   <!--
-    Kilsbergen MkDocs theme copyright 2019 Ruud van Asseldonk.
+    Kilsbergen MkDocs theme copyright 2023 Ruud van Asseldonk.
     Licensed under the Apache 2.0 license.
     See https://github.com/ruuda/kilsbergen.
   -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Documentation Index — docs.ruuda.nl</title>
+  <title>Documentation Index</title>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@0;1&display=swap" rel="stylesheet">
-  <link href="https://docs.ruuda.nl/musium/" rel="canonical">
+  <link href="https://docs.ruuda.nl/" rel="canonical">
   <style>
   /* Inter font family, copyright Rasmus Andersson, licensed under SIL OFL 1.1,
      see https://rsms.me/inter and https://rsms.me/inter/inter.css. */
@@ -248,13 +248,13 @@
     margin-top: 3.4rem;
     padding-bottom: 3.3rem;
   }
-  #nav-prev, #nav-next, #repo-link {
+  #nav-prev, #nav-next, #author-link {
     display: inline-block;
   }
   #nav-prev {
     float: left;
   }
-  #nav-next, #repo-link {
+  #nav-next, #author-link {
     float: right;
     text-align: right;
   }
@@ -391,7 +391,7 @@
   }
 
   .projectlink {
-    border: 1px solid #eee;
+    border: 1px solid #e4e4e4;
     border-radius: 0.2rem;
     margin-bottom: 1.7rem;
     margin-left: -0.3rem;
@@ -402,18 +402,20 @@
     padding-left: 1.2rem;
     padding-right: 1.2rem;
     background-color: #fdfdfd;
+    box-shadow: rgba(0, 0, 0, 0.02) 2px 2px 5px;
   }
 
   .projectlink h3 {
     padding-top: 0;
   }
 
-  .projectlink p {
-    margin: 0;
+  .projectlink p.desc {
+    margin-bottom: 0.4rem;
   }
 
   .projectlink p.src {
     color: #ccc;
+    margin: 0;
   }
 
   .stars {
@@ -430,39 +432,35 @@
     <div id="main">
       <nav id="breadcrumbs">
         <a href="https://docs.ruuda.nl/">docs.ruuda.nl</a>
-        <a href="https://ruudvanasseldonk.com" id="repo-link">ruudvanasseldonk.com</a>
+        <a href="https://ruudvanasseldonk.com" id="author-link" rel="author">ruudvanasseldonk.com</a>
       </nav>
       <article>
-        <h1 id="musium">Documentation Index</h1>
+        <h1>Documentation Index</h1>
         <p>This domain hosts documentation for my software projects.
         Each of the documentation sites is also mirrored to GitHub Pages for redundancy,
         but this domain is the canonical source.
         Change <code>docs.ruuda.nl</code>
         to <code>ruuda.github.io</code> in the <abbr>URL</abbr> to access the mirror.</p>
 
-        <p>Projects are listed here ordered by virtual internet points as of February 2023.</p>
-
-        <!--<h2 id="projects">Projects</h2>-->
-<div class="projectlink">
-  <h3><a href="/musium/">Musium</a></h3>
-  <p class="desc">Music playback daemon with web-based library browser.</p>
-  <p class="src"><span class="stars">★ 120</span> ⋅ <a href="">GitHub</a> ⋅ <a href="">Codeberg</a>
-</div>
-<div class="projectlink">
-  <h3><a href="/noblit/">Noblit</a></h3>
-  <p class="desc">An immutable append-only database.</p>
-  <p class="src"><span class="stars">★ 44</span> ⋅ <a href="">GitHub</a> | <a href="">Codeberg</a>
-</div>
+        <p>Projects are listed here ordered by virtual internet points as of {{generated_at}}.</p>
+        {{projects}}
 
 <h2 id="about">About<a class="headerlink" href="#about">&para;</a></h2>
-<p>See <a href="">https://ruudvanasseldonk.com</a> for more about the author.</p>
+<p>See <a href="https://ruudvanasseldonk.com" rel="author">ruudvanasseldonk.com</a>
+for more about the author.
+More projects are <a href="https://github.com/ruuda?tab=repositories">on GitHub</a>
+and mirrored <a href="https://codeberg.org/ruuda">to Codeberg</a>.</p>
 
 <h2 id="colophon">Colophon<a class="headerlink" href="#colophon">&para;</a></h2>
-<p>The documentation sites are generated using <a href="">MkDocs</a>
-and use the <a href="https://github.com/ruuda/kilsbergen">Kilsbergen</a> theme.</a>
+<p>The documentation sites are generated
+using <a href="https://www.mkdocs.org/">MkDocs</a>
+and use the <a href="https://github.com/ruuda/kilsbergen">Kilsbergen</a> theme</a>.
 I post-process the MkDocs output to minify the <abbr>HTML</abbr>
-using <a href="https://github.com/ruuda/minimizer">Minimizer</a> in a Git post-receive hook,
-and then I serve everything using <a href="https://github.com/ruuda/miniserver">Miniserver</a>.</p>
+using <a href="https://github.com/ruuda/minimizer">Minimizer</a>
+in a Git post-receive hook,
+and then I serve everything
+with <a href="https://github.com/ruuda/miniserver">Miniserver</a>.
+This index page itself uses a custom variation of the Kilsbergen stylesheet.</p>
       </article>
       </div>
   </div>
