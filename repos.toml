@@ -1,0 +1,25 @@
+# All my repositories that have a documentation site.
+
+[Hanson]
+slug = "hanson"
+description = "Self-hosted prediction market app."
+
+[Musium]
+slug = "musium"
+description = "Music playback daemon with web-based library browser."
+
+[Noblit]
+slug = "noblit"
+description = "An immutable append-only database."
+
+[Pris]
+slug = "pris"
+description = "A language for designing slides."
+
+[Pris]
+slug = "pris"
+description = "Generate boilerplate from annotated <abbr>SQL</abbr> queries."
+
+[Tako]
+slug = "tako"
+description = "Updater for single files."
