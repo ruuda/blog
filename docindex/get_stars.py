@@ -7,15 +7,7 @@ from typing import Dict
 import json
 import urllib.request
 
-
-repos = [
-    "hanson",
-    "musium",
-    "noblit",
-    "pris",
-    "squiller",
-    "tako",
-]
+from build import load_repos
 
 
 def count_stars(client: HTTPSConnection, owner: str, repo: str) -> int:
@@ -53,8 +45,8 @@ def main() -> None:
     timeout_seconds = 9.1
     client = HTTPSConnection("api.github.com", timeout=timeout_seconds)
 
-    for repo in repos:
-        result[repo] = count_stars(client, "ruuda", repo)
+    for repo in load_repos():
+        result[repo.slug] = count_stars(client, "ruuda", repo.slug)
 
     data = {
         "generated_at": now.isoformat(),
