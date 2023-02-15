@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    Kilsbergen MkDocs theme copyright 2023 Ruud van Asseldonk.
+    Licensed under the Apache 2.0 license.
+    See https://github.com/ruuda/kilsbergen.
+  -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documentation Index</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital@0;1&display=swap" rel="stylesheet">
+  <link href="https://docs.ruuda.nl/" rel="canonical">
+  <style>
+  /* Inter font family, copyright Rasmus Andersson, licensed under SIL OFL 1.1,
+     see https://rsms.me/inter and https://rsms.me/inter/inter.css. */
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('https://rsms.me/inter/font-files/Inter-roman.var.woff2?v=3.19') format('woff2');
+    font-named-instance: 'Regular';
+  }
+  @font-face {
+    font-family: 'Inter';
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('https://rsms.me/inter/font-files/Inter-italic.var.woff2?v=3.19') format('woff2');
+    font-named-instance: 'Italic';
+  }
+  /* Modular scale with exponent 1.7^(1/3). The 1.7 was chosen as the line hight
+     that goes well with Inter. Previously I used 1.59, but it was just too tight.
+     0.59em
+     0.70em
+     1.00em
+     1.19em
+     1.42em
+     1.70em
+     2.02em
+     2.42em
+  */
+  * { margin: 0; padding: 0; border-spacing: 0; }
+  html {
+    font-family: Inter, Roboto, sans-serif;
+    /*
+    Turn on character variant 8 for Inter, which puts serifs on the uppercase I.
+    Also turn on variant 1, which has a curved 1.
+    Disable contextual alternates for now. There is a bug, either in Inter or
+    in Chrome (https://crbug.com/1046095) that causes colons after a <strong> to
+    be raised above the baseline.
+    */
+    font-feature-settings: 'cv01' 1, 'cv08' 1, 'calt' 0;
+
+    font-size: 16px;
+    line-height: 1.7em;
+    background-color: #fff;
+    height: 100%;
+  }
+  em {
+    /* The variable font from Google Fonts uses a slant axis, it does not come
+       with a separate true italic. (But Inter doesn't have a true italic either
+       way.) */
+    font-style: oblique 10deg;
+  }
+  body {
+    height: 100%;
+  }
+  #content {
+    display: grid;
+    grid-template-columns: auto 16rem 50rem auto;
+    color: #333;
+    min-height: 100%;
+  }
+  #main {
+    grid-area: 1 / 3 / 2 / 4;
+    padding: 2.2rem;
+    padding-left: 4rem;
+    padding-right: 4rem;
+    overflow: hidden;
+  }
+  #breadcrumbs {
+    margin-bottom: 3rem;
+    word-spacing: 0.3em;
+    color: #78a;
+  }
+  #breadcrumbs a {
+    word-spacing: 0;
+    color: #78a;
+  }
+  article {
+    margin-top: 1.3rem;
+  }
+  h1, h2, h3 {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #444;
+    position: relative;
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2.1rem;
+    line-height: 2.42rem;
+    margin-top: -0.35rem;
+    margin-bottom: 1.75rem;
+  }
+  h2 {
+    font-size: 1.42rem;
+    margin-top: 3.5rem;
+    margin-bottom: 1.6rem;
+  }
+  .headerlink {
+    position: absolute;
+    left: -0.9em;
+    width: 1em;
+    opacity: 0.0;
+    transition: opacity 0.2s ease-in;
+  }
+  /* Don't show the link for h1, usually you only have a single h1 at the top
+     of the page, so it doesn't make much sense to add an anchor there, and with
+     the larger font size, it doesn't fit in a narrow viewport. */
+  h2:hover .headerlink, h3:hover .headerlink {
+    opacity: 1.0;
+  }
+  code {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.84rem;
+    line-height: 1.5rem;
+  }
+  h3 > code {
+    /* Roboto Mono 500 is about as heavy as Inter semibold (600). */
+    font-weight: 500;
+  }
+  abbr {
+    text-transform: uppercase;
+    /* Downsize so caps are x-height, and compensate weight loss. */
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.05rem;
+    /* Prevent abbrs from changing the line height of lines in which they occur. */
+    line-height: 0;
+  }
+  sub, sup {
+    /* Don't disturb the line height of normal text. */
+    line-height: 0rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+  }
+  p > code,
+  a > code,
+  h3 > code,
+  li > code,
+  td > code,
+  dt > code,
+  dd > code {
+    background-color: #f0f0f0;
+    padding: 0.13rem;
+    padding-left: 0.3rem;
+    padding-right: 0.3rem;
+    border-radius: 0.2rem;
+    line-height: 1rem;
+  }
+  h3 {
+    padding-top: 0.9rem;
+    padding-bottom: 0.8rem;
+  }
+  h3 > code {
+    margin-left: -0.1rem;
+  }
+  a {
+    color: #36d;
+    text-decoration: none;
+  }
+  p, ul, ol, dl, pre, table {
+    /* Same space as line height, leave exactly one line blank. */
+    margin-bottom: 1.7rem;
+  }
+  pre {
+    padding-top: 0.8rem;
+    padding-bottom: 0.9rem;
+    padding-left: 1.19rem;
+    padding-right: 0;
+    background-color: #f8f8f8;
+    border-radius: 0 0.2rem 0.2rem 0;
+    border-left: 0.3rem solid #d5d8e0;
+    overflow-x: auto;
+  }
+  pre > code {
+    margin-right: 1.41rem;
+    color: #555;
+  }
+  code .k { color: #36d; }
+  code .kt, code .nb { color: #d36; }
+  code .c1, code .cm { color: #d36; font-style: italic; }
+  code .s { color: #c43; }
+  ul, ol {
+    list-style-type: none;
+    counter-reset: item;
+  }
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+  th, td {
+    padding-right: 2rem;
+  }
+  th {
+    text-align: left;
+  }
+  td > img {
+    display: block;
+    padding-top: 1em;
+    padding-bottom: 1em;
+  }
+  dl {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    grid-column-gap: 2em;
+  }
+  dl dt {
+    text-align: right;
+  }
+  #main ul li:before {
+    color: #555;
+    content: '\2022';
+    display: inline-block;
+    font-weight: 700;
+    margin-left: -0.9rem;
+    width: 0.9rem;
+  }
+  #main ul li {
+    margin-left: 0.87rem;
+  }
+  #main ol li:before {
+    content: counter(item);
+    display: inline-block;
+    font-weight: 700;
+    width: 0.8rem;
+    margin-left: -1.6rem;
+    padding-right: 0.8rem;
+  }
+  #main ol li {
+    margin-left: 1.6rem;
+    counter-increment: item;
+  }
+  #nav-prev-next {
+    margin-top: 3.4rem;
+    padding-bottom: 3.3rem;
+  }
+  #nav-prev, #nav-next, #author-link {
+    display: inline-block;
+  }
+  #nav-prev {
+    float: left;
+  }
+  #nav-next, #author-link {
+    float: right;
+    text-align: right;
+  }
+  #nav-prev::before {
+    content: '\219e';
+    padding-right: 0.5em;
+  }
+  #nav-next::after {
+    content: '\21a0';
+    padding-left: 0.5em;
+  }
+  aside {
+    grid-area: 1 / 1 / 2 / 3;
+    border-right: 1px solid #eee;
+    background-color: #fafafa;
+    color: #78a;
+  }
+  aside nav {
+    margin-top: 9rem;
+    padding-bottom: 3.4rem;
+    width: 14rem;
+    float: right;
+    /* Put the active chapter border over the sidebar border. */
+    margin-right: -1px;
+  }
+  aside a {
+    color: inherit;
+  }
+  aside .toc-section {
+    font-weight: 700;
+  }
+  aside ul {
+    margin-bottom: 0;
+  }
+  aside li {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  aside li ul {
+    padding-top: 0.6rem;
+    padding-bottom: 1.1rem;
+  }
+  aside li.toc-section {
+    margin-top: 1.7rem;
+  }
+  aside li.toc-section {
+    color: #36d;
+  }
+  aside li.current, aside li ul {
+    border-right: 0.3em solid #d5d8e0;
+    padding-left: 1em;
+    margin-left: -1em;
+  }
+  aside li.toc-chapter.current {
+    font-weight: 600;
+  }
+  aside li.toc-heading {
+    padding-left: 1em;
+    padding-right: 0.3em;
+  }
+
+  @media(max-width: 63rem)
+  {
+    #content {
+      /* Manual implementation of max-width: on narrower viewports,
+         auto-size the body. */
+      grid-template-columns: 0 16rem auto 0;
+    }
+  }
+
+  @media(max-width: 1150px)
+  {
+    html { font-size: 15px; }
+  }
+
+  /* Move the sidebar TOC below content at small widths. */
+  @media(max-width: 800px)
+  {
+    #content {
+      display: block;
+    }
+    aside {
+      border-top: 1px solid #eee;
+      border-right: 0px none;
+      padding-top: 1.7em;
+    }
+    aside nav {
+      margin-left: 4em;
+      margin-top: 1.7em;
+      margin-right: 0;
+      float: none;
+      width: auto;
+    }
+    #main {
+      padding-bottom: 1.7em;
+    }
+    /* Now that the TOC is full-width, adding the border on the right to
+       highlight the active page is not as clear anymore, it can be far away.
+       The current chapter is still in boldface, but that does not work for
+       section indexes. So point a guillemet at it as well. */
+    aside li.current, aside li ul {
+      border-right: 0px none;
+      position: relative;
+    }
+    aside li.current:before {
+      content: '\203a';
+      position: absolute;
+      left: 0;
+    }
+  }
+
+  /* Use less generous margins for very narrow viewports. */
+  @media(max-width: 650px)
+  {
+    #main {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+    aside nav {
+      margin-left: 2rem;
+      padding-bottom: 2rem;
+    }
+  }
+
+  @media(max-width: 450px)
+  {
+    #main {
+      padding-left: 1.7em;
+      padding-right: 1.7em;
+    }
+    aside nav {
+      margin-left: 1.7em;
+    }
+  }
+
+  .projectlink {
+    border: 1px solid #e4e4e4;
+    border-radius: 0.2rem;
+    margin-bottom: 1.7rem;
+    margin-left: -0.3rem;
+    margin-right: -0.3rem;
+
+    padding-top: 0.9rem;
+    padding-bottom: 0.8rem;
+    padding-left: 1.2rem;
+    padding-right: 1.2rem;
+    background-color: #fdfdfd;
+    box-shadow: rgba(0, 0, 0, 0.02) 2px 2px 5px;
+  }
+
+  .projectlink h3 {
+    padding-top: 0;
+  }
+
+  .projectlink p.desc {
+    margin-bottom: 0.4rem;
+  }
+
+  .projectlink p.src {
+    color: #ccc;
+    margin: 0;
+  }
+
+  .stars {
+    color: #78a;
+  }
+
+  #content {
+    grid-template-columns: auto 0rem 50rem auto;
+  }
+  </style>
+</head>
+<body>
+  <div id="content">
+    <div id="main">
+      <nav id="breadcrumbs">
+        <a href="https://docs.ruuda.nl/">docs.ruuda.nl</a>
+        <a href="https://ruudvanasseldonk.com" id="author-link" rel="author">ruudvanasseldonk.com</a>
+      </nav>
+      <article>
+        <h1>Documentation Index</h1>
+        <p>This domain hosts documentation for my software projects.
+        Each of the documentation sites is also mirrored to GitHub Pages for redundancy,
+        but this domain is the canonical source.
+        Change <code>docs.ruuda.nl</code>
+        to <code>ruuda.github.io</code> in the <abbr>URL</abbr> to access the mirror.</p>
+
+        <p>Projects are listed here ordered by virtual internet points as of {{generated_at}}.</p>
+        {{projects}}
+
+<h2 id="about">About<a class="headerlink" href="#about">&para;</a></h2>
+<p>See <a href="https://ruudvanasseldonk.com" rel="author">ruudvanasseldonk.com</a>
+for more about the author.
+More projects are <a href="https://github.com/ruuda?tab=repositories">on GitHub</a>
+and mirrored <a href="https://codeberg.org/ruuda">to Codeberg</a>.</p>
+
+<h2 id="colophon">Colophon<a class="headerlink" href="#colophon">&para;</a></h2>
+<p>The documentation sites are generated
+using <a href="https://www.mkdocs.org/">MkDocs</a>
+and use the <a href="https://github.com/ruuda/kilsbergen">Kilsbergen</a> theme</a>.
+I post-process the MkDocs output to minify the <abbr>HTML</abbr>
+using <a href="https://github.com/ruuda/minimizer">Minimizer</a>
+in a Git post-receive hook,
+and then I serve everything
+with <a href="https://github.com/ruuda/miniserver">Miniserver</a>.
+This index page itself uses a custom variation of the Kilsbergen stylesheet.</p>
+      </article>
+      </div>
+  </div>
+</body>
+</html>
