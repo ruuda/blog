@@ -26,17 +26,17 @@ In this post I want to outline an algorithm that _is_ optimal in the above sense
 
 Inverleaving two artists
 ------------------------
-Suppose we have a playlist with just two artists, A and B,
+Suppose we have a playlist with just two artists, <abbr>A</abbr> and <abbr>B</abbr>,
 and they have _n_ and _m_ tracks respectively.
 Without loss of generality we may assume that _n_ ≥ _m_.
 We can create a playlist without consecutive artists
 if and only if _m_ ≥ _n_ - 1.
 With _m_ = _n_ - 1
-we can put one of B’s track in between each of A’s tracks.
+we can put one of <abbr>B</abbr>’s track in between each of <abbr>A</abbr>’s tracks.
 If we had any less,
-then some of A’s tracks will need to be consecutive.
-With _m_ = _n_ we can also add a track at the start or end.
-When _m_ > _n_, that would violate our assumption.
+then some of <abbr>A</abbr>’s tracks will need to be consecutive.
+With _m_ = _n_ we can also add a track at the start or end,
+_m_ > _n_ would violate our assumption.
 
 From this it is not so hard to see
 how we can optimally shuffle a playlist with two artists:
@@ -45,11 +45,11 @@ how we can optimally shuffle a playlist with two artists:
    so we have list <abbr>A</abbr> of length _n_
    and list <abbr>B</abbr> of length _m_,
    with _n_ > _m_.
-2. Shuffle the lists internally using a true shuffle.
+2. Shuffle the lists individually using a true shuffle.
    (Later we will refine this
    to at least try and avoid consecutive tracks from the same album.)
 3. Draw _m_ indices from {1, 2, …, _n_ - 1} without replacement.
-   If _m_ = _n_, draw from {0, 1, …, _n_}.
+   If _m_ = _n_, draw one more index from {0, _n_}.
 4. Insert <abbr>B</abbr>’s elements in front of those indices into <abbr>A</abbr>.
 
 When possible this will interleave <abbr>A</abbr> and <abbr>B</abbr>
