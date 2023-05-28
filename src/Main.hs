@@ -16,6 +16,7 @@ import System.IO (IOMode (ReadMode, WriteMode), hClose, hGetContents, hPutStr, h
 
 import qualified Data.Map as M
 import qualified Control.Concurrent.Async as Async
+import qualified System.Process as Process
 
 import Type (SubsetCommand, subsetArtifact, subsetFonts)
 import Minification (minifyHtml)
@@ -65,9 +66,23 @@ readPost :: FilePath -> IO P.Post
 readPost fname = fmap makePost $ readUtf8 fname
   where makePost body = P.parse (takeBaseName fname) body
 
+-- Read a .md.m4 document, apply m4, then read it as a normal post.
+readPostM4 :: FilePath -> IO P.Post
+readPostM4 fname =
+  let
+    m4 = (Process.proc "m4" [fname]) { Process.std_out = Process.CreatePipe }
+  in do
+    (_stdin, Just hstdout, _stderr, handle) <- Process.createProcess m4
+    hSetEncoding hstdout utf8
+    body <- hGetContents hstdout
+    pure $ P.parse (takeBaseName fname) body
+
 -- Reads and renders all posts in the given directory.
 readPosts :: FilePath -> IO [P.Post]
-readPosts = mapFilesIf ((== ".md") . takeExtension) readPost
+readPosts = do
+  rawMd <- mapFilesIf ((== ".md") . takeExtension) readPost
+  m4Md  <- mapFilesIf ((== ".m4") . takeExtension) readPostM4
+  pure $ rawMd <> m4Md
 
 -- Copy over bitmap images, render svg images, so they can reference
 -- subsetted fonts. Svgs should be rendered with the font context of their post.

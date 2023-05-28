@@ -62,6 +62,7 @@ in
       ]))
       pkgs.brotli
       pkgs.guetzli
+      pkgs.m4
       pkgs.mozjpeg
       pkgs.optipng
       pkgs.zopfli
