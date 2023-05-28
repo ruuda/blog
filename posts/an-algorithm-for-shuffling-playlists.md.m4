@@ -10,6 +10,7 @@ define(`_var', `<var>$1</var>')
 define(`aA', `_abbr(A)')
 define(`aB', `_abbr(B)')
 define(`aC', `_abbr(C)')
+define(`v_k', `_var(k)')
 define(`v_n', `_var(n)')
 define(`v_m', `_var(m)')
 
@@ -36,14 +37,14 @@ Inverleaving two artists
 Suppose we have a playlist with just two artists, aA and aB,
 and they have v_n and v_m tracks respectively.
 Without loss of generality we may assume that v_n ≥ v_m.
-We can create a playlist without consecutive artists
+We can create a playlist without consecutive tracks by the same artist
 if and only if v_m ≥ v_n - 1.
 With v_m = v_n - 1
 we can put one of aB’s track in between each of aA’s tracks.
 If we had any less,
 then some of aA’s tracks will need to be consecutive.
 With v_m = v_n we can also add a track at the start or end,
-v_m > v_n would violate our assumption.
+and v_m > v_n would violate our assumption.
 
 From this it is not so hard to see
 how we can optimally shuffle a playlist with two artists:
@@ -51,25 +52,22 @@ how we can optimally shuffle a playlist with two artists:
 1. Partition on artist,
    so we have list aA of length v_n
    and list aB of length v_m,
-   with v_n > v_m.
+   with v_n ≥ v_m.
 2. Shuffle the lists individually using a true shuffle.
    (Later we will refine this
    to at least try and avoid consecutive tracks from the same album.)
-3. Draw v_m indices from {1, 2, …, v_n - 1} without replacement.
-   If v_m = v_n, draw one more index from {0, v_n}.
-4. Insert aB’s elements in front of those indices into aA.
+3. Split list aA into v_m + 1 equal parts.
+   If v_m + 1 does not divide v_n,
+   the parts that get one more element can be decided pseudorandomly.
+4. Interleave the v_m + 1 parts of aA with aB’s elements.
 
-When possible this will interleave aA and aB
-and avoid consecutive tracks by the same artist.
-When consecutive tracks are inevitable,
-the algorithm ensures at least
-that only one of the two artists has consecutive tracks.
-What this algorithm naively does not do,
-but Spotify’s algorithm does,
-is ensure that the spans by the same artist have roughly the same size.
-This can be mitigated by using stratified sampling for step 3:
-break the indices evenly into v_m bins,
-and sample an index from every bin.
+This algorithm is optimal in the following sense:
+
+ * Artist aB will have no consecutive tracks,
+   and if possible aA will not either.
+ * More generally, for any positive integer v_k,
+   the number of occurrences of v_k or less consecutive tracks
+   by the same artist is minimal.
 
 Multiple artists
 ----------------
