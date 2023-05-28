@@ -5,6 +5,13 @@ minutes: ?
 synopsis: TODO
 run-in: It is widely known
 ---
+define(`_abbr', `<abbr>$1</abbr>')
+define(`_var', `<var>$1</var>')
+define(`aA', `_abbr(A)')
+define(`aB', `_abbr(B)')
+define(`aC', `_abbr(C)')
+define(`v_n', `_var(n)')
+define(`v_m', `_var(m)')
 
 It is widely known that for shuffling playlists,
 humans don’t want an _actual_ shuffle,
@@ -26,33 +33,33 @@ In this post I want to outline an algorithm that _is_ optimal in the above sense
 
 Inverleaving two artists
 ------------------------
-Suppose we have a playlist with just two artists, <abbr>A</abbr> and <abbr>B</abbr>,
-and they have _n_ and _m_ tracks respectively.
-Without loss of generality we may assume that _n_ ≥ _m_.
+Suppose we have a playlist with just two artists, aA and aB,
+and they have v_n and v_m tracks respectively.
+Without loss of generality we may assume that v_n ≥ v_m.
 We can create a playlist without consecutive artists
-if and only if _m_ ≥ _n_ - 1.
-With _m_ = _n_ - 1
-we can put one of <abbr>B</abbr>’s track in between each of <abbr>A</abbr>’s tracks.
+if and only if v_m ≥ v_n - 1.
+With v_m = v_n - 1
+we can put one of aB’s track in between each of aA’s tracks.
 If we had any less,
-then some of <abbr>A</abbr>’s tracks will need to be consecutive.
-With _m_ = _n_ we can also add a track at the start or end,
-_m_ > _n_ would violate our assumption.
+then some of aA’s tracks will need to be consecutive.
+With v_m = v_n we can also add a track at the start or end,
+v_m > v_n would violate our assumption.
 
 From this it is not so hard to see
 how we can optimally shuffle a playlist with two artists:
 
 1. Partition on artist,
-   so we have list <abbr>A</abbr> of length _n_
-   and list <abbr>B</abbr> of length _m_,
-   with _n_ > _m_.
+   so we have list aA of length v_n
+   and list aB of length v_m,
+   with v_n > v_m.
 2. Shuffle the lists individually using a true shuffle.
    (Later we will refine this
    to at least try and avoid consecutive tracks from the same album.)
-3. Draw _m_ indices from {1, 2, …, _n_ - 1} without replacement.
-   If _m_ = _n_, draw one more index from {0, _n_}.
-4. Insert <abbr>B</abbr>’s elements in front of those indices into <abbr>A</abbr>.
+3. Draw v_m indices from {1, 2, …, v_n - 1} without replacement.
+   If v_m = v_n, draw one more index from {0, v_n}.
+4. Insert aB’s elements in front of those indices into aA.
 
-When possible this will interleave <abbr>A</abbr> and <abbr>B</abbr>
+When possible this will interleave aA and aB
 and avoid consecutive tracks by the same artist.
 When consecutive tracks are inevitable,
 the algorithm ensures at least
@@ -61,7 +68,7 @@ What this algorithm naively does not do,
 but Spotify’s algorithm does,
 is ensure that the spans by the same artist have roughly the same size.
 This can be mitigated by using stratified sampling for step 3:
-break the indices evenly into _m_ bins,
+break the indices evenly into v_m bins,
 and sample an index from every bin.
 
 Multiple artists
@@ -69,23 +76,23 @@ Multiple artists
 Now that we can optimally shuffle two artists,
 we can extend the idea to more artists.
 Let’s look at an example first.
-Say we have four tracks by artist <abbr>A</abbr>,
-two by <abbr>B</abbr>, and one by <abbr>C</abbr>.
+Say we have four tracks by artist aA,
+two by aB, and one by aC.
 Then the three optimal shuffles are ABABACA, ABACABA, and ACABABA.
-Between <abbr>B</abbr> and <abbr>C</abbr> we have some freedom,
-but we need all the <abbr>B</abbr>’s and <abbr>C</abbr>’s
-together to go in between the <abbr>A</abbr>’s.
+Between aB and aC we have some freedom,
+but we need all the aB’s and aC’s
+together to go in between the aA’s.
 What we did here
-is to first interleave <abbr>B</abbr> and <abbr>C</abbr>,
-and then we interleaved the result with <abbr>A</abbr>.
+is to first interleave aB and aC,
+and then we interleaved the result with aA.
 
-If we have an already shuffled list of _n_ tracks
-and we want to merge in _m_ more tracks by a new artist not in the list,
-then if _n_ ≥ _m_,
+If we have an already shuffled list of v_n tracks
+and we want to merge in v_m more tracks by a new artist not in the list,
+then if v_n ≥ v_m,
 we can do this without creating consecutive tracks by the same artist.
 In other words,
-when we consider a new artist with _m_ tracks,
-we should try to have an already-shuffled list of at least _m_ - 1 tracks.
+when we consider a new artist with v_m tracks,
+we should try to have an already-shuffled list of at least v_m - 1 tracks.
 
 Putting things together,
 we get the following incremental algorithm:
