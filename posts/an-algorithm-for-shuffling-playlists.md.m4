@@ -44,6 +44,10 @@ To make the explanation a bit cleaner,
 let’s forget about artists and tracks for a moment,
 and consider lists of symbols instead,
 such as AAABBC where in this example the symbols are aA, aB, and aC.
+The algorithm will produce a permutation of this list
+— it will specify the order of the artists.
+For the slots assigned to a particular artist,
+we can pick the tracks using a regular shuffle.
 
 Interleaving two artists
 ------------------------
@@ -159,25 +163,26 @@ Let’s first formalize what we are trying to prove.
 
 **Definition**:
 For a positive integer v_k,
-the <em>v_k-badness</em> of a list of symbols
+the <em>v_k-badness</em> of a playlist
 is the number of times that
-the same symbol occurs v_k times in a row.
+the same artist occurs v_k times in a row.
 For example, the 2-badness of AAABBC is 3:
 AA occurs at index 0 and 1,
 and BB occurs at index 3.
 
 **Definition**:
-We say that a permutation v_x is _better_ than v_y,
+Let v_x and v_y be permutations of the same playlist.
+We say that a v_x is _better_ than v_y,
 if for every positive integer v_k,
 v_x has a lower v_k-badness than v_y.
-This defines a partial order on the permutations of v_x.
+This defines a partial order on playlists.
 Note that this is not a total order!
 For example,
 AAACAACAACAAC has a lower 3-badness than
 AAACAAACACACA, but a higher 2-badness.
 
 **Definition**:
-A permutation v_x of a list of symbols is called an _optimal shuffle_,
+A permutation of a playlist is called an _optimal shuffle_,
 if there exists no better permutation.
 For example,
 AAABB is not an optimal shuffle,
@@ -192,13 +197,13 @@ none achieve a lower 2-badness.
 **Theorem**:
 The algorithm described in the previous section returns optimal shuffles.<br>
 _Proof_:
-The proof will be by induction on the number of symbols v_s.
+The proof will be by induction on the number of artists v_s.
 
 **Base case**:
 For v_s = 2,
-say we have v_n times the symbol aA,
-and v_m ≤ v_n times the symbol aB.
-When v_m = v_n we interleave the two lists
+say we have v_n times artist aA,
+and v_m ≤ v_n times artist aB.
+When v_m = v_n we interleave the two
 and the result has a v_k-badness of zero for every v_k ≥ 2,
 which is optimal.
 Assume therefore that v_m < v_n.
@@ -209,14 +214,14 @@ without breaking the list into more than v_m spans,
 so the permutation is optimal.
 
 **Induction step**:
-Let the number of symbols v_s be given.
-Assume that for fewer than v_s symbols,
+Let the number of artists v_s be given.
+Assume that for fewer than v_s artists,
 our algorithm produces optimal shuffles.
-Say we have v_n times the symbol aA,
-and v_m times a different symbol (not necessarily all distinct).
-Assume that no other symbol occurs more than v_n times.
+Say we have v_n times the artist aA,
+and v_m times a different artist (not necessarily all distinct).
+Assume that no other artist occurs more than v_n times.
 Let v_x be
-an optimal permutation of the v_m symbols other than aA.
+an optimal shuffle of the v_m artists other than aA.
 We can distinguish three cases,
 of which the first two are easy to treat:
 
