@@ -13,6 +13,11 @@ define(`aC', `_abbr(C)')
 define(`v_k', `_var(k)')
 define(`v_n', `_var(n)')
 define(`v_m', `_var(m)')
+define(`v_s', `_var(s)')
+define(`v_x', `_var(x)')
+define(`v_y', `_var(y)')
+define(`k_0', `_var(k)<sub>0</sub>')
+define(`k_1', `_var(k)<sub>1</sub>')
 
 It is widely known that for shuffling playlists,
 humans don’t want an _actual_ shuffle,
@@ -116,7 +121,7 @@ then interleaving it into a larger partition
 will break up the consecutive tracks.
 
 Could it happen that we end up with consecutive tracks in the intermediate list,
-— let’s say BBBC —
+— let’s say BBCB —
 but the next partition is smaller than the intermediate list
 — let’s say AA —
 so it gets interleaved into the intermediate list
@@ -129,16 +134,64 @@ In the example,
 we should have interleaved AA and aC first because those are the smaller partitions,
 and then interleaving with BBB works out fine.
 
-Optimality proof
-----------------
-_If you are not interested in the formalities you can skip this section._
+Appendix: Optimality proof
+--------------------------
+Let’s first formalize what we are trying to prove.
+To make the proof a bit cleaner,
+let’s forget about artists and tracks for a moment,
+and consider lists of _symbols_ instead,
+such as AAABBC where in this example the symbols are aA, aB, and aC.
 
-I wonder,
-suppose the intermediate result does produce consecutive tracks,
-and the next largest partition has fewer tracks than our intermediate result.
-Will it always break them up? Maybe not?
+**Definition**:
+For a positive integer v_k,
+the <em>v_k-badness</em> of a list of symbols
+is the number of times that
+the same symbol occurs v_k times in a row.
+For example, the 2-badness of AAABBC is 3:
+AA occurs at index 0 and 1,
+and BB occurs at index 3.
 
-Say BBBC and AAA. We might build BBABACA, but
+**Definition**:
+If a permutation v_x has a lower v_k-badness than v_y,
+then v_x also has a lower (v_k + 1)-badness than v_y,
+because every sequence of v_k + 1 times the same symbol
+has two subsequences of v_k times the same symbol.
+This means that we can speak about one pemutation being better
+than another regardless of v_k.
+We say that a permutation v_x is _better_ than v_y,
+if there exists a positive integer v_k
+such that v_x has a lower v_k-badness than v_y.
+This defines a total order on the permutations of v_x.
+
+**Definition**:
+A permutation v_x of a list of symbols is called an _optimal shuffle_,
+if there exists no better permutation.
+For example,
+AAABBC is not an optimal shuffle,
+because its permutation ABBACA has a 2-badness of 2,
+lower than AAABBC’s 2-badness of 3.
+An example of a shuffle that _is_ optimal is AABA.
+It has a 2-badness of 1,
+and of its four permutations (BAAA, ABAA, AABA, and AAAB),
+none achieve a lower 2-badness.
+
+**Theorem**:
+The algorithm described in the previous section returns optimal shuffles.<br>
+_Proof_:
+The proof will be by induction on the number of symbols v_s.
+
+**i**. For v_s = 2,
+say we have v_n times the symbol aA,
+and v_m ≤ v_n times the symbol aB.
+When v_m = v_n we interleave the two lists
+and the result has a v_k-badness of zero for every v_k ≥ 2,
+which is optimal.
+Assume therefore that v_m < v_n.
+Then we break up the list of aA’s into groups of size
+v_k = ⌈v_n / (v_m + 1)⌉ and possibly of size v_k - 1.
+This permutation has the minimal v_k-badness,
+and reducing the badness for shorter spans would create more v_k-badness,
+so the permutation is optimal.
 
 Note
 ----
