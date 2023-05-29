@@ -208,10 +208,10 @@ of which the first two are easy to treat:
 
 1. When v_n > v_m,
    we can interleave the other symbols between the aA’s
-   in the same manner as in part **i**.
+   in the same manner as in the base case.
    Badness due to symbols from v_x
    is zero for all v_k ≥ 2,
-   so the resulting permutation is optimal for the same reason as in part **i**.
+   so the resulting permutation is optimal for the same reason as in the base case.
 2. When v_n = v_m
    we can interleave aA’s with other symbols.
    The result has a v_k-badness of zero for all v_k ≥ 2,
@@ -244,6 +244,19 @@ because removing an aA can create at most one new occurrence of two consecutive 
 We also saw already that for every v_k,
 the v_k-badness of v_yp is at most that of v_y,
 and the v_k badness of v_xp is at most that of v_x.
+
+Todo
+----
+I found a counterexample.
+Take A = 5, B = 10, C = 12.
+After step 1 we will have
+BBA BBA BBA BBA BBA.
+We need to divide those 15 symbols into 13 groups,
+so we get 11 groups of size 1,
+and 2 groups of size 2.
+But those two groups _could_ be chosen so they include a BB. Bad!
+Note, it _is_ possible to pick optimally.
+But my algorithm is not guaranteed to do this.
 
 
 Note
