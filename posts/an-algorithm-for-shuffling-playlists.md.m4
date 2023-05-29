@@ -248,16 +248,15 @@ and the v_k badness of v_xp is at most that of v_x.
 Todo
 ----
 I found a counterexample.
-Take A = 5, B = 10, C = 12.
+Take A = 4, B = 8, C = 10.
 After step 1 we will have
-BBA BBA BBA BBA BBA.
-We need to divide those 15 symbols into 13 groups,
-so we get 11 groups of size 1,
-and 2 groups of size 2.
-But those two groups _could_ be chosen so they include a BB. Bad!
+BBA BBA BBA BBA.
+We need to divide those 12 symbols into 11 groups,
+so we get 10 groups of size 1,
+and one group of size 2.
+But that group _could_ be chosen to include a BB. Bad!
 Note, it _is_ possible to pick optimally.
 But my algorithm is not guaranteed to do this.
-
 
 Note
 ----
