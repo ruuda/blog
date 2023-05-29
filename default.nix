@@ -59,6 +59,7 @@ in
       (pkgs.python38.withPackages (ps: [
         ps.brotli
         (fonttools ps)
+        ps.fontforge
       ]))
       pkgs.brotli
       pkgs.guetzli
