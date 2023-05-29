@@ -26,13 +26,13 @@ in the sense that they might play an artist consecutively
 in cases where this was possible to avoid.
 I’ve been thinking about this for [Musium][musium],
 the music player that I am building.
-In this post I want to outline an algorithm that _is_ optimal in the above sense.
+In this post I want to outline an algorithm that is optimal in the above sense.
 
 [martin]: https://keyj.emphy.de/balanced-shuffle/
 [spotify]: https://engineering.atspotify.com/2014/02/how-to-shuffle-songs/
 [musium]: https://github.com/ruuda/musium
 
-Inverleaving two artists
+Interleaving two artists
 ------------------------
 Suppose we have a playlist with just two artists, aA and aB,
 and they have v_n and v_m tracks respectively.
@@ -58,15 +58,19 @@ how we can optimally shuffle a playlist with two artists:
    to at least try and avoid consecutive tracks from the same album.)
 3. Split list aA into v_m + 1 equal parts.
    If v_m + 1 does not divide v_n,
-   the parts that get one more element can be decided pseudorandomly.
+   the parts that get one more element can be selected randomly.
 4. Interleave the v_m + 1 parts of aA with aB’s elements.
+   If v_m = v_n,
+   we just interleave the two lists
+   (we can split aA into at most v_m parts),
+   but we can flip a coin about which list goes first.
 
 This algorithm is optimal in the following sense:
 
  * Artist aB will have no consecutive tracks,
    and if possible aA will not either.
  * More generally, for any positive integer v_k,
-   the number of occurrences of v_k or less consecutive tracks
+   the number of occurrences of v_k consecutive tracks
    by the same artist is minimal.
 
 Multiple artists
@@ -98,8 +102,16 @@ we get the following incremental algorithm:
 1. Partition on artist, shuffle the partitions internally.
 2. Initialize the intermediate result to an empty list.
 3. While there are partitions left,
-   interleave the smallest partition into the intermediate result,
+   interleave the smallest partition with the intermediate result,
    as in step 3 and 4 of the previous section.
+
+In step 3, we interleave the smaller list into the larger one.
+When the intermediate list is as long as the smallest partition,
+
+   We interleave the smaller list into the larger one,
+   b
+   If the intermediate result and the smallest partition have the same size,
+   we 
 
 TODO: Always merge the smallest into intermediate,
 or merge the smallest two partitions?
