@@ -10,6 +10,7 @@ define(`_var', `<var>$1</var>')
 define(`aA', `_abbr(A)')
 define(`aB', `_abbr(B)')
 define(`aC', `_abbr(C)')
+define(`v_b', `_var(b)')
 define(`v_k', `_var(k)')
 define(`v_n', `_var(n)')
 define(`v_m', `_var(m)')
@@ -165,9 +166,9 @@ AAACAAACACACA, but a higher 2-badness.
 A permutation v_x of a list of symbols is called an _optimal shuffle_,
 if there exists no better permutation.
 For example,
-AAABBC is not an optimal shuffle,
-because its permutation ABBACA has a 2-badness of 2,
-lower than AAABBC’s 2-badness of 3,
+AAABB is not an optimal shuffle,
+because its permutation ABBAA has a 2-badness of 2,
+lower than AAABB’s 2-badness of 3,
 and it also has a lower 3-badness.
 An example of a shuffle that _is_ optimal is AABA.
 It has a 2-badness of 1,
@@ -179,7 +180,7 @@ The algorithm described in the previous section returns optimal shuffles.<br>
 _Proof_:
 The proof will be by induction on the number of symbols v_s.
 
-**i**.
+**Base case**:
 For v_s = 2,
 say we have v_n times the symbol aA,
 and v_m ≤ v_n times the symbol aB.
@@ -193,7 +194,7 @@ It is not possible to build a permutation with lower v_k-badness
 without breaking the list into more than v_m spans,
 so the permutation is optimal.
 
-**ii**.
+**Induction step**:
 Let the number of symbols v_s be given.
 Assume that for fewer than v_s symbols,
 our algorithm produces optimal shuffles.
@@ -202,7 +203,8 @@ and v_m times a different symbol (not necessarily all distinct).
 Assume that no other symbol occurs more than v_n times.
 Let v_x be
 an optimal permutation of the v_m symbols other than aA.
-We can distinguish three cases:
+We can distinguish three cases,
+of which the first two are easy to treat:
 
 1. When v_n > v_m,
    we can interleave the other symbols between the aA’s
@@ -214,20 +216,35 @@ We can distinguish three cases:
    we can interleave aA’s with other symbols.
    The result has a v_k-badness of zero for all v_k ≥ 2,
    which is optimal.
-3. The interesting case is v_n < v_m.
-   This time there is no badness due to aA,
-   so the badness of the result is at most the badness of v_x.
-   Let v_xp be the output of our algorithm,
-   starting with v_x as its intermediate result.
-   We have to show that v_xp is optimal.
-   Suppose that v_yp is a better permutation than v_xp.
-   Note that in v_yp,
-   there are no consecutive occurences of aA.
-   If there were,
-   we could build a better permutation by taking some symbols
-   from a span of non-aA symbols
-   and using those to break up
-  
+
+The interesting case is v_n < v_m.
+This time there is no badness due to aA,
+so the badness of the result is at most the badness of v_x.
+Let v_xp be the output of our algorithm,
+starting with v_x as its intermediate result.
+We have to show that v_xp is optimal.
+Suppose that v_yp is a better permutation than v_xp.
+Note that in v_yp,
+there are no consecutive occurences of aA.
+If there were,
+we could build a better permutation by taking a symbol
+from a span of non-aA symbols
+and using it to break up two aA’s.
+A span of non-aA symbols of length at least two exists,
+because with at most v_n - 1 spans of aA’s,
+the aA’s break the remaining v_m symbols into at most v_n spans.
+
+Define v_y to be v_yp with the aA symbols removed.
+Note that v_y is a permutation of v_x,
+and that the v_n aA’s in v_yp break v_y into v_n + 1 parts.
+Let v_b be the 2-badness of v_yp.
+The 2-badness of v_y can be at most v_b + v_n,
+because removing an aA can create at most one new occurrence of two consecutive symbols.
+
+We also saw already that for every v_k,
+the v_k-badness of v_yp is at most that of v_y,
+and the v_k badness of v_xp is at most that of v_x.
+
 
 Note
 ----
