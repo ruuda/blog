@@ -38,6 +38,13 @@ In this post I want to outline an algorithm that is optimal in the above sense.
 [spotify]: https://engineering.atspotify.com/2014/02/how-to-shuffle-songs/
 [musium]: https://github.com/ruuda/musium
 
+While the reason behind this post is shuffling playlists,
+writing “tracks by the same artist” all the time gets tedious quickly.
+To make the explanation a bit cleaner,
+let’s forget about artists and tracks for a moment,
+and consider lists of symbols instead,
+such as AAABBC where in this example the symbols are aA, aB, and aC.
+
 Interleaving two artists
 ------------------------
 Suppose we have a playlist with just two artists, aA and aB,
@@ -108,10 +115,21 @@ we get the following incremental algorithm:
 1. Partition on artist, shuffle the partitions internally.
 2. Initialize the intermediate result to an empty list.
 3. While there are partitions left,
-   interleave the smallest partition with the intermediate result,
-   as in step 3 and 4 of the previous section.
-   If there is no unique smallest partition,
-   we can break ties randomly.
+   interleave the smallest partition into the intermediate result as follows:
+   When the intermediate list is smaller than the new partition,
+   to do as in previous section.
+   Otherwise,
+   let the length of the longer list be v_n,
+   and the length of the shorter list v_m.
+   Break the longer list into spans
+   such that no span contains the same symbol twice in a row.
+   (It is not obvious that this is always possible,
+   but as we will see in the proof,
+   it is.)
+   Then break the remaining spans up further
+   (select them randomly)
+   until we have v_m + 1 spans,
+   and interleave those spans with the v_m elements of the shorter list.
 
 The intuition behind this is that
 by interleaving the smallest partitions first,
@@ -138,10 +156,6 @@ and then interleaving with BBB works out fine.
 Appendix: Optimality proof
 --------------------------
 Let’s first formalize what we are trying to prove.
-To make the proof a bit cleaner,
-let’s forget about artists and tracks for a moment,
-and consider lists of _symbols_ instead,
-such as AAABBC where in this example the symbols are aA, aB, and aC.
 
 **Definition**:
 For a positive integer v_k,
@@ -249,8 +263,9 @@ Todo
 ----
 I found a counterexample.
 Take A = 4, B = 8, C = 10.
-After step 1 we will have
-BBA BBA BBA BBA.
+After step 1 we will have e.g.
+BBA BBA BBA BAB
+
 We need to divide those 12 symbols into 11 groups,
 so we get 10 groups of size 1,
 and one group of size 2.
