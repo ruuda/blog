@@ -75,7 +75,7 @@ This algorithm is optimal in the following sense:
 
 Multiple artists
 ----------------
-Now that we can optimally shuffle two artists,
+Now that we can shuffle two artists,
 we can extend the idea to more artists.
 Let’s look at an example first.
 Say we have four tracks by artist aA,
@@ -104,28 +104,34 @@ we get the following incremental algorithm:
 3. While there are partitions left,
    interleave the smallest partition with the intermediate result,
    as in step 3 and 4 of the previous section.
+   If there is no unique smallest partition,
+   we can break ties randomly.
 
-In step 3, we interleave the smaller list into the larger one.
-When the intermediate list is as long as the smallest partition,
-
-   We interleave the smaller list into the larger one,
-   b
-   If the intermediate result and the smallest partition have the same size,
-   we 
-
-TODO: Always merge the smallest into intermediate,
-or merge the smallest two partitions?
-
-By interleaving the smallest partitions first,
+The intuition behind this is that
+by interleaving the smallest partitions first,
 we ensure that by the time we get to a larger partition,
 we have enough tracks to interleave it with.
 If at some point we produced consecutive tracks in the intermediate list,
 then interleaving it into a larger partition
 will break up the consecutive tracks.
 
+Could it happen that we end up with consecutive tracks in the intermediate list,
+— let’s say BBBC —
+but the next partition is smaller than the intermediate list
+— let’s say AA —
+so it gets interleaved into the intermediate list
+instead of the other way around,
+and not all consecutive tracks get broken up?
+It turns out this cannot happen,
+but this is not so obvious,
+we will prove it in the next section.
+In the example,
+we should have interleaved AA and aC first because those are the smaller partitions,
+and then interleaving with BBB works out fine.
+
 Optimality proof
 ----------------
-_If you are not interested in the formalities you can safely skip this section._
+_If you are not interested in the formalities you can skip this section._
 
 I wonder,
 suppose the intermediate result does produce consecutive tracks,
