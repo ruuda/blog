@@ -38,16 +38,18 @@ In this post I want to outline an algorithm that is optimal in the above sense.
 [spotify]: https://engineering.atspotify.com/2014/02/how-to-shuffle-songs/
 [musium]: https://github.com/ruuda/musium
 
-While the reason behind this post is shuffling playlists,
-writing “tracks by the same artist” all the time gets tedious quickly.
-To make the explanation a bit cleaner,
-let’s forget about artists and tracks for a moment,
-and consider lists of symbols instead,
-such as AAABBC where in this example the symbols are aA, aB, and aC.
-The algorithm will produce a permutation of this list
-— it will specify the order of the artists.
-For the slots assigned to a particular artist,
-we can pick the tracks using a regular shuffle.
+Notation
+--------
+In this post a playlist is an ordered list of tracks.
+For example,
+AAABBC is a playlist with six tracks:
+three by artist aA,
+then two by artist aB,
+and then one by artist aC.
+The shuffling algorithm returns a permutation of this list;
+it specifies the order of the artists.
+At this point we treat tracks by the same artist as indistinguishable.
+We’ll address that later.
 
 Interleaving two artists
 ------------------------
@@ -61,25 +63,24 @@ we can put one of aB’s track in between each of aA’s tracks.
 If we had any less,
 then some of aA’s tracks will need to be consecutive.
 With v_m = v_n we can also add a track at the start or end,
-and v_m > v_n would violate our assumption.
+and v_m > v_n is the same as v_m < v_n but with the artists swapped.
 
 From this it is not so hard to see
-how we can optimally shuffle a playlist with two artists:
+how we can optimally shuffle a playlist with two artists,
+aA with v_n tracks,
+and aB with v_m tracks:
 
 1. Partition on artist,
-   so we have list aA of length v_n
-   and list aB of length v_m,
+   so we have list v_x of length v_n
+   and list v_y of length v_m,
    with v_n ≥ v_m.
-2. Shuffle the lists individually using a true shuffle.
-   (Later we will refine this
-   to at least try and avoid consecutive tracks from the same album.)
-3. Split list aA into v_m + 1 equal parts.
+2. Split v_x into v_m + 1 equal parts.
    If v_m + 1 does not divide v_n,
    the parts that get one more element can be selected randomly.
-4. Interleave the v_m + 1 parts of aA with aB’s elements.
+4. Interleave the v_m + 1 parts of v_x with v_y’s elements.
    If v_m = v_n,
    we just interleave the two lists
-   (we can split aA into at most v_m parts),
+   (we can split v_x into at most v_m parts),
    but we can flip a coin about which list goes first.
 
 This algorithm is optimal in the following sense:
@@ -89,6 +90,12 @@ This algorithm is optimal in the following sense:
  * More generally, for any positive integer v_k,
    the number of occurrences of v_k consecutive tracks
    by the same artist is minimal.
+
+We don’t need to limit ourselves to inputs v_x and v_y
+that consist of only one artist each,
+the procedure can interleave any two lists v_x and v_y.
+Let’s call that procedure <code>interleave</code>.
+It interleaves the smaller list into the larger one.
 
 Multiple artists
 ----------------
@@ -104,6 +111,36 @@ together to go in between the aA’s.
 What we did here
 is to first interleave aB and aC,
 and then we interleaved the result with aA.
+
+A promising approach then,
+is to incrementally build up the result from an empty list.
+At every step,
+we interleave an artist with the least number of tracks with the result,
+until we incorporated all artists.
+This works well in most cases,
+and I originally thought that this algorithm would produce optimal shuffles.
+However,
+when I set out to prove that,
+I discovered a counterexample.
+
+Take 4 tracks of artist aA,
+8 tracks of aB,
+and 10 tracks of aC.
+If we interleave aA and aB first,
+then aA partitions the aB’s into five groups,
+three of size two, and two of size one.
+For example,
+BB-aA-BB-aA-BB-aA-aB-aA-aB.
+This list has length 12,
+so next we interleave the aC’s into it,
+but the 10 aC’s are not quite enough to only create groups of size 1,
+there will be one group of size 2,
+and it might contain a BB.
+We _do_ have enough aC’s to break up all the occurences of BB,
+but we need to be more careful about where we use them.
+It turns out that this example has this property
+no matter which two artists we interleave first.
+Incremental use of <code>interleave</code> does not guarantee optimal shuffles.
 
 If we have an already shuffled list of v_n tracks
 and we want to merge in v_m more tracks by a new artist not in the list,
