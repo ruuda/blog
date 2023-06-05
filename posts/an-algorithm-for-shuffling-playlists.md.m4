@@ -3,7 +3,7 @@ title: An algorithm for shuffling playlists
 date: 2023-05-27
 minutes: ?
 synopsis: TODO
-run-in: It is widely known
+run-in: It is a common observation
 ---
 define(`_abbr', `<abbr>$1</abbr>')
 define(`_var', `<var>$1</var>')
@@ -20,11 +20,12 @@ define(`v_xp', `_var(x''`)')
 define(`v_y', `_var(y)')
 define(`v_yp', `_var(y''`)')
 
-It is widely known that for shuffling playlists,
+It is a common observation
+that for shuffling playlists,
 humans don’t want an _actual_ shuffle,
 because that might play the same artist twice in a row,
 which doesn’t feel random.
-Much has been written about this topic,
+This topic has been discussed by others,
 including famously [by Spotify][spotify],
 which in turn references [Martin Fiedler’s algorithm][martin].
 However, neither algorithm is optimal,
@@ -53,20 +54,16 @@ We’ll address that later.
 
 Interleaving two artists
 ------------------------
-Suppose we have a playlist with just two artists, aA and aB,
-and they have v_n and v_m tracks respectively.
-Without loss of generality we may assume that v_n ≥ v_m.
-We can create a playlist without consecutive tracks by the same artist
-if and only if v_m ≥ v_n - 1.
-With v_m = v_n - 1
-we can put one of aB’s track in between each of aA’s tracks.
-If we had any less,
-then some of aA’s tracks will need to be consecutive.
-With v_m = v_n we can also add a track at the start or end,
-and v_m > v_n is the same as v_m < v_n but with the artists swapped.
+Suppose we have tracks from just two artists, aA and aB,
+where aA has more tracks than aB.
+Then we can divide aA’s tracks into equally sized groups,
+and insert aB’s tracks in between them.
+This way we never play aB consecutively,
+we break up as many of aA’s consecutive plays as we can,
+and we minimize the longest span of aA’s in a row.
 
-From this it is not so hard to see
-how we can optimally shuffle a playlist with two artists,
+Let state that formally.
+We are going to optimally shuffle a playlist with two artists,
 aA with v_n tracks,
 and aB with v_m tracks:
 
@@ -83,7 +80,7 @@ and aB with v_m tracks:
    (we can split v_x into at most v_m parts),
    but we can flip a coin about which list goes first.
 
-This algorithm is optimal in the following sense:
+The resulting permutation is optimal in the following sense:
 
  * Artist aB will have no consecutive tracks,
    and if possible aA will not either.
@@ -91,10 +88,12 @@ This algorithm is optimal in the following sense:
    the number of occurrences of v_k consecutive tracks
    by the same artist is minimal.
 
-We don’t need to limit ourselves to inputs v_x and v_y
-that consist of only one artist each,
-the procedure can interleave any two lists v_x and v_y.
-Let’s call that procedure <code>interleave</code>.
+We can apply this interleaving more generally,
+we don’t need to limit ourselves to inputs v_x and v_y
+that consist of only one artist each.
+The procedure can interleave any two lists v_x and v_y.
+We will need this later,
+so let’s call the procedure <code>interleave</code>.
 It interleaves the smaller list into the larger one.
 
 Multiple artists
