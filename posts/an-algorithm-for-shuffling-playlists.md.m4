@@ -14,11 +14,15 @@ define(`v_b', `_var(b)')
 define(`v_k', `_var(k)')
 define(`v_n', `_var(n)')
 define(`v_m', `_var(m)')
+define(`v_r', `_var(r)')
+define(`v_r0', `_var(r)<sub>0</sub>')
+define(`v_r1', `_var(r)<sub>1</sub>')
 define(`v_s', `_var(s)')
 define(`v_x', `_var(x)')
 define(`v_xp', `_var(x''`)')
 define(`v_y', `_var(y)')
 define(`v_yp', `_var(y''`)')
+changequote(`<<<<', `>>>>')
 
 It is a common observation
 that for shuffling playlists,
@@ -93,7 +97,7 @@ we don’t need to limit ourselves to inputs v_x and v_y
 that consist of only one artist each.
 The procedure can interleave any two lists v_x and v_y.
 We will need this later,
-so let’s call the procedure <code>interleave</code>.
+so let’s call the procedure `interleave`.
 It interleaves the smaller list into the larger one.
 
 Multiple artists
@@ -104,11 +108,10 @@ Let’s look at an example first.
 Say we have four tracks by artist aA,
 two by aB, and one by aC.
 Then the three optimal shuffles are ABABACA, ABACABA, and ACABABA.
-Between aB and aC we have some freedom,
+Among aB and aC we have some freedom,
 but we need all the aB’s and aC’s
 together to go in between the aA’s.
-What we did here
-is to first interleave aB and aC,
+What we did is to first interleave aB and aC,
 and then we interleaved the result with aA.
 
 A promising approach then,
@@ -122,76 +125,100 @@ However,
 when I set out to prove that,
 I discovered a counterexample.
 
-Take 4 tracks of artist aA,
-8 tracks of aB,
-and 10 tracks of aC.
+Take 2 tracks of artist aA,
+4 tracks of aB,
+and 4 tracks of aC.
 If we interleave aA and aB first,
-then aA partitions the aB’s into five groups,
-three of size two, and two of size one.
-For example,
-BB-aA-BB-aA-BB-aA-aB-aA-aB.
-This list has length 12,
+then aA partitions the aB’s into three groups,
+two of size one,
+and one of size two.
+For example BBABAB.
+This list has length 6,
 so next we interleave the aC’s into it,
-but the 10 aC’s are not quite enough to only create groups of size 1,
+but the four aC’s are not quite enough to only create groups of size 1,
 there will be one group of size 2,
 and it might contain a BB.
 We _do_ have enough aC’s to break up all the occurences of BB,
 but we need to be more careful about where we use them.
-It turns out that this example has this property
-no matter which two artists we interleave first.
-Incremental use of <code>interleave</code> does not guarantee optimal shuffles.
+We can fix the counterexample by interleaving aB and aC first,
+and then interleaving aA into it.
+But it turns out that there exist counterexamples
+that cannot be fixed by interleaving in a different order.
+For example, 4, 8, and 10 tracks.
+No matter which two artists we interleave first,
+it is not possible for `interleave` to guarantee an optimal shuffle.
 
-If we have an already shuffled list of v_n tracks
-and we want to merge in v_m more tracks by a new artist not in the list,
-then if v_n ≥ v_m,
-we can do this without creating consecutive tracks by the same artist.
-In other words,
-when we consider a new artist with v_m tracks,
-we should try to have an already-shuffled list of at least v_m - 1 tracks.
+To tackle the counterexample we can define `intersperse`
+which merges two lists v_x and v_y of length v_n and v_m.
+It proceeds as follows:
 
-Putting things together,
-we get the following incremental algorithm:
+ 1. Break v_x up into spans at every place where an artist plays twice.
+ 2. While we have fewer than v_m + 1 spans,
+    break up spans randomly until we have v_m + 1.
+ 3. Interleave the spans with elements of v_y.
 
-1. Partition on artist, shuffle the partitions internally.
-2. Initialize the intermediate result to an empty list.
-3. While there are partitions left,
-   interleave the smallest partition into the intermediate result as follows:
-   When the intermediate list is smaller than the new partition,
-   to do as in previous section.
-   Otherwise,
-   let the length of the longer list be v_n,
-   and the length of the shorter list v_m.
-   Break the longer list into spans
-   such that no span contains the same symbol twice in a row.
-   (It is not obvious that this is always possible,
-   but as we will see in the proof,
-   it is.)
-   Then break the remaining spans up further
-   (select them randomly)
-   until we have v_m + 1 spans,
-   and interleave those spans with the v_m elements of the shorter list.
+Note that in general,
+step 1 may produce more than v_m + 1 spans,
+and then the procedure doesn’t work.
+But we are only going to use `intersperse`
+in situations where this does not happen.
 
-The intuition behind this is that
-by interleaving the smallest partitions first,
-we ensure that by the time we get to a larger partition,
-we have enough tracks to interleave it with.
-If at some point we produced consecutive tracks in the intermediate list,
-then interleaving it into a larger partition
-will break up the consecutive tracks.
+Incremental merging for optimal shuffles
+----------------------------------------
+Now we can put the pieces together
+and fix the issue that plagued our first attempt at incremental interleaving,
+into the final `merge_shuffle` procedure:
 
-Could it happen that we end up with consecutive tracks in the intermediate list,
-— let’s say BBCB —
-but the next partition is smaller than the intermediate list
-— let’s say AA —
-so it gets interleaved into the intermediate list
-instead of the other way around,
-and not all consecutive tracks get broken up?
-It turns out this cannot happen,
-but this is not so obvious,
-we will prove it in the next section.
-In the example,
-we should have interleaved AA and aC first because those are the smaller partitions,
-and then interleaving with BBB works out fine.
+ 1. Partition on artist, and sort the partitions on ascending size.
+    Break ties randomly.
+ 2. Initialize v_r to an empty list.
+ 3. Take the next partition and merge it into v_r.
+    Say the partition to merge has length v_n,
+    and v_r has length v_m.
+    When v_n ≥ v_m,
+    use `interleave`.
+    When v_n < v_m,
+    use `intersperse`.
+ 4. Repeat until we merged all partitions, v_r is the result.
+
+Why is `intersperse` safe to use when v_n < v_m?
+This happens because v_r can have at most v_n consecutive tracks,
+and that property holds at every step of the procedure.
+The proof in the appendix makes it a bit clearer why this happens,
+but for the purpose of implementing the algorithm,
+we can take it as a fact that `intersperse` will not fail.
+
+This algorithm produces optimal shuffles,
+we’ll formalize that in the appendix.
+The only case where it places the same artist consecutively
+is when this is impossible to avoid,
+because we don’t have enough other tracks to break up the consecutive plays.
+This happens when the last step is an `interleave` an n > m + 1,
+for example in AABA.
+
+Extension to albums
+-------------------
+In a situation like AABA,
+we cannot avoid playing artist aA multiple times in a row.
+But if two of aA’s tracks are from a different album,
+then we can at least avoid playing tracks from the same album in a row.
+The process is the same as before,
+but instead of partitioning on artist we partition on album.
+The merge-shuffle preserves the relative order
+of tracks in the partitions that it merges,
+so to shuffle a playlist,
+we can use `merge_shuffle` at two levels:
+
+ 1. Partition the playlist into albums.
+ 2. Shuffle every album individually using a regular shuffle.
+ 3. For every album artist,
+    use `merge_shuffle` to merge albums into a partition per artist.
+ 4. Use `merge_shuffle` to merge the artist partitions
+    into a final shuffled playlist.
+
+Conclusion
+----------
+To do.
 
 Appendix: Optimality proof
 --------------------------
@@ -300,22 +327,14 @@ We also saw already that for every v_k,
 the v_k-badness of v_yp is at most that of v_y,
 and the v_k badness of v_xp is at most that of v_x.
 
-Todo
-----
-I found a counterexample.
-Take A = 4, B = 8, C = 10.
-After step 1 we will have e.g.
-BBA BBA BBA BAB
-
-We need to divide those 12 symbols into 11 groups,
-so we get 10 groups of size 1,
-and one group of size 2.
-But that group _could_ be chosen to include a BB. Bad!
-Note, it _is_ possible to pick optimally.
-But my algorithm is not guaranteed to do this.
-
 Note
 ----
 Note, for two artists, Spotify’s algorithm works well.
 But they merge in one go instead of merging pairwise,
 which creates the problem.
+
+Future work
+-----------
+* Can we not only minimize consecutive plays,
+  but also maximize the distance between plays by the same artist?
+* Does anybody care?
