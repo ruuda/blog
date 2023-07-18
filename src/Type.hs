@@ -121,8 +121,9 @@ makeAbbrs = Html.renderTags . Html.concatMapTagsWhere isBodyTag mkAbbr . Html.pa
         insertAbbrs (MixedCaps str) = [S.TagText str]
         insertAbbrs (AllCaps   str) = [S.TagOpen "abbr" [], S.TagText str, S.TagClose "abbr"]
         -- Only insert <abbr> tags in things that are typesetted (text content),
-        -- but not in monospace content (code).
-        isBodyTag t = (needsFont t) && (not $ Html.isCode t)
+        -- but not in monospace content (code). Also not when we are already
+        -- inside an <abbr> tag.
+        isBodyTag t = (needsFont t) && (not $ Html.isCode t) && (not $ Html.isAbbr t)
 
 -- Returns whether Calluna or Inconsolata has a glyph for the character. This
 -- function is optimistic, so getGlyphName still fails for unexpected glyphs.
