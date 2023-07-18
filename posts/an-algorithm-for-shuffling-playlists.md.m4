@@ -321,13 +321,53 @@ We can distinguish three cases:
 
 This concludes the proof. <span class="qed">∎</span>
 
-Appendix: Complexity
---------------------
+Discussion
+----------
+We now have an algorithm that generates optimal shuffles,
+for some very specific definition of optimal.
+We might call this _soundness_:
+the algorithm never generates shuffles that are not optimal.
+However,
+we haven’t shown what we might call _completeness_ or _surjectivity_:
+for a given playlist,
+can the algorithm output every possible optimal shuffle?
+And if the answer is yes,
+do each of the shuffles have equal probability of being returned,
+or is the algorithm biased in some way?
+It turns out that `merge-shuffle` is not complete:
+for example,
+it would not generate _seq(ABAAA),
+even though it has the same 2-badness as _seq(AABAA).
+TODO: But that is more like a bug in the definition of optimal!
 
-TODO
+TODO: An observation is that this algorithm tends to produce “symmetric”
+playlists, actually as a result of the above (trying to insert uniformly).
+Even worse, if we don’t have one artist dominate,
+but the number of tracks grows slowly (but at least by 1),
+then the order of the artists is completely deterministic.
+If we only care about the 2-badness,
+we might make things a bit more “random” but less uniform.
+
+Complexity
+----------
+
+Our algorithm produces optimal shuffles,
+but is it fast?
+If we consider moving a track into an (intermediate) list
+to be the primitive operation,
+then the worst-case complexity is `merge-shuffle` is O(v_n<sup>2</sup>),
+and it is achieved for a playlist of v_n distinct artists:
+we build v_n lists of size v_n/2 on average.
+This is worse than Spotify’s algorithm,
+which devolves into a sort with v_n distinct artists
+and therefore achieves O(v_n log v_n) complexity.
+However,
+my implementation in Musium can shuffle 500 tracks in negligible time (<2ms),
+so this doesn’t really matter in practice.
 
 Future work
 -----------
 * Can we not only minimize consecutive plays,
   but also maximize the distance between plays by the same artist?
+  To put it differently, can we also minimize the badness of the complement?
 * Does anybody care?
