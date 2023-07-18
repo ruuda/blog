@@ -76,7 +76,7 @@ This way we never play aB consecutively,
 we break up as many of aA’s consecutive plays as we can,
 and we minimize the longest span of aA’s in a row.
 
-Let state that formally.
+Let’s state that formally.
 We are going to optimally shuffle a playlist with two artists,
 aA with v_n tracks,
 and aB with v_m tracks:
