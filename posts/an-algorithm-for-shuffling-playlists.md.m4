@@ -26,7 +26,7 @@ In this post I want to outline an algorithm that is optimal in the above sense.
 [musium]: https://github.com/ruuda/musium
 
 <style>
-.a { color: #c90 }
+.a { color: #c80 }
 .b { color: #37b }
 .c { color: #c35 }
 .s + .s { margin-left: 0.03em }
@@ -277,29 +277,13 @@ The `merge-shuffle` algorithm returns optimal shuffles.
 Moreover, the 2-badness of the result is at most v_n - 1,
 where v_n is the track count for the artist that occurs most often.<br>
 _Proof_:
-The proof will be by induction on the number of artists v_s.
+The proof will be by induction on v_s, the number of artists.
 
 **Base case**:
 With a single artist,
 there is nothing to interleave or intersperse,
 and the result has a 2-badness of v_n - 1,
 where v_n is the size of the input.
-
-Let’s therefore consider the first interesting case, v_s = 2.
-Say we have v_n times artist aA,
-and v_m ≤ v_n times artist aB.
-When v_m = v_n we interleave the two
-and the result has a v_k-badness of zero for every v_k ≥ 2,
-which is optimal.
-Assume therefore that v_m < v_n.
-Then we break up the list of aA’s into spans of size
-v_k = ⌈v_n / (v_m + 1)⌉ and possibly of size v_k - 1.
-It is not possible to build a permutation with lower v_k-badness
-without breaking the list into more than v_m spans,
-so the permutation is optimal.
-Moreover, the 2-badness is at most v_n - 2:
-a list of all aA’s would have 2-badness v_n - 1,
-and we have at least one aB to reduce this.
 
 **Induction step**:
 Let the number of artists v_s be given.
@@ -308,19 +292,22 @@ our algorithm produces optimal shuffles.
 Say we have v_n tracks by aA,
 and v_m tracks by different artists (not necessarily all distinct).
 Assume that no other artist occurs more than v_n times.
-Let v_x be an optimal shuffle of the v_m tracks,
+Let v_x be an optimal shuffle of the v_m tracks
 with a 2-badness of at most v_n - 1.
 We can distinguish three cases:
 
 1. When v_n > v_m,
-   we can interleave the other symbols between the aA’s
-   in the same manner as in the base case.
-   Badness due to symbols from v_x
-   is zero for all v_k ≥ 2,
-   so the resulting permutation is optimal for the same reason as in the base case,
-   and the 2-badness is at most v_n - 2 for the same reason.
+   we interleave the tracks from v_x between the aA’s.
+   We break up the list of aA’s into spans of size
+   v_k = ⌈v_n / (v_m + 1)⌉ and possibly of size v_k - 1.
+   It is not possible to build a permutation with lower v_k-badness
+   without breaking the list into more than v_m spans,
+   so the permutation is optimal.
+   Moreover, the 2-badness is at most v_n - 2:
+   a list of all aA’s would have 2-badness v_n - 1,
+   and we have at least one track in v_x to reduce this.
 2. When v_n = v_m
-   we can interleave aA’s with other symbols.
+   we can interleave aA’s with tracks from v_x.
    The result has a v_k-badness of zero for all v_k ≥ 2,
    which is optimal.
 3. When v_n < v_m,
