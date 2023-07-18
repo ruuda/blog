@@ -5,24 +5,6 @@ minutes: ?
 synopsis: TODO
 run-in: It is a common observation
 ---
-define(`_abbr', `<abbr>$1</abbr>')
-define(`_var', `<var>$1</var>')
-define(`aA', `_abbr(A)')
-define(`aB', `_abbr(B)')
-define(`aC', `_abbr(C)')
-define(`v_b', `_var(b)')
-define(`v_k', `_var(k)')
-define(`v_n', `_var(n)')
-define(`v_m', `_var(m)')
-define(`v_r', `_var(r)')
-define(`v_r0', `_var(r)<sub>0</sub>')
-define(`v_r1', `_var(r)<sub>1</sub>')
-define(`v_s', `_var(s)')
-define(`v_x', `_var(x)')
-define(`v_xp', `_var(x''`)')
-define(`v_y', `_var(y)')
-define(`v_yp', `_var(y''`)')
-changequote(`<<<<', `>>>>')
 
 It is a common observation
 that for shuffling playlists,
@@ -43,11 +25,39 @@ In this post I want to outline an algorithm that is optimal in the above sense.
 [spotify]: https://engineering.atspotify.com/2014/02/how-to-shuffle-songs/
 [musium]: https://github.com/ruuda/musium
 
+<style>
+.a { color: #c90 }
+.b { color: #37b }
+.c { color: #c35 }
+.s + .s { margin-left: 0.03em }
+</style>
+changequote(`[[', `]]')
+define([[_var]], [[<var>$1</var>]])
+define([[v_b]], [[_var(b)]])
+define([[v_k]], [[_var(k)]])
+define([[v_n]], [[_var(n)]])
+define([[v_m]], [[_var(m)]])
+define([[v_r]], [[_var(r)]])
+define([[v_r0]], [[_var(r)<sub>0</sub>]])
+define([[v_r1]], [[_var(r)<sub>1</sub>]])
+define([[v_s]], [[_var(s)]])
+define([[v_x]], [[_var(x)]])
+define([[v_xp]], [[_var(x')]])
+define([[v_y]], [[_var(y)]])
+define([[v_yp]], [[_var(y')]])
+define([[seq_aa]], [[patsubst($1, [[\([A]+\)]], [[<abbr class="s a">\1</abbr>]])]])
+define([[seq_bb]], [[patsubst($1, [[\([B]+\)]], [[<abbr class="s b">\1</abbr>]])]])
+define([[seq_cc]], [[patsubst($1, [[\([C]+\)]], [[<abbr class="s c">\1</abbr>]])]])
+define([[_seq]], [[seq_aa(seq_bb(seq_cc($1)))]])
+define([[aA]], [[seq_aa(A)]])
+define([[aB]], [[seq_bb(B)]])
+define([[aC]], [[seq_cc(C)]])
+
 Notation
 --------
 In this post a playlist is an ordered list of tracks.
 For example,
-AAABBC is a playlist with six tracks:
+_seq(AAABBC) is a playlist with six tracks:
 three by artist aA,
 then two by artist aB,
 and then one by artist aC.
@@ -107,7 +117,7 @@ we can extend the idea to more artists.
 Let’s look at an example first.
 Say we have four tracks by artist aA,
 two by aB, and one by aC.
-Then the three optimal shuffles are ABABACA, ABACABA, and ACABABA.
+Then the three optimal shuffles are _seq(ABABACA), _seq(ABACABA), and _seq(ACABABA).
 Among aB and aC we have some freedom,
 but we need all the aB’s and aC’s
 together to go in between the aA’s.
@@ -132,7 +142,7 @@ If we interleave aA and aB first,
 then aA partitions the aB’s into three groups,
 two of size one,
 and one of size two.
-For example BBABAB.
+For example _seq(BBABAB).
 This list has length 6,
 so next we interleave the aC’s into it,
 but the four aC’s are not quite enough to only create groups of size 1,
@@ -194,11 +204,11 @@ The only case where it places the same artist consecutively
 is when this is impossible to avoid,
 because we don’t have enough other tracks to break up the consecutive plays.
 This happens when the last step is an `interleave` an n > m + 1,
-for example in AABA.
+for example in _seq(AABA).
 
 Extension to albums
 -------------------
-In a situation like AABA,
+In a situation like _seq(AABA),
 we cannot avoid playing artist aA multiple times in a row.
 But if two of aA’s tracks are from a different album,
 then we can at least avoid playing tracks from the same album in a row.
@@ -229,9 +239,9 @@ For a positive integer v_k,
 the <em>v_k-badness</em> of a playlist
 is the number of times that
 the same artist occurs v_k times in a row.
-For example, the 2-badness of AAABBC is 3:
-AA occurs at index 0 and 1,
-and BB occurs at index 3.
+For example, the 2-badness of _seq(AAABBC) is 3:
+_seq(AA) occurs at index 0 and 1,
+and _seq(BB) occurs at index 3.
 
 **Definition**:
 Let v_x and v_y be permutations of the same playlist.
@@ -241,20 +251,20 @@ v_x has a lower v_k-badness than v_y.
 This defines a partial order on playlists.
 Note that this is not a total order!
 For example,
-AAACAACAACAAC has a lower 3-badness than
-AAACAAACACACA, but a higher 2-badness.
+_seq(AAABAABAABAAB) has a lower 3-badness than
+_seq(AAABAAABABABA), but a higher 2-badness.
 
 **Definition**:
 A permutation of a playlist is called an _optimal shuffle_,
 if there exists no better permutation.
 For example,
-AAABB is not an optimal shuffle,
-because its permutation ABBAA has a 2-badness of 2,
-lower than AAABB’s 2-badness of 3,
+_seq(AAABB) is not an optimal shuffle,
+because its permutation _seq(ABBAA) has a 2-badness of 2,
+lower than _seq(AAABB)’s 2-badness of 3,
 and it also has a lower 3-badness.
-An example of a shuffle that _is_ optimal is AABA.
+An example of a shuffle that _is_ optimal is _seq(AABA).
 It has a 2-badness of 1,
-and of its four permutations (BAAA, ABAA, AABA, and AAAB),
+and of its four permutations (_seq(BAAA), _seq(ABAA), _seq(AABA), and _seq(AAAB)),
 none achieve a lower 2-badness.
 
 **Theorem**:
