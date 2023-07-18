@@ -30,11 +30,14 @@ In this post I want to outline an algorithm that is optimal in the above sense.
 .b { color: #37b }
 .c { color: #c35 }
 .s + .s { margin-left: 0.03em }
+.qed { float: right }
 </style>
 changequote(`[[', `]]')
 define([[_var]], [[<var>$1</var>]])
 define([[v_b]], [[_var(b)]])
 define([[v_k]], [[_var(k)]])
+define([[v_k1]], [[_var(k)<sub>1</sub>]])
+define([[v_k2]], [[_var(k)<sub>2</sub>]])
 define([[v_n]], [[_var(n)]])
 define([[v_m]], [[_var(m)]])
 define([[v_r]], [[_var(r)]])
@@ -77,7 +80,7 @@ we break up as many of aA’s consecutive plays as we can,
 and we minimize the longest span of aA’s in a row.
 
 Let’s state that formally.
-We are going to optimally shuffle a playlist with two artists,
+We are going to shuffle a playlist with two artists,
 aA with v_n tracks,
 and aB with v_m tracks:
 
@@ -177,7 +180,7 @@ Incremental merging for optimal shuffles
 ----------------------------------------
 Now we can put the pieces together
 and fix the issue that plagued our first attempt at incremental interleaving.
-Define the `merge_shuffle` procedure as follows:
+Define the `merge-shuffle` procedure as follows:
 
  1. Partition on artist, and order the partitions by ascending size.
     Break ties randomly.
@@ -199,11 +202,11 @@ but for the purpose of implementing the algorithm,
 we can take it as a fact that `intersperse` will not fail.
 
 This algorithm produces optimal shuffles,
-we’ll formalize that in the appendix.
+which we will formalize in the appendix.
 The only case where it places the same artist consecutively
 is when this is impossible to avoid,
 because we don’t have enough other tracks to break up the consecutive plays.
-This happens when the last step is an `interleave` an n > m + 1,
+This happens when the last step is an `interleave` and v_n > v_m + 1,
 for example in _seq(AABA).
 
 Extension to albums
@@ -217,13 +220,13 @@ but instead of partitioning on artist we partition on album.
 The merge-shuffle preserves the relative order
 of tracks in the partitions that it merges,
 so to shuffle a playlist,
-we can use `merge_shuffle` at two levels:
+we can use `merge-shuffle` at two levels:
 
  1. Partition the playlist into albums.
  2. Shuffle every album individually using a regular shuffle.
  3. For every album artist,
-    use `merge_shuffle` to merge albums into a partition per artist.
- 4. Use `merge_shuffle` to merge the artist partitions
+    use `merge-shuffle` to merge albums into a partition per artist.
+ 4. Use `merge-shuffle` to merge the artist partitions
     into a final shuffled playlist.
 
 Conclusion
@@ -242,6 +245,8 @@ the same artist occurs v_k times in a row.
 For example, the 2-badness of _seq(AAABBC) is 3:
 _seq(AA) occurs at index 0 and 1,
 and _seq(BB) occurs at index 3.
+Note that for v_k2 > v_k1,
+the v_k2-badness of a playlist is never greater than its v_k1-badness.
 
 **Definition**:
 Let v_x and v_y be permutations of the same playlist.
@@ -268,13 +273,20 @@ and of its four permutations (_seq(BAAA), _seq(ABAA), _seq(AABA), and _seq(AAAB)
 none achieve a lower 2-badness.
 
 **Theorem**:
-The `merge_shuffle` algorithm returns optimal shuffles.<br>
+The `merge-shuffle` algorithm returns optimal shuffles.
+Moreover, the 2-badness of the result is at most v_n - 1,
+where v_n is the track count for the artist that occurs most often.<br>
 _Proof_:
 The proof will be by induction on the number of artists v_s.
 
 **Base case**:
-For v_s = 2,
-say we have v_n times artist aA,
+With a single artist,
+there is nothing to interleave or intersperse,
+and the result has a 2-badness of v_n - 1,
+where v_n is the size of the input.
+
+Let’s therefore consider the first interesting case, v_s = 2.
+Say we have v_n times artist aA,
 and v_m ≤ v_n times artist aB.
 When v_m = v_n we interleave the two
 and the result has a v_k-badness of zero for every v_k ≥ 2,
@@ -285,63 +297,47 @@ v_k = ⌈v_n / (v_m + 1)⌉ and possibly of size v_k - 1.
 It is not possible to build a permutation with lower v_k-badness
 without breaking the list into more than v_m spans,
 so the permutation is optimal.
+Moreover, the 2-badness is at most v_n - 2:
+a list of all aA’s would have 2-badness v_n - 1,
+and we have at least one aB to reduce this.
 
 **Induction step**:
 Let the number of artists v_s be given.
 Assume that for fewer than v_s artists,
 our algorithm produces optimal shuffles.
-Say we have v_n times the artist aA,
-and v_m times a different artist (not necessarily all the same).
+Say we have v_n tracks by aA,
+and v_m tracks by different artists (not necessarily all distinct).
 Assume that no other artist occurs more than v_n times.
-Let v_x be
-an optimal shuffle of the v_m artists other than aA.
-We can distinguish three cases,
-of which the first two are easy to treat:
+Let v_x be an optimal shuffle of the v_m tracks,
+with a 2-badness of at most v_n - 1.
+We can distinguish three cases:
 
 1. When v_n > v_m,
    we can interleave the other symbols between the aA’s
    in the same manner as in the base case.
    Badness due to symbols from v_x
    is zero for all v_k ≥ 2,
-   so the resulting permutation is optimal for the same reason as in the base case.
+   so the resulting permutation is optimal for the same reason as in the base case,
+   and the 2-badness is at most v_n - 2 for the same reason.
 2. When v_n = v_m
    we can interleave aA’s with other symbols.
    The result has a v_k-badness of zero for all v_k ≥ 2,
    which is optimal.
+3. When v_n < v_m,
+   we use `intersperse`.
+   The aA’s are used in between spans,
+   so there is no badness due to aA.
+   The 2-badness of v_x is at most v_n - 1,
+   but we have v_n aA’s,
+   which is enough to eliminate all 2-badness entirely.
+   Therefore the resulting shuffle is optimal.
 
-The interesting case is v_n < v_m.
-This time there is no badness due to aA,
-so the badness of the result is at most the badness of v_x.
-Let v_xp be the output of our algorithm,
-starting with v_x as its intermediate result.
-We have to show that v_xp is optimal.
-Suppose that v_yp is a better permutation than v_xp.
-Note that in v_yp,
-there are no consecutive occurences of aA.
-If there were,
-we could build a better permutation by taking a symbol
-from a span of non-aA symbols
-and using it to break up two aA’s.
-A span of non-aA symbols of length at least two exists,
-because with at most v_n - 1 spans of aA’s,
-the aA’s break the remaining v_m symbols into at most v_n spans.
+This concludes the proof. <span class="qed">∎</span>
 
-Define v_y to be v_yp with the aA symbols removed.
-Note that v_y is a permutation of v_x,
-and that the v_n aA’s in v_yp break v_y into v_n + 1 parts.
-Let v_b be the 2-badness of v_yp.
-The 2-badness of v_y can be at most v_b + v_n,
-because removing an aA can create at most one new occurrence of two consecutive symbols.
+Appendix: Complexity
+--------------------
 
-We also saw already that for every v_k,
-the v_k-badness of v_yp is at most that of v_y,
-and the v_k badness of v_xp is at most that of v_x.
-
-Note
-----
-Note, for two artists, Spotify’s algorithm works well.
-But they merge in one go instead of merging pairwise,
-which creates the problem.
+TODO
 
 Future work
 -----------
