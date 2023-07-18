@@ -147,8 +147,8 @@ This list has length 6,
 so next we interleave the aC’s into it,
 but the four aC’s are not quite enough to only create groups of size 1,
 there will be one group of size 2,
-and it might contain a BB.
-We _do_ have enough aC’s to break up all the occurences of BB,
+and it might contain a _seq(BB).
+We _do_ have enough aC’s to break up all the occurences of _seq(BB),
 but we need to be more careful about where we use them.
 We can fix the counterexample by interleaving aB and aC first,
 and then interleaving aA into it.
@@ -176,10 +176,10 @@ in situations where this does not happen.
 Incremental merging for optimal shuffles
 ----------------------------------------
 Now we can put the pieces together
-and fix the issue that plagued our first attempt at incremental interleaving,
-into the final `merge_shuffle` procedure:
+and fix the issue that plagued our first attempt at incremental interleaving.
+Define the `merge_shuffle` procedure as follows:
 
- 1. Partition on artist, and sort the partitions on ascending size.
+ 1. Partition on artist, and order the partitions by ascending size.
     Break ties randomly.
  2. Initialize v_r to an empty list.
  3. Take the next partition and merge it into v_r.
@@ -268,7 +268,7 @@ and of its four permutations (_seq(BAAA), _seq(ABAA), _seq(AABA), and _seq(AAAB)
 none achieve a lower 2-badness.
 
 **Theorem**:
-The algorithm described in the previous section returns optimal shuffles.<br>
+The `merge_shuffle` algorithm returns optimal shuffles.<br>
 _Proof_:
 The proof will be by induction on the number of artists v_s.
 
@@ -291,7 +291,7 @@ Let the number of artists v_s be given.
 Assume that for fewer than v_s artists,
 our algorithm produces optimal shuffles.
 Say we have v_n times the artist aA,
-and v_m times a different artist (not necessarily all distinct).
+and v_m times a different artist (not necessarily all the same).
 Assume that no other artist occurs more than v_n times.
 Let v_x be
 an optimal shuffle of the v_m artists other than aA.
