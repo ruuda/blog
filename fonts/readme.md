@@ -24,6 +24,7 @@ following code points do not have a glyph:
 
  - U+03C6 Greek small letter phi
  - U+03C8 Greek small letter psi
+ - U+220E End of Proof
  - U+2261 Identical to
  - U+1D53D Mathematical double-struck capital F
 

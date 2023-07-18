@@ -185,6 +185,7 @@ getGlyphName c = case c of
   '⌉' -> "uni2309"
   '⌊' -> "uni230A"
   '⌋' -> "uni230B"
+  '∎' -> "qed"
   '~' -> "asciitilde"
   '±' -> "plusminus"
   '¶' -> "paragraph"
