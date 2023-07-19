@@ -197,12 +197,12 @@ Define the `merge-shuffle` procedure as follows:
 Why is `intersperse` safe to use when v_n < v_m?
 This happens because v_r can have at most v_n consecutive tracks,
 and that property holds at every step of the procedure.
-The proof in the appendix makes it a bit clearer why this happens,
+The proof below makes it a bit clearer why this happens,
 but for the purpose of implementing the algorithm,
 we can take it as a fact that `intersperse` will not fail.
 
 This algorithm produces optimal shuffles,
-which we will formalize in the appendix.
+which we will formalize later.
 The only case where it places the same artist consecutively
 is when this is impossible to avoid,
 because we don’t have enough other tracks to break up the consecutive plays.
@@ -233,8 +233,8 @@ Conclusion
 ----------
 To do.
 
-Appendix: Optimality proof
---------------------------
+Optimality proof
+-----------------
 Let’s first formalize what we are trying to prove.
 
 **Definition**:
@@ -321,8 +321,8 @@ We can distinguish three cases:
 
 This concludes the proof. <span class="qed">∎</span>
 
-Discussion
-----------
+Discussion and ideas for future work
+------------------------------------
 We now have an algorithm that generates optimal shuffles,
 for some very specific definition of optimal.
 We might call this _soundness_:
@@ -332,13 +332,36 @@ we haven’t shown what we might call _completeness_ or _surjectivity_:
 for a given playlist,
 can the algorithm output every possible optimal shuffle?
 And if the answer is yes,
-do each of the shuffles have equal probability of being returned,
+do each of the shuffles have equal probability of being generated,
 or is the algorithm biased in some way?
-It turns out that `merge-shuffle` is not complete:
-for example,
+
+It turns out that `merge-shuffle` is not complete
+for our current definition of optimality.
+For example,
 it would not generate _seq(ABAAA),
 even though it has the same 2-badness as _seq(AABAA).
-TODO: But that is more like a bug in the definition of optimal!
+This is arguably an issue with the definition of _optimal_:
+for a permutation v_x to be _better_ than v_y,
+it has to have a lower v_k-badness for _every_ v_k.
+We can relax this and say that v_x has to have a lower v_k-badness
+for _at least_ one v_k,
+and it can have the same (but no greater) v_k-badness
+for other values of v_k.
+Under that definition,
+_seq(ABAAA) is no longer optimal.
+It has the same 2-badness as _seq(AABAA),
+but a greater 3-badness.
+Under this stricter definition of optimal,
+`merge-shuffle` is still sound,
+but I don’t know whether it is complete.
+I don’t expect it is,
+and I definitely don’t expect it to be unbiased.
+Is this stricter definition of optimal desirable?
+On the one hand,
+I like the evenness and uniformity of _seq(AABAA) better,
+but on the other hand,
+it does limit our freedom by forcing aB to go in the middle,
+which arguably defeats the point of shuffling.
 
 TODO: An observation is that this algorithm tends to produce “symmetric”
 playlists, actually as a result of the above (trying to insert uniformly).
