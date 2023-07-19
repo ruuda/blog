@@ -26,11 +26,30 @@ In this post I want to outline an algorithm that is optimal in the above sense.
 [musium]: https://github.com/ruuda/musium
 
 <style>
+.qed { float: right }
 .a { color: #c80 }
 .b { color: #37b }
 .c { color: #c35 }
+.d { color: #690 }
+.comp.a { background-color: #c80 }
+.comp.b { background-color: #37b }
+.comp.c { background-color: #c35 }
+.comp.d { background-color: #690 }
+/* The complement of a color, denoted by inverting. */
+.comp {
+  color: #fffef8;
+  line-height: 1.4ex;
+  display: inline-block;
+  height: 1.8ex;
+  padding-left: 0.1em;
+  padding-right: 0.05em;
+  border-radius: 0.1em;
+  margin-right: 0.05em;
+  /* Make it stand out a bit less, it already draws a lot of attention. */
+  opacity: 0.8;
+}
 .s + .s { margin-left: 0.03em }
-.qed { float: right }
+.s + .comp { margin-left: 0.05em }
 </style>
 changequote(`[[', `]]')
 define([[_var]], [[<var>$1</var>]])
@@ -51,10 +70,20 @@ define([[v_yp]], [[_var(y')]])
 define([[seq_aa]], [[patsubst($1, [[\([A]+\)]], [[<abbr class="s a">\1</abbr>]])]])
 define([[seq_bb]], [[patsubst($1, [[\([B]+\)]], [[<abbr class="s b">\1</abbr>]])]])
 define([[seq_cc]], [[patsubst($1, [[\([C]+\)]], [[<abbr class="s c">\1</abbr>]])]])
-define([[_seq]], [[seq_aa(seq_bb(seq_cc($1)))]])
+define([[seq_dd]], [[patsubst($1, [[\([D]+\)]], [[<abbr class="s d">\1</abbr>]])]])
+define([[seq_comp_aa]], [[patsubst($1, [[\([BCD]+\)]], [[<abbr class="comp a">\1</abbr>]])]])
+define([[seq_comp_bb]], [[patsubst($1, [[\([ACD]+\)]], [[<abbr class="comp b">\1</abbr>]])]])
+define([[seq_comp_cc]], [[patsubst($1, [[\([ABD]+\)]], [[<abbr class="comp c">\1</abbr>]])]])
+define([[seq_comp_dd]], [[patsubst($1, [[\([ABC]+\)]], [[<abbr class="comp d">\1</abbr>]])]])
+define([[_seq]], [[seq_aa(seq_bb(seq_cc(seq_dd($1))))]])
+define([[_comp_a]], [[seq_aa(seq_comp_aa($1))]])
+define([[_comp_b]], [[seq_bb(seq_comp_bb($1))]])
+define([[_comp_c]], [[seq_cc(seq_comp_cc($1))]])
+define([[_comp_d]], [[seq_dd(seq_comp_dd($1))]])
 define([[aA]], [[seq_aa(A)]])
 define([[aB]], [[seq_bb(B)]])
 define([[aC]], [[seq_cc(C)]])
+define([[aD]], [[seq_dd(D)]])
 
 Notation
 --------
@@ -321,8 +350,8 @@ We can distinguish three cases:
 
 This concludes the proof. <span class="qed">∎</span>
 
-Discussion and ideas for future work
-------------------------------------
+What is optimal, anyway?
+------------------------
 We now have an algorithm that generates optimal shuffles,
 for some very specific definition of optimal.
 We might call this _soundness_:
@@ -356,6 +385,7 @@ Under this stricter definition of optimal,
 but I don’t know whether it is complete.
 I don’t expect it is,
 and I definitely don’t expect it to be unbiased.
+
 Is this stricter definition of optimal desirable?
 On the one hand,
 I like the evenness and uniformity of _seq(AABAA) better,
@@ -363,6 +393,53 @@ but on the other hand,
 it does limit our freedom by forcing aB to go in the middle,
 which arguably defeats the point of shuffling.
 
+More even shuffles through negative badness
+-------------------------------------------
+We could take the desire for evenness one step further.
+The current definition of optimal
+penalizes consecutive tracks by the same artist,
+but as long as that does not happen,
+it doesn’t care where in the playlist tracks occur.
+For instance,
+_seq(ABABCDCD) and _seq(ABCDABCD) are both optimal,
+even though artists are clustered in the former
+and spaced more evenly in the latter.
+To capture this,
+we might extend the definition of badness to negative integers,
+where the (–v_k)-badness of a playlist
+is the number of times that the _complement_ of an artist
+occurs v_k times in a row.
+
+Let’s look at an example.
+Consider aA in _seq(ABABCDCD).
+We can highlight its complement as _comp_a(ABABCDCD),
+the complement of aB as _comp_b(ABABCDCD), etc.
+These two complements have a 2-badness of 4 and 3 respectively,
+and by symmetry we also get 4 and 3 from the complements
+_comp_c(ABABCDCD) and _comp_d(ABABCDCD) of aC and aD.
+Therefore the (–2)-badness of _seq(ABABCDCD) is 14.
+Through similar reasoning we can count that the (–3)-badness is 10,
+the (–4)-badness is 6,
+and the (–5)-badness is 2.
+
+Now let’s look at _seq(ABCDABCD).
+Here the complement of aA is _comp_a(ABCDABCD),
+the complement of aB is _comp_b(ABCDABCD),
+the complement of aC is _comp_c(ABCDABCD),
+and the complement of aD is _comp_d(ABCDABCD).
+The (–2)-badness again comes out to 14,
+but the (–3)-badness is reduced to 6,
+and (–4)-badness does not occur at all.
+If we extend our definition of _better_ and _optimal_ permutations
+to include negative values of v_k,
+then _seq(ABCDABCD) would be a better permutation than _seq(ABABCDCD).
+
+To design an algorithm
+that generates optimal shuffles for this extended definition of optimal
+would be an interesting topic for a follow-up.
+
+To do
+-----
 TODO: An observation is that this algorithm tends to produce “symmetric”
 playlists, actually as a result of the above (trying to insert uniformly).
 Even worse, if we don’t have one artist dominate,
@@ -387,10 +464,3 @@ and therefore achieves O(v_n log v_n) complexity.
 However,
 my implementation in Musium can shuffle 500 tracks in negligible time (<2ms),
 so this doesn’t really matter in practice.
-
-Future work
------------
-* Can we not only minimize consecutive plays,
-  but also maximize the distance between plays by the same artist?
-  To put it differently, can we also minimize the badness of the complement?
-* Does anybody care?
