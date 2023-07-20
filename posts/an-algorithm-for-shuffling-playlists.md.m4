@@ -334,11 +334,12 @@ We can distinguish three cases:
    We break up the list of aA’s into spans of size
    v_k = ⌈v_n / (v_m + 1)⌉ and possibly of size v_k - 1.
    It is not possible to build a permutation with lower v_k-badness
-   without breaking the list into more than v_m spans,
+   without breaking the list into more than v_m spans.
+   This also holds for the 2-badness, 3-badness, ... up to v_k,
    so the permutation is optimal.
-   Moreover, the 2-badness is at most v_n - 2:
+   Moreover, the 2-badness is less than v_n - 1:
    a list of all aA’s would have 2-badness v_n - 1,
-   and we have at least one track in v_x to reduce this.
+   and interleaving tracks from v_x can only reduce this further.
 2. When v_n = v_m
    we can interleave aA’s with tracks from v_x.
    The result has a v_k-badness of zero for all v_k ≥ 2,
