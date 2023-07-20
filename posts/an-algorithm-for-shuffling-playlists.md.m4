@@ -355,8 +355,8 @@ We can distinguish three cases:
 
 This concludes the proof. <span class="qed">∎</span>
 
-What is optimal, anyway?
-------------------------
+Completeness
+------------
 We now have an algorithm that generates optimal shuffles,
 for some very specific definition of optimal.
 We might call this _soundness_:
@@ -369,38 +369,29 @@ And if the answer is yes,
 do each of the shuffles have equal probability of being generated,
 or is the algorithm biased in some way?
 
-It turns out that `merge-shuffle` is not complete
-for our current definition of optimality.
+It turns out that `merge-shuffle` is not complete.
 For example,
-it would not generate _seq(ABAAA),
-even though it has the same 2-badness as _seq(AABAA).
-This is arguably an issue with the definition of _optimal_:
-for a permutation v_x to be _better_ than v_y,
-it has to have a lower v_k-badness for _every_ v_k.
-We can relax this and say that v_x has to have a lower v_k-badness
-for _at least_ one v_k,
-and it can have the same (but no greater) v_k-badness
-for other values of v_k.
-Under that definition,
-_seq(ABAAA) is no longer optimal.
-It has the same 2-badness as _seq(AABAA),
-but a greater 3-badness.
-Under this stricter definition of optimal,
-`merge-shuffle` is still sound,
-but I don’t know whether it is complete.
-I don’t expect it is,
-and I definitely don’t expect it to be unbiased.
-
-Is this stricter definition of optimal desirable?
-On the one hand,
-I like the evenness and uniformity of _seq(AABAA) better,
-but on the other hand,
-it does limit our freedom by forcing aB to go in the middle,
+for the input _seq(AAABBC)
+it would only output _seq(ABACAB) or its mirror image _seq(BACABA),
+but not _seq(ACABAB),
+even though all of these are optimal under the current definition of optimal.
+Is this a problem with the algorithm,
+or with our definition of optimal?
+The artists in _seq(ABACAB) are distributed more evenly over the playlist,
+while in _seq(ACABAB) the aB’s are more clustered.
+It is not so obvious in this small example,
+but you can scale it to arbitrarily large playlists,
+where the first half would consist of _seq(AB) repeated many times,
+and the second half of _seq(AC).
+On the one hand I like the evenness better for playlists,
+so maybe we should require this of an optimal shuffle.
+But on the other hand,
+it does limit our freedom,
 which arguably defeats the point of shuffling.
 
 More even shuffles through negative badness
 -------------------------------------------
-We could take the desire for evenness one step further.
+We can formalize the desire for evenness.
 The current definition of optimal
 penalizes consecutive tracks by the same artist,
 but as long as that does not happen,
