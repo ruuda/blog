@@ -279,9 +279,13 @@ the v_k2-badness of a playlist is never greater than its v_k1-badness.
 
 **Definition**:
 Let v_x and v_y be permutations of the same playlist.
-We say that a v_x is _better_ than v_y,
-if for every positive integer v_k,
-v_x has a lower v_k-badness than v_y.
+We say that v_x is _better_ than v_y if both of the following hold:
+
+ 1. There exists a positive integer v_k
+    for which v_x has a lower v_k-badness than v_y.
+ 2. For every positive integer v_k,
+    v_x has no greater v_k-badness than v_y.
+
 This defines a partial order on playlists.
 Note that this is not a total order!
 For example,
