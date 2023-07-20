@@ -374,24 +374,29 @@ For example,
 for the input _seq(AAABBC)
 it would only output _seq(ABACAB) or its mirror image _seq(BACABA),
 but not _seq(ACABAB),
-even though all of these are optimal under the current definition of optimal.
-Is this a problem with the algorithm,
-or with our definition of optimal?
-The artists in _seq(ABACAB) are distributed more evenly over the playlist,
-while in _seq(ACABAB) the aB’s are more clustered.
-It is not so obvious in this small example,
-but you can scale it to arbitrarily large playlists,
+even though all of them are optimal under the current definition.
+
+<!--
+We could argue that _seq(ABACAB)
+is a nicer playlist than _seq(ACABAB) anyway,
+because the artists are distributed more evenly.
+This is not so obvious in this small example,
+but we can scale it to arbitrarily large playlists,
 where the first half would consist of _seq(AB) repeated many times,
 and the second half of _seq(AC).
+That would be optimal under the current definition,
+but does it match our expectations of a good shuffle?
 On the one hand I like the evenness better for playlists,
 so maybe we should require this of an optimal shuffle.
 But on the other hand,
-it does limit our freedom,
+it constrains the number of possible shuffles severely,
 which arguably defeats the point of shuffling.
+-->
 
-More even shuffles through negative badness
--------------------------------------------
-We can formalize the desire for evenness.
+More even shuffles
+------------------
+An arguably desirable property of shuffles,
+is to have an artist’s tracks occur roughly uniformly throughout the playlist.
 The current definition of optimal
 penalizes consecutive tracks by the same artist,
 but as long as that does not happen,
@@ -430,9 +435,18 @@ If we extend our definition of _better_ and _optimal_ permutations
 to include negative values of v_k,
 then _seq(ABCDABCD) would be a better permutation than _seq(ABABCDCD).
 
+Even though we saw already that our merge-shuffle
+avoids generating some uneven shuffles,
+it is by no means sound
+under this new extended definition of optimal.
+For instance,
+it would output permutations worse than _seq(ABCDABCD).
 To design an algorithm
-that generates optimal shuffles for this extended definition of optimal
-would be an interesting topic for a follow-up.
+that generates optimal shuffles for the extended definition of optimal
+would be an interesting topic for future work.
+Especially if the algorithm can be made complete and unbiased,
+in the sense that it outputs all possible optimal shuffles
+with equal probability.
 
 To do
 -----
