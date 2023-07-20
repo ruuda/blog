@@ -258,10 +258,6 @@ we can use `merge-shuffle` at two levels:
  4. Use `merge-shuffle` to merge the artist partitions
     into a final shuffled playlist.
 
-Conclusion
-----------
-To do.
-
 Optimality proof
 -----------------
 Let’s first formalize what we are trying to prove.
@@ -448,15 +444,32 @@ Especially if the algorithm can be made complete and unbiased,
 in the sense that it outputs all possible optimal shuffles
 with equal probability.
 
-To do
------
-TODO: An observation is that this algorithm tends to produce “symmetric”
-playlists, actually as a result of the above (trying to insert uniformly).
-Even worse, if we don’t have one artist dominate,
-but the number of tracks grows slowly (but at least by 1),
-then the order of the artists is completely deterministic.
-If we only care about the 2-badness,
-we might make things a bit more “random” but less uniform.
+Conclusion
+----------
+In this post I gave a new algorithm for shuffling playlists.
+This algorithm avoids playing the same artist twice in a row
+when this is possible to avoid,
+unlike other algorithms such as the one introduced by Spotify.
+I [implemented this in Musium][impl],
+and it works reasonably well in practice,
+although the shuffles are sometimes lacking variation.
+While doing this,
+I set out to prove that algorithm really generates optimal shuffles.
+(I also added a [fuzzer][fuzz] that has not found any counterexamples).
+This was a valuable exercise,
+because it uncovered a flaw in an earlier version of the algorithm.
+The further I got writing this post though,
+and the more I used the shuffle myself,
+the clearer it became to me how ad-hoc the algorithm really is,
+and what the properties of a good shuffle ought to be.
+I could keep on refining things for a long time,
+but then I would never publish anything,
+so this is where I draw the line for now.
+The merge-shuffle works well enough in practice.
+Maybe I’ll revisit it some other time.
+
+[impl]: https://github.com/ruuda/musium/blob/a4a3f9216f37fc8ff8a1e92ac716d1597bee8dd5/src/shuffle.rs
+[fuzz]: https://github.com/ruuda/musium/blob/a4a3f9216f37fc8ff8a1e92ac716d1597bee8dd5/fuzz/fuzz_targets/shuffle.rs
 
 Complexity
 ----------
