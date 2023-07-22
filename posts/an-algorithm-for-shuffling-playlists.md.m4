@@ -444,46 +444,62 @@ Especially if the algorithm can be made complete and unbiased,
 in the sense that it outputs all possible optimal shuffles
 with equal probability.
 
+In practice
+-----------
+[I implemented the merge-shuffle algorithm in Musium][impl].
+It works reasonably well in practice,
+although I find the shuffles are sometimes lacking variation
+when I re-shuffle.
+This is no surprise because for many inputs,
+the order of the artists is deterministic.
+There are ways to alleviate this by sacrificing some evenness,
+for instance by allowing to split the larger list
+in only v_m parts rather than v_m + 1
+when the smaller list has v_m tracks.
+I also wonder if it would help to always merge the two smallest lists
+instead of always merging into the intermediate result.
+Perhaps the result would no longer be optimal
+according to the definition in this post,
+but although this definition is good for nerd-sniping,
+it is not so obvious that it captures what humans care about well.
+Arriving at a good shuffling algorithm will require some more experimentation.
+
+Aside from the algorithm itself,
+[I implemented a fuzzer][fuzz] that searches for counterexamples
+to the proof in this post.
+After implementing the full algorithm outlined in this post,
+the fuzzer has not found any counterexamples.
+The value of this is twofold:
+it increases my confidence that the implementation is correct,
+but it also increases my confidence that the proof is correct.
+
+Performance-wise the algorithm is fast enough to be a non-issue.
+Although the complexity in the number of track moves is worst-case quadratic
+(achieved when all artists are distinct,
+because we build v_n lists of size v_n/2 on average)
+in practice shuffling even thousands of tracks takes mere microseconds,
+so unless you try to shuffle your entire music library,
+this is unlikely to be a problem.
+
+[impl]: https://github.com/ruuda/musium/blob/a4a3f9216f37fc8ff8a1e92ac716d1597bee8dd5/src/shuffle.rs
+[fuzz]: https://codeberg.org/ruuda/musium/src/commit/a4a3f9216f37fc8ff8a1e92ac716d1597bee8dd5/fuzz/fuzz_targets/shuffle.rs
+
 Conclusion
 ----------
 In this post I gave a new algorithm for shuffling playlists.
 This algorithm avoids playing the same artist twice in a row
 when this is possible to avoid,
 unlike other algorithms such as the one introduced by Spotify.
-I [implemented this in Musium][impl],
-and it works reasonably well in practice,
-although the shuffles are sometimes lacking variation.
-While doing this,
-I set out to prove that algorithm really generates optimal shuffles.
-(I also added a [fuzzer][fuzz] that has not found any counterexamples).
-This was a valuable exercise,
+I also proved this,
+which was a valuable exercise,
 because it uncovered a flaw in an earlier version of the algorithm.
 The further I got writing this post though,
-and the more I used the shuffle myself,
 the clearer it became to me how ad-hoc the algorithm really is,
-and what the properties of a good shuffle ought to be.
+and the more I used the shuffle myself,
+the less clear it became to me
+that the current definition of optimal is a good one.
 I could keep on refining things for a long time,
 but then I would never publish anything,
 so this is where I draw the line for now.
 The merge-shuffle works well enough in practice.
 Maybe I’ll revisit it some other time.
-
-[impl]: https://github.com/ruuda/musium/blob/a4a3f9216f37fc8ff8a1e92ac716d1597bee8dd5/src/shuffle.rs
-[fuzz]: https://github.com/ruuda/musium/blob/a4a3f9216f37fc8ff8a1e92ac716d1597bee8dd5/fuzz/fuzz_targets/shuffle.rs
-
-Complexity
-----------
-
-Our algorithm produces optimal shuffles,
-but is it fast?
-If we consider moving a track into an (intermediate) list
-to be the primitive operation,
-then the worst-case complexity is `merge-shuffle` is O(v_n<sup>2</sup>),
-and it is achieved for a playlist of v_n distinct artists:
-we build v_n lists of size v_n/2 on average.
-This is worse than Spotify’s algorithm,
-which devolves into a sort with v_n distinct artists
-and therefore achieves O(v_n log v_n) complexity.
-However,
-my implementation in Musium can shuffle 500 tracks in negligible time (<2ms),
-so this doesn’t really matter in practice.
