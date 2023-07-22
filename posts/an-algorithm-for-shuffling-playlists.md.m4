@@ -1,7 +1,7 @@
 ---
 title: An algorithm for shuffling playlists
 date: 2023-05-27
-minutes: ?
+minutes: 15
 synopsis: TODO
 run-in: It is a common observation
 ---
@@ -285,7 +285,7 @@ _seq(AAABAABAABAAB) has a lower 3-badness than
 _seq(AAABAAABABABA), but a higher 2-badness.
 
 **Definition**:
-A permutation of a playlist is called an _optimal shuffle_,
+A permutation of a playlist is called an _optimal shuffle_
 if there exists no better permutation.
 For example,
 _seq(AAABB) is not an optimal shuffle,
@@ -326,7 +326,7 @@ We can distinguish three cases:
    We break up the list of aA’s into spans of size
    v_k = ⌈v_n / (v_m + 1)⌉ and possibly of size v_k - 1.
    It is not possible to build a permutation with lower v_k-badness
-   without breaking the list into more than v_m spans.
+   without breaking the list into more than v_m + 1 spans.
    This also holds for the 2-badness, 3-badness, ... up to v_k,
    so the permutation is optimal.
    Moreover, the 2-badness is less than v_n - 1:
@@ -450,7 +450,7 @@ This is no surprise because for many inputs,
 the order of the artists is deterministic.
 There are ways to alleviate this by sacrificing some evenness,
 for instance by allowing to split the larger list
-in only v_m parts rather than v_m + 1
+into only v_m parts rather than v_m + 1
 when the smaller list has v_m tracks.
 I also wonder if it would help to always merge the two smallest lists
 instead of always merging into the intermediate result.
