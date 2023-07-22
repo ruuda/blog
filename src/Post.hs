@@ -26,7 +26,7 @@ import           Data.Maybe (fromMaybe, isJust)
 import qualified Data.Set as S
 import qualified Data.Text as Text
 import           Data.Time.Format
-import           Data.Time.Calendar (Day, showGregorian, toGregorian)
+import           Data.Time.Calendar (Day, showGregorian, fromGregorian, toGregorian)
 import           GHC.Exts (groupWith, sortWith)
 import           Text.Pandoc
 import           Text.Pandoc.Highlighting (pygments)
@@ -82,8 +82,17 @@ year post = y where (y, _m, _d) = toGregorian $ date post
 
 -- Returns the canonical absolute url for a particular post.
 url :: Post -> String
-url post = "/" ++ datePath ++ "/" ++ (slug post)
-  where datePath = formatTime defaultTimeLocale "%Y/%m/%d" $ date post
+url post =
+  let
+    datePath = formatTime defaultTimeLocale "%Y/%m/%d" $ date post
+    yearPath = formatTime defaultTimeLocale "%Y" $ date post
+    --  For more recent posts, I started using only the year in the url,
+    --  for older posts they still include the month and day. Maybe in the
+    --  future I'll add redirects for them or something, but for now I don't
+    --  want to break existing urls.
+    prefix = if (date post) >= (fromGregorian 2023 6 1) then yearPath else datePath
+  in
+    "/" <> prefix <> "/" <> (slug post)
 
 -- Returns whether post has code in it that requires a monospace font.
 usesMonoFont :: Post -> Bool

@@ -76,7 +76,7 @@ readPostM4 fname =
     hSetEncoding hstdout utf8
     body <- hGetContents hstdout
     -- Note the double takeBaseName, one to strip .m4, one to strip .md.
-    pure $ P.parse (takeBaseName $ takeBasename fname) body
+    pure $ P.parse (takeBaseName $ takeBaseName fname) body
 
 -- Reads and renders all posts in the given directory.
 readPosts :: FilePath -> IO [P.Post]
