@@ -292,9 +292,9 @@ _seq(AAABB) is not an optimal shuffle,
 because its permutation _seq(ABBAA) has a 2-badness of 2,
 lower than _seq(AAABB)’s 2-badness of 3,
 and it also has a lower 3-badness.
-An example of a shuffle that _is_ optimal is _seq(AABA).
+An example of a shuffle that _is_ optimal is _seq(BBCB).
 It has a 2-badness of 1,
-and of its four permutations (_seq(BAAA), _seq(ABAA), _seq(AABA), and _seq(AAAB)),
+and of its four permutations (_seq(CBBB), _seq(BCBB), _seq(BBCB), and _seq(BBBC)),
 none achieve a lower 2-badness.
 
 **Theorem**:
