@@ -54,6 +54,7 @@ module Html ( Tag
             , mapText
             , mapTextWith
             , maxOlLength
+            , mergeStyles
             , parseTags
             , renderTags
             ) where
@@ -379,3 +380,36 @@ addAnchors = renderTags . concatMap expandHeader . parseTags
     expandHeader tag = case tag of
       h2 @ (S.TagOpen "h2" [("id", anchor)]) -> h2 : emptyA ('#' : anchor)
       otherTag -> [otherTag]
+
+-- Merge all <style> tags in the document into a single one. This helps with
+-- minification, but mostly it helps to make the documents valid html, because
+-- technically a <style> tag in the body is not valid, but for some posts I want
+-- to write custom stylesheets for that post. So I just write them in the post,
+-- Pandoc preserves them, and this function merges all style tags into the first
+-- one, which is the one in the <head>.
+mergeStyles :: [Tag] -> [Tag]
+mergeStyles = run [] "" []
+  where
+    run pfx contents sfx [] =
+      -- End of input, put everything back together. Note that the intermediate
+      -- prefix and suffix lists were built reversed, so we reverse them again.
+      (reverse pfx) <>
+        [ S.TagOpen "style" []
+        , S.TagText contents
+        , S.TagClose "style"
+        ] <>
+        (reverse sfx)
+
+    -- When we encounter a style tag, append its contents.
+    run pfx contents1 sfx
+      ( (S.TagOpen "style" _)
+      : (S.TagText contents2)
+      : (S.TagClose "style")
+      : more
+      ) = run pfx (contents1 <> contents2) sfx more
+
+    -- Before we have style contents, every tag we are not interested in goes
+    -- into the prefix. After we have style contents, everything goes into the
+    -- suffix.
+    run pfx ""       []  (tag:more) = run (tag:pfx) ""       []        more
+    run pfx contents sfx (tag:more) = run pfx       contents (tag:sfx) more

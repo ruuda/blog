@@ -158,7 +158,12 @@ stripTags =
   (mapTagsExceptPre $ Html.mapText mergeWhitespace) .
   (removeComments)
 
--- Minifies html by removing excess whitespace and comments, and by minifying
--- inline stylesheets.
+-- Minifies html by removing excess whitespace and comments, and by merging
+-- and minifying inline stylesheets.
 minifyHtml :: String -> String
-minifyHtml = Html.renderTags . minifyStyleTags . stripTags . Html.parseTags
+minifyHtml
+  = Html.renderTags
+  . minifyStyleTags
+  . Html.mergeStyles
+  . stripTags
+  . Html.parseTags
