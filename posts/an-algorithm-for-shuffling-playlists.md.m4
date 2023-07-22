@@ -2,7 +2,7 @@
 title: An algorithm for shuffling playlists
 date: 2023-05-27
 minutes: 15
-synopsis: TODO
+synopsis: When shuffling a playlist, a true shuffle is rarely what we want, because it might play the same artist twice in a row. In this post I introduce an algorithm that avoids this when possible.
 run-in: It is a common observation
 ---
 
