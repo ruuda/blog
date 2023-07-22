@@ -1,4 +1,4 @@
-SplineFontDB: 3.0
+SplineFontDB: 3.2
 FontName: CallunaSansMath-Regular
 FullName: Calluna Sans Math
 FamilyName: Calluna Sans Math
@@ -22,7 +22,7 @@ OS2Version: 2
 OS2_WeightWidthSlopeOnly: 0
 OS2_UseTypoMetrics: 0
 CreationTime: 1292841550
-ModificationTime: 1452904833
+ModificationTime: 1689719331
 PfmFamily: 17
 TTFWeight: 400
 TTFWidth: 5
@@ -54,6 +54,7 @@ OS2StrikeYSize: 50
 OS2StrikeYPos: 250
 OS2CapHeight: 667
 OS2XHeight: 450
+OS2Vendor: 'PfEd'
 OS2CodePages: 2000009b.00000000
 OS2UnicodeRanges: a000002f.5000206b.00000000.00000000
 MarkAttachClasses: 1
@@ -65,7 +66,7 @@ NameList: AGL For New Fonts
 DisplaySize: -72
 AntiAlias: 1
 FitToEm: 0
-WinInfo: 105 21 8
+WinInfo: 8652 14 8
 BeginPrivate: 6
 BlueValues 23 [-12 0 450 462 667 679]
 OtherBlues 11 [-237 -225]
@@ -75,7 +76,7 @@ StemSnapH 10 [55 68 71]
 StemSnapV 13 [67 78 82 88]
 EndPrivate
 TeXData: 1 0 0 1048576 524288 349525 0 1048576 349525 783286 444596 497025 792723 393216 433062 380633 303038 157286 324010 404750 52429 2506097 1059062 262144
-BeginChars: 65573 1
+BeginChars: 65589 6
 
 StartChar: u1D53D
 Encoding: 133 120125 0
@@ -104,6 +105,104 @@ SplineSet
  229 70 l 5
 EndSplineSet
 Validated: 1
+EndChar
+
+StartChar: uni2309
+Encoding: 8969 8969 1
+Width: 287
+Flags: HW
+HStem: -155 55<19 137 19 202 19 137> 612 55<19 137 19 202>
+VStem: 137 65<-100 612 612 612>
+LayerCount: 2
+Fore
+SplineSet
+136 -157 m 1
+ 137 612 l 1
+ 19 612 l 1
+ 19 667 l 1
+ 202 667 l 1
+ 202 -155 l 1
+ 136 -157 l 1
+EndSplineSet
+EndChar
+
+StartChar: uni2308
+Encoding: 8968 8968 2
+Width: 287
+Flags: HW
+HStem: -155 55<150 268 150 268> 612 55<150 268 150 150>
+VStem: 85 65<-100 612 -100 667 -100 667>
+LayerCount: 2
+Fore
+SplineSet
+150 -155 m 1
+ 85 -155 l 1
+ 85 667 l 1
+ 268 667 l 1
+ 268 612 l 1
+ 150 612 l 1
+ 150 -155 l 1
+EndSplineSet
+EndChar
+
+StartChar: uni230A
+Encoding: 8970 8970 3
+Width: 287
+Flags: HW
+HStem: -155 55<150 268 150 268> 612 55<150 268 150 150>
+VStem: 85 65<-100 612 -100 667 -100 667>
+LayerCount: 2
+Fore
+SplineSet
+150 -100 m 1
+ 268 -100 l 1
+ 268 -155 l 1
+ 85 -155 l 1
+ 85 667 l 1
+ 148 667 l 1
+ 150 -100 l 1
+EndSplineSet
+EndChar
+
+StartChar: uni230B
+Encoding: 8971 8971 4
+Width: 287
+Flags: HW
+HStem: -155 55<19 137 19 202 19 137> 612 55<19 137 19 202>
+VStem: 137 65<-100 612 612 612>
+LayerCount: 2
+Fore
+SplineSet
+136 667 m 1
+ 202 667 l 1
+ 202 -155 l 1
+ 19 -155 l 1
+ 19 -100 l 1
+ 137 -100 l 1
+ 136 667 l 1
+EndSplineSet
+EndChar
+
+StartChar: qed
+Encoding: 8718 8718 5
+Width: 604
+Flags: HW
+HStem: 0 65<146 461> 386 64<146 461>
+VStem: 77 69<65 386> 461 66<65 386>
+LayerCount: 2
+Fore
+SplineSet
+146 65 m 1
+ 461 65 l 1
+ 461 386 l 1
+ 146 386 l 5
+ 146 65 l 1
+77 0 m 1
+ 77 450 l 1
+ 527 450 l 1
+ 527 0 l 1
+ 77 0 l 1
+EndSplineSet
 EndChar
 EndChars
 EndSplineFont
