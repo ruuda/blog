@@ -55,8 +55,6 @@ changequote(`[[', `]]')
 define([[_var]], [[<var>$1</var>]])
 define([[v_b]], [[_var(b)]])
 define([[v_k]], [[_var(k)]])
-define([[v_k1]], [[_var(k)<sub>1</sub>]])
-define([[v_k2]], [[_var(k)<sub>2</sub>]])
 define([[v_n]], [[_var(n)]])
 define([[v_m]], [[_var(m)]])
 define([[v_r]], [[_var(r)]])
@@ -270,8 +268,6 @@ the same artist occurs v_k times in a row.
 For example, the 2-badness of _seq(AAABBC) is 3:
 _seq(AA) occurs at index 0 and 1,
 and _seq(BB) occurs at index 3.
-Note that for v_k2 > v_k1,
-the v_k2-badness of a playlist is never greater than its v_k1-badness.
 
 **Definition**:
 Let v_x and v_y be permutations of the same playlist.
