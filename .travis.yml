@@ -1,8 +1,0 @@
-language: nix
-
-# Do not spam me with build status emails.
-notifications:
-  email: false
-
-script:
-  - nix build
