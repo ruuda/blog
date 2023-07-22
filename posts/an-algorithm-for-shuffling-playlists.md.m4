@@ -477,8 +477,8 @@ in practice shuffling even thousands of tracks takes mere microseconds,
 so unless you try to shuffle your entire music library,
 this is unlikely to be a problem.
 
-[impl]: https://github.com/ruuda/musium/blob/a4a3f9216f37fc8ff8a1e92ac716d1597bee8dd5/src/shuffle.rs
-[fuzz]: https://codeberg.org/ruuda/musium/src/commit/a4a3f9216f37fc8ff8a1e92ac716d1597bee8dd5/fuzz/fuzz_targets/shuffle.rs
+[impl]: https://github.com/ruuda/musium/blob/e4939b6031c477d5d7cd2c5d520e9337edd8a383/src/shuffle.rs
+[fuzz]: https://codeberg.org/ruuda/musium/src/commit/e4939b6031c477d5d7cd2c5d520e9337edd8a383/fuzz/fuzz_targets/shuffle.rs
 
 Conclusion
 ----------
