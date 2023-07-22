@@ -2,7 +2,6 @@
 title: Fibonacci numbers in finite fields
 break: numbers in
 date: 2014-07-01
-math: true
 synopsis: With a bit of algebra, Fibonacci numbers can be computed efficiently using only integer arithmetic.
 run-in: A function
 ---
@@ -28,6 +27,51 @@ There are numerous [other ways][otherways] to compute the <var>n</var>-th Fibona
 <var>F<sub>n</sub></var> in a more efficient way.
 A simple constant-time solution is to use the closed-form expression:
 
+<style>
+.sqrt
+{
+  border-top: 0.08em solid #456;
+  margin-left: -0.04em;
+  position: relative;
+  top: 0.22em;
+}
+
+.sqrt > span
+{
+  padding-left: 0.14em;
+  padding-right: 0.1em;
+  position: relative;
+  top: -0.22em;
+}
+
+.eqn
+{
+  text-align: center;
+  word-spacing: 0.35em;
+}
+
+.frac
+{
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.numer
+{
+  border-bottom: 0.08em solid #456;
+  display: block;
+
+  /* Add a bit of space between the line and the symbols, and compensate for
+   * the height of the border. */
+  margin-top: -0.18em;
+  padding-bottom: 0.1em;
+}
+
+.sep
+{
+  margin-right: 1em;
+}
+</style>
 <p class="eqn">
   <var>F<sub>n</sub></var> = <span class="frac"><span class="numer">
   (1 + √<span class="sqrt"><span>5</span></span>)<sup><var>n</var></sup> –
