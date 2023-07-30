@@ -1,23 +1,12 @@
 {
   description = "Blog";
 
-  inputs.nixpkgs.url = "nixpkgs/ea7d4aa9b8225abd6147339f0d56675d6f1f0fd1";
+  inputs.nixpkgs.url = "nixpkgs/nixos-unstable";
 
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-
-      # Even though Nixpkgs ships a recent fonttools, pin to version 3.0.
-      # Later versions produce fonts which don't load correctly in IE 9.
-      fonttools = ps: ps.buildPythonPackage rec {
-        pname = "fonttools";
-        version = "3.0";
-        src = ps.fetchPypi {
-          inherit pname version;
-          sha256 = "0f4iblpbf3y3ghajiccvdwk2f46cim6dsj6fq1kkrbqfv05dr4nz";
-        };
-      };
 
       ghc = pkgs.ghc.withPackages (ps: [
         ps.async
@@ -57,6 +46,8 @@
       };
     in
       {
+        packages."${system}".default = blog;
+
         devShells."${system}".default = pkgs.mkShell {
           name = "blog";
           nativeBuildInputs = [
@@ -65,10 +56,10 @@
             # to run "nix build" all the time.
             ghc
             # And the runtime dependencies of the generator and utilities.
-            (pkgs.python38.withPackages (ps: [
+            (pkgs.python39.withPackages (ps: [
               ps.brotli
-              (fonttools ps)
               ps.fontforge
+              ps.fonttools
             ]))
             pkgs.brotli
             pkgs.guetzli

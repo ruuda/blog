@@ -32,7 +32,6 @@ import           Text.Pandoc
 import           Text.Pandoc.Highlighting (pygments)
 import           Text.Pandoc.Extensions (enableExtension, pandocExtensions)
 import           Text.Pandoc.Class
-import           Control.Error (runExceptT)
 
 import qualified Html
 import qualified Template

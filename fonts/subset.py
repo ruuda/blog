@@ -12,7 +12,7 @@ from sys import stdin
 # We expect to be using the pinned version. If it differs, we are probably not
 # running from the Nix profile.
 import fontTools
-assert fontTools.version == '3.0'
+assert fontTools.version == '4.38.0'
 
 # Removes format 12 cmap tables if they are not required. A format 4 table is
 # always included, but this format can only encode code points in the Basic
@@ -69,6 +69,9 @@ def subset(fontfile, outfile_basename, glyphs):
     # fonts, but on subsetted fonts it hurts file size and compressability, so
     # desubroutinize.
     options.desubroutinize = True
+
+    # The "FontForge Time Stamp Table" is useless in our output, delete it.
+    options.drop_tables.append("FFTM")
 
     font = load_font(fontfile, options)
 

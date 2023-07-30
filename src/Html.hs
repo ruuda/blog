@@ -378,7 +378,7 @@ addAnchors = renderTags . concatMap expandHeader . parseTags
   where
     emptyA href = [S.TagOpen "a" [("href", href)], S.TagClose "a"]
     expandHeader tag = case tag of
-      h2 @ (S.TagOpen "h2" [("id", anchor)]) -> h2 : emptyA ('#' : anchor)
+      h2@(S.TagOpen "h2" [("id", anchor)]) -> h2 : emptyA ('#' : anchor)
       otherTag -> [otherTag]
 
 -- Merge all <style> tags in the document into a single one. This helps with
