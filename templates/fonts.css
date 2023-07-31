@@ -55,6 +55,12 @@
 {
   font-family: Calluna;
   font-weight: bold;
+  /* The bolld serif font is used for the headers, for this one we set
+   * font-display to swap, so you can see the title of the page immediately,
+   * even if it is not yet the right font. The rest should be fast to load,
+   * even far away on a slow connection it shouldn't take more than a second
+   * or so, so there we prefer to block instead. */
+  font-display: swap;
   src: url(/fonts/sb{{serif-bold-hash}}.woff2) format("woff2"),
        url(/fonts/sb{{serif-bold-hash}}.woff)  format("woff");
 }
