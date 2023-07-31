@@ -12,7 +12,9 @@ from sys import stdin
 # We expect to be using the pinned version. If it differs, we are probably not
 # running from the Nix profile.
 import fontTools
-assert fontTools.version == '4.38.0'
+
+assert fontTools.version == "4.38.0"
+
 
 # Removes format 12 cmap tables if they are not required. A format 4 table is
 # always included, but this format can only encode code points in the Basic
@@ -21,7 +23,7 @@ assert fontTools.version == '4.38.0'
 # table cannot be removed. In other cases it is a completely redundant copy of
 # the format 4 table, so strip it to save space.
 def prune_cmaps(font):
-    tables = font['cmap'].tables
+    tables = font["cmap"].tables
     min_len = min(len(table.cmap) for table in tables)
     max_len = max(len(table.cmap) for table in tables)
 
@@ -40,7 +42,7 @@ def subset(fontfile, outfile_basename, glyphs):
     options.layout_features.remove("dnom")
 
     # There are some dlig glyphs that we want to include.
-    options.layout_features.append('dlig')
+    options.layout_features.append("dlig")
 
     # Do not include extra glypths that may be reachable through OpenType
     # features, I specify all the glyphs I want, and nothing more.
@@ -48,9 +50,9 @@ def subset(fontfile, outfile_basename, glyphs):
 
     # Same for small caps, it needs to be enabled explicitly. Luckily, only the
     # glyphs in the list get included, no extra ones.
-    if any(g.endswith('.smcp') for g in glyphs):
-        options.layout_features.append('smcp')
-        options.layout_features.append('c2sc')
+    if any(g.endswith(".smcp") for g in glyphs):
+        options.layout_features.append("smcp")
+        options.layout_features.append("c2sc")
 
     # Fonts that went through the FontForge roundtrip will have subroutinized
     # programs in the CFF table. This presumably reduces file size for full
@@ -76,8 +78,8 @@ def subset(fontfile, outfile_basename, glyphs):
 
     font = load_font(fontfile, options)
 
-    subsetter = Subsetter(options = options)
-    subsetter.populate(glyphs = glyphs)
+    subsetter = Subsetter(options=options)
+    subsetter.populate(glyphs=glyphs)
     subsetter.subset(font)
 
     prune_cmaps(font)
