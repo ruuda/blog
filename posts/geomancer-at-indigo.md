@@ -1,6 +1,7 @@
 ---
 title: Geomancer at Indigo
 date: 2012-09-23
+lang: en-GB
 synopsis: One of the games that I worked on will be presented at Indigo 2012.
 run-in: During the past
 ---

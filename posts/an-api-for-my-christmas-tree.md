@@ -3,6 +3,7 @@ title: An API for my Christmas tree
 break: my Christmas
 date: 2017-12-01
 minutes: 3
+lang: en-GB
 synopsis: With a tiny server, and an Arduino to drive the lights, I connected my Christmas tree to the internet.
 run-in: It is almost
 ---

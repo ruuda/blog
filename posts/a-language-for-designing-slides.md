@@ -3,6 +3,7 @@ title: A language for designing slides
 break: language for
 date: 2017-04-27
 minutes: 6
+lang: en-GB
 synopsis: No existing tool allowed me to design slides in the way I would like. So I built my own.
 run-in: It is my opinion that
 ---

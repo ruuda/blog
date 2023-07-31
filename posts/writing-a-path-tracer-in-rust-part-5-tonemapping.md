@@ -5,6 +5,7 @@ break: path tracer
 subheader: Tonemapping
 part: 5
 date: 2014-08-24
+lang: en-GB
 synopsis: Rust’s advanced type system can express a rendering pipeline in a safer way than C++.
 ---
 

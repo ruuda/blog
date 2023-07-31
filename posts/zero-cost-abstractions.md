@@ -2,6 +2,7 @@
 title: Zero-cost abstractions
 date: 2016-11-30
 minutes: 6
+lang: en-GB
 synopsis: Rust claims to enable abstraction without overhead. How does that claim hold up in practice?
 run-in: If you read my blog
 ---

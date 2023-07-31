@@ -1,6 +1,7 @@
 ---
 title: Encryption by default
 date: 2015-01-13
+lang: en-GB
 synopsis: You should encrypt all of your internet traffic. I am helping by making my site available over https.
 run-in: In recent years
 ---

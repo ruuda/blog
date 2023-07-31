@@ -5,6 +5,7 @@ break: path tracer
 subheader: Multithreading
 part: 6
 date: 2014-09-15
+lang: en-GB
 synopsis: Instead of doing proper algorithmic optimisation, I made my path tracer faster the lazy way.
 ---
 

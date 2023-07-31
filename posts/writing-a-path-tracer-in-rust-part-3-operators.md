@@ -4,6 +4,7 @@ header: Writing a path tracer in Rust
 break: path tracer
 subheader: Operators
 part: 3
+lang: en-GB
 date: 2014-08-15
 synopsis: Operator overloading can do wonders to make vector math readable. How does Rust compare to C++ here?
 ---

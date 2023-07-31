@@ -2,6 +2,7 @@
 title: Git’s push url
 date: 2016-05-10
 minutes: 1
+lang: en-GB
 synopsis: Here’s a little-known feature of Git that allows you to fetch over https but push with SSH.
 run-in: Fetching from
 ---

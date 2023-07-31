@@ -1,6 +1,7 @@
 ---
 title: Continuations revisited
 date: 2013-08-12
+lang: en-GB
 synopsis: Observables are a different take on asynchronous programming that can be more powerful than tasks for some scenarios.
 run-in: A while ago
 ---

@@ -1,6 +1,7 @@
 ---
 title: One year with Colemak
 date: 2014-07-17
+lang: en-GB
 synopsis: After typing in Colemak for a year I am still convinced that it was worth the switch.
 run-in: About a year ago
 ---

@@ -1,6 +1,7 @@
 ---
 title: The task monad in C#
 date: 2013-05-01
+lang: en-GB
 synopsis: When you are composing asynchronous code, you are using monads. This posts reveals the form the task monad takes in C#.
 run-in: Today I was trying
 ---

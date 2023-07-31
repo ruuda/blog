@@ -3,6 +3,7 @@ title: Exceptional results: error handling with C# and Rust
 header: Exceptional results
 subheader: Error handling with C# and Rust
 date: 2015-06-17
+lang: en-GB
 synopsis: Monadic error handling is an alternative to exception-based systems that can prevent many programming errors at compile time.
 run-in: When I first
 ---

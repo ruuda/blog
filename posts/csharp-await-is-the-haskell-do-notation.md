@@ -2,6 +2,7 @@
 title: C# await is the Haskell do notation
 break: the Haskell
 date: 2013-08-20
+lang: en-GB
 synopsis: When writing asynchronous code in C# with the await keyword, the emerging structure resembles the Haskell do notation.
 run-in: As a follow-up
 ---

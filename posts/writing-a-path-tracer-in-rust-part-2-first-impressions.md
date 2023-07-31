@@ -4,6 +4,7 @@ header: Writing a path tracer in Rust
 break: path tracer
 subheader: First impressions
 part: 2
+lang: en-GB
 date: 2014-08-13
 synopsis: After setting my first baby steps in the Rust programming language, these are my initial impressions.
 ---

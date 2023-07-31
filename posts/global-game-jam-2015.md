@@ -1,6 +1,7 @@
 ---
 title: Global Game Jam 2015
 date: 2015-02-05
+lang: en-GB
 synopsis: This year’s Global Game Jam we built our most beautiful gam jam game yet.
 run-in: It is starting
 ---

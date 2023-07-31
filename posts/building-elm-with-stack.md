@@ -3,6 +3,7 @@ title: Building Elm with Stack
 break: Elm with
 date: 2017-09-21
 minutes: 4
+lang: en-GB
 synopsis: The Haskell tool Stack enables simple reproducible builds. I used it to build the Elm compiler from source.
 run-in: The hackathon I joined
 ---

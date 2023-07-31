@@ -58,6 +58,7 @@ data Post = Post { title       :: String
                  , part        :: Maybe Int
                  , date        :: Day
                  , slug        :: String
+                 , lang        :: String
                  , synopsis    :: String
                  , body        :: String
                  -- As a hack, if we need more glyphs in the body font than
@@ -127,9 +128,11 @@ context p = fmap Template.StringValue ctx
                                , ("short-date", shortDate p)
                                , ("long-date", longDate p)
                                , ("url", url p)
+                               , ("lang", lang p)
                                , ("synopsis", synopsis p)
                                , ("synopsis-html", Type.makeAbbrs $ synopsis p)
-                               , ("content", body p) ]
+                               , ("content", body p)
+                               ]
         optFields = M.fromList [ ("subheader", subheader p)
                                , ("part", fmap toRoman $ part p)
                                , ("bold-font", boldFontField)
@@ -159,21 +162,23 @@ parse postSlug contents = let
   addRunIn html = foldl Html.makeRunIn html (fmap length runIn)
   refineType    = addRunIn . Type.expandPunctuation . Type.makeAbbrs
   parseDate     = parseTimeOrError True defaultTimeLocale "%F"
-  in Post { title       = postTitle
-          , header      = brokenHeading
-          , subheader   = M.lookup "subheader" frontMatter
-          , part        = fmap read $ M.lookup "part" frontMatter
-          , date        = parseDate $ frontMatter M.! "date"
-          , slug        = postSlug
-          , synopsis    = frontMatter M.! "synopsis"
-          , extraGlyphs = fromMaybe "" $ M.lookup "extra-glyphs" frontMatter
-          , body        = refineType
-                        $ Html.cleanTables
-                        $ Html.cleanCodeBlocks
-                        $ Html.cleanOl
-                        $ Html.addAnchors
-                        $ renderMarkdown bodyContents
-          }
+  in Post
+    { title       = postTitle
+    , header      = brokenHeading
+    , subheader   = M.lookup "subheader" frontMatter
+    , part        = fmap read $ M.lookup "part" frontMatter
+    , date        = parseDate $ frontMatter M.! "date"
+    , slug        = postSlug
+    , synopsis    = frontMatter M.! "synopsis"
+    , extraGlyphs = fromMaybe "" $ M.lookup "extra-glyphs" frontMatter
+    , lang        = frontMatter M.! "lang"
+    , body        = refineType
+                  $ Html.cleanTables
+                  $ Html.cleanCodeBlocks
+                  $ Html.cleanOl
+                  $ Html.addAnchors
+                  $ renderMarkdown bodyContents
+    }
 
 -- Renders markdown to html using Pandoc with my settings.
 renderMarkdown :: String -> String

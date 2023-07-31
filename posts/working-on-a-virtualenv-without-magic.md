@@ -1,6 +1,7 @@
 ---
 title: Working on a virtualenv without magic
 date: 2016-10-02
+lang: en-GB
 minutes: 3
 synopsis: The standard way of activating a Python virtualenv has a number of issues. Here is a simpler, understandable method.
 run-in: To keep installed dependencies

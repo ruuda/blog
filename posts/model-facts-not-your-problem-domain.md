@@ -2,6 +2,7 @@
 title: Model facts, not your problem domain
 date: 2020-06-07
 minutes: 1
+lang: en-GB
 synopsis: When requirements change, an append-only data model of immutable facts is more useful than a mutable data model that models the problem domain.
 run-in: When requirements change
 ---

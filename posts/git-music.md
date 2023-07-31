@@ -1,6 +1,7 @@
 ---
 title: Git music
 date: 2013-07-20
+lang: en-GB
 synopsis: I cross-referenced my Git commit history with my Last.fm scrobbles.
 run-in: A while ago
 ---

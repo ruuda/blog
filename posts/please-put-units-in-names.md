@@ -3,6 +3,7 @@ title: Please put units in names
 break: put units
 subheader: or use strong types
 date: 2022-03-20
+lang: en-US
 minutes: 4
 synopsis: Using strong types, or putting units in names, is a small effort that can make a tremendous difference for code readability.
 run-in: There is one

@@ -5,6 +5,7 @@ break: path tracer
 subheader: Conclusion
 part: 7
 date: 2014-10-20
+lang: en-GB
 synopsis: After porting a reasonably-sized application to Rust, I still like the language a lot. C++ has a worthy opponent here.
 ---
 

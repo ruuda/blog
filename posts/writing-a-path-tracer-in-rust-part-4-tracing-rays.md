@@ -5,6 +5,7 @@ break: path tracer
 subheader: Tracing rays
 part: 4
 date: 2014-08-19
+lang: en-GB
 synopsis: Tracing rays is at the core of a path tracer. Implementing the algorithm in Rust is a great way to get a feel for the language.
 ---
 
