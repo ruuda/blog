@@ -168,28 +168,42 @@ writePage url pageContext template = do
 
 writeIndex :: Template.Context -> Template.Template -> IO [SubsetCommand]
 writeIndex globalContext = writePage "/" context
-  where context = M.unions [ Template.stringField "title"     "Ruud van Asseldonk"
-                           , Template.stringField "bold-font" "true"
-                           , Template.stringField "light"     "true"
-                           , globalContext ]
+  where
+    context = M.unions
+      [ Template.stringField "title"     "Ruud van Asseldonk"
+      , Template.stringField "bold-font" "true"
+      , Template.stringField "light"     "true"
+        -- My intro is in British English
+      , Template.stringField "lang"      "en-GB"
+      , globalContext
+      ]
 
 -- Given the archive template and the global context, writes the archive page
 -- to the destination directory.
 writeArchive :: Template.Context -> Template.Template -> [P.Post] -> IO [SubsetCommand]
 writeArchive globalContext template posts = writePage "/writing" context template
-  where context = M.unions [ P.archiveContext posts
-                           , Template.stringField "title"     "Writing by Ruud van Asseldonk"
-                           , Template.stringField "bold-font" "true"
-                           , Template.stringField "archive"   "true"
-                           , globalContext ]
+  where
+    context = M.unions
+      [ P.archiveContext posts
+      , Template.stringField "title"     "Writing by Ruud van Asseldonk"
+      , Template.stringField "bold-font" "true"
+      , Template.stringField "archive"   "true"
+        -- The summaries mix British and US English, so don't be specific.
+      , Template.stringField "lang"      "en"
+      , globalContext
+      ]
 
 -- Given the contact template and the global context, writes the contact page
 -- to the destination directory.
 writeContact :: Template.Context -> Template.Template -> IO [SubsetCommand]
 writeContact globalContext = writePage "/contact" context
-  where context = M.unions [ Template.stringField "title" "Contact Ruud van Asseldonk"
-                           , Template.stringField "light" "true"
-                           , globalContext ]
+  where
+    context = M.unions
+      [ Template.stringField "title" "Contact Ruud van Asseldonk"
+      , Template.stringField "light" "true"
+      , Template.stringField "lang"  "en-GB"
+      , globalContext
+      ]
 
 -- Given the feed template and list of posts, writes an atom feed.
 writeFeed :: Template.Template -> [P.Post] -> IO ()
