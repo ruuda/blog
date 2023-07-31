@@ -192,7 +192,16 @@ renderMarkdown md =
           $ enableExtension Ext_ascii_identifiers
           $ pandocExtensions
       }
-    wopt = def { writerHighlightStyle = Just pygments }
+    wopt = def
+      { writerHighlightStyle = Just pygments
+        -- Note, WrapPreserve would actually be nice to use to get simpler
+        -- diffs, and it doesn't matter for minification size (except maybe for
+        -- compression, if spaces are more common they may encode in fewer bits
+        -- than newlines.) But historically Pandoc did not preserve them, so we
+        -- do not preserve them now to be able to compare site output when
+        -- updating Pandoc.
+      , writerWrapText = WrapNone
+      }
   in case runPure $ readMarkdown ropt $ Text.pack md of
     Left  _      -> "Failed to parse markdown."
     Right result -> case runPure $ writeHtml4String wopt result of
