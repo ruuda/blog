@@ -12,7 +12,9 @@ from sys import stdin
 # We expect to be using the pinned version. If it differs, we are probably not
 # running from the Nix profile.
 import fontTools
-assert fontTools.version == '3.0'
+
+assert fontTools.version == "4.38.0"
+
 
 # Removes format 12 cmap tables if they are not required. A format 4 table is
 # always included, but this format can only encode code points in the Basic
@@ -21,7 +23,7 @@ assert fontTools.version == '3.0'
 # table cannot be removed. In other cases it is a completely redundant copy of
 # the format 4 table, so strip it to save space.
 def prune_cmaps(font):
-    tables = font['cmap'].tables
+    tables = font["cmap"].tables
     min_len = min(len(table.cmap) for table in tables)
     max_len = max(len(table.cmap) for table in tables)
 
@@ -34,35 +36,23 @@ def prune_cmaps(font):
 def subset(fontfile, outfile_basename, glyphs):
     options = Options()
 
-    # Fonttools has this feature that if you enable 'dlig', it will also give
-    # you glyphs that you did not ask for, but if you do not enable 'dlig',
-    # then discretionary ligatures do not render properly.
-    # See https://github.com/behdad/fonttools/issues/43.
-    # As a workaround, only enable 'dlig' if there are glyphs for discretionary
-    # ligatures.
-    # TODO: This should be fixed, consider upgrading.
-    # https://github.com/fonttools/fonttools/commit/022536212be4cf022a2cb9a286fec8be1931d19b.
-    dligs = set(glyphs).intersection(['c_b', 'c_h', 'c_k', 'c_p', 'ct', 'g_i',
-                                      'q_u', 's_b', 's_h', 's_k', 's_p', 'st'])
-    if len(dligs) > 0:
-        options.layout_features.append('dlig')
-    else:
-        # Due to a bug in Fonttools, options are actually global, so the
-        # remnants of the previous instance are visible here.
-        # See https://github.com/behdad/fonttools/issues/413.
-        if 'dlig' in options.layout_features:
-            options.layout_features.remove('dlig')
+    # Disable some default-enabled features that we do not use.
+    options.layout_features.remove("frac")
+    options.layout_features.remove("numr")
+    options.layout_features.remove("dnom")
+
+    # There are some dlig glyphs that we want to include.
+    options.layout_features.append("dlig")
+
+    # Do not include extra glypths that may be reachable through OpenType
+    # features, I specify all the glyphs I want, and nothing more.
+    options.layout_closure = False
 
     # Same for small caps, it needs to be enabled explicitly. Luckily, only the
     # glyphs in the list get included, no extra ones.
-    if any(g.endswith('.smcp') for g in glyphs):
-        options.layout_features.append('smcp')
-        options.layout_features.append('c2sc')
-    else:
-        if 'smcp' in options.layout_features:
-            options.layout_features.remove('smcp')
-        if 'c2sc' in options.layout_features:
-            options.layout_features.remove('c2sc')
+    if any(g.endswith(".smcp") for g in glyphs):
+        options.layout_features.append("smcp")
+        options.layout_features.append("c2sc")
 
     # Fonts that went through the FontForge roundtrip will have subroutinized
     # programs in the CFF table. This presumably reduces file size for full
@@ -70,10 +60,26 @@ def subset(fontfile, outfile_basename, glyphs):
     # desubroutinize.
     options.desubroutinize = True
 
+    # Do not keep the scripts. Older versions of fonttools didn't seem to create
+    # a "DFLT" or "latn" script tag in all cases. However, if we remove "latn",
+    # then many glyphs (ligatures, smcp) don't get included correctly any more.
+    options.layout_scripts = ["latn"]
+
+    # Preserve only name id 1 and 2, the name of the font and the style. Older
+    # versions of fonttools preserved only those, newer versions preserve also
+    # other ids which contain things like a version number and makeotf writer
+    # version, which are pointless to distribute to web clients. (In fact all
+    # the name ids are, but let's keep them to have some info about what the
+    # font is remaining.)
+    options.name_IDs = [1, 2]
+
+    # The "FontForge Time Stamp Table" is useless in our output, delete it.
+    options.drop_tables.append("FFTM")
+
     font = load_font(fontfile, options)
 
-    subsetter = Subsetter(options = options)
-    subsetter.populate(glyphs = glyphs)
+    subsetter = Subsetter(options=options)
+    subsetter.populate(glyphs=glyphs)
     subsetter.subset(font)
 
     prune_cmaps(font)
