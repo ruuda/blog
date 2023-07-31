@@ -4,6 +4,9 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
+{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+
 module Type ( SubsetCommand
             , expandPunctuation
             , makeAbbrs
@@ -14,13 +17,14 @@ module Type ( SubsetCommand
             ) where
 
 import Control.Monad (filterM)
-import Data.Word (Word32)
+import Data.Bits (rotateL, xor)
 import Data.Char (isAscii, isAsciiLower, isAsciiUpper, isLetter, isSpace, ord, toLower)
-import Data.Hashable (hash)
+import Data.Foldable (foldl')
 import Data.Maybe (fromJust, isJust)
+import Data.Word (Word32, Word64)
 import Numeric (showHex)
-import System.IO (hClose, hPutStrLn)
 import System.Directory (doesFileExist)
+import System.IO (hClose, hPutStrLn)
 
 import qualified Data.Map as Map
 import qualified Data.Set as Set
@@ -370,6 +374,18 @@ subsetFonts commands = do
       hPutStrLn stdin dst
       hPutStrLn stdin $ unwords glyphs
 
+-- One iteration of the "fxhash" hash function, with state `a` and input `x`.
+-- Based on the operations outlined in
+-- https://nnethercote.github.io/2021/12/08/a-brutally-effective-hash-function-in-rust.html
+fxHash :: Word64 -> Word64 -> Word64
+fxHash !a !x = (xor (rotateL a 5) x) * 0x517cc1b727220a95
+
+fxHashString :: String -> Word64
+fxHashString = foldl' fxHash 0 . fmap (fromIntegral . fromEnum)
+
+fxHashStrings :: [String] -> Word64
+fxHashStrings = foldl' fxHash 0 . fmap fxHashString
+
 -- Given a list of glyph names, return a short filename based on a hash of the
 -- content, such that if the content changes, the name is different. Subsetted
 -- fonts are stored "content-addressable". The file contents are immutable. The
@@ -393,8 +409,8 @@ subsetFonts commands = do
 contentName :: [String] -> String
 contentName glyphNames =
   let
-    signedHash = fromIntegral (hash glyphNames) :: Word32
-    appendHexHash = showHex signedHash
+    hash32 :: Word32 = fromIntegral $ fxHashStrings glyphNames
+    appendHexHash = showHex hash32
     name = appendHexHash ""
     prefix = take (8 - (length name)) (repeat '0') -- Left-pad with zeros.
   in
