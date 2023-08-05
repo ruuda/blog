@@ -30,9 +30,10 @@ license details, see the readme in the fonts directory.
 Compiling
 ---------
 
-All dependencies are available in a [Nix][nix] profile that you can enter with
+All dependencies are available in a [Nix][nix] ≥ 2.14 development environment
+that you can enter with
 
-    $ nix run --command $SHELL
+    $ nix develop --command $SHELL
 
 This will bring a `python3` on the path with the right requirements for font
 subsetting, as well as the blog generator itself, and tools for compressing
