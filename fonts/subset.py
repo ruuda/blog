@@ -13,7 +13,7 @@ from sys import stdin
 # running from the Nix profile.
 import fontTools
 
-assert fontTools.version == "4.38.0"
+assert fontTools.version == "4.38.0", fontTools.version
 
 
 # Removes format 12 cmap tables if they are not required. A format 4 table is

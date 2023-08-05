@@ -1,7 +1,7 @@
 {
   description = "Blog";
 
-  inputs.nixpkgs.url = "nixpkgs/nixos-unstable";
+  inputs.nixpkgs.url = "nixpkgs/nixos-23.05";
 
   outputs = { self, nixpkgs }:
     let
