@@ -21,7 +21,7 @@ an ‘end-of-sequence’ signal or an error.
 
 Tasks vs. observables
 ---------------------
-Let’s comare this to `Task<T>`. A `Task<T>` represents a value of `T` that is
+Let’s compare this to `Task<T>`. A `Task<T>` represents a value of `T` that is
 either available, or will be available in the future. Additionally, the task
 catches exceptions, so instead of resulting in a value in the future, it
 might result in an exception instead. This maps directly to observables:
