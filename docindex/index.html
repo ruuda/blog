@@ -20,7 +20,7 @@
     font-style: normal;
     font-weight: 100 900;
     font-display: swap;
-    src: url('https://rsms.me/inter/font-files/Inter-roman.var.woff2?v=3.19') format('woff2');
+    src: url('https://rsms.me/inter/font-files/InterVariable.woff2?v=4.0') format('woff2');
     font-named-instance: 'Regular';
   }
   @font-face {
@@ -28,7 +28,7 @@
     font-style: italic;
     font-weight: 100 900;
     font-display: swap;
-    src: url('https://rsms.me/inter/font-files/Inter-italic.var.woff2?v=3.19') format('woff2');
+    src: url('https://rsms.me/inter/font-files/InterVariable-Italic.woff2?v=4.0') format('woff2');
     font-named-instance: 'Italic';
   }
   /* Modular scale with exponent 1.7^(1/3). The 1.7 was chosen as the line hight
@@ -48,12 +48,10 @@
     /*
     Turn on character variant 8 for Inter, which puts serifs on the uppercase I.
     Also turn on variant 1, which has a curved 1.
-    Disable contextual alternates for now. There is a bug, either in Inter or
-    in Chrome (https://crbug.com/1046095) that causes colons after a <strong> to
-    be raised above the baseline.
     */
-    font-feature-settings: 'cv01' 1, 'cv08' 1, 'calt' 0;
-
+    font-feature-settings: 'cv01' 1, 'cv08' 1, 'calt' 1;
+    /* Inter 4.0 is a tad heavy by default. */
+    font-weight: 375;
     font-size: 16px;
     line-height: 1.7em;
     background-color: #fff;
@@ -94,7 +92,7 @@
     margin-top: 1.3rem;
   }
   h1, h2, h3 {
-    font-weight: 600;
+    font-weight: 625;
     font-size: 1rem;
     color: #444;
     position: relative;
