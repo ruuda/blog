@@ -11,11 +11,11 @@ About six months ago, I was fed up with it.
 The particular _it_ was HCL — Hashicorp Configuration Language —
 but that was only the trigger,
 it was hardly the only offender.
-The particular issue I was struggling with,
+The issue I was struggling with that day
 was to define six cloud storage buckets in Terraform.
 They were similar, but not quite identical.
 The kind of thing you’d do with [a two-line nested loop][rcl-loop]
-in any language that has them,
+in any general-purpose language,
 but where all the ways of achieving that in HCL were so much hassle,
 that is was far simpler to just copy-paste the config six times.
 
@@ -53,7 +53,7 @@ And types.
 <img
   alt="I’ll build my own configuration language. With list comprehensions. And types."
   src="/images/ill-build-my-own-configuration-language.png"
-  style="max-width: 20em; display: block; margin-left: auto; margin-right: auto;" />
+  style="max-width: 18em; display: block; margin-left: auto; margin-right: auto;" />
 
 I never expected or intended for it to go anywhere
 — it was just a way to vent.
@@ -63,7 +63,7 @@ I find it increasingly useful,
 and I think it might benefit others too.
 So let’s dive in!
 
-## Organic growth
+## A functional foundation
 
 To be clear, I’m not criticizing the designers of Ansible or HCL.
 The limits of these tools are a natural consequence of their organic growth:
@@ -78,26 +78,44 @@ because that’s easy to do within the limits of the existing syntax.
 When it comes to adding more principled abstraction features,
 the authors have a background in infrastructure administration,
 not in language design or type theory.
-And so they accidentally implement [some functions][hcl-flatten]
+So they accidentally implement [some functions][hcl-flatten]
 in an ad-hoc way that seemed helpful,
 but causes surprises down the line.
 (A `flatten` that _sometimes_ flattens recursively can’t be typed properly,
 which breaks generic code.)
 Many of Javascript and PHP’s idiosyncrasies can be explained in the same way.
 
+The [Nix language][nix] had a more solid foundation
+in functional programming from the start,
+which enables abstraction in a natural way.
+It predates Terraform by more than a decade,
+and the language has stood the test of time far better than HCL did.
+With very few changes,
+it scaled to massive configuration repositories like [Nixpkgs][nixpkgs],
+and although Nix has issues,
+abstracting repetition away is not one of them.
+I’ve used Nix to generate repetitive GitHub Actions workflows,
+and of course it is at the heart of NixOS,
+where it generates configuration files such as systemd units
+from a consistent declarative specification.
+This is the power of having few simple features that compose well.
+
+Though Nix is great,
+I don’t think it is the answer to all configuration problems.
+Nix-the-language is intimately tied to Nix-the-package-manager and the Nix store,
+and the Haskell-style syntax can look foreign
+to people who are used to more mainstream languages.
+Still,
+Nix has many good ideas that have been proven to work,
+and my own configuration language takes lots of inspiration from it.
+
 [hcl-loop]:     https://developer.hashicorp.com/terraform/language/v1.7.x/meta-arguments/for_each
 [ansible-loop]: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html#standard-loops
 [gha-loop]:     https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
 [hcl-flatten]:  https://developer.hashicorp.com/terraform/language/v1.7.x/functions/flatten
-
-## The problem
-
-Starts out as a simple data format. Then repetition. So you bolt it on.
-Terraform for_each;
-Ansible with;
-If not possible inside, you do it outside, templating yaml (gasp).
-
-But this is a solved problem! Nix!
+[nix]:          https://nixos.org/manual/nix/stable/language/index.html
+[nixpkgs]:      https://github.com/NixOS/nixpkgs
+[nix-tojson]:   https://nixos.org/manual/nix/stable/language/builtins#builtins-toJSON
 
 ## I’ll build my own configuration language!
 
