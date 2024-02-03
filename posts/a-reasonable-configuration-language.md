@@ -239,7 +239,7 @@ including from yaml: just serialize it to json,
 and you’re good to go.
 This is a valid RCL document:
 
-```
+```json
 {
   "buckets": [
     {
@@ -262,7 +262,7 @@ trailing commas and numeric underscores.
 Furthermore, dicts can be written with `ident = value` syntax
 to omit the quotes and reduce some line noise:
 
-```
+<!--
 {
   buckets = [
     {
@@ -277,12 +277,26 @@ to omit the quotes and reduce some line noise:
     },
   ],
 }
-```
+-->
+<pre><code class="sourceCode">{
+  <span class="n">buckets</span> = [
+    {</span>
+      <span class="n">name</span> = <span class="st">"bucket-0"</span>,
+      <span class="n">location</span> = <span class="st">"eu-west1"</span>,
+      <span class="n">delete-after-seconds</span> = <span class="dv">86_400</span>,
+    },
+    {
+      <span class="n">name</span> = <span class="st">"bucket-1"</span>,
+      <span class="n">location</span> = <span class="st">"eu-west1"</span>,
+      <span class="n">delete-after-seconds</span> = <span class="dv">86_400</span>,
+    },
+  ],
+}</code></pre>
 
 There are arithmetic expressions as you would expect, list comprehensions,
 format strings, and functions:
 
-```
+<!--
 {
   buckets = [
     for i in std.range(0, 2):
@@ -293,27 +307,55 @@ format strings, and functions:
     },
   ],
 }
-```
+-->
+<pre><code class="sourceCode">{
+  <span class="n">buckets</span> = [
+    <span class="kw">for</span> <span class="n">i</span> <span class="kw">in</span> <span class="nb">std</span>.<span class="n">range</span>(<span class="dv">0</span>, <span class="dv">2</span>):
+    {
+      <span class="n">name</span> = <span class="st">f"bucket-</span><span class="dt">{</span><span class="n">i</span><span class="dt">}</span><span class="st">"</span>,
+      <span class="n">location</span> = <span class="st">"eu-west1"</span>,
+      <span class="n">delete-after-seconds</span> = <span class="dv">24</span> <span class="o">*</span> <span class="dv">3600</span>,
+    },
+  ],
+}</code></pre>
+
 For validation, the [`key_by`][key-by] method is useful.
 In the above example,
 if we’d name the buckets by hand and there are many of them,
 how do we ensure that we don’t accidentally create two buckets with the same name?
 We can do that by building a mapping from name to bucket:
-```
+
+<!--
 let buckets = [
   // Omitted here for brevity, defined as before.
 ];
 
 // Build a mapping of bucket name to bucket. If a key (bucket name)
 // occurs multiple times, this will fail with an error that reports
-// the offending key and the associated values.
+// the offending key and the associated values. The type annotation
+// is for clarification, it is not mandatory.
 let buckets_by_name: Dict[String, Dynamic] = buckets.key_by(b => b.name);
 
 // Constructing the mapping is enough for validation, the document still
 // evaluates to the same dict as before. Note, the left "buckets" is the
 // name of the field, the right "buckets" is a variable reference.
 { buckets = buckets }
-```
+-->
+<pre><code class="sourceCode"><span class="kw">let</span> <span class="n">buckets</span> = [
+  <span class="co">// Omitted here for brevity, defined as before.</span>
+];
+
+<span class="co">// Build a mapping of bucket name to bucket. If a key (bucket name)</span>
+<span class="co">// occurs multiple times, this will fail with an error that reports</span>
+<span class="co">// the offending key and the associated values. The type annotation</span>
+<span class="co">// is for clarification, it is not mandatory.</span>
+<span class="kw">let</span> <span class="n">buckets_by_name</span>: <span class="dt">Dict</span>[<span class="dt">String</span>, <span class="dt">Dynamic</span>] = <span class="n">buckets</span>.<span class="fu">key_by</span>(<span class="n">b</span> <span class="o">=&gt;</span> <span class="n">b</span>.<span class="n">name</span>);
+
+<span class="co">// Constructing the mapping is enough for validation, the document still</span>
+<span class="co">// evaluates to the same dict as before. Note, the left "buckets" is the</span>
+<span class="co">// name of the field, the right "buckets" is a variable reference.</span>
+{ <span class="n">buckets</span> = <span class="n">buckets</span> }
+</code></pre>
 
 This is just a quick overview of some features.
 For a more thorough introduction,
@@ -340,15 +382,13 @@ These allow you to break down configuration into small reusable pieces.
 Let’s say that all your cloud resources are in the same location.
 Then we might have a file `cloud_config.rcl`:
 
-```
-{
-  default_location = "eu-west1",
-}
-```
+<pre><code class="sourceCode">{
+  default_location = <span class="st">"eu-west1"</span>,
+}</code></pre>
 
 Then in `buckets.rcl`, we can use that like so:
 
-```
+<!--
 let cloud_config = import "cloud_config.rcl";
 {
   buckets = [
@@ -360,7 +400,18 @@ let cloud_config = import "cloud_config.rcl";
     },
   ],
 }
-```
+-->
+<pre><code class="sourceCode"><span class="kw">let</span> cloud_config = <span class="kw">import</span> <span class="st">"cloud_config.rcl"</span>;
+{
+  <span class="n">buckets</span> = [
+    <span class="kw">for</span> <span class="n">i</span> <span class="kw">in</span> <span class="nb">std</span>.<span class="n">range</span>(<span class="dv">0</span>, <span class="dv">2</span>):
+    {
+      <span class="n">name</span> = <span class="st">f"bucket-</span><span class="dt">{</span><span class="n">i</span><span class="dt">}</span><span class="st">"</span>,
+      <span class="n">location</span> = cloud_config.default_location,
+      <span class="n">delete-after-seconds</span> = <span class="dv">24</span> <span class="o">*</span> <span class="dv">3600</span>,
+    },
+  ],
+}</code></pre>
 
 Because every document is an expression,
 you can always evaluate it and inspect it,
