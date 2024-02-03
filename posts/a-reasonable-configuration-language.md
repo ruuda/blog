@@ -384,14 +384,17 @@ I was dealing with a json document that had roughly this structure:
 
 ```json
 [
-  { "name": "widget-1", "tags": ["expensive", "fancy"] },
-  { "name": "widget-2", "tags": ["cheap"] },
-  { "name": "widget-3" },
-  { "name": "widget-4", "tags": ["fancy", "intricate"] }
+  { "name": "server-1", "tags": ["amd", "fast"] },
+  { "name": "server-2", "tags": ["intel", "slow"] },
+  { "name": "server-3" },
+  { "name": "server-4", "tags": ["amd", "vm", "slow"] }
 ]
 ```
 
-I wanted to know the names of all the widgets that had the `fancy` tag applied.
+I wanted to know the names of all the machines that had a particular tag applied.
+That the `tags` field is missing from some machines complicates that,
+and the real input consisted of hundreds of machines,
+so fixing that by hand was not feasible.
 I spent about 10 minutes struggling with `jq` and scrolling through
 unhelpful Stack Overflow answers.
 I did not think to try ChatGPT at the time,
@@ -405,13 +408,13 @@ I have a language in which this query is straightforward to express,
 and it can import json!
 
 ```
-$ rcl query --output=raw widgets.json '[
-  for w in input:
-  if w.get("tags", []).contains("fancy"):
-  w.name
+$ rcl query --output=raw machines.json '[
+  for m in input:
+  if m.get("tags", []).contains("amd"):
+  m.name
 ]'
-widget-1
-widget-4
+server-1
+server-4
 ```
 
 That’s how RCL,
@@ -420,9 +423,55 @@ became one of my most frequently used query languages.
 
 [jq]: https://jqlang.github.io/jq/
 
-## Conclusion
+## The future of RCL
 
-To do: write a conclusion.
+That day when I was fed up with HCL,
+and I ran `git init`,
+I didn’t expect to produce anything useful
+aside from entertaining myself for a few evenings.
+Now six months later,
+RCL is no longer vaporware,
+and it regularly solves real problems for me!
+
+Some parts of RCL are already quite polished.
+It has mostly good error reporting,
+[there is reference documentation](https://docs.ruuda.nl/rcl/),
+it has an autoformatter,
+and it is very well tested with a suite of golden tests and fuzzers.
+But RCL is also far from ready for prime time:
+there is no syntax highlighting for any editor aside from Vim,
+the type system is a work in progress,
+the Python module doesn’t expose errors nicely,
+the autoformatter has quirks,
+and I’m still ambivalent about whether there should be a `:` after `else`.
+
+But most of all,
+I’m not sure whether I _want_ RCL to experience prime time.
+Of course it is very gratifying to see your project be adopted
+and solve real-world problems for other people.
+I’m proud of what I built so far and I _want_ people to see it and try it
+— that’s why I publish everything as free and open source software,
+and that’s why I’m writing this post.
+It always cheers me up
+when somebody who found one of my projects useful or interesting sends me an e-mail.
+But I also already experience a bit of maintainer fatigue
+from some of my successful Rust crates,
+and I don’t always spend the time on them that they deserve.
+When a project takes off,
+inevitably users start making requests,
+having opinions,
+and submitting well-intentioned but low-quality contributions.
+Keeping up with that takes time and mental energy.
+I like working on RCL right now,
+because I get to build it in exactly the way I want,
+and it solves exactly the problems that I have.
+Building a tool for the open source community
+would require making different trade-offs.
+For now, I’m treating it as a source-available project.
+It solves a need for me,
+and if others find it useful that’s great,
+but it is provided as-is.
+Maybe Haskell’s _avoid success at all cost_ isn’t such a bad idea.
 
 ## Appendix: A non-exhaustive list of configuration languages
 
@@ -434,8 +483,7 @@ but beware that these are very superficial.
 
 [**Bicep**](https://github.com/Azure/bicep)
 — Microsoft’s DSL for configuring Azure resources declaratively.
-I haven’t looked into it in much detail,
-because I don’t work with Azure,
+I haven’t looked into it in much detail because I don’t work with Azure,
 but it looks potentially interesting.
 
 [**Cue**](https://cuelang.org/)
@@ -467,10 +515,10 @@ I use [Spago][spago],
 the PureScript package manager,
 in some of my projects,
 and it uses Dhall as its configuration format.
-It looks like that is being [deprecated][spago-depr] in favor of yaml though.
+Unfortunately it looks like it is being [deprecated][spago-depr] in favor of yaml.
 I tried to use Dhall once to solve an Advent of Code challenge,
 but got stuck immediately because it’s not possible to split strings in Dhall.
-(This year I solved a few Advent of Code challenges in RCL,
+(This year I [solved][aoc] a few Advent of Code challenges in RCL,
 which went pretty well for small inputs,
 but the lack of unbounded loops and tail calls
 make it unsuitable as a general-purpose language.)
@@ -553,6 +601,7 @@ of tools that can type and abstract json.
 I haven’t used TypeScript enough to have a strong opinion on its type system.
 Possibly RCL’s type system will end up being similar.
 
+[aoc]:           https://github.com/ruuda/adventofcode/blob/c452562c72cdd203df4dd0fd631596e6c0e2aa13/2023/11/main.rcl
 [gh-configlang]: https://github.com/topics/configuration-language
 [jsonnet-compr]: https://jsonnet.org/articles/comparisons.html
 [kcl-compr]:     https://kcl-lang.io/docs/0.6.0/user_docs/getting-started/intro/#how-to-choose
