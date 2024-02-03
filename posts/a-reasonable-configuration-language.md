@@ -58,7 +58,7 @@ And types.
 I never expected or intended for it to go anywhere
 — it was just a way to vent.
 But six months later,
-Ruud’s Configuration Language is no longer complete vaporware.
+_Ruud’s Configuration Language_ is no longer complete vaporware.
 I find it increasingly useful,
 and I think it might benefit others too.
 So let’s dive in!
@@ -89,7 +89,7 @@ The [Nix language][nix] had a more solid foundation
 in functional programming from the start,
 which enables abstraction in a natural way.
 It predates Terraform by more than a decade,
-and the language has stood the test of time far better than HCL did.
+and the language has stood the test of time far better than HCL.
 With very few changes,
 it scaled to massive configuration repositories like [Nixpkgs][nixpkgs],
 and although Nix has issues,
@@ -107,10 +107,10 @@ and the Haskell-style syntax can look foreign
 to people who are used to more mainstream languages.
 Still,
 Nix has many good ideas that have been proven to work,
-and my own configuration language takes lots of inspiration from it.
+and my own configuration language is heavily inspired by it.
 
 The other language that I take a lot of inspiration from is Python.
-It is not primarily a functional language,
+Python is not primarily a functional language,
 but you can certainly use it in that way
 (avoid mutation, write pure functions, prefer list comprehensions over loops, etc.),
 and this is very natural.
@@ -118,7 +118,7 @@ I find the syntax pleasant and readable:
 the meaning of idiomatic Python code is clear
 even to people who are not intimately familiar with the language.
 As a configuration language,
-Python is also not bad!
+Python is not bad!
 In fact,
 I’ve _also_ used Python to generate repetitive GitHub Actions configurations.
 List and dict literals are very similar to json,
@@ -142,8 +142,7 @@ but with enough room to code when needed,
 simple features that compose well),
 Python
 (clean and familiar syntax, list comprehensions, format strings, types),
-and of course
-— consciously or unconsciously —
+and — consciously or unconsciously —
 many more languages that I’ve been exposed to,
 and combined them into a language
 that _I_ like to work with.
@@ -185,7 +184,7 @@ and if I was looking for a tool to solve
 my configuration problems with the least amount of effort,
 then I can set my taste aside — I’ll get used to it.
 But for a personal project that I spend my free time on,
-I enjoy exploring a tool that is exactly what _I_ want to have.
+I enjoy exploring ideas that form exactly the tool that _I_ want to have.
 
 So that’s how it started,
 as a toy project.
@@ -204,12 +203,12 @@ First in unexpected places
 (as a `jq` replacement, more on that below),
 and as I added features,
 in more places,
-to the point where now,
-despite its shortcomings,
+to the point where now
+— despite its shortcomings —
 I would prefer it over some of the tools that I use at my day job.
 
-So now what — is it a Serious Software Project now?
-No, it’s still a hobby project without stability promise,
+So now what, is it a Serious Software Project now?
+No, it’s still a hobby project without stability promise.
 I don’t recommend using it for anything serious.
 But it’s also _useful_ to the point
 where I expect I’ll keep it in my toolbelt for the forseeable future
