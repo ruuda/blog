@@ -83,7 +83,7 @@ in an ad-hoc way that seemed helpful,
 but causes surprises down the line.
 (A `flatten` that _sometimes_ flattens recursively can’t be typed properly,
 which breaks generic code.)
-Many of Javascript and PHP’s idiosyncrasies can be explained in the same way.
+Many of JavaScript and PHP’s idiosyncrasies can be explained in the same way.
 
 The [Nix language][nix] had a more solid foundation
 in functional programming from the start,
@@ -217,7 +217,7 @@ And if it’s useful to me,
 maybe it’s useful to others,
 so that’s why I’m writing about it today.
 
-[appendix]: #appendix-other-configuration-languages
+[appendix]: #appendix-a-non-exhaustive-list-of-configuration-languages
 [pris]:     /2017/04/27/a-language-for-designing-slides
 
 ## Ruud’s Configuration Language
@@ -429,15 +429,136 @@ To do: write a conclusion.
 Aside from Nix, Python, and HCL, which I’ve already discussed extensively,
 I am aware of the following configuation languages.
 For the ones that I’ve used or at least evaluated briefly,
-I’ve added my personal impression,
-but note that these are very superficial.
+I added my personal impressions,
+but beware that these are very superficial.
 
- * **Cue** — TODO
- * **Dhall** — TODO
- * [**Jsonnet**](https://jsonnet.org/)
-   — I never properly evaluated Jsonnet, but probably I should.
-   Superficially it looks like one of the more mature formats,
-   and in many ways it looks similar to RCL.
- * **KCL** — TODO
- * **Nickel** — TODO
- * **Starlark** — TODO
+[**Bicep**](https://github.com/Azure/bicep)
+— Microsoft’s DSL for configuring Azure resources declaratively.
+I haven’t looked into it in much detail,
+because I don’t work with Azure,
+but it looks potentially interesting.
+
+[**Cue**](https://cuelang.org/)
+— Out of all the configuration languages
+that I evaluated during a company hackathon,
+I found Cue to be the most promising one.
+Its type system is interesting:
+it helps to constrain and validate configuration
+(as you would expect from a type system),
+but it also plays a role in eliminating boilerplate.
+Like Nix,
+Cue is based on few simple constructs that compose well,
+and grounded in solid theory.
+It took me some time before it clicked,
+but when it did,
+Cue became really powerful.
+A few things I don’t like about it
+are the package/module system that has its roots in the Go ecosystem,
+and its string interpolation syntax which is hideous.
+The command-line tooling works but could be more polished,
+and I found it to become slow quickly,
+even for fairly small configurations.
+
+[**Dhall**](https://dhall-lang.org/)
+— This is the first configuration language that I learned about many years ago.
+From what I can tell,
+it is one of the most mature and widely supported configuration languages.
+I use [Spago][spago],
+the PureScript package manager,
+in some of my projects,
+and it uses Dhall as its configuration format.
+It looks like that is being [deprecated][spago-depr] in favor of yaml though.
+I tried to use Dhall once to solve an Advent of Code challenge,
+but got stuck immediately because it’s not possible to split strings in Dhall.
+(This year I solved a few Advent of Code challenges in RCL,
+which went pretty well for small inputs,
+but the lack of unbounded loops and tail calls
+make it unsuitable as a general-purpose language.)
+Although I used to work as a Haskell developer,
+the formatting and names of built-in functions in Dhall look awkward to me.
+
+[**JSON-e**](https://json-e.js.org/)
+— A json parametrization language.
+I discovered this one in Rimu’s list of related projects.
+I think I’ve seen it mentioned a few times before,
+but I haven’t evaluated it at all.
+
+[**Jsonnet**](https://jsonnet.org/)
+— I never properly evaluated Jsonnet, but probably I should.
+Superficially it looks like one of the more mature formats,
+and in many ways it looks similar to RCL.
+Its documentation has
+[a page comparing itself against other configuration languages][jsonnet-compr].
+
+[**KCL**](https://kcl-lang.io/)
+— This is an odd one.
+From the website and repository it looks like a big project,
+but somehow I’ve never seen it come up or be used anywhere.
+I only learned about it when I started searching for configuration languages.
+From the way it describes itself,
+it sounds like the tool I want,
+but I am generally wary of tools that use lots of buzzwords,
+especially when it involves the words “modern” and “cloud native”.
+I should evaluate it properly at some point.
+Its documentation has
+[a page comparing itself against other configuation languages][kcl-compr].
+
+[**Nickel**](https://nickel-lang.org/)
+— [An attempt to create a language similar to Nix][nickel-intro],
+but without being tied to the package manager and Nix store.
+It looked very promising to me,
+but after evaluating it during a company hackathon,
+I found it difficult or impossible to express sanity checks
+that I can easily express in Cue and RCL.
+
+[**Pulumi**](https://www.pulumi.com/)
+— Not a configuration language,
+but an infrastructure automation tool like Terraform.
+It can be configured using existing general-purpose programming languages.
+I haven’t had the opportunity to try it,
+but I suppose I don’t get to complain about HCL
+without at least acknowledging Pulumi’s existence.
+
+[**Rimu**](https://rimu.dev/)
+— I stumbled upon this one recently while browsing
+[the configuration-language tag][gh-configlang] on GitHub.
+It might be an eerie case of [parallel discovery][par-discovery]:
+like RCL,
+it looks like a configuration language developed as a side project,
+written in Rust,
+started in August 2023,
+and not ready for serious use yet.
+Unlike RCL, its syntax is based on yaml.
+
+[**Starlark**](https://bazel.build/rules/language)
+— A Python dialect used by the Bazel build tool.
+I used it intensively when I was working with Blaze/Bazel,
+and it works well for defining build targets.
+Starlark has multiple implementations,
+including [one in Rust][starlark-rust]
+that can be used as a standalone command-line tool,
+but all the implementations clearly focus on being embedded.
+From my limited attempts
+to use them in an infrastructure-as-code repository,
+they are not suitable for incremental adoption there.
+
+[**TypeScript**](https://www.typescriptlang.org/)
+— Not a configuration language,
+but it deserves a mention here,
+because RCL intends to be json with abstraction and types,
+and since TypeScript is a superset of JavaScript,
+which is a superset of json,
+it falls in the same category
+of tools that can type and abstract json.
+I haven’t used TypeScript enough to have a strong opinion on its type system.
+Possibly RCL’s type system will end up being similar.
+
+[gh-configlang]: https://github.com/topics/configuration-language
+[jsonnet-compr]: https://jsonnet.org/articles/comparisons.html
+[kcl-compr]:     https://kcl-lang.io/docs/0.6.0/user_docs/getting-started/intro/#how-to-choose
+[nickel-intro]:  https://www.tweag.io/blog/2020-10-22-nickel-open-sourcing/
+[par-discovery]: https://en.wikipedia.org/wiki/Multiple_discovery
+[pulumi]:        https://www.pulumi.com/
+[spago-depr]:    https://github.com/purescript/spago/tree/bbe37b6cd497aa544bd0761fa7a56a5f5d002a87#migrate-from-spagodhall-to-spagoyaml
+[spago]:         https://github.com/purescript/spago
+[starlark-rust]: https://github.com/facebookexperimental/starlark-rust
