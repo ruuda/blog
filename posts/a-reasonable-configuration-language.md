@@ -88,8 +88,8 @@ Many of Javascript and PHP’s idiosyncrasies can be explained in the same way.
 The [Nix language][nix] had a more solid foundation
 in functional programming from the start,
 which enables abstraction in a natural way.
-It predates Terraform by more than a decade,
-and the language has stood the test of time far better than HCL.
+Even though it predates Terraform by more than a decade,
+the language has stood the test of time far better than HCL.
 With very few changes,
 it scaled to massive configuration repositories like [Nixpkgs][nixpkgs],
 and although Nix has issues,
@@ -222,19 +222,209 @@ so that’s why I’m writing about it today.
 
 ## Ruud’s Configuration Language
 
-Something something, toy project, lose interest.
-But actually, already useful.
-Not going away entirely.
+So what is this language?
+I call it RCL,
+jokingly named after myself,
+but it turns out that `rcl` is a pretty good file extension
+and name for a command-line tool.
+If you prefer,
+it might stand for Reasonable Configuration Language,
+or, in classic GNU style,
+for RCL configuration language.
+
+The language is a superset of json.
+This makes it easy to export data
+from many tools and incrementally upgrade it to RCL,
+including from yaml: just serialize it to json,
+and you’re good to go.
+This is a valid RCL document:
+
+```
+{
+  "buckets": [
+    {
+      "name": "bucket-0",
+      "location": "eu-west1",
+      "delete-after-seconds": 86400
+    },
+    {
+      "name": "bucket-1",
+      "location": "eu-west1",
+      "delete-after-seconds": 86400
+    }
+  ]
+}
+```
+
+It’s 2024, so RCL has some features
+that you might expect from a “modern” language:
+trailing commas and numeric underscores.
+Furthermore, dicts can be written with `ident = value` syntax
+to omit the quotes and reduce some line noise:
+
+```
+{
+  buckets = [
+    {
+      name = "bucket-0",
+      location = "eu-west1",
+      delete-after-seconds = 86_400,
+    },
+    {
+      name = "bucket-1",
+      location = "eu-west1",
+      delete-after-seconds = 86_400,
+    },
+  ],
+}
+```
+
+There are arithmetic expressions as you would expect, list comprehensions,
+format strings, and functions:
+
+```
+{
+  buckets = [
+    for i in std.range(0, 2):
+    {
+      name = f"bucket-{i}",
+      location = "eu-west1",
+      delete-after-seconds = 24 * 3600,
+    },
+  ],
+}
+```
+
+This is just a quick overview of some features.
+For a more thorough introduction,
+check out [the tutorial][rcl-tutorial]
+and [the syntax guide][rcl-syntax].
+
+An RCL document is always an expression,
+and you can evaluate it to a json document with the `rcl` command-line tool:
+
+```
+rcl evaluate --output=json buckets.rcl
+```
+
+The tool can also output in RCL syntax,
+which is a bit less noisy when inspecting data,
+and it’s a way to upgrade json documents to RCL.
+Aside from the standalone command-line tool,
+I also recently added a Python module
+that enables importing RCL documents in much the same way as `json.loads`.
+
+Abstraction in a single document is nice,
+but the real power comes from _imports_.
+These allow you to break down configuration into small reusable pieces.
+Let’s say that all your cloud resources are in the same location.
+Then we might have a file `cloud_config.rcl`:
+
+```
+{
+  location = "eu-west1",
+}
+```
+
+Then in `buckets.rcl`, we can use that like so:
+
+```
+let cloud_config = import "cloud_config.rcl";
+{
+  buckets = [
+    for i in std.range(0, 2):
+    {
+      name = f"bucket-{i}",
+      location = cloud_config.location,
+      delete-after-seconds = 24 * 3600,
+    },
+  ],
+}
+```
+
+Because every document is an expression,
+you can always evaluate it and inspect it,
+even if it’s only an intermediate stage in a larger configuration.
+For more fine-grained inspection,
+there is [`trace`][rcl-trace],
+and with `rcl query` you can evaluate an expression
+against a document to drill down into it.
+For example, to look only at the first bucket:
+
+```
+rcl query buckets.rcl 'input.buckets[0]'
+```
+
+This feature is what made RCL useful
+for a use case that I did not anticipate:
+querying json documents.
+
+[rcl-syntax]:   https://docs.ruuda.nl/rcl/syntax/
+[rcl-trace]:    https://docs.ruuda.nl/rcl/syntax/#debug-tracing
+[rcl-tutorial]: https://docs.ruuda.nl/rcl/tutorial/
 
 ## An unexpected jq replacement
 
-Write about how it’s nice for this.
+I use [jq][jq] a lot.
+Most of the time,
+only to pretty-print a json document returned from some API.
+Because RCL is a superset of json, `rcl` can do that too now:
+
+    curl --silent https://api.example.com | rcl evaluate
+
+By itself that is nothing special,
+the true power comes when querying.
+Jq features its own stream processing DSL,
+and for simple expressions I can usually remember the syntax
+— unpack the list, extract a few fields.
+But when it gets more complex,
+I’m at a loss.
+A while while ago,
+I was dealing with a json document that had roughly this structure:
+
+```json
+[
+  { "name": "widget-1", "tags": ["expensive", "fancy"] },
+  { "name": "widget-2", "tags": ["cheap"] },
+  { "name": "widget-3" },
+  { "name": "widget-4", "tags": ["fancy", "intricate"] }
+]
+```
+
+I wanted to know the names of all the widgets that had the `fancy` tag applied.
+I spent about 10 minutes struggling with `jq` and scrolling through
+unhelpful Stack Overflow answers.
+I did not think to try ChatGPT at the time,
+but in hindsight it _almost_ gets the query right
+to a point where I could then get it working myself.
+But fundamentally,
+these kind of queries come up so infrequently,
+that the things I learn about jq never really stick.
+At that point I remembered:
+I have a language in which this query is straightforward to express,
+and it can import json!
+
+```
+$ rcl query --output=raw widgets.json '[
+  for w in input:
+  if w.get("tags", []).contains("fancy"):
+  w.name
+]'
+widget-1
+widget-4
+```
+
+That’s how RCL,
+even though it is intended as a configuration language,
+became one of my most frequently used query languages.
+
+[jq]: https://jqlang.github.io/jq/
 
 ## Conclusion
 
 To do: write a conclusion.
 
-## Appendix: Other configuration languages
+## Appendix: A non-exhaustive list of configuration languages
 
 Aside from Nix, Python, and HCL, which I’ve already discussed extensively,
 I am aware of the following configuation languages.
