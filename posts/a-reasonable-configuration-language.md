@@ -21,7 +21,7 @@ that is was far simpler to just copy-paste the config six times.
 
 Although this HCL episode was the droplet,
 my bucket of frustration had been filling up
-for a longer time with challenges like these:
+for a longer time:
 
  * **GitHub Actions workflows** that differ in only a few commands
    — there is no native way to abstract those.
@@ -43,6 +43,52 @@ for a longer time with challenges like these:
 [rcl-loop]: https://github.com/ruuda/rcl/blob/bedbd3eea1129ba6053427d67b77a955240ceca8/examples/buckets.rcl#L9-L10
 [template-yaml]: /2023/01/11/the-yaml-document-from-hell#templating-yaml-is-a-terrible-terrible-idea
 [yaml-hell]: /2023/01/11/the-yaml-document-from-hell
+
+So that day,
+when I was in a particularly defiant mood,
+I decided to write my own configuration language.
+With list comprehensions.
+And types.
+
+<img
+  alt="I’ll build my own configuration language. With list comprehensions. And types."
+  src="/images/ill-build-my-own-configuration-language.png"
+  style="max-width: 20em; display: block; margin-left: auto; margin-right: auto;" />
+
+I never expected or intended for it to go anywhere
+— it was just a way to vent.
+But six months later,
+Ruud’s Configuration Language is no longer complete vaporware.
+I find it increasingly useful,
+and I think it might benefit others too.
+So let’s dive in!
+
+## Organic growth
+
+To be clear, I’m not criticizing the designers of Ansible or HCL.
+The limits of these tools are a natural consequence of their organic growth:
+you start out with a tool that needs simple configuration,
+adoption grows and people start doing more complex things with it,
+and suddenly you find yourself without a good way to do abstraction.
+So as a quick stopgap,
+you [bolt on][hcl-loop] control flow
+[encoded inside][ansible-loop] the [data format][gha-loop],
+because that’s easy to do within the limits of the existing syntax.
+
+When it comes to adding more principled abstraction features,
+the authors have a background in infrastructure administration,
+not in language design or type theory.
+And so they accidentally implement [some functions][hcl-flatten]
+in an ad-hoc way that seemed helpful,
+but causes surprises down the line.
+(A `flatten` that _sometimes_ flattens recursively can’t be typed properly,
+which breaks generic code.)
+Many of Javascript and PHP’s idiosyncrasies can be explained in the same way.
+
+[hcl-loop]:     https://developer.hashicorp.com/terraform/language/v1.7.x/meta-arguments/for_each
+[ansible-loop]: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html#standard-loops
+[gha-loop]:     https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
+[hcl-flatten]:  https://developer.hashicorp.com/terraform/language/v1.7.x/functions/flatten
 
 ## The problem
 
