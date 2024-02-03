@@ -14,7 +14,7 @@ I had heard about Colemak before,
 and a few months later a post about the keyboard layout made it to the front page of Hacker News.
 I decided to give it a try.
 
-Afraid be completely inproductive for some time,
+Afraid to be completely inproductive for some time,
 I did not want to make the switch cold-turkey.
 I practiced Colemak in the evenings, and typed Qwerty during the day.
 After little more than a week,
