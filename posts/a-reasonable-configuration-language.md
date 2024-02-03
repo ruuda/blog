@@ -109,6 +109,45 @@ Still,
 Nix has many good ideas that have been proven to work,
 and my own configuration language takes lots of inspiration from it.
 
+The other language that I take a lot of inspiration from is Python.
+It is not primarily a functional language,
+but you can certainly use it in that way
+(avoid mutation, write pure functions, prefer list comprehensions over loops, etc.),
+and this is very natural.
+I find the syntax pleasant and readable:
+the meaning of idiomatic Python code is clear
+even to people who are not intimately familiar with the language.
+As a configuration language,
+Python is also not bad!
+In fact,
+I’ve _also_ used Python to generate repetitive GitHub Actions configurations.
+List and dict literals are very similar to json,
+and with functions, list comprehensions, and format strings,
+there is ample room to abstract repetitive configuration.
+Types can help to document and enforce structure.
+
+But like Nix,
+I don’t think that Python is the answer to all configuration problems.
+A Python file is still primarily code,
+not data,
+and it’s usually not easy to inspect or evaluate pieces in isolation.
+It is possible to make the entry point `json.dump` data to stdout,
+but a Python program is still fundamentally a _program_ that has side-effects.
+
+For my own language,
+I took the parts that I like about Nix
+(functional,
+more data than code,
+but with enough room to code when needed,
+simple features that compose well),
+Python
+(clean and familiar syntax, list comprehensions, format strings, types),
+and of course
+— consciously or unconsciously —
+many more languages that I’ve been exposed to,
+and combined them into a language
+that _I_ like to work with.
+
 [hcl-loop]:     https://developer.hashicorp.com/terraform/language/v1.7.x/meta-arguments/for_each
 [ansible-loop]: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html#standard-loops
 [gha-loop]:     https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstrategymatrix
@@ -117,25 +156,99 @@ and my own configuration language takes lots of inspiration from it.
 [nixpkgs]:      https://github.com/NixOS/nixpkgs
 [nix-tojson]:   https://nixos.org/manual/nix/stable/language/builtins#builtins-toJSON
 
-## I’ll build my own configuration language!
+## Oh no, yet another configuration language!
 
-With list comprehensions. And types.
+I am not the first person to be frustrated
+by the lack of abstraction features in various tools,
+nor am I the first person to think
+that a configuration language would solve that.
+There exist more configuration languages than I can count on one hand already
+(see [the appendix][appendix]),
+and probably many more that I’m not aware of.
+So why add one more to the mix?
+Why is _this one_ going to _really_ solve all our problems,
+when five others haven’t seen widespread adoption (yet)?
 
-## Status
+First of all,
+I did not start out writing my own language thinking
+it would be a viable alternative to existing configuration languages.
+I started it to vent,
+because I find it fun to work on,
+because it’s a good learning exercise,
+and because I can do things in exactly the way that _I_ want to.
+Dhall has been around longer,
+has wider support,
+and a bigger community.
+But I don’t really like the syntax and the way it names some things.
+That’s a superficial complaint,
+and if I was looking for a tool to solve
+my configuration problems with the least amount of effort,
+then I can set my taste aside — I’ll get used to it.
+But for a personal project that I spend my free time on,
+I enjoy exploring a tool that is exactly what _I_ want to have.
 
-Something something, toy project, lose interest. But actually, already useful.
+So that’s how it started,
+as a toy project.
+I put a big vaporware warning on it,
+expecting that I would lose interest in it
+before it got to a point where it was useful.
+It’s certainly [not the first time][pris]
+that I’m writing a toy language that stalled,
+and maybe this one will meet the same fate.
+(I do still occasionally use Pris,
+and occasionally I get excited about adding features,
+but it’s mostly abandoned,
+like many of my side projects.)
+But then my tool started being useful.
+First in unexpected places
+(as a `jq` replacement, more on that below),
+and as I added features,
+in more places,
+to the point where now,
+despite its shortcomings,
+I would prefer it over some of the tools that I use at my day job.
+
+So now what — is it a Serious Software Project now?
+No, it’s still a hobby project without stability promise,
+I don’t recommend using it for anything serious.
+But it’s also _useful_ to the point
+where I expect I’ll keep it in my toolbelt for the forseeable future
+— if only as a `jq` replacement.
+And if it’s useful to me,
+maybe it’s useful to others,
+so that’s why I’m writing about it today.
+
+[appendix]: #appendix-other-configuration-languages
+[pris]:     /2017/04/27/a-language-for-designing-slides
+
+## Ruud’s Configuration Language
+
+Something something, toy project, lose interest.
+But actually, already useful.
 Not going away entirely.
 
 ## An unexpected jq replacement
 
-## Why another configuration language?
-
-There are already so many languages that claim to solve the
-“write repetitive configuration in a nice way”-problem.
-Why add another one to the pile?
-
-To do: add list of alternatives.
+Write about how it’s nice for this.
 
 ## Conclusion
 
 To do: write a conclusion.
+
+## Appendix: Other configuration languages
+
+Aside from Nix, Python, and HCL, which I’ve already discussed extensively,
+I am aware of the following configuation languages.
+For the ones that I’ve used or at least evaluated briefly,
+I’ve added my personal impression,
+but note that these are very superficial.
+
+ * **Cue** — TODO
+ * **Dhall** — TODO
+ * [**Jsonnet**](https://jsonnet.org/)
+   — I never properly evaluated Jsonnet, but probably I should.
+   Superficially it looks like one of the more mature formats,
+   and in many ways it looks similar to RCL.
+ * **KCL** — TODO
+ * **Nickel** — TODO
+ * **Starlark** — TODO
