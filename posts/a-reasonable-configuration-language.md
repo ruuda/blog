@@ -3,7 +3,7 @@ title: A reasonable configuration language
 date: 2024-02-03
 lang: en-US
 minutes: ??
-synopsis: TODO
+synopsis: I was fed up with the poor opportunities for abstraction in the configuration formats of the infrastructure tools I use. Although there exist many configuration languages already, those were not invented here, so I wrote my own.
 run-in: About six months ago
 ---
 
@@ -21,7 +21,7 @@ that is was far simpler to just copy-paste the config six times.
 
 Although this HCL episode was the droplet,
 my bucket of frustration had been filling up
-for a longer time:
+for a long time:
 
  * **GitHub Actions workflows** that differ in only a few commands
    — there is no native way to abstract those.
@@ -35,7 +35,7 @@ for a longer time:
    (adding comments and a lighter syntax to json),
    but in the process introduces [so many new problems][yaml-hell]
    that the cure is arguably worse than the disease.
- * **Ansible playbooks** that are too similar to copy-paste,
+ * **Ansible playbooks** that are too similar to justify duplicating,
    but different enough that parametrizing over data is insufficient.
    Related to this,
    the parameter data is difficult to share between Ansible and other tools.
@@ -166,7 +166,7 @@ There exist more configuration languages than I can count on one hand already
 and probably many more that I’m not aware of.
 So why add one more to the mix?
 Why is _this one_ going to _really_ solve all our problems,
-when five others haven’t seen widespread adoption (yet)?
+when five more mature ones haven’t seen widespread adoption (yet)?
 
 First of all,
 I did not start out writing my own language thinking
@@ -184,7 +184,7 @@ and if I was looking for a tool to solve
 my configuration problems with the least amount of effort,
 then I can set my taste aside — I’ll get used to it.
 But for a personal project that I spend my free time on,
-I enjoy exploring ideas that form exactly the tool that _I_ want to have.
+I enjoy exploring ideas and building exactly the tool that _I_ want to have.
 
 So that’s how it started,
 as a toy project.
@@ -294,6 +294,26 @@ format strings, and functions:
   ],
 }
 ```
+For validation, the [`key_by`][key-by] method is useful.
+In the above example,
+if we’d name the buckets by hand and there are many of them,
+how do we ensure that we don’t accidentally create two buckets with the same name?
+We can do that by building a mapping from name to bucket:
+```
+let buckets = [
+  // Omitted here for brevity, defined as before.
+];
+
+// Build a mapping of bucket name to bucket. If a key (bucket name)
+// occurs multiple times, this will fail with an error that reports
+// the offending key and the associated values.
+let buckets_by_name: Dict[String, Dynamic] = buckets.key_by(b => b.name);
+
+// Constructing the mapping is enough for validation, the document still
+// evaluates to the same dict as before. Note, the left "buckets" is the
+// name of the field, the right "buckets" is a variable reference.
+{ buckets = buckets }
+```
 
 This is just a quick overview of some features.
 For a more thorough introduction,
@@ -322,7 +342,7 @@ Then we might have a file `cloud_config.rcl`:
 
 ```
 {
-  location = "eu-west1",
+  default_location = "eu-west1",
 }
 ```
 
@@ -335,7 +355,7 @@ let cloud_config = import "cloud_config.rcl";
     for i in std.range(0, 2):
     {
       name = f"bucket-{i}",
-      location = cloud_config.location,
+      location = cloud_config.default_location,
       delete-after-seconds = 24 * 3600,
     },
   ],
@@ -345,9 +365,8 @@ let cloud_config = import "cloud_config.rcl";
 Because every document is an expression,
 you can always evaluate it and inspect it,
 even if it’s only an intermediate stage in a larger configuration.
-For more fine-grained inspection,
-there is [`trace`][rcl-trace],
-and with `rcl query` you can evaluate an expression
+For more fine-grained inspection there is [`trace`][rcl-trace],
+and with [`rcl query`][rcl-query] you can evaluate an expression
 against a document to drill down into it.
 For example, to look only at the first bucket:
 
@@ -359,6 +378,8 @@ This feature is what made RCL useful
 for a use case that I did not anticipate:
 querying json documents.
 
+[key-by]:       https://docs.ruuda.nl/rcl/type_list/#key_by
+[rcl-query]:    https://docs.ruuda.nl/rcl/rcl_query/
 [rcl-syntax]:   https://docs.ruuda.nl/rcl/syntax/
 [rcl-trace]:    https://docs.ruuda.nl/rcl/syntax/#debug-tracing
 [rcl-tutorial]: https://docs.ruuda.nl/rcl/tutorial/
@@ -401,8 +422,11 @@ I did not think to try ChatGPT at the time,
 but in hindsight it _almost_ gets the query right
 to a point where I could then get it working myself.
 But fundamentally,
-these kind of queries come up so infrequently,
+these kind of queries come up so infrequently
 that the things I learn about jq never really stick.
+ChatGPT is no excuse to tolerate bad tools:
+if the one-liner is easy to write,
+that’s still faster than leaving your terminal.
 At that point I remembered:
 I have a language in which this query is straightforward to express,
 and it can import json!
@@ -425,8 +449,7 @@ became one of my most frequently used query languages.
 
 ## The future of RCL
 
-That day when I was fed up with HCL,
-and I ran `git init`,
+That day when I was fed up with HCL and I ran `git init`,
 I didn’t expect to produce anything useful
 aside from entertaining myself for a few evenings.
 Now six months later,
@@ -435,9 +458,13 @@ and it regularly solves real problems for me!
 
 Some parts of RCL are already quite polished.
 It has mostly good error reporting,
-[there is reference documentation](https://docs.ruuda.nl/rcl/),
+[there is reference documentation][rcl-docs],
 it has an autoformatter,
 and it is very well tested with a suite of golden tests and fuzzers.
+Although I’m not sure at what point
+it starts being worth the complication of an additional tool,
+RCL can define cloud storage buckets today
+with [Terraform’s json syntax][tf-json].
 But RCL is also far from ready for prime time:
 there is no syntax highlighting for any editor aside from Vim,
 the type system is a work in progress,
@@ -472,6 +499,9 @@ It solves a need for me,
 and if others find it useful that’s great,
 but it is provided as-is.
 Maybe Haskell’s _avoid success at all cost_ isn’t such a bad idea.
+
+[rcl-docs]: https://docs.ruuda.nl/rcl/
+[tf-json]:  https://developer.hashicorp.com/terraform/language/syntax/json
 
 ## Appendix: A non-exhaustive list of configuration languages
 
