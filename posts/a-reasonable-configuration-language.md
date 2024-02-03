@@ -1,6 +1,6 @@
 ---
 title: A reasonable configuration language
-date: 2024-02-03
+date: 2024-02-04
 lang: en-US
 minutes: ??
 synopsis: I was fed up with the poor opportunities for abstraction in the configuration formats of the infrastructure tools I use. Although there exist many configuration languages already, those were not invented here, so I wrote my own.
