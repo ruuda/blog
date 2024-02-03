@@ -18,7 +18,7 @@ description = "A language for designing slides."
 
 [RCL]
 slug = "rcl"
-description = "A sane configuration language."
+description = "A reasonable configuration language."
 
 [Squiller]
 slug = "squiller"

@@ -16,6 +16,7 @@
 
 # Generated blog output
 /out
+/docindex/index.rendered.html
 
 # Python virtualenv
 /venv
