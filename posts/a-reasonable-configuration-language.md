@@ -640,6 +640,17 @@ but after evaluating it during a company hackathon,
 I found it difficult or impossible to express sanity checks
 that I can easily express in Cue and RCL.
 
+[**Pkl**](https://pkl-lang.org/)
+— A configuration language by Apple.
+The timing is eerie:
+I wrote this post on a Saturday
+with the intention of proofreading and publishing it the next day,
+and right that Sunday morning,
+[the Pkl announcement post][pkl-announce] was on the Hacker News frontpage.
+From the comments,
+it [has been in use][pkl-used] at Apple internally for a few years already.
+I haven’t had the opportunity to evaluate it yet.
+
 [**Pulumi**](https://www.pulumi.com/)
 — Not a configuration language,
 but an infrastructure automation tool like Terraform.
@@ -688,6 +699,8 @@ Possibly RCL’s type system will end up being similar.
 [kcl-compr]:     https://kcl-lang.io/docs/0.6.0/user_docs/getting-started/intro/#how-to-choose
 [nickel-intro]:  https://www.tweag.io/blog/2020-10-22-nickel-open-sourcing/
 [par-discovery]: https://en.wikipedia.org/wiki/Multiple_discovery
+[pkl-announce]:  https://pkl-lang.org/blog/introducing-pkl.html
+[pkl-used]:      https://news.ycombinator.com/item?id=39248081
 [pulumi]:        https://www.pulumi.com/
 [spago-depr]:    https://github.com/purescript/spago/tree/bbe37b6cd497aa544bd0761fa7a56a5f5d002a87#migrate-from-spagodhall-to-spagoyaml
 [spago]:         https://github.com/purescript/spago
