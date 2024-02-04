@@ -2,7 +2,7 @@
 title: A reasonable configuration language
 date: 2024-02-04
 lang: en-US
-minutes: ??
+minutes: 17
 synopsis: I was fed up with the poor opportunities for abstraction in configuration formats. The many configuration languages that exist already were not invented here, so I wrote my own, at first just for fun. But then it became useful.
 run-in: About six months ago
 ---
@@ -137,17 +137,16 @@ Python’s module system is great for larger codebases,
 but less suitable for sharing pieces of data between many small scripts.
 
 For my own language,
-I took the parts that I like about Nix
-(functional,
+I took the parts that I like about Nix:
+functional,
 more data than code,
 but with enough room to code when needed,
-simple features that compose well),
-Python
-(clean and familiar syntax, list comprehensions, format strings, types),
-and — consciously or unconsciously —
-many more languages that I’ve been exposed to,
-and combined them into a language
-that _I_ like to work with.
+and simple features that compose well.
+I took what I like about Python:
+the clean and familiar syntax, list comprehensions, format strings, and types.
+And consciously or unconsciously,
+I’m influenced by many more languages that I’ve been exposed to.
+Those ideas I combined into a language that _I_ like working with.
 
 [hcl-loop]:     https://developer.hashicorp.com/terraform/language/v1.7.x/meta-arguments/for_each
 [ansible-loop]: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_loops.html#standard-loops
@@ -476,7 +475,7 @@ but in hindsight it _almost_ gets the query right
 to a point where I could then get it working myself.
 But fundamentally,
 these kind of queries come up so infrequently
-that the things I learn about jq never really stick.
+that the things I learn about `jq` never really stick.
 ChatGPT is no excuse to tolerate bad tools:
 if the one-liner is easy to write,
 that’s still faster than leaving your terminal.
@@ -590,6 +589,8 @@ and its string interpolation syntax which is hideous.
 The command-line tooling works but could be more polished,
 and I found it to become slow quickly,
 even for fairly small configurations.
+It has [a page][cue-compr]
+comparing itself against a few other configuation languages.
 
 [**Dhall**](https://dhall-lang.org/)
 — This is the first configuration language that I learned about many years ago.
@@ -602,10 +603,14 @@ and it uses Dhall as its configuration format.
 Unfortunately it looks like it is being [deprecated][spago-depr] in favor of yaml.
 I tried to use Dhall once to solve an Advent of Code challenge,
 but got stuck immediately because it’s not possible to split strings in Dhall.
-(This year I [solved][aoc] a few Advent of Code challenges in RCL,
+Of course,
+this is an unfair test to evaluate a configuration language on,
+but it does give an impression of the expressivity of a language.
+I’ve used Nix to [solve][aoc-nix] a few Advent of Code challenges in the past,
+and this year I [solved][aoc-rcl] a few in RCL,
 which went pretty well for small inputs,
 but the lack of unbounded loops and tail calls
-make it unsuitable as a general-purpose language.)
+make it unsuitable as a general-purpose language.
 Although I used to work as a Haskell developer,
 the formatting and names of built-in functions in Dhall look awkward to me.
 
@@ -619,12 +624,13 @@ but I haven’t evaluated it at all.
 — I never properly evaluated Jsonnet, but probably I should.
 Superficially it looks like one of the more mature formats,
 and in many ways it looks similar to RCL.
-Its documentation has
-[a page comparing itself against other configuration languages][jsonnet-compr].
+Its has [a page][jsonnet-compr]
+comparing itself against other configuration languages.
 
 [**KCL**](https://kcl-lang.io/)
 — This is an odd one.
-From the website and repository it looks like a big project,
+From the website and repository it looks like
+a lot of resources went into this project,
 but somehow I’ve never seen it come up or be used anywhere.
 I only learned about it when I started searching for configuration languages.
 From the way it describes itself,
@@ -632,8 +638,8 @@ it sounds like the tool I want,
 but I am generally wary of tools that use lots of buzzwords,
 especially when it involves the words “modern” and “cloud native”.
 I should evaluate it properly at some point.
-Its documentation has
-[a page comparing itself against other configuation languages][kcl-compr].
+It has [a page][kcl-compr]
+comparing itself against other configuation languages.
 
 [**Nickel**](https://nickel-lang.org/)
 — [An attempt to create a language similar to Nix][nickel-intro],
@@ -642,6 +648,8 @@ It looked very promising to me,
 but after evaluating it during a company hackathon,
 I found it difficult or impossible to express sanity checks
 that I can easily express in Cue and RCL.
+Its has [a page][nickel-compr]
+comparing itself against other configuation languages.
 
 [**Pkl**](https://pkl-lang.org/)
 — A configuration language by Apple.
@@ -653,6 +661,9 @@ and right that Sunday morning,
 From the comments,
 it [has been in use][pkl-used] at Apple internally for a few years already.
 I haven’t had the opportunity to evaluate it yet.
+Its has [a page][pkl-compr]
+comparing itself against other configuation languages,
+but only superficially.
 
 [**Pulumi**](https://www.pulumi.com/)
 — Not a configuration language,
@@ -696,13 +707,17 @@ of tools that can type and abstract json.
 I haven’t used TypeScript enough to have a strong opinion on its type system.
 Possibly RCL’s type system will end up being similar.
 
-[aoc]:           https://github.com/ruuda/adventofcode/blob/c452562c72cdd203df4dd0fd631596e6c0e2aa13/2023/11/main.rcl
+[aoc-nix]:       https://github.com/ruuda/adventofcode/blob/c452562c72cdd203df4dd0fd631596e6c0e2aa13/2022/03/main.nix
+[aoc-rcl]:       https://github.com/ruuda/adventofcode/blob/c452562c72cdd203df4dd0fd631596e6c0e2aa13/2023/11/main.rcl
+[cue-compr]:     https://cuelang.org/docs/usecases/configuration/#comparisons
 [gh-configlang]: https://github.com/topics/configuration-language
 [jsonnet-compr]: https://jsonnet.org/articles/comparisons.html
 [kcl-compr]:     https://kcl-lang.io/docs/0.6.0/user_docs/getting-started/intro/#how-to-choose
+[nickel-compr]:  https://github.com/tweag/nickel/blob/6cf2902d3db768618e1d990c549671e308dd3ff4/RATIONALE.md#comparison-with-alternatives
 [nickel-intro]:  https://www.tweag.io/blog/2020-10-22-nickel-open-sourcing/
 [par-discovery]: https://en.wikipedia.org/wiki/Multiple_discovery
 [pkl-announce]:  https://pkl-lang.org/blog/introducing-pkl.html
+[pkl-compr]:     https://pkl-lang.org/main/current/introduction/comparison.html
 [pkl-used]:      https://news.ycombinator.com/item?id=39248081
 [pulumi]:        https://www.pulumi.com/
 [spago-depr]:    https://github.com/purescript/spago/tree/bbe37b6cd497aa544bd0761fa7a56a5f5d002a87#migrate-from-spagodhall-to-spagoyaml
