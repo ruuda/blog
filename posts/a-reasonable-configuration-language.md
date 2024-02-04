@@ -3,13 +3,13 @@ title: A reasonable configuration language
 date: 2024-02-04
 lang: en-US
 minutes: ??
-synopsis: I was fed up with the poor opportunities for abstraction in the configuration formats of the infrastructure tools I use. Although there exist many configuration languages already, those were not invented here, so I wrote my own.
+synopsis: I was fed up with the poor opportunities for abstraction in configuration formats. The many configuration languages that exist already were not invented here, so I wrote my own, at first just for fun. But then it became useful.
 run-in: About six months ago
 ---
 
 About six months ago, I was fed up with it.
 The particular _it_ was HCL — Hashicorp Configuration Language —
-but that was only the trigger,
+but that was just the trigger,
 it was hardly the only offender.
 The issue I was struggling with that day
 was to define six cloud storage buckets in Terraform.
@@ -25,7 +25,7 @@ for a long time:
 
  * **GitHub Actions workflows** that differ in only a few commands
    — there is no native way to abstract those.
-   The same often applies to jobs within a workflow.
+   The same applies to jobs within a workflow.
  * **Kubernetes manifests** that are 80% the same for most applications,
    and an entire industry that fails to adopt a proper solution for this,
    and instead resorts to templating yaml,
@@ -34,7 +34,7 @@ for a long time:
    a format that does solve some problems
    (adding comments and a lighter syntax to json),
    but in the process introduces [so many new problems][yaml-hell]
-   that the cure is arguably worse than the disease.
+   that the cure is almost as bad as the disease.
  * **Ansible playbooks** that are too similar to justify duplicating,
    but different enough that parametrizing over data is insufficient.
    Related to this,
@@ -58,10 +58,12 @@ And types.
 I never expected or intended for it to go anywhere
 — it was just a way to vent.
 But six months later,
-_Ruud’s Configuration Language_ is no longer complete vaporware.
+[_Ruud’s Configuration Language_][rcl-github] is no longer completely vaporware.
 I find it increasingly useful,
 and I think it might benefit others too.
 So let’s dive in!
+
+[rcl-github]: https://github.com/ruuda/rcl
 
 ## A functional foundation
 
@@ -103,7 +105,7 @@ This is the power of having few simple features that compose well.
 Though Nix is great,
 I don’t think it is the answer to all configuration problems.
 Nix-the-language is intimately tied to Nix-the-package-manager and the Nix store,
-and the Haskell-style syntax can look foreign
+and the ML-style syntax can look foreign
 to people who are used to more mainstream languages.
 Still,
 Nix has many good ideas that have been proven to work,
@@ -128,11 +130,11 @@ Types can help to document and enforce structure.
 
 But like Nix,
 I don’t think that Python is the answer to all configuration problems.
-A Python file is still primarily code,
-not data,
-and it’s usually not easy to inspect or evaluate pieces in isolation.
-It is possible to make the entry point `json.dump` data to stdout,
-but a Python program is still fundamentally a _program_ that has side-effects.
+A Python file is still primarily code, not data.
+You can have an entry point `json.dump` data to files or stdout,
+but it’s not always easy to import or evaluate intermediate pieces in isolation.
+Python’s module system is great for larger codebases,
+but less suitable for sharing pieces of data between many small scripts.
 
 For my own language,
 I took the parts that I like about Nix
@@ -224,7 +226,7 @@ so that’s why I’m writing about it today.
 
 So what is this language?
 I call it RCL,
-jokingly named after myself,
+named after myself in Bender meme style,
 but it turns out that `rcl` is a pretty good file extension
 and name for a command-line tool.
 If you prefer,
@@ -519,6 +521,7 @@ with [Terraform’s json syntax][tf-json].
 But RCL is also far from ready for prime time:
 there is no syntax highlighting for any editor aside from Vim,
 the type system is a work in progress,
+it doesn’t support floats yet,
 the Python module doesn’t expose errors nicely,
 the autoformatter has quirks,
 and I’m still ambivalent about whether there should be a `:` after `else`.
