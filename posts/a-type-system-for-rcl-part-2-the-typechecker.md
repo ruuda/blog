@@ -9,3 +9,5 @@ synopsis: TODO
 ---
 
 TODO: Write intro, headings, etc.
+
+TODO: Write that we track sourec spans for types and it's helpful.
