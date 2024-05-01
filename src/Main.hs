@@ -5,7 +5,7 @@
 -- the licence file in the root of the repository.
 
 import Control.Monad (filterM)
-import Data.List (isSuffixOf)
+import Data.List (isSuffixOf, sortOn)
 import Data.Monoid ((<>))
 import Data.Time.Calendar (toGregorian)
 import Data.Time.Clock (getCurrentTime, utctDay)
@@ -216,10 +216,13 @@ writeFeed template posts = do
   writeUtf8 destFile atom
   compressFile destFile
 
+sortPosts :: [P.Post] -> [P.Post]
+sortPosts = sortOn $ \p -> (P.date p, P.part p)
+
 main :: IO ()
 main = do
   templates <- readTemplates "templates/"
-  posts     <- readPosts     "posts/"
+  posts <- sortPosts <$> readPosts "posts/"
 
   -- Create a context with the field "year" set to the current year, and create
   -- a context that contains all of the templates, to handle includes.

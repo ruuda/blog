@@ -4,11 +4,10 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
-module Post ( Post
+module Post ( Post (date, part)
             , archiveContext
             , body
             , context
-            , date
             , extraGlyphs
             , feedContext
             , longDate
