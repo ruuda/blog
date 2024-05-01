@@ -1,7 +1,7 @@
 ---
-title: A type system for RCL, part 2: The typechecker
+title: A type system for RCL, part 2: The type system
 header: A type system for RCL
-subheader: The typeche<span class="dlig">ck</span>er
+subheader: The type <span class="dlig">system</span>
 part: 2
 lang: en-US
 date: 2024-04-29

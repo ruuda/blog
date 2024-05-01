@@ -1,7 +1,7 @@
 ---
-title: A type system for RCL, part 1: Types
+title: A type system for RCL, part 1: Introduction
 header: A type system for RCL
-subheader: Types
+subheader: <span class="dlig">Introduction</span>
 part: 1
 lang: en-US
 date: 2024-04-29
