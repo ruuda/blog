@@ -1,7 +1,7 @@
 ---
 title: A type system for RCL, part 1: Introduction
 header: A type system for RCL
-subheader: <span class="dlig">Introduction</span>
+subheader: Introduction
 part: 1
 lang: en-US
 date: 2024-04-29
@@ -29,7 +29,7 @@ My goal with this series is twofold:
  * **Sharing ideas and experiences.**
    None of the ideas in the type system are especially innovative or special,
    but the way in which they work together can still be interesting.
- * **I’m looking for feedback.**
+ * **Gathering feedback.**
    I feel pretty confident that the way the RCL interpreter is implemented makes sense,
    but I’m less sure about the type system.
    I studied program analysis and type and effect systems in university
@@ -55,7 +55,7 @@ and can be exported as json, yaml, or toml.
 [nix-lang]: https://nixos.org/manual/nix/stable/language/index.html
 
 The data model is that of json plus sets and functions.
-Dictionary keys are not limited to strings,
+Also, dictionary keys are not limited to strings,
 they can be any value.
 Aside from literals for these new values,
 RCL adds let-bindings, list comprehensions, and a few other features to json.
@@ -143,7 +143,7 @@ These tools can demand any schema.
 If RCL placed limitations on that,
 it would not be a very useful configuration language.
 This means that the type system must be able to deal with
-values that some strongly typed languages would reject,
+constructs that some type systems would reject,
 such as heterogeneous lists,
 or if-else expressions where the then-branch
 returns a different type than the else-branch.
@@ -165,9 +165,46 @@ we’ll see more about the type lattice in the next post.
 
 ## Static typing
 
-TODO: We do report errors in unreachable code.
+R<!---->C<!---->L is statically typed,
+in the sense that it can report type errors in unreachable code.
+For example,
+the following program fails with a type error:
 
-## Runtime errors are static errors
+```
+let string = "strings cannot be negated";
+if false:
+  // Error: Type mismatch. Expected Bool but found String.
+  not string
+else
+  true
+```
+
+However,
+although RCL enforces all type annotations,
+it defers some type checks to runtime.
+The following is fine:
+
+```
+let string: Any = "strings cannot be negated";
+if false:
+  not string
+else
+  true
+```
+
+In general,
+the typechecker can encounter three cases:
+
+* It can prove that the program contains a type error.
+  In this case it reports the error.
+* It can prove that the program is well-typed.
+  In this case we proceed to evaluation.
+* It can’t rule out a type error, but it can’t prove it either.
+  In this case it inserts a runtime type check.
+
+TODO: Move to next post.
+
+## Blurring the line between static and runtime
 
 For long-running daemons or programs deployed to users,
 types are essential for building robust software.
