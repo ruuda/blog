@@ -180,6 +180,7 @@ getGlyphName c = case c of
   '@' -> "at"
   '[' -> "bracketleft"
   ']' -> "bracketright"
+  '^' -> "asciicircum"
   '_' -> "underscore"
   '`' -> "grave"
   '{' -> "braceleft"
