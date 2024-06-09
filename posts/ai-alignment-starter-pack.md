@@ -4,7 +4,7 @@ break: alignment starter
 date: 2024-06-09
 lang: en-US
 minutes: ?
-synopsis: TODO
+synopsis: In this post I share resources for learning more about AI alignment, and why misalignment is a risk that I take seriously.
 run-in: Despite the amount of attention
 ---
 
