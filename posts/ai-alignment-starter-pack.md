@@ -8,12 +8,12 @@ run-in: Despite the amount of attention
 ---
 
 Despite the amount of attention that machine learning is receiving nowadays,
-alignment is still a niche topic.
+few people are familiar with the concept of AI alignment.
 This worries me,
 because a misaligned superintelligence has the potential
 to pose an existential threat to humanity,
 and I think we should treat it as seriously as nuclear warfare or climate change.
-In this post I want to mention some of the keywords
+In this post I want to introduce some of the concepts
 and share pointers for where to learn more about AI alignment.
 
 ## What is AI alignment?
@@ -53,10 +53,10 @@ A superintelligence is by definition vastly better than humans at achieving its 
 If that goal does not include a component that cares about preserving humanity,
 when humans and the superintelligence compete for resources,
 humans will not stand a chance.
-A rogue AI does not have to turn against humans explicitly
+A rogue AGI does not have to turn against humans explicitly
 — it simply may not care.
 People who worry about alignment worry
-that the _default_ state of an AI is to be unaligned
+that the _default_ state of an AGI is to be unaligned
 for reasons highlighted in the next sections.
 
 Recommended resources:
@@ -88,12 +88,21 @@ long enough before we get one that is capable of destroying humanity.
 This means that we would have time to take action.
 
 In a _hard_ or _fast takeoff_,
-AI capabilities increase suddenly by a large amount.
+AI capabilities increase at an accelerating pace.
+Where the graph goes vertical,
+this looks like a sudden large capability gain.
 This may happen for various reasons,
 for example because AI may speed up the development of better AI.
 In a hard takeoff scenario,
 we may not realize that we have an AI with lethal capabilities
 before it’s too late.
+
+If it is indeed harder to create an aligned AGI
+than it is to create _any_ AGI,
+then companies racing to create AGI without regard for alignment
+is a problem in a hard takeoff scenario.
+If the first superintelligence we create is misaligned,
+we do not get to try a second time.
 
 Resources:
 
@@ -117,7 +126,7 @@ and why we may not be able to tell that it’s misaligned.
    — The Orthogonality Thesis states that there can exist intelligent agents
    that can pursue any kind of goal (such as maximizing paperclips),
    and that agents that have a goal that seems absurd to humans
-   don’t have to be fundamentally different.
+   don’t have to be fundamentally different from agents that don’t.
  * [Instrumental convergence][convergence]
    — The observation that some actions are a good first step for many goals.
    As a silly example,
@@ -126,7 +135,7 @@ and why we may not be able to tell that it’s misaligned.
    Regardless of where exactly you need to go,
    crossing the Golden Gate bridge would be the first step.
    If your taxi driver starts crossing the bridge,
-   that brings you closer to your destination at first,
+   that brings you closer to your destination,
    but it is no guarantee that the driver has the goal of taking you there.
    Similarly,
    if we see an AGI doing things we like at first,
@@ -136,9 +145,10 @@ and why we may not be able to tell that it’s misaligned.
    (updated, altered, or shut down) by its operators.
    Interfering with attempts to be corrected is an instrumentally convergent behavior:
    you can’t achieve goals when you are shut down!
-   In [this post][christiano-corrigible],
-   Paul Christiano responds to the [_Corrigibility_][yudkowski-corrigible] paper
-   by Soares, Fallenstein, and Yudkowski.
+   Nate Soares, Benja Fallenstein, and Eliezer Yudkowski
+   [introduce the concept][yudkowski-corrigible] as an open problem.
+   [Paul Christiano argues][christiano-corrigible] that corrigibility
+   is not as big of a problem as it seems.
 
 [orthogonality]: https://arbital.com/p/orthogonality/
 [convergence]:   https://arbital.com/p/instrumental_convergence/
@@ -146,11 +156,90 @@ and why we may not be able to tell that it’s misaligned.
 [christiano-corrigible]: https://www.alignmentforum.org/posts/fkLYhTQteAu5SinAc/corrigibility
 [yudkowski-corrigible]:  https://intelligence.org/files/Corrigibility.pdf
 
+## Inner and outer goals
+
+The current wave of AI is powered by neural networks
+that are trained using gradient descent to minimize a loss function
+or maximize a reward.
+In some cases we program the goal explicitly into the training loop
+(for example, for an AI that learns to play chess).
+In other cases,
+where we don’t know how to express the goal formally,
+we show a bunch of examples of what we want,
+and in practice the resulting model
+gives the output we want even on inputs it has not seen.
+Doesn’t this mean that the model is aligned?
+
+Unfortunately, no.
+Just because the optimizer had an _outer goal_,
+doesn’t mean that the model internalized that goal as its _inner goal_.
+
+ * An example of this is the [Adversarial Patch][patch] paper.
+   It shows how an image classifier that works well on ordinary photographs
+   very confidently misclassifies a banana as a toaster
+   after adding a sticker with specific colored patterns
+   — a mistake that no human would make.
+   We trained the model to tell bananas and toasters apart,
+   and it learned to classify based on something different
+   that correlates with bananas and toasters,
+   but behaves unpredictably under _distributional shift_.
+ * Another example is the [Neural Net Tank Urban Legend][gwern-tank],
+   where the creators of an image model thought they trained it to recognize tanks,
+   but in reality the model learned to recognize cloudy vs. sunny days.
+   While the story likely never happened,
+   it serves as a reminder that neural networks are black boxes.
+   The field of [interpretability][interpret] is in its infancy,
+   and we have no tools to verify that the model
+   learned the outer goal it was trained on.
+ * Evolution producing humans is the only known example
+   of an optimizer that created general intelligence,
+   and it failed to align the inner goal to the outer goal.
+   (Evolution wants inclusive genetic fitness,
+   humans want sweet/fat food and sex.
+   For a long time humans pursuing their inner goal
+   helped to achieve evolution’s outer goal
+   — until we developed healthcare, ice cream, and contraception.)
+   Eliezer makes this argument in [his AGI ruin post][ruin],
+   though others [argue that the analogy is inappropriate][evolution-no].
+
+[patch]:        https://arxiv.org/abs/1712.09665
+[acx-mesa]:     https://www.astralcodexten.com/p/deceptively-aligned-mesa-optimizers
+[gwern-tank]:   https://gwern.net/tank
+[evolution-no]: https://www.alignmentforum.org/posts/FyChg3kYG54tEN3u6/evolution-is-a-bad-analogy-for-agi-inner-alignment
+[interpret]:    https://distill.pub/2018/building-blocks/
+
 ## Deceptively misaligned mesa-optimizers
 
-TODO
+A [mesa-optimizer][mesa] is what you get
+when the result of an optimization process
+is itself an optimizer with an inner goal.
+The _outer_ or _base_ optimizer creates the _inner_ or _mesa_-optimizer.
+As shown above,
+there is no guarantee that the mesa-optimizer shares the base optimizer’s goal.
+But it gets worse:
+an intelligent mesa-optimizer could deceive its base optimizer
+about what its goal is,
+and doing so is an instrumentally convergent behavior (remember corrigibility).
 
-## “Safety” vs. alignment
+Recommended resources:
+
+ * [The Other A<!---->I Alignment Problem: Mesa-Optimizers and Inner Alignment][miles-mesa]
+   by Robert Miles is a very clear explanation of optimizers,
+   mesa-optimizers,
+   and why deception is an optimal strategy for a mesa-optimizer.
+   The follow-up videos are also worth watching:
+   [Deceptive Misaligned Mesa-Optimisers? It’s More Likely Than You Think…][miles-likely],
+   and [We Were Right! Real Inner Misalignment][miles-right].
+ * [Deceptively Aligned Mesa-Optimizers: It’s Not Funny If I Have To Explain It][acx-mesa]
+   by Scott Alexander.
+
+[mesa]:         https://www.alignmentforum.org/tag/mesa-optimization
+[miles-mesa]:   https://www.youtube.com/watch?v=bJLcIBixGj8
+[miles-likely]: https://www.youtube.com/watch?v=IeWljQw3UgQ
+[miles-right]:  https://www.youtube.com/watch?v=zkbPdEHEyEI
+[acx-mesa]:     https://www.astralcodexten.com/p/deceptively-aligned-mesa-optimizers
+
+## Safety and alignment
 
 A non-superintelligent AI that is unaligned may be offensive or even harmful,
 but it is not an existential threat.
@@ -161,12 +250,12 @@ expressing politically inconvenient statements,
 helping people to build weapons,
 or [teaching <abbr>C++</abbr> to minors][bard-cpp].
 Solving alignment would enable us to solve these issues,
-but to my knowledge,
-current attempts are reactive rather than proactive.
+but current attempts are reactive rather than proactive.
 We can mitigate bad behaviors that we are aware of,
 but this is not fundamental progress on alignment.
 As an analogy,
-we can fix buffer overflows in a program after we learn about them,
+we can fix buffer overflows in a program after we learn about them
+(and we can even actively search for them),
 but that’s not the same as writing the program in a memory-safe language
 that eliminates buffer overflows by construction.
 
