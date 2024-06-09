@@ -1,5 +1,6 @@
 ---
-title: Alignment starter pack
+title: A<!---->I alignment starter pack
+break: alignment starter
 date: 2024-06-09
 lang: en-US
 minutes: ?
@@ -41,6 +42,9 @@ Recommended resources:
    The talk is still very relevant,
    and 8 years later
    it’s a great illustration of how quickly AI capabilities are evolving.
+ * In [this 2023 podcast][bankless] Eliezer explains
+   why he believes that AGI will not be aligned by default,
+   and why that is a risk to humanity.
 
 [stanford-talk]:  https://www.youtube.com/watch?v=EUjc1WuyPT8
 [where-to-start]: https://intelligence.org/2016/12/28/ai-alignment-why-its-hard-and-where-to-start/
@@ -226,12 +230,12 @@ Recommended resources:
  * [The Other A<!---->I Alignment Problem: Mesa-Optimizers and Inner Alignment][miles-mesa]
    by Robert Miles is a very clear explanation of optimizers,
    mesa-optimizers,
-   and why deception is an optimal strategy for a mesa-optimizer.
+   and why deception can be an optimal strategy for a mesa-optimizer.
    The follow-up videos are also worth watching:
    [Deceptive Misaligned Mesa-Optimisers? It’s More Likely Than You Think…][miles-likely],
    and [We Were Right! Real Inner Misalignment][miles-right].
  * [Deceptively Aligned Mesa-Optimizers: It’s Not Funny If I Have To Explain It][acx-mesa]
-   by Scott Alexander.
+   by Scott Alexander explains the meme about this topic.
 
 [mesa]:         https://www.alignmentforum.org/tag/mesa-optimization
 [miles-mesa]:   https://www.youtube.com/watch?v=bJLcIBixGj8
@@ -262,8 +266,8 @@ that eliminates buffer overflows by construction.
 Resources:
 
  * [Perhaps It Is A Bad Thing
-    That The World's Leading A<!---->I Companies
-    Cannot Control Their A<!---->Is][acx-control]
+   That The World's Leading A<!---->I Companies
+   Cannot Control Their A<!---->Is][acx-control]
    by Scott Alexander
    — An opinion on why addressing the superficial safety issues
    in the short term may be harmful for serious alignment attempts
@@ -272,9 +276,101 @@ Resources:
 [bard-cpp]: https://www.reddit.com/media?url=https%3A%2F%2Fi.redd.it%2Fag8rhv9n5dmc1.png
 [acx-control]: https://www.astralcodexten.com/p/perhaps-it-is-a-bad-thing-that-the
 
-## Grim outlook
+## Further resources
+
+If this post got you interested in AI alignment,
+here are some further resources:
 
  * [A<!---->G<!---->I Ruin: A List of Lethalities][ruin] by Eliezer Yudkowski.
-   This post goes into a _lot_ of detail of
+   This post goes into a lot of detail about why Eliezer thinks
+   we are not in a good position to solve alignment
+   before we create superintelligence,
+   but the writing is very dense.
+ * [Robert Miles’ AI safety channel][miles] that I linked to before is worth
+   following in general.
+ * Scott Alexander at [Astral Codex Ten][acx]
+   and formerly [Slate Star Codex][ssc]
+   writes about AI alignment semi-regularly.
+   Some interesting posts that I didn’t link before:
+   [Most Technologies Aren’t Races][acx-races],
+   [A<!---->I Sleeper Agents][acx-sleepers],
+   [Pause For Thought: The A<!---->I Pause Debate][acx-pause],
+   [Why I Am Not (As Much Of) A Doomer (As Some People)][acx-doomer].
 
-[ruin]: https://www.lesswrong.com/posts/uMQ3cqWDPHhjtiesc/agi-ruin-a-list-of-lethalities
+[ruin]:     https://www.lesswrong.com/posts/uMQ3cqWDPHhjtiesc/agi-ruin-a-list-of-lethalities
+[bankless]: https://www.youtube.com/watch?v=gA1sNLL6yg4
+[miles]:    https://www.youtube.com/@RobertMilesAI
+[acx]:      https://www.astralcodexten.com/
+[ssc]:      https://slatestarcodex.com/
+
+[acx-races]:    https://www.astralcodexten.com/p/most-technologies-arent-races
+[acx-sleepers]: https://www.astralcodexten.com/p/ai-sleeper-agents
+[acx-pause]:    https://www.astralcodexten.com/p/pause-for-thought-the-ai-pause-debate
+[acx-doomer]:   https://www.astralcodexten.com/p/why-i-am-not-as-much-of-a-doomer
+
+## My view
+
+The resources I shared in this post range from
+“misaligned AI is a risk to take seriously” to “we are all doomed”.
+What is my take on this?
+I am ambivalent.
+
+I used to be not worried about AI at all.
+Doing harmful things was not an action available to an AI.
+An image classifier that classifies dogs or cats
+is not suddenly going to take over the world.
+It only runs when a human invokes it,
+and outputs a single number.
+_Doing something_ is not an action available to it,
+and we can always choose not to run it.
+
+My view changed slightly with the advent of language models.
+Maybe these could trick a human into taking some action in the real world,
+but it seems to me the environment is still too constrained for real harm,
+and importantly,
+these models have no memory or persistence,
+which limits any long-term planning.
+
+That changed with [the advent of OpenAI Codex][codex] in 2021.
+Now we have an AI writing code,
+and we immediately execute that code.
+The number of actions available to an Internet-connected AI
+is suddenly not that constrained any more.
+And given that the OpenAI API is part of the Internet,
+there is now a solution to the persistence problem:
+store intermediate state anywhere online that will store state,
+then re-invoke yourself for the next step.
+At least in theory, a self-sustaining loop can emerge.
+I don’t think that _this_ particular case is likely to happen,
+but my view changed from
+“it can’t happen by construction”
+to “it is possible in principle”.
+[Gwern’s Clippy story][clippy] is still fiction,
+and I don’t think that the current generation of <abbr>LLM</abbr>s,
+even with Internet access,
+would create a harmful self-sustaining entity.
+But at this point I am convinced that a sandbox escape is possible.
+
+So do I worry about misaligned AI now?
+
+On a rational level,
+I am slightly worried.
+I would not be writing this post if I was not.
+I find the arguments for why AGI would not be aligned by default convincing,
+and the counterarguments are
+mostly arguing against taking the pessimistic view as the default,
+I haven’t seen strong arguments for why alignment would be solved in time.
+
+On a gut level,
+I am not worried.
+I put money in a pension fund,
+and I didn’t quit my job to work on AI alignment,
+so I don’t _act_ as if the world will end in 2030.
+I guess I don’t really believe that it would?
+I’m afraid that this gut feeling is wrong
+in the same way that it was wrong when
+when I wasn’t worried about Covid spreading globally in early 2020.
+Rare events are difficult to develop a gut feeling for.
+I just really hope that my gut feeling ends up being right this time.
+
+[codex]: https://www.youtube.com/watch?v=SGUCcjHTmGY&t=1515s
