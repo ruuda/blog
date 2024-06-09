@@ -22,7 +22,7 @@ and share pointers for where to learn more about AI alignment.
 **Alignment is the process of building an AI
 whose goal aligns with the goals of its creators.**
 
-As of 2024, alignment is an unsolved problem.
+Alignment is an unsolved problem.
 We have techniques for building <abbr>AI</abbr> whose _output_
 matches what its human creators want to see on a range of inputs,
 but due to reasons highlighted below,
@@ -81,7 +81,7 @@ Recommended resources:
 [paperclip]: https://www.lesswrong.com/tag/squiggle-maximizer-formerly-paperclip-maximizer
 [clippy]:    https://gwern.net/fiction/clippy
 
-## Hard vs. soft takeoff
+## Hard and soft takeoff
 
 In a _soft_ or _slow takeoff_,
 progress in AI is steady.
@@ -114,8 +114,8 @@ Resources:
    — This post does a good job of explaining hard and soft takeoff,
    and some of the arguments for why each may happen.
    Paul argues in favor of a soft takeoff.
-   Eliezer [later discussed this post][takeoff-discuss]
-   where he argues in favor of a hard takeoff.
+   Eliezer [later responded][takeoff-discuss]
+   arguing in favor of a hard takeoff.
 
 [takeoff]:         https://sideways-view.com/2018/02/24/takeoff-speeds/
 [takeoff-discuss]: https://www.alignmentforum.org/posts/vwLxd6hhFvPbvKmBH/yudkowsky-and-christiano-discuss-takeoff-speeds
@@ -143,7 +143,7 @@ and why we may not be able to tell that it’s misaligned.
    but it is no guarantee that the driver has the goal of taking you there.
    Similarly,
    if we see an AGI doing things we like at first,
-   that is no guarantee that it shares our goals.
+   that is no guarantee that it shares our long-term goals.
  * [Corrigibility][corrigibility]
    — A _corrigible_ AI is an AI that allows itself to be corrected
    (updated, altered, or shut down) by its operators.
@@ -169,9 +169,10 @@ In some cases we program the goal explicitly into the training loop
 (for example, for an AI that learns to play chess).
 In other cases,
 where we don’t know how to express the goal formally,
-we show a bunch of examples of what we want,
-and in practice the resulting model
-gives the output we want even on inputs it has not seen.
+we take a bunch of example inputs and outputs,
+and set “behave like these examples” as the training objective.
+In practice the model learns to give the output we want
+even on inputs it has not seen.
 Doesn’t this mean that the model is aligned?
 
 Unfortunately, no.
@@ -187,7 +188,7 @@ doesn’t mean that the model internalized that goal as its _inner goal_.
    and it learned to classify based on something different
    that correlates with bananas and toasters,
    but behaves unpredictably under _distributional shift_.
- * Another example is the [Neural Net Tank Urban Legend][gwern-tank],
+ * Another example is the [Tank Urban Legend][gwern-tank],
    where the creators of an image model thought they trained it to recognize tanks,
    but in reality the model learned to recognize cloudy vs. sunny days.
    While the story likely never happened,
@@ -202,7 +203,7 @@ doesn’t mean that the model internalized that goal as its _inner goal_.
    humans want sweet/fat food and sex.
    For a long time humans pursuing their inner goal
    helped to achieve evolution’s outer goal
-   — until we developed healthcare, ice cream, and contraception.)
+   — until we developed medicine, ice cream, and contraception.)
    Eliezer makes this argument in [his AGI ruin post][ruin],
    though others [argue that the analogy is inappropriate][evolution-no].
 
@@ -286,7 +287,7 @@ here are some further resources:
    we are not in a good position to solve alignment
    before we create superintelligence,
    but the writing is very dense.
- * [Robert Miles’ AI safety channel][miles] that I linked to before is worth
+ * [Robert Miles’ channel][miles] that I linked to before is worth
    following in general.
  * Scott Alexander at [Astral Codex Ten][acx]
    and formerly [Slate Star Codex][ssc]
@@ -295,7 +296,7 @@ here are some further resources:
    [Most Technologies Aren’t Races][acx-races],
    [A<!---->I Sleeper Agents][acx-sleepers],
    [Pause For Thought: The A<!---->I Pause Debate][acx-pause],
-   [Why I Am Not (As Much Of) A Doomer (As Some People)][acx-doomer].
+   and [Why I Am Not (As Much Of) A Doomer (As Some People)][acx-doomer].
 
 [ruin]:     https://www.lesswrong.com/posts/uMQ3cqWDPHhjtiesc/agi-ruin-a-list-of-lethalities
 [bankless]: https://www.youtube.com/watch?v=gA1sNLL6yg4
@@ -324,9 +325,33 @@ and outputs a single number.
 _Doing something_ is not an action available to it,
 and we can always choose not to run it.
 
-My view changed slightly with the advent of language models.
+In 2017 I did not think that AGI was close,
+and I did not realize that building language models
+could lead to general intelligence.
+At that time I was working in AI research myself.
+(The research was not fruitful, but I learned a lot.)
+In hindsight,
+it is obvious to me that reducing the loss on text prediction
+can create intelligence.
+If you train a model to predict the next word,
+it starts start by predicting just word frequencies.
+It can reduce the loss by taking context into a account,
+so it learns to emulate a Markov chain.
+It can do better still by learning grammar,
+but at some point all of the linguistic tricks are exhausted,
+and to reduce the loss further,
+the model has to understand the topic of the text,
+and later even model the world it describes.
+Training on text works even when the training set includes fiction and falsehoods,
+because you can be wrong in many different directions,
+but right in only one.
+With every new generation of GPT it gets better
+at tasks that previous generations failed at,
+and I don’t see any fundamental limits to this.
+
+So my view changed slightly with the advent of language models.
 Maybe these could trick a human into taking some action in the real world,
-but it seems to me the environment is still too constrained for real harm,
+but it seemed to me the interactions were still too constrained for real harm,
 and importantly,
 these models have no memory or persistence,
 which limits any long-term planning.
@@ -359,7 +384,7 @@ I would not be writing this post if I was not.
 I find the arguments for why AGI would not be aligned by default convincing,
 and the counterarguments are
 mostly arguing against taking the pessimistic view as the default,
-I haven’t seen strong arguments for why alignment would be solved in time.
+rather than arguing for why alignment _would_ be solved in time.
 
 On a gut level,
 I am not worried.
