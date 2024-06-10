@@ -3,7 +3,7 @@ title: A<!---->I alignment starter pack
 break: alignment starter
 date: 2024-06-09
 lang: en-US
-minutes: ?
+minutes: 15
 synopsis: In this post I share resources for learning more about AI alignment, and why misalignment is a risk that I take seriously.
 run-in: Despite the amount of attention
 ---
@@ -28,14 +28,14 @@ matches what its human creators want to see on a range of inputs,
 but due to reasons highlighted below,
 this does not imply that its _goal_ matches that of its creators.
 
-Recommended resources:
+Recommended introductory material:
 
  * [Intro to A<!---->I Safety][miles-intro] by Robert Miles
    — A great general introduction about why AGI might be dangerous,
    and to the concepts that I mention in the remainder of this post.
  * [A<!---->I Alignment: Why It’s Hard, and Where to Start][where-to-start]
    by Eliezer Yudkowsky ([video][stanford-talk]).
-   This is good introduction with more details about alignment specifically.
+   This is a good introduction with more details about alignment specifically.
    The talk is from 2016;
    it predates the seminal 2017 paper [_Attention is All You Need_][attention]
    that enabled the current wave of <abbr>LLM</abbr>s.
@@ -55,7 +55,7 @@ Recommended resources:
 
 A superintelligence is by definition vastly better than humans at achieving its goal.
 If that goal does not include a component that cares about preserving humanity,
-when humans and the superintelligence compete for resources,
+when humans and the superintelligence come into conflict,
 humans will not stand a chance.
 A rogue AGI does not have to turn against humans explicitly
 — it simply may not care.
@@ -67,7 +67,7 @@ Recommended resources:
 
  * [Paperclip maximizer][paperclip] —
    A paperclip maximizer is an agent
-   tasked with producing as many paperclips as possible.
+   that wants to produce as many paperclips as possible.
    It’s a thought experiment to show that
    a goal that is seemingly harmless in a weak AI
    can become an existential threat in a strong AI.
@@ -127,17 +127,19 @@ in discussions about why a misaligned AI might exist and even be likely,
 and why we may not be able to tell that it’s misaligned.
 
  * [Orthogonality][orthogonality]
-   — The Orthogonality Thesis states that there can exist intelligent agents
-   that can pursue any kind of goal (such as maximizing paperclips),
-   and that agents that have a goal that seems absurd to humans
-   don’t have to be fundamentally different from agents that don’t.
+   — The Orthogonality Thesis states that
+   the space of intelligent agents contains agents
+   that pursue any computationally tractable goal
+   as their terminal goal,
+   including goals that seem absurd to humans,
+   such as maximizing paperclips.
  * [Instrumental convergence][convergence]
    — The observation that some actions are a good first step for many goals.
    As a silly example,
    imagine you are north of the Golden Gate,
    and you need to go somewhere in San Francisco.
    Regardless of where exactly you need to go,
-   crossing the Golden Gate bridge would be the first step.
+   crossing the Golden Gate Bridge would be the first step.
    If your taxi driver starts crossing the bridge,
    that brings you closer to your destination,
    but it is no guarantee that the driver has the goal of taking you there.
@@ -190,7 +192,9 @@ doesn’t mean that the model internalized that goal as its _inner goal_.
    but behaves unpredictably under _distributional shift_.
  * Another example is the [Tank Urban Legend][gwern-tank],
    where the creators of an image model thought they trained it to recognize tanks,
-   but in reality the model learned to recognize cloudy vs. sunny days.
+   but in reality the model learned to recognize cloudy vs. sunny days,
+   because in the training set,
+   all tank pictures were taken on sunny days.
    While the story likely never happened,
    it serves as a reminder that neural networks are black boxes.
    The field of [interpretability][interpret] is in its infancy,
@@ -236,7 +240,7 @@ Recommended resources:
    [Deceptive Misaligned Mesa-Optimisers? It’s More Likely Than You Think…][miles-likely],
    and [We Were Right! Real Inner Misalignment][miles-right].
  * [Deceptively Aligned Mesa-Optimizers: It’s Not Funny If I Have To Explain It][acx-mesa]
-   by Scott Alexander explains the meme about this topic.
+   by Scott Alexander explains a meme about this topic.
 
 [mesa]:         https://www.alignmentforum.org/tag/mesa-optimization
 [miles-mesa]:   https://www.youtube.com/watch?v=bJLcIBixGj8
@@ -328,8 +332,6 @@ and we can always choose not to run it.
 In 2017 I did not think that AGI was close,
 and I did not realize that building language models
 could lead to general intelligence.
-At that time I was working in AI research myself.
-(The research was not fruitful, but I learned a lot.)
 In hindsight,
 it is obvious to me that reducing the loss on text prediction
 can create intelligence.
@@ -373,7 +375,7 @@ to “it is possible in principle”.
 [Gwern’s Clippy story][clippy] is still fiction,
 and I don’t think that the current generation of <abbr>LLM</abbr>s,
 even with Internet access,
-would create a harmful self-sustaining entity.
+would create a harmful self-sustaining feedback loop.
 But at this point I am convinced that a sandbox escape is possible.
 
 So do I worry about misaligned AI now?
