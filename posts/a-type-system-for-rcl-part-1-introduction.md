@@ -207,6 +207,54 @@ Runtime errors are static errors in RCL.
 
 [typing-interview]: https://aphyr.com/posts/342-typing-the-technical-interview
 
+## Not every expression needs to be well-typed
+
+The type system is a new addition to RCL.
+Although it is a goal for RCL to be able to represent any json document,
+it is not the goal that any expression
+that could be evaluated prior to the addition of the typechecker,
+is well-typed.
+For example,
+the following program has a type error,
+even though it could be evaluated with the typechecker disabled:
+
+```rcl
+let ints = [
+  for x in [1, 2, 3]:
+  if x > 10:
+  x
+];
+[for i in ints: not i]
+```
+
+R<!---->C<!---->L reports the following error:
+
+```
+  |
+6 | [for i in ints: not i]
+  |                     ^
+Error: Type mismatch. Expected Bool but found Int.
+
+  |
+6 | [for i in ints: not i]
+  |                 ^~~
+Note: Expected Bool because of this operator.
+
+  |
+2 |   for x in [1, 2, 3]:
+  |             ^
+Note: Found Int because of this value.
+```
+
+It is true that integers cannot be negated,
+but that type error is not exposed at runtime because `ints` is empty,
+so without the typechecker,
+evaluation succeeds.
+I am fine with rejecting pathological code like this.
+After all,
+trying to negate an integer is probably a bug,
+even if the code path is unreachable.
+
 ## Putting everything together
 
 ## Conclusion
