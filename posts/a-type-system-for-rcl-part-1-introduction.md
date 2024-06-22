@@ -17,7 +17,7 @@ I thought it would be interesting to look at the type system and its implementat
 The type system is by no means complete,
 in particular record types
 and importing types across files are not yet supported,
-but I think there is enough here for a post or three.
+but there is enough already to fill a post or three.
 This introduction explores RCL
 and what problems a type system for RCL should and should not solve.
 In part two we’ll explore the type system itself,
@@ -34,7 +34,7 @@ My goal with this series is twofold:
  * **Gathering feedback.**
    I feel pretty confident that the way the RCL interpreter is implemented makes sense,
    but I’m less sure about the type system.
-   I studied program analysis and type and effect systems during my master
+   I studied program analysis and type and effect systems during my master’s
    so none of this is completely new to me,
    but I have a feeling that for some of the choices I made,
    an expert more versed in the literature will say
@@ -57,8 +57,8 @@ Its goal is to enable abstraction and reuse in repetitive configuration
 such as CI workflows,
 deployment configuration such as Ansible playbooks and Kubernetes manifests,
 and infrastructure-as-code tools like OpenTofu.
-An RCL document consist of a single expression
-and can be exported as json, yaml, or toml.
+An RCL document consists of a single expression
+and can be evaluated into json, yaml, or toml.
 
 [nix-lang]: https://nixos.org/manual/nix/stable/language/index.html
 
@@ -185,7 +185,8 @@ to discover and handle edge cases ahead of time.
 Configuration languages are on the other end of this spectrum.
 An RCL program does not need to be able to handle any situation,
 it needs to handle exactly one.
-The program has no inputs: all parameters are “hard-coded” into it.
+The program doesn’t even have any inputs:
+all parameters are “hard-coded” into it.
 The program itself is the configuration file after all.
 
 For an RCL program, there is no “run-time”.
@@ -207,7 +208,24 @@ Runtime errors are static errors in RCL.
 
 [typing-interview]: https://aphyr.com/posts/342-typing-the-technical-interview
 
-## Not every expression needs to be well-typed
+## Strong types
+
+Even before the addition of the typechecker,
+RCL was strongly typed,
+in the sense that it does not convert between data types implicitly.
+For example,
+the condition in an if-else expression really needs to be a boolean.
+When the condition is e.g. an empty list,
+RCL does not try to guess what the programmer might have meant,
+it fails with a type error instead.
+Before the addition of the typechecker,
+this would have been a runtime type error.
+Now, in many cases it is a static type error,
+though there are still cases where the the typechecker
+has to insert a runtime type check.
+We’ll see why in the next post.
+
+## The boundaries of well-typedness
 
 The type system is a new addition to RCL.
 Although it is a goal for RCL to be able to represent any json document,
@@ -216,7 +234,7 @@ that could be evaluated prior to the addition of the typechecker,
 is well-typed.
 For example,
 the following program has a type error,
-even though it could be evaluated with the typechecker disabled:
+even though it can be evaluated with the typechecker disabled:
 
 ```rcl
 let ints = [
@@ -246,7 +264,7 @@ Note: Expected Bool because of this operator.
 Note: Found Int because of this value.
 ```
 
-It is true that integers cannot be negated,
+It is true that `not` cannot be applied to integers,
 but that type error is not exposed at runtime because `ints` is empty,
 so without the typechecker,
 evaluation succeeds.
@@ -254,8 +272,6 @@ I am fine with rejecting pathological code like this.
 After all,
 trying to negate an integer is probably a bug,
 even if the code path is unreachable.
-
-## Putting everything together
 
 ## Conclusion
 
