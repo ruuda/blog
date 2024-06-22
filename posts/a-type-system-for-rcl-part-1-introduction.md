@@ -19,7 +19,7 @@ in particular record types
 and importing types across files are not yet supported,
 but I think there is enough here for a post or three.
 This introduction explores RCL
-and what problems a type system for RCL should and shouldn’t solve.
+and what problems a type system for RCL should and should not solve.
 In part two we’ll explore the type system itself,
 and in part three we’ll dive into the internals of the typechecker.
 
@@ -34,7 +34,7 @@ My goal with this series is twofold:
  * **Gathering feedback.**
    I feel pretty confident that the way the RCL interpreter is implemented makes sense,
    but I’m less sure about the type system.
-   I studied program analysis and type and effect systems in university
+   I studied program analysis and type and effect systems during my master
    so none of this is completely new to me,
    but I have a feeling that for some of the choices I made,
    an expert more versed in the literature will say
@@ -89,8 +89,8 @@ It evaluates to the following json document:
 ```json
 {
   "deployments": [
-    {"name": "red", "port": 8000},
-    {"name": "blue", "port": 8100}
+    {"name": "blue", "port": 8000},
+    {"name": "green", "port": 8100}
   ]
 }
 ```
@@ -132,12 +132,13 @@ But I want to have them for two reasons:
    It would be nice if there was a type annotation on the function argument
    where your editor’s jump-to-definition can just show you the type and its fields.
 
-It is no surprise that Mypy has taken the Python world by storm,
-or that Typescript has largely displaced Javascript.
+It is no surprise that Typescript has largely displaced Javascript,
+and that Mypy has taken the Python world by storm.
 To keep a large codebase maintainable,
 you need types.
-But the snippet in the previous section is pretty clear on its own,
-it would be a shame to make it more verbose than necessary,
+
+The snippet in the previous section is pretty clear on its own though.
+It would be a shame to make it more verbose than necessary,
 especially for a configuration language that tries to eliminate boilerplate.
 So type annotations in RCL are optional.
 The type system is gradual,
@@ -171,63 +172,23 @@ and the inferred type for both question marks is `Any`
 — but I’m running ahead,
 we’ll see more about the type lattice in the next post.
 
-## Static typing
-
-R<!---->C<!---->L is statically typed,
-in the sense that it can report type errors in unreachable code.
-For example,
-the following program fails with a type error:
-
-```
-let string = "strings cannot be negated";
-if false:
-  // Error: Type mismatch. Expected Bool but found String.
-  not string
-else
-  true
-```
-
-However,
-although RCL enforces all type annotations,
-it defers some type checks to runtime.
-The following is fine:
-
-```
-let string: Any = "strings cannot be negated";
-if false:
-  not string
-else
-  true
-```
-
-In general,
-the typechecker can encounter three cases:
-
-* It can prove that the program contains a type error.
-  In this case it reports the error.
-* It can prove that the program is well-typed.
-  In this case we proceed to evaluation.
-* It can’t rule out a type error, but it can’t prove it either.
-  In this case it inserts a runtime type check.
-
-TODO: Move to next post.
-
 ## Blurring the line between static and runtime
 
 For long-running daemons or programs deployed to users,
 types are essential for building robust software.
-Such programs need to be prepared to handle any input at runtime,
+Such programs need to be prepared to handle _any_ situation at runtime,
 because if there is an unhandled runtime error,
 there is no developer watching to fix the program.
-A type system can help to force the programmer
+A type system can help the programmer
 to discover and handle edge cases ahead of time.
 
 Configuration languages are on the other end of this spectrum.
-An RCL program does not need to handle any inputs.
-It has no inputs: all parameters are “hard-coded” into the program.
+An RCL program does not need to be able to handle any situation,
+it needs to handle exactly one.
+The program has no inputs: all parameters are “hard-coded” into it.
 The program itself is the configuration file after all.
 
-For an RCL program, there is no “run time”.
+For an RCL program, there is no “run-time”.
 A user will run RCL to generate some configuration,
 and if that succeeds,
 RCL is out of the picture.
