@@ -12,14 +12,16 @@ synopsis: TODO
 [RCL][rcl-lang].
 From the start I intended it to have types,
 but initially it was implemented as a completely dynamic language.
-Now that I completed the initial version of a typechecker,
+Now that I wrote the initial version of a typechecker,
 I thought it would be interesting to look at the type system and its implementation.
 The type system is by no means complete,
 in particular record types
 and importing types across files are not yet supported,
-but I think there is enough here for a post or two.
-In part one we’ll explore the type system itself
-and in part two we’ll dive into the internals of the typechecker.
+but I think there is enough here for a post or three.
+This introduction explores RCL
+and what problems a type system for RCL should and shouldn’t solve.
+In part two we’ll explore the type system itself,
+and in part three we’ll dive into the internals of the typechecker.
 
 [rcl-intro]: /2024/a-reasonable-configuration-language
 [rcl-lang]:  https://rcl-lang.org/
@@ -38,6 +40,12 @@ My goal with this series is twofold:
    an expert more versed in the literature will say
    “Ah this is a well-known technique with this name”
    or “That approach doesn’t work, it has this problem.”
+
+In this series:
+
+ * [Part <abbr>I</abbr>: Introduction](/2024/a-type-system-for-rcl-part-1-introduction) (this post)
+ * [Part <abbr>II</abbr>: The type system](/2024/a-type-system-for-rcl-part-2-the-type-system)
+ * [Part <abbr>III</abbr>: The typechecker](/2024/a-type-system-for-rcl-part-3-the-typechecker)
 
 ## What is RCL?
 

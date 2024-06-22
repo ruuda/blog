@@ -10,4 +10,10 @@ synopsis: TODO
 
 TODO: Write intro, headings, etc.
 
+In this series:
+
+ * [Part <abbr>I</abbr>: Introduction](/2024/a-type-system-for-rcl-part-1-introduction)
+ * [Part <abbr>II</abbr>: The type system](/2024/a-type-system-for-rcl-part-2-the-type-system)
+ * [Part <abbr>III</abbr>: The typechecker](/2024/a-type-system-for-rcl-part-3-the-typechecker) (this post)
+
 TODO: Write that we track sourec spans for types and it's helpful.
