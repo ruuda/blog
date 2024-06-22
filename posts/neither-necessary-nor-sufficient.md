@@ -6,6 +6,7 @@ minutes: 5
 lang: en-GB
 synopsis: A garbage collector is neither necessary nor sufficient for quality software because it does not solve the problem of resource management.
 run-in: A few days ago
+teaser: zero-cost-abstractions
 ---
 
 A few days ago I stumbled upon a [blog post][when-rust-makes-sense]

@@ -5,6 +5,7 @@ minutes: 1
 lang: en-GB
 synopsis: When requirements change, an append-only data model of immutable facts is more useful than a mutable data model that models the problem domain.
 run-in: When requirements change
+teaser: please-put-units-in-names
 ---
 
 When requirements change,

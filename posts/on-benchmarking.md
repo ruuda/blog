@@ -6,6 +6,7 @@ lang: en-GB
 synopsis: Measuring performance is hard. Presenting measurements may be even harder. Here is my advice on judging software performance data.
 run-in: Measuring performance is hard
 math: true
+teaser: zero-cost-abstractions
 ---
 
 Measuring performance is hard.

@@ -5,6 +5,7 @@ minutes: 6
 lang: en-GB
 synopsis: Rust claims to enable abstraction without overhead. How does that claim hold up in practice?
 run-in: If you read my blog
+teaser: neither-necessary-nor-sufficient
 ---
 
 If you read my blog,

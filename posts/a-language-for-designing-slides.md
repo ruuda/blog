@@ -6,6 +6,7 @@ minutes: 6
 lang: en-GB
 synopsis: No existing tool allowed me to design slides in the way I would like. So I built my own.
 run-in: It is my opinion that
+teaser: a-reasonable-configuration-language
 ---
 
 It is my opinion that great slides are designed.

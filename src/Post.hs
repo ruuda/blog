@@ -21,6 +21,7 @@ module Post ( Post
             , url
             , year ) where
 
+import           Data.Foldable (find)
 import qualified Data.Map as M
 import           Data.Maybe (fromMaybe, isJust)
 import qualified Data.Set as S
@@ -58,6 +59,8 @@ data Post = Post { title       :: String
                  , part        :: Maybe Int
                  , date        :: Day
                  , slug        :: String
+                 -- Optionally, the slug of the post to display in the teaser.
+                 , teaser      :: Maybe String
                  , lang        :: String
                  , synopsis    :: String
                  , body        :: String
@@ -169,6 +172,7 @@ parse postSlug contents = let
     , part        = fmap read $ M.lookup "part" frontMatter
     , date        = parseDate $ frontMatter M.! "date"
     , slug        = postSlug
+    , teaser      = M.lookup "teaser" frontMatter
     , synopsis    = frontMatter M.! "synopsis"
     , extraGlyphs = fromMaybe "" $ M.lookup "extra-glyphs" frontMatter
     , lang        = frontMatter M.! "lang"
@@ -228,19 +232,27 @@ relatedContext related = case related of
 -- Takes an (unordered) list of posts and produces a list of posts together with
 -- related content for that post.
 selectRelated :: [Post] -> [(Post, RelatedContent)]
-selectRelated posts = fmap nextElsePrev prevPostNext
+selectRelated posts = fmap getRelated adjacentPosts
   where -- Create chronological triples of (previous post, post, next post).
         chronological = sortWith date posts
         prevPosts     = Nothing : (fmap Just chronological)
         nextPosts     = (drop 1 $ fmap Just chronological) ++ [Nothing]
-        prevPostNext  = zip3 prevPosts chronological nextPosts
+        adjacentPosts = zip3 prevPosts chronological nextPosts
+
+        -- It's a linear search, but it's not that bad, I don't have that many
+        -- posts.
+        findTeaser post = case teaser post of
+          Just teaserSlug -> find ((== teaserSlug) . slug) posts
+          Nothing -> Nothing
 
         -- Select the next post as "Further" content if there is one, otherwise
         -- take the previous post (which is assumed to exist in that case).
-        nextElsePrev x = case x of
-          (_, post, Just next) -> (post, Further next)
-          (Just prev, post, _) -> (post, Further prev)
-          _                    -> error "At least two posts are required."
+        getRelated (p, q, r) = case findTeaser q of
+          Just teaserPost -> (q, Further teaserPost)
+          Nothing -> case (p, q, r) of
+            (_, post, Just next) -> (post, Further next)
+            (Just prev, post, _) -> (post, Further prev)
+            _                    -> error "At least two posts are required."
 
 -- Returns a context for a group of posts that share the same year.
 archiveYearContext :: [Post] -> Template.Context
