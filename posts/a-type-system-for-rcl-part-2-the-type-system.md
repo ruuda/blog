@@ -23,6 +23,23 @@ TODO: Write no HM, no constraints.
 
 [swift-slow]: https://danielchasehooper.com/posts/why-swift-is-slow/
 
+## Strong types
+
+Even before the addition of the typechecker,
+RCL was strongly typed,
+in the sense that it does not convert between data types implicitly.
+For example,
+the condition in an if-else expression really needs to be a boolean.
+When the condition is e.g. an empty list,
+RCL does not try to guess what the programmer might have meant,
+it fails with a type error instead.
+Before the addition of the typechecker,
+this would have been a runtime type error.
+Now, in many cases it is a static type error,
+though there are still cases where the the typechecker
+has to insert a runtime check.
+We’ll see why below.
+
 ## Static typing
 
 R<!---->C<!---->L is statically typed,
