@@ -12,8 +12,13 @@ TODO: Write intro, headings, etc.
 
 In this series:
 
- * [Part <abbr>I</abbr>: Introduction](/2024/a-type-system-for-rcl-part-1-introduction)
- * [Part <abbr>II</abbr>: The type system](/2024/a-type-system-for-rcl-part-2-the-type-system)
- * [Part <abbr>III</abbr>: The typechecker](/2024/a-type-system-for-rcl-part-3-the-typechecker) (this post)
+ * [Part <abbr>I</abbr>: Introduction][part1]
+ * [Part <abbr>II</abbr>: The type system][part2]
+ * [Part <abbr>III</abbr>: The typechecker][part3] (this post)
 
 TODO: Write that we track sourec spans for types and it's helpful.
+TODO: Mention that it took me three attempts, functions are tough.
+
+[part1]: /2024/a-type-system-for-rcl-part-1-introduction
+[part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
+[part3]: /2024/a-type-system-for-rcl-part-3-the-typechecker

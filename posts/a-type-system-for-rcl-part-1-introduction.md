@@ -43,9 +43,9 @@ My goal with this series is twofold:
 
 In this series:
 
- * [Part <abbr>I</abbr>: Introduction](/2024/a-type-system-for-rcl-part-1-introduction) (this post)
- * [Part <abbr>II</abbr>: The type system](/2024/a-type-system-for-rcl-part-2-the-type-system)
- * [Part <abbr>III</abbr>: The typechecker](/2024/a-type-system-for-rcl-part-3-the-typechecker)
+ * [Part <abbr>I</abbr>: Introduction][part1] (this post)
+ * [Part <abbr>II</abbr>: The type system][part2]
+ * [Part <abbr>III</abbr>: The typechecker][part3]
 
 ## What is RCL?
 
@@ -275,4 +275,34 @@ even if the code path is unreachable.
 
 ## Conclusion
 
-Write
+R<!---->C<!---->L is a new configuration language
+that aims to reduce configuration boilerplate
+by extending json into a simple functional language
+that enables abstraction and reuse.
+Recently I added an initial typechecker
+and support for type annotations to it.
+What do I want from the type system?
+
+ * **It should help to prevent bugs**,
+   by moving invariants out of comments and into the program,
+   where they can be enforced.
+ * **It should make code more self-documenting**,
+   without forcing type annotations onto code that is already clear by itself.
+ * **Any json value should be well-typed**,
+   including things like heterogeneous lists,
+   because RCL must be able to generate any json value as output.
+ * **It is okay to defer to runtime checks**.
+   As a configuration language,
+   typechecking and evaluation happen in the same session,
+   so to a user there is little difference
+   between a static type error and a runtime type error.
+
+In [part II][part2],
+we will look at the type system,
+and how it achieves the requirements outlined above.
+In [part III][part3],
+we will look at the implementation of the typechecker.
+
+[part1]: /2024/a-type-system-for-rcl-part-1-introduction
+[part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
+[part3]: /2024/a-type-system-for-rcl-part-3-the-typechecker
