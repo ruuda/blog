@@ -1,7 +1,7 @@
 ---
 title: A type system for RCL, part 2: The type system
 header: A type system for RCL
-subheader: The type <span class="dlig">system</span>
+subheader: The type system
 part: 2
 lang: en-US
 date: 2024-04-29
