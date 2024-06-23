@@ -12,12 +12,12 @@ synopsis: TODO
 [RCL][rcl-lang].
 From the start I intended it to have types,
 but initially it was implemented as a completely dynamic language.
-Now that I wrote the initial version of a typechecker,
+Now that I’m adding a typechecker,
 I thought it would be interesting to look at the type system and its implementation.
-The type system is by no means complete,
-in particular record types
-and importing types across files are not yet supported,
-but there is enough already to fill a post or three.
+The type system is by no means complete
+— in particular record types
+and importing types across files are not yet supported —
+but there is enough already to fill a few posts.
 This introduction explores RCL
 and what problems a type system for RCL should and should not solve.
 In part two we’ll explore the type system itself,
@@ -58,7 +58,7 @@ such as CI workflows,
 deployment configuration such as Ansible playbooks and Kubernetes manifests,
 and infrastructure-as-code tools like OpenTofu.
 An RCL document consists of a single expression
-and can be evaluated into json, yaml, or toml.
+and can be exported to json, yaml, or toml.
 
 [nix-lang]: https://nixos.org/manual/nix/stable/language/index.html
 
@@ -69,20 +69,18 @@ Aside from literals for these new values,
 RCL adds let-bindings, list comprehensions, and a few other features to json.
 Here is an example document:
 
-```rcl
-// TODO: Highlight.
-let colors = ["blue", "green"];
-let port_number = seq_no => 8000 + (100 * seq_no);
+<pre><code class="sourceCode"><span class="kw">let</span> colors = [<span class="st">"blue"</span>, <span class="st">"green"</span>];
+<span class="kw">let</span> port_number = offset => <span class="dv">8000</span> + (<span class="dv">100</span> * offset);
 {
-  deployments = [
-    for i, color in colors.enumerate():
+  <span class="n">deployments</span> = [
+    <span class="kw">for</span> i, color <span class="kw">in</span> colors.<span class="fu">enumerate</span>():
     {
-      name = color,
-      port = port_number(i),
-    },
+      <span class="n">name</span> = color,
+      <span class="n">port</span> = port_number(i),
+    }
   ],
 }
-```
+</code></pre>
 
 It evaluates to the following json document:
 
@@ -157,11 +155,10 @@ such as heterogeneous lists,
 or if-else expressions where the then-branch
 returns a different type than the else-branch.
 
-```rcl
-// What do we need to put on the ? to make the types explicit?
-let xs: List[?] = [42, true, "yes"];
-let y: ? = if xs.contains(21): "has-21" else null;
-```
+<pre><code class="sourceCode"><span class="co">// What do we need to put on the ? to make the types explicit?</span>
+<span class="kw">let</span> xs: <span class="dt">List</span>[<span class="dt">?</span>] = [<span class="dv">42</span>, <span class="kw">true</span>, <span class="st">"yes"</span>];
+<span class="kw">let</span> y: <span class="dt">?</span> = <span class="kw">if</span> xs.contains(<span class="dv">21</span>): <span class="st">"has-21"</span> <span class="kw">else null</span>;
+</code></pre>
 
 With type annotations removed, the above code is well-typed.
 But that annotations are optional,
@@ -219,33 +216,32 @@ For example,
 the following program has a type error,
 even though it can be evaluated with the typechecker disabled:
 
-```rcl
-let ints = [
-  for x in [1, 2, 3]:
-  if x > 10:
+<pre><code class="sourceCode"><span class="kw">let</span> ints = [
+  <span class="kw">for</span> x <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]:
+  <span class="kw">if</span> x > <span class="dv">10</span>:
   x
 ];
-[for i in ints: not i]
-```
+[<span class="kw">for</span> i <span class="kw">in</span> ints: <span class="kw">not</span> i]
+</code></pre>
 
 R<!---->C<!---->L reports the following error:
 
-```
-  |
-6 | [for i in ints: not i]
-  |                     ^
-Error: Type mismatch. Expected Bool but found Int.
+<pre><code class="sourceCode">
+  <span class="dt">|</span>
+6 <span class="dt">|</span> [for i in ints: not i]
+  <span class="dt">|</span>                     <span class="dt">^</span>
+<span class="dt">Error:</span> Type mismatch. Expected <span class="dt">Bool</span> but found <span class="dt">Int</span>.
 
-  |
-6 | [for i in ints: not i]
-  |                 ^~~
-Note: Expected Bool because of this operator.
+  <span class="st">|</span>
+6 <span class="st">|</span> [for i in ints: not i]
+  <span class="st">|</span>                 <span class="st">^~~</span>
+<span class="st">Note:</span> Expected Bool because of this operator.
 
-  |
-2 |   for x in [1, 2, 3]:
-  |             ^
-Note: Found Int because of this value.
-```
+  <span class="st">|</span>
+2 <span class="st">|</span>   for x in [1, 2, 3]:
+  <span class="st">|</span>             <span class="st">^</span>
+<span class="st">Note:</span> Found Int because of this value.
+</code></pre>
 
 It is true that `not` cannot be applied to integers,
 but that type error is not exposed at runtime because `ints` is empty,
