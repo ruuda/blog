@@ -74,36 +74,33 @@ Two major choices affect RCL’s type system:
 What does it mean that the same value can fit multiple types?
 It means that all of these are well-typed:
 
-```rcl
-let a: Int = 0;
-let b: Union[Int, String] = 0;
-let c: Any = 0;
-```
+<pre><code class="sourceCode"><span class="kw">let</span> a: <span class="dt">Int</span> = <span class="dv">0</span>;
+<span class="kw">let</span> b: <span class="dt">Any</span> = <span class="dv">0</span>;
+<span class="kw">let</span> c: <span class="dt">Union</span>[<span class="dt">Int</span>, <span class="dt">String</span>] = <span class="dv">0</span>;
+</code></pre>
 
 Collections are another example.
 The runtime representation of a collection
 does not depend on the element type,
 so all of these are fine:
 
-```rcl
-let a: List[Void] = [];
-let b: List[Int] = [];
-let c: List[Union[Int, Bool]] = [0, false];
-let d: List[Any] = [0, false];
-```
+<pre><code class="sourceCode"><span class="kw">let</span> a: <span class="dt">List</span>[<span class="dt">Void</span>] = [];
+<span class="kw">let</span> b: <span class="dt">List</span>[<span class="dt">Int</span>] = [];
+<span class="kw">let</span> c: <span class="dt">List</span>[<span class="dt">Union</span>[<span class="dt">Int</span>, <span class="dt">Bool</span>]] = [<span class="dv">0</span>, <span class="kw">false</span>];
+<span class="kw">let</span> d: <span class="dt">List</span>[<span class="dt">Any</span>] = [<span class="dv">0</span>, <span class="kw">false</span>];
+</code></pre>
 
 That many types can describe the same value
 matters especially for record types.
 While they are not yet implemented,
-this code will have to be well-typed:
+this code would have to be well-typed:
 
-```rcl
-type Widget = { id: Int };
-let a: Widget = { id = 42 };
-let b: Dict[String, Int] = { id = 42 };
-```
+<pre><code class="sourceCode"><span class="kw">type</span> <span class="dt">Widget</span> = { id: <span class="dt">Int</span> };
+<span class="kw">let</span> a: <span class="dt">Widget</span> = { <span class="n">id</span> = <span class="dv">42</span> };
+<span class="kw">let</span> b: <span class="dt">Dict</span>[<span class="dt">String</span>, <span class="dt">Int</span>] = { <span class="n">id</span> = <span class="dv">42</span> };
+</code></pre>
 
-We can think of types as the set of values that the type allows.
+We can think of types as the set of values that fit that type.
 That a value can have multiple types,
 means that these sets are not disjoint.
 That in turn means that we can order them by the subset relation,
@@ -111,8 +108,9 @@ so we have a partial order on types.*
 Which brings us to the next topic:
 types form a _lattice_.
 
-\* The subset relation is not _quite_ the order on types,
-for reasons we’ll see below.
+\* The subset relation is not _quite_ the order that we use in practice,
+for reasons we’ll see below,
+but it’s quite close.
 
 ## The type lattice
 
