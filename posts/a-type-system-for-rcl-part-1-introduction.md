@@ -103,7 +103,7 @@ or try [the interactive demos][demo] on the the website.
 ## Why types?
 
 R<!---->C<!---->L is implemented as a tree-walking interpreter
-that can do dynamic dispatch on the values it encounters.
+that can dispatch on the values it encounters.
 It does not have a compiler that _needs_ type information
 to know what instruction to select,
 or to emit the correct memory offset for a struct field.
@@ -115,6 +115,8 @@ But I want to have them for two reasons:
  * **To prevent bugs.**
    A type system enables moving invariants out of documentation
    and into the program where they can be mechanically enforced.
+   For example for renaming fields,
+   a type system can be useful to ensure you updated all usages.
  * **To make code more self-documenting.**
    If you have ever worked in a large untyped Python or Javascript codebase,
    you might recognize this problem:
@@ -226,8 +228,7 @@ even though it can be evaluated with the typechecker disabled:
 
 R<!---->C<!---->L reports the following error:
 
-<pre><code class="sourceCode">
-  <span class="dt">|</span>
+<pre><code class="sourceCode">  <span class="dt">|</span>
 6 <span class="dt">|</span> [for i in ints: not i]
   <span class="dt">|</span>                     <span class="dt">^</span>
 <span class="dt">Error:</span> Type mismatch. Expected <span class="dt">Bool</span> but found <span class="dt">Int</span>.
@@ -252,14 +253,13 @@ After all,
 trying to negate an integer is probably a bug,
 even if the code path is unreachable.
 
-## Conclusion
+## Putting it together
 
-R<!---->C<!---->L is a new configuration language
+R<!---->C<!---->L is an experimental configuration language
 that aims to reduce configuration boilerplate
 by extending json into a simple functional language
 that enables abstraction and reuse.
-Recently I added an initial typechecker
-and support for type annotations to it.
+I am adding support for type annotations and a typechecker to it.
 What do I want from the type system?
 
  * **It should help to prevent bugs**,
@@ -276,11 +276,10 @@ What do I want from the type system?
    so to a user there is little difference
    between a static type error and a runtime type error.
 
-In [part II][part2],
-we will look at the type system,
-and how it achieves the requirements outlined above.
-In [part III][part3],
-we will look at the implementation of the typechecker.
+In the remainder of this series,
+we’ll see how RCL achieves this.
+In [part II][part2] we will look at the type system,
+and in [part III][part3] we will look at the implementation of the typechecker.
 
 [part1]: /2024/a-type-system-for-rcl-part-1-introduction
 [part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
