@@ -116,8 +116,9 @@ types form a _lattice_.
 A lattice — strictly speaking a _meet-semilattice_ in this case —
 is a partially ordered set with an operation called _meet_
 that returns the greatest lower bound of two elements.
-Part of the lattice looks like this:
+Part of the type lattice looks like this:
 
+<!-- TODO: Fix up css in the svg to work with the subsetted font. -->
 ![A part of the type lattice.](/images/lattice.svg)
 
 The bottom of the lattice is `Void`, the uninhabited type.
@@ -128,23 +129,87 @@ In between we have primitive types like `Int` and `String`,
 but also collection types like `List[Int]`,
 a list of integers.
 
-The partial order on types is the subtyping relationship.
-If we view types as sets,
-then the subset relationship is _almost_ the subtype relationship.
-With the notation `T ≤ U` for “`T` is a subtype of `U`”,
-and `t:` `T` for “`t` fits `T`”,
-the subset-based relationship would be the following:
+The partial order on types is the subset relationship on the underlying sets.
+If every value of type `T` fits type `U`,
+then we say that `T` is a subtype of `U`, written `T ≤ U`.
+Note that `Null` is not a subtype of the primitive types.
+Unlike many other languages,
+RCL does not have implicit nullability.
 
- * We say `T ≤ U` if for all `t:` `T` it holds that `t:` `U`.
- * We say `T` and `U` are unorderable
-   if there exist `t:` `T` and `u:` `U`
+The meet operation is useful for bottom-up type inference.
+For example,
+when the typechecker encounters a list `[t,` `u]`,
+where `t:` `T` and `u:` `U`,
+it infers that the list has type `List[V]`,
+where `V` is the meet of `T` and `U`.
 
-TODO: Lattice itself.
-TODO: It’s gradual, so we need `Any`.
-TODO: Sloppy join = fast inference.
-TODO: Ref [Cue][cue-lattice].
+## The subtype check
 
-[cue-lattice]: https://cuelang.org/docs/concept/the-logic-of-cue/
+If RCL were a completely statically typed language,
+the typechecker’s job would be to perform a _subtype check_ on expressions.
+For every expression it visits,
+it has an inferred actual type for that expression,
+and a specified expected type.
+Consider for example:
+
+<pre><code class="sourceCode"><span class="kw">let</span> a: <span class="dt">Int</span> = <span class="dv">0</span>;
+<span class="kw">let</span> b: <span class="dt">Any</span> = a;
+<span class="kw">let</span> c: <span class="dt">Int</span> = b;
+</code></pre>
+
+ * On the first line
+   the inferred type of the right-hand side is `Int`,
+   because integer literals are integers.
+   The expected type is also `Int`,
+   due to the type annotation.
+   We have `Int ≤ Int`,
+   so the typecheck passes.
+ * On the second line
+   the inferred type is `Int`, because `a:` `Int`.
+   The expected type is `Any`.
+   We have `Int ≤ Any`,
+   so again the typecheck passes.
+ * On the third line
+   the inferred type is `Any`, because `b:` `Any`.
+   The expected type is `Int`.
+   But it does **not** hold that `Any ≤ Int`,
+   so the typecheck fails;
+   the program contains a type error.
+
+This is a bit of a shame though.
+We can _see_ that `c` is going to be bound to the integer `0`.
+There is no runtime type error here.
+Yet, the typechecker cannot see that,
+so it has to report a static error.
+
+Some languages offer a way out through runtime type inspection,
+with e.g. an `isinstance` check.
+If RCL had one, it might look like this:
+
+<pre><code class="sourceCode"><span class="kw">let</span> c: <span class="dt">Int</span> = <span class="kw">if</span> <span class="fu">isinstance</span>(b, <span class="dt">Int</span>): b <span class="kw">else</span> <span class="dv">0</span>;
+</code></pre>
+
+A typechecker that is aware of `isinstance`
+would change the type of `b` from `Any` to `Int` inside the then-branch,
+and then the expression again typechecks.
+
+R<!---->C<!---->L does not have a user-exposed `isinstance` check,
+but it does insert a runtime type check under the hood.
+Before binding a value to `c`,
+it checks that the value fits type `Int`.
+In this case it does,
+and the above program executes just fine.
+When the check fails,
+RCL reports a runtime type error.
+This is fine, because [runtime errors are static errors in RCL][static].
+The important thing
+is that we don’t allow execution to continue
+when the type annotation is violated.
+Whether we prevent the violation statically or at runtime
+makes little difference to the user,
+because typechecking and runtime happen in the same session.
+
+[static]: /2024/a-type-system-for-rcl-part-1-introduction#blurring-the-line-between-static-and-runtime
 
 ## Static typing
 
@@ -170,21 +235,29 @@ The following is fine:
 <span class="kw">if</span> <span class="kw">false</span>: <span class="kw">not</span> string <span class="kw">else</span> <span class="kw">true</span>
 </code></pre>
 
+This is the result of what I call a _generalized subtype check_.
+
+
 In general,
 the typechecker can encounter three cases:
 
-* It can prove that the program contains a type error.
+* It can prove that the expression contains a type error.
   In this case it reports the error.
-* It can prove that the program is well-typed.
-  In this case we proceed to evaluation.
+* It can prove that the expression is well-typed.
+  Evaluation is guaranteed to succeed.
 * It can’t rule out a type error, but it can’t prove it either.
   In this case it inserts a runtime type check.
+
+## To do
+
+TODO: It’s gradual, so we need `Any`.
+TODO: Sloppy join = fast inference.
+TODO: Ref [Cue][cue-lattice].
+TODO: Write no HM, no constraints. [Swift is slow][swift-slow]
 
 [part1]: /2024/a-type-system-for-rcl-part-1-introduction
 [part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
 [part3]: /2024/a-type-system-for-rcl-part-3-the-typechecker
 
-TODO: Write no HM, no constraints.
-[Swift is slow][swift-slow]
-
-[swift-slow]: https://danielchasehooper.com/posts/why-swift-is-slow/
+[swift-slow]:  https://danielchasehooper.com/posts/why-swift-is-slow/
+[cue-lattice]: https://cuelang.org/docs/concept/the-logic-of-cue/
