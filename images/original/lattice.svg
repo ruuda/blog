@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="684"
+   height="212"
+   viewBox="0 0 180.97498 56.091661"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   sodipodi:docname="lattice.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px"
+     inkscape:zoom="1.1833809"
+     inkscape:cx="298.72038"
+     inkscape:cy="16.478211"
+     inkscape:window-width="1532"
+     inkscape:window-height="967"
+     inkscape:window-x="23"
+     inkscape:window-y="15"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="90.492523"
+       y="3.7563612"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="90.492523"
+         y="3.7563612">Any</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="90.598091"
+       y="54.593433"
+       id="text1-5"><tspan
+         sodipodi:role="line"
+         id="tspan1-3"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="90.598091"
+         y="54.593433">Void</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="29.744106"
+       y="29.270571"
+       id="text1-5-9"><tspan
+         sodipodi:role="line"
+         id="tspan1-3-1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="29.744106"
+         y="29.270571">Int</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="48.223991"
+       y="29.270571"
+       id="text1-5-9-9"><tspan
+         sodipodi:role="line"
+         id="tspan1-3-1-3"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="48.223991"
+         y="29.270571">Bool</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="69.911148"
+       y="29.270571"
+       id="text1-5-9-9-2"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="69.911148"
+         y="29.270571"
+         id="tspan2">String</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="11.962989"
+       y="29.270571"
+       id="text1-5-9-9-2-9"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="11.962989"
+         y="29.270571"
+         id="tspan2-2">Null</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="136.34593"
+       y="41.785286"
+       id="text1-5-9-9-2-9-7"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="136.34593"
+         y="41.785286"
+         id="tspan2-2-5">List[Void]</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="115.2598"
+       y="29.270571"
+       id="text1-5-9-9-2-9-7-8"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="115.2598"
+         y="29.270571"
+         id="tspan2-2-5-9">List[Int]</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="136.34593"
+       y="16.733322"
+       id="text1-5-9-9-2-9-7-8-9"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="136.34593"
+         y="16.733322"
+         id="tspan2-2-5-9-4">List[Any]</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:bold;font-size:5.02708px;line-height:125%;font-family:'Warnock Pro';-inkscape-font-specification:'Warnock Pro Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="155.63391"
+       y="29.270571"
+       id="text1-5-9-9-2-9-7-8-1-3"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.02708px;font-family:'Calluna Sans';-inkscape-font-specification:'Calluna Sans';fill:#445566;fill-opacity:1;stroke:none;stroke-width:0.264583px"
+         x="155.63391"
+         y="29.270571"
+         id="tspan2-2-5-9-2-2">List[Bool]</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.37678647;stroke-dasharray:none"
+       d="m 125.14204,38.18976 -6.54577,-6.730433"
+       id="path27"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.37678647;stroke-dasharray:none"
+       d="m 147.34271,38.08968 7.40137,-6.03484"
+       id="path28"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.37678647;stroke-dasharray:none"
+       d="m 126.18725,17.448833 -7.60114,6.762584"
+       id="path29"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0.37678647;stroke-dasharray:none"
+       d="m 146.7374,17.691842 8.03988,6.222431"
+       id="path30"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.3175;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="M 125.5603,43.148056 100.13318,52.28657"
+       id="path34"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="M 70.29561,31.543387 85.214183,47.862742"
+       id="path35"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="M 48.723436,31.383747 83.36635,49.346985"
+       id="path36"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="m 30.285405,31.352251 51.71761,19.709176"
+       id="path37"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="M 12.176536,31.543387 81.391348,53.285011"
+       id="path38"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="M 70.562092,23.507799 85.346687,6.7324341"
+       id="path39"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="M 48.627094,24.441249 84.047474,5.4606842"
+       id="path40"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="M 30.378658,24.197311 83.246791,3.8951208"
+       id="path41"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="M 12.596789,23.933302 82.93408,2.1700638"
+       id="path42"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#778899;stroke-width:0.31749997;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:0.37678647"
+       d="M 126.66018,11.461704 98.235416,2.5040132"
+       id="path43"
+       sodipodi:nodetypes="cc" />
+  </g>
+</svg>

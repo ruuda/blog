@@ -41,6 +41,10 @@ cp original/rectangles.svg compressed/rectangles.svg
 zopfli compressed/rectangles.svg
 brotli --force --output=compressed/rectangles.svg.br compressed/rectangles.svg
 
+cp original/lattice.svg compressed/lattice.svg
+zopfli compressed/lattice.svg
+brotli --force --output=compressed/lattice.svg.br compressed/lattice.svg
+
 # Guetzli experiments
 # -------------------
 # Conclusion: apart from one image, Guetzli is universally worse than Mozjpeg
