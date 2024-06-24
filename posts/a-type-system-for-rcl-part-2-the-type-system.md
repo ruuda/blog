@@ -113,9 +113,9 @@ types form a _lattice_.
 
 ## The type lattice
 
-A lattice — strictly speaking a _meet-semilattice_ in this case —
-is a partially ordered set with an operation called _meet_
-that returns the greatest lower bound of two elements.
+A lattice — strictly speaking a _join-semilattice_ in this case —
+is a partially ordered set with an operation called _join_
+that returns the least upper bound of two elements.
 Part of the type lattice looks like this:
 
 <!-- TODO: Fix up css in the svg to work with the subsetted font. -->
@@ -136,12 +136,12 @@ Note that `Null` is not a subtype of the primitive types.
 Unlike many other languages,
 RCL does not have implicit nullability.
 
-The meet operation is useful for bottom-up type inference.
+The join operation is useful for bottom-up type inference.
 For example,
 when the typechecker encounters a list `[t,` `u]`,
 where `t:` `T` and `u:` `U`,
 it infers that the list has type `List[V]`,
-where `V` is the meet of `T` and `U`.
+where `V` is the join of `T` and `U`.
 
 ## The subtype check
 
@@ -210,6 +210,43 @@ makes little difference to the user,
 because typechecking and runtime happen in the same session.
 
 [static]: /2024/a-type-system-for-rcl-part-1-introduction#blurring-the-line-between-static-and-runtime
+
+## The generalized subtype check
+
+R<!---->C<!---->L knows when to insert a runtime type check
+because the typechecker performs what I call a _generalized subtype check_.
+A static typechecker needs to answer the question
+“does this expression evaluate to a value of type `U`?”,
+and it does that using a subtype check `T ≤ U`,
+where `T` is the inferred type of the expression.
+It can reach two possible conclusions:
+
+ 1. `T ≤ U`, I can prove that the program will not encounter runtime type errors.
+ 2. `T ≤ U` does not hold,
+    I failed to prove the absence of runtime type errors.
+    Maybe it fails, maybe not.
+
+As we saw before in the lattice section,
+the inferred type `T` is a upper bound.
+It may be too pessimistic.
+For a language where runtime type errors are fatal,
+the typechecker has to be pessimistic,
+so it reject programs in case **2**.
+But in a configuration language,
+[runtime errors are static errors][static].
+So maybe we could just try?
+What if the typechecker could reach three different conclusions?
+
+ 1. I can prove that the program will not encounter runtime type errors:
+    for all `t:` `T`, we have `t:` `U`.
+ 2. I can prove that the program _will_ encounter a runtime type error:
+    for any `t:` `T`, we have that `t` does **not** fit `U`.
+ 3. The check is inconclusive:
+    there exists a `t0:` `T` that fits `U`,
+    and `t1:` `T` that does not fit `U`.
+
+In case **2** we can still report a static type error,
+and in case **3** we insert a runtime type check.
 
 ## Static typing
 
