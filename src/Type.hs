@@ -210,6 +210,7 @@ getGlyphName c = case c of
   '…' -> "ellipsis"
   '≈' -> "approxequal"
   '≠' -> "notequal"
+  '≰' -> "notlessnorequal"
   '𝔽' -> "u1D53D"
   _   -> error $ "no postscript glyph name for '" ++ [c] ++ "' " ++
                  "(code point " ++ (show $ ord c) ++ ")"

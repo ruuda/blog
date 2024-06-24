@@ -248,6 +248,81 @@ What if the typechecker could reach three different conclusions?
 In case **2** we can still report a static type error,
 and in case **3** we insert a runtime type check.
 
+## Variance
+
+R<!---->C<!---->L has types that have a subtype relation,
+and it has generic types like `List[T]`, `Dict[K,` `V]`, and function types.
+At the intersection of subtypes and generics,
+we have _variance_.
+`List[T]` is covariant in `T`:
+we have `List[T] ≤ List[U]` if and only if `T ≤ U`.
+This neat property falls out of the subset definition of the partial order on sets.
+How does covariance behave under the generalized subtype check?
+Let’s write `T` ≤ `U` for case **1** as defined before (well-typed),
+`T` !≤ `U` for case **2** (static type error),
+and `T` ~ `U` for case **3** (inconclusive).
+It would be nice if it worked like this:
+
+ 1. If `T` ≤ `U`, then `List[T]` ≤ `List[U]`.
+ 2. If `T` !≤ `U`, then `List[T]` !≤ `List[U]`.
+ 3. If `T` ~ `U`, then `List[T]` ~ `List[U]`.
+
+(TODO: Put comparison outside of code tags everywhere.)
+
+Unfortunately,
+this is not the case
+according to our earlier definition of the generalized subtype check.
+We have `Int` !≤ `Bool`,
+so we would like to say that `List[Int]` !≤ `List[Bool]`,
+but the empty list is an instance of both,
+so we have to conclude that `List[Int]` ~ `List[Bool]`.
+That’s a shame,
+because it means that we can report fewer type errors statically.
+And to be fair, when you write
+
+<pre><code class="sourceCode"><span class="kw">let</span> xs: <span class="dt">List</span>[<span class="dt">Int</span>] = [
+  <span class="kw">for</span> x <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]:
+  <span class="kw">if</span> x > <span class="dv">10</span>:
+  x
+];
+<span class="kw">let</span> ys: <span class="dt">List</span>[<span class="dt">Bool</span>] = xs;
+</code></pre>
+
+that _is_ probably a bug,
+even though there is no runtime type error.
+So I opted to make the generalized subtype check in RCL
+respect this generalized notion of covariance for `List`,
+and report a static type error in the case above.
+
+This is one of the places in the type system
+where I’m not sure if my approach is right.
+There is some freedom in implementing the subtype check,
+and when things get too complex,
+it’s always possible to say either “inconclusive, we’ll insert a runtime check”
+for code that is useful in practice,
+or “static error even though it wouldn’t fail in strictly all cases”
+for contrived examples like the one above.
+So far this has been working fine,
+but this feels like one of those things
+where if you make ad-hoc decisions
+without a strong underlying principle,
+they backfire and cause interactions that don’t make sense.
+For example,
+the creator of Javascript defined the `==` operator
+in an ad-hoc way that he thought was useful,
+without the principle of transitivity in mind,
+and it [creates logical inconsistencies][js-trinity]
+that make Javascript difficult to reason about.
+I want RCL to be easy to reason about,
+and using set operations to define the generalized subtype check
+seemed like a strong guiding principle.
+Unfortunately I think it makes the typechecker too weak,
+and breaking covariance is maybe a more surprising behavior
+than rejecting an assignment of `List[Int]` to `List[Bool]`.
+I would love to hear from people who have encountered this problem before.
+
+[js-trinity]: https://javascriptwtf.com/wtf/javascript-holy-trinity
+
 ## Static typing
 
 R<!---->C<!---->L is statically typed,
@@ -287,7 +362,7 @@ the typechecker can encounter three cases:
 
 ## To do
 
-TODO: It’s gradual, so we need `Any`.
+TODO: Forward inference breaks referential transparency.
 TODO: Sloppy join = fast inference.
 TODO: Ref [Cue][cue-lattice].
 TODO: Write no HM, no constraints. [Swift is slow][swift-slow]
