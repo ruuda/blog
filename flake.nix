@@ -66,6 +66,7 @@
             pkgs.m4
             pkgs.mozjpeg
             pkgs.optipng
+            pkgs.scour
             pkgs.zopfli
           ];
         };
