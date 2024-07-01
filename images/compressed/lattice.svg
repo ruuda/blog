@@ -1,30 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg version="1.1" viewBox="0 0 684 212" xmlns="http://www.w3.org/2000/svg">
-<style>@font-face{font-family:Calluna Sans;src:url(/fonts/r{{sans-roman-hash}}.woff2)format("woff2")}
+<svg version="1.1" viewBox="0 0 684 212" xmlns="http://www.w3.org/2000/svg"><style>@font-face{font-family:Calluna Sans;src:url(/fonts/r{{sans-roman-hash}}.woff2)format("woff2")}
 text{font:19px 'Calluna Sans',sans-serif;fill:#456;text-anchor:middle}
-path{stroke:#789;opacity:0.37;stroke-width:1.1}</style>
-<text x="323.26846" y="13">Any</text>
-<text x="498.75458" y="63">List[Any]</text>
-<text x="90.777527" y="111">Int</text>
-<text x="161.50211" y="111">Bool</text>
-<text x="244.50127" y="111">String</text>
-<text x="22.727213" y="111">Null</text>
-<text x="418.0556" y="111">List[Int]</text>
-<text x="572.57178" y="111">List[Bool]</text>
-<text x="498.75458" y="159">List[Void]</text>
-<text x="323.67249" y="208">Void</text>
-<path d="m456 145-25.1-25.8"/>
-<path d="m541 145 28.3-23.1"/>
-<path d="m460 65.7-29.1 25.9"/>
-<path d="m539 66.6 30.8 23.8"/>
-<path d="m457 164-97.3 35"/>
-<path d="m246 120 57.1 62.5"/>
-<path d="m163 119 133 68.7"/>
-<path d="m92.8 119 198 75.4"/>
-<path d="m23.5 120 265 83.2"/>
-<path d="m247 88.8 56.6-64.2"/>
-<path d="m163 92.4 136-72.6"/>
-<path d="m93.2 91.5 202-77.7"/>
-<path d="m25.2 90.5 269-83.3"/>
-<path d="m462 42.7-109-34.3"/>
-</svg>
+path{stroke:#789;opacity:0.37;stroke-width:1.1}</style><text x="323.26846" y="13">Any</text><text x="498.75458" y="63">List[Any]</text><text x="90.777527" y="111">Int</text><text x="161.50211" y="111">Bool</text><text x="244.50127" y="111">String</text><text x="22.727213" y="111">Null</text><text x="418.0556" y="111">List[Int]</text><text x="572.57178" y="111">List[Bool]</text><text x="498.75458" y="159">List[Void]</text><text x="323.67249" y="208">Void</text><path d="m456 145-25.1-25.8"/><path d="m541 145 28.3-23.1"/><path d="m460 65.7-29.1 25.9"/><path d="m539 66.6 30.8 23.8"/><path d="m457 164-97.3 35"/><path d="m246 120 57.1 62.5"/><path d="m163 119 133 68.7"/><path d="m92.8 119 198 75.4"/><path d="m23.5 120 265 83.2"/><path d="m247 88.8 56.6-64.2"/><path d="m163 92.4 136-72.6"/><path d="m93.2 91.5 202-77.7"/><path d="m25.2 90.5 269-83.3"/><path d="m462 42.7-109-34.3"/></svg>

@@ -1,6 +1,9 @@
 # Build output
 /.stack-work
 /dist
+/src/*.hi
+/src/*.o
+/blog
 
 # Cabal sandbox
 /.cabal-sandbox
@@ -9,6 +12,14 @@
 # Editor files
 *.swp
 *.swo
+
+# Nix build result symlink
+/result
+
+# Image intermediate build products
+.ninja_log
+/images/compressed/*.br
+/images/compressed/*.gz
 
 # Fonts, original and processed
 /fonts/generated

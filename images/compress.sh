@@ -35,16 +35,6 @@ guetzli --quality 93 resized/richys-groceries.png compressed/richys-groceries.jp
 # unnoticeable, the jpeg is actually larger than the png, so opt for the png.
 cp resized/tristar-cyan.png compressed/tristar-cyan.png
 
-# The SVG file has been optimised already. It is quite bad still, but it's ok.
-# Also precompress with Zopfli and Brotli.
-cp original/rectangles.svg compressed/rectangles.svg
-zopfli compressed/rectangles.svg
-brotli --force --output=compressed/rectangles.svg.br compressed/rectangles.svg
-
-cp original/lattice.svg compressed/lattice.svg
-zopfli compressed/lattice.svg
-brotli --force --output=compressed/lattice.svg.br compressed/lattice.svg
-
 # Guetzli experiments
 # -------------------
 # Conclusion: apart from one image, Guetzli is universally worse than Mozjpeg
