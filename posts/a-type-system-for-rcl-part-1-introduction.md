@@ -17,7 +17,7 @@ I thought it would be interesting to look at the type system and its implementat
 The type system is by no means complete
 — in particular record types
 and importing types across files are not yet supported —
-but there is enough already to fill a few posts.
+but there is enough to fill a few posts.
 This introduction explores RCL
 and what problems a type system for RCL should and should not solve.
 In part two we’ll explore the type system itself,
@@ -115,8 +115,9 @@ But I want to have them for two reasons:
  * **To prevent bugs.**
    A type system enables moving invariants out of documentation
    and into the program where they can be mechanically enforced.
-   For example for renaming fields,
-   a type system can be useful to ensure you updated all usages.
+   In configuration in particular,
+   a type system can ensure that all construction sites are updated when renaming a field,
+   or that a string belongs to a set of allowed values.
  * **To make code more self-documenting.**
    If you have ever worked in a large untyped Python or Javascript codebase,
    you might recognize this problem:
