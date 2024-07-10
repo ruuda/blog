@@ -172,7 +172,7 @@ and the inferred type for both question marks is `Any`
 — but I’m running ahead,
 we’ll see more about the type lattice in the next post.
 
-## Blurring the line between static and runtime
+## Static vs. runtime
 
 For long-running daemons or programs deployed to users,
 types are essential for building robust software.
@@ -208,7 +208,7 @@ Runtime errors are static errors in RCL.
 
 [typing-interview]: https://aphyr.com/posts/342-typing-the-technical-interview
 
-## The boundaries of well-typedness
+## What should be well-typed?
 
 The type system is a new addition to RCL.
 Although it is a goal for RCL to be able to represent any json document,
@@ -279,8 +279,8 @@ What do I want from the type system?
 
 In the remainder of this series,
 we’ll see how RCL achieves this.
-In [part II][part2] we will look at the type system,
-and in [part III][part3] we will look at the implementation of the typechecker.
+In [part two][part2] we will look at the type system,
+and in [part three][part3] we will look at the implementation of the typechecker.
 
 [part1]: /2024/a-type-system-for-rcl-part-1-introduction
 [part2]: /2024/a-type-system-for-rcl-part-2-the-type-system

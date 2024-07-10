@@ -26,12 +26,12 @@ or find problems with them.
  * [Part <abbr>II</abbr>: The type system][part2] (this post)
  * [Part <abbr>III</abbr>: The typechecker][part3]
 
-In part <abbr>I</abbr> we looked at what I want from a type system for RCL.
+In part one we looked at what I want from a type system for RCL.
 In this part we’ll look at the type system so far.
 The type system is a work in progress.
 I plan to still add record types and type aliases,
 and one thing I haven’t yet figured out
-is how to enable importing types from files.
+is how importing types from files should work.
 I don’t expect that these will fundamentally change the type system,
 so let’s look at what we have so far.
 
@@ -52,12 +52,12 @@ though there are still cases where the the typechecker
 has to insert a runtime check.
 We’ll see why below.
 
-## Basics
+## Foundation
 
 Two major choices affect RCL’s type system:
 
  1. **Types constrain values, but values don’t have unique types.**
-    The type system specifies whether a value “fits” a type,
+    The type system specifies whether a value _fits_ a type,
     but the same value can fit multiple types.
     Variables that have different types can refer to values that are equal.
  2. **Type inference is forward-only, and mostly bottom-up.**
@@ -81,7 +81,7 @@ It means that all of these are well-typed:
 <span class="kw">let</span> c: <span class="dt">Union</span>[<span class="dt">Int</span>, <span class="dt">String</span>] = <span class="dv">0</span>;
 </code></pre>
 
-Collections are another example:
+Collections are another example.
 The runtime representation of a collection
 does not depend on the element type,
 so all of these are fine:
@@ -107,7 +107,7 @@ We can think of types as the set of values that fit that type.
 That a value can have multiple types,
 means that these sets are not disjoint.
 That in turn means that we can order them by the subset relation,
-so we have a partial order on types.*
+so we have a partial order on types.
 Which brings us to the next topic:
 types form a _lattice_.
 
@@ -118,7 +118,6 @@ is a partially ordered set with an operation called _join_
 that returns the least upper bound of two elements.
 Part of the type lattice looks like this:
 
-<!-- TODO: Fix up css in the svg to work with the subsetted font. -->
 ![A part of the type lattice.](/images/lattice.svg)
 
 The bottom of the lattice is `Void`, the uninhabited type.
@@ -209,7 +208,7 @@ Whether we prevent the violation statically or at runtime
 makes little difference to the user,
 because typechecking and runtime happen in the same session.
 
-[static]: /2024/a-type-system-for-rcl-part-1-introduction#blurring-the-line-between-static-and-runtime
+[static]: /2024/a-type-system-for-rcl-part-1-introduction#static-vs.-runtime
 
 ## The generalized subtype check
 
