@@ -229,22 +229,8 @@ If RCL had one, it might look like this:
 A typechecker that is aware of `isinstance`
 would change the type of `b` from `Any` to `Int` inside the then-branch,
 and then the expression again typechecks.
-
 R<!---->C<!---->L does not have a user-exposed `isinstance` check,
-but it does insert a runtime type check under the hood.
-Before binding a value to `c`,
-it checks that the value fits type `Int`.
-In this case it does,
-and the above program executes just fine.
-When the check fails,
-RCL reports a runtime type error.
-This is fine, because [runtime errors are static errors in RCL][static].
-The important thing
-is that we don’t allow execution to continue
-when the type annotation is violated.
-Whether we prevent the violation statically or at runtime
-makes little difference to the user,
-because typechecking and runtime happen in the same session.
+but it does have runtime type checks under the hood.
 
 [static]: /2024/a-type-system-for-rcl-part-1-introduction#static-vs.-runtime
 
@@ -271,6 +257,12 @@ the typechecker has to be pessimistic,
 so it reject programs in case **2**.
 But in a configuration language,
 [runtime errors are static errors][static].
+The important thing
+is that we don’t allow execution to continue
+when the type annotation is violated.
+Whether we prevent the violation statically or at runtime
+makes little difference to the user,
+because typechecking and runtime happen in the same session.
 So maybe we could just try?
 What if the typechecker could reach three different conclusions?
 
@@ -281,8 +273,10 @@ What if the typechecker could reach three different conclusions?
 
 <!-- TODO: Illustration of Venn diagram. -->
 
-This generalized subtype check is what RCL implements,
-although variance causes some subtleties.
+R<!---->C<!---->L implements this generalized subtype check,
+and when the result is inconclusive,
+it inserts a runtime check
+to verify that the value fits the expected type.
 
 ## Variance
 
@@ -314,7 +308,7 @@ That’s a shame,
 because it means that we can report fewer type errors statically.
 And to be fair, when you write
 
-<pre><code class="sourceCode"><span class="kw">let</span> xs: <span class="dt">List</span>[<span class="dt">Int</span>] = [
+<pre><code class="sourceCode"><span class="kw">let</span> xs = [
   <span class="kw">for</span> x <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]:
   <span class="kw">if</span> x > <span class="dv">10</span>:
   x
