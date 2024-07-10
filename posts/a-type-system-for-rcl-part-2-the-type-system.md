@@ -130,7 +130,7 @@ a list of integers.
 
 The partial order on types is the subset relationship on the underlying sets.
 If every value of type `T` fits type `U`,
-then we say that `T` is a subtype of `U`, written `T ≤ U`.
+then we say that `T` is a subtype of `U`, written `T` ≤ `U`.
 Note that `Null` is not a subtype of the primitive types.
 Unlike many other languages,
 RCL does not have implicit nullability.
@@ -141,6 +141,44 @@ when the typechecker encounters a list `[t,` `u]`,
 where `t:` `T` and `u:` `U`,
 it infers that the list has type `List[V]`,
 where `V` is the join of `T` and `U`.
+
+## Static and gradual typing
+
+R<!---->C<!---->L is statically typed,
+in the sense that it can report type errors in unreachable code.
+For example,
+the following program fails with a type error:
+
+<pre><code class="sourceCode"><span class="kw">let</span> string = <span class="st">"strings cannot be negated"</span>;
+<span class="kw">if</span> <span class="kw">false</span>:
+  <span class="co">// Error: Type mismatch. Expected Bool but found String.</span>
+  <span class="kw">not</span> string
+<span class="kw">else</span>
+  <span class="kw">true</span>
+</code></pre>
+
+However,
+although RCL enforces all type annotations,
+it defers some type checks to runtime.
+In this sense, RCL is gradually typed.
+The following is fine:
+
+<pre><code class="sourceCode"><span class="kw">let</span> string: <span class="dt">Any</span> = <span class="st">"strings cannot be negated"</span>;
+<span class="kw">if</span> <span class="kw">false</span>: <span class="kw">not</span> string <span class="kw">else</span> <span class="kw">true</span>
+</code></pre>
+
+When checking an expression,
+the typechecker can encounter three cases:
+
+1. It can prove that the expression is well-typed.
+   Evaluation is guaranteed to succeed.
+2. It can prove that evaluation would fail with a type error.
+   In this case it reports the error.
+3. The check is inconclusive:
+   it can’t rule out a type error, but it can’t prove it either.
+   In this case the typechecker inserts a runtime type check.
+
+Checking whether an expression fits a type is the role of the _subtype check_.
 
 ## The subtype check
 
@@ -161,17 +199,17 @@ Consider for example:
    because integer literals are integers.
    The expected type is also `Int`,
    due to the type annotation.
-   We have `Int ≤ Int`,
+   We have `Int` ≤ `Int`,
    so the typecheck passes.
  * On the second line
    the inferred type is `Int`, because `a:` `Int`.
    The expected type is `Any`.
-   We have `Int ≤ Any`,
+   We have `Int` ≤ `Any`,
    so again the typecheck passes.
  * On the third line
    the inferred type is `Any`, because `b:` `Any`.
    The expected type is `Int`.
-   But it does **not** hold that `Any ≤ Int`,
+   But it does **not** hold that `Any` ≤ `Int`,
    so the typecheck fails;
    the program contains a type error.
 
@@ -214,19 +252,19 @@ because typechecking and runtime happen in the same session.
 
 R<!---->C<!---->L knows when to insert a runtime type check
 because the typechecker performs what I call a _generalized subtype check_.
-A static typechecker needs to answer the question
-“does this expression evaluate to a value of type `U`?”,
-and it does that using a subtype check `T ≤ U`,
+The checker needs to answer the question
+“does this expression evaluate to a value of type `U`?”
+It does that using a subtype check `T` ≤ `U`,
 where `T` is the inferred type of the expression.
-It can reach two possible conclusions:
+Traditionally a check can reach two possible conclusions:
 
- 1. `T ≤ U`, I can prove that the program will not encounter runtime type errors.
- 2. `T ≤ U` does not hold,
+ 1. `T` ≤ `U`, I can prove that the program will not encounter runtime type errors.
+ 2. `T` ≤ `U` does not hold,
     I failed to prove the absence of runtime type errors.
     Maybe it fails, maybe not.
 
 As we saw before in the lattice section,
-the inferred type `T` is a upper bound.
+the inferred type `T` is an upper bound.
 It may be too pessimistic.
 For a language where runtime type errors are fatal,
 the typechecker has to be pessimistic,
@@ -236,16 +274,15 @@ But in a configuration language,
 So maybe we could just try?
 What if the typechecker could reach three different conclusions?
 
- 1. I can prove that the program will not encounter runtime type errors:
-    for all `t:` `T`, we have `t:` `U`.
- 2. I can prove that the program _will_ encounter a runtime type error:
-    for any `t:` `T`, we have that `t` does **not** fit `U`.
- 3. The check is inconclusive:
-    there exists a `t0:` `T` that fits `U`,
+ 1. **Well-typed** — For all `t:` `T`, we have `t:` `U`.
+ 2. **Static error** — For all `t:` `T`, `t` does not fit `U`.
+ 3. **Inconclusive** — There exist a `t0:` `T` that fits `U`,
     and `t1:` `T` that does not fit `U`.
 
-In case **2** we can still report a static type error,
-and in case **3** we insert a runtime type check.
+<!-- TODO: Illustration of Venn diagram. -->
+
+This generalized subtype check is what RCL implements,
+although variance causes some subtleties.
 
 ## Variance
 
@@ -254,7 +291,7 @@ and it has generic types like `List[T]`, `Dict[K,` `V]`, and function types.
 At the intersection of subtypes and generics,
 we have _variance_.
 `List[T]` is covariant in `T`:
-we have `List[T] ≤ List[U]` if and only if `T ≤ U`.
+we have `List[T]` ≤ `List[U]` if and only if `T` ≤ `U`.
 This neat property falls out of the subset definition of the partial order on sets.
 How does covariance behave under the generalized subtype check?
 Let’s write `T` ≤ `U` for case **1** as defined before (well-typed),
@@ -265,8 +302,6 @@ It would be nice if it worked like this:
  1. If `T` ≤ `U`, then `List[T]` ≤ `List[U]`.
  2. If `T` !≤ `U`, then `List[T]` !≤ `List[U]`.
  3. If `T` ~ `U`, then `List[T]` ~ `List[U]`.
-
-(TODO: Put comparison outside of code tags everywhere.)
 
 Unfortunately,
 this is not the case
@@ -307,10 +342,10 @@ where if you make ad-hoc decisions
 without a strong underlying principle,
 they backfire and cause interactions that don’t make sense.
 For example,
-the creator of Javascript defined the `==` operator
-in an ad-hoc way that he thought was useful,
-without the principle of transitivity in mind,
-and it [creates logical inconsistencies][js-trinity]
+Javascript defined the `==` operator
+in an ad-hoc way without the principle of transitivity in mind,
+and even though the definition might have seemed useful at first,
+it [creates logical inconsistencies][js-trinity]
 that make Javascript difficult to reason about.
 I want RCL to be easy to reason about,
 and using set operations to define the generalized subtype check
@@ -322,45 +357,9 @@ I would love to hear from people who have encountered this problem before.
 
 [js-trinity]: https://javascriptwtf.com/wtf/javascript-holy-trinity
 
-## Static typing
-
-R<!---->C<!---->L is statically typed,
-in the sense that it can report type errors in unreachable code.
-For example,
-the following program fails with a type error:
-
-<pre><code class="sourceCode"><span class="kw">let</span> string = <span class="st">"strings cannot be negated"</span>;
-<span class="kw">if</span> <span class="kw">false</span>:
-  <span class="co">// Error: Type mismatch. Expected Bool but found String.</span>
-  <span class="kw">not</span> string
-<span class="kw">else</span>
-  <span class="kw">true</span>
-</code></pre>
-
-However,
-although RCL enforces all type annotations,
-it defers some type checks to runtime.
-The following is fine:
-
-<pre><code class="sourceCode"><span class="kw">let</span> string: <span class="dt">Any</span> = <span class="st">"strings cannot be negated"</span>;
-<span class="kw">if</span> <span class="kw">false</span>: <span class="kw">not</span> string <span class="kw">else</span> <span class="kw">true</span>
-</code></pre>
-
-This is the result of what I call a _generalized subtype check_.
-
-
-In general,
-the typechecker can encounter three cases:
-
-* It can prove that the expression contains a type error.
-  In this case it reports the error.
-* It can prove that the expression is well-typed.
-  Evaluation is guaranteed to succeed.
-* It can’t rule out a type error, but it can’t prove it either.
-  In this case it inserts a runtime type check.
-
 ## To do
 
+TODO: Bottom-up inference.
 TODO: Forward inference breaks referential transparency.
 TODO: Sloppy join = fast inference.
 TODO: Ref [Cue][cue-lattice].
