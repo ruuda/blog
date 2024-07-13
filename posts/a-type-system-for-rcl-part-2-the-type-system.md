@@ -62,11 +62,12 @@ Two major choices affect RCL’s type system:
     Variables that have different types can refer to values that are equal.
  2. **Type inference is forward-only, and mostly bottom-up.**
     The typechecker assigns a concrete type to every bound variable;
-    there is no constraint propagation that makes type information flow backwards.
+    there are no Hindley–Milner-style constraint propagation
+    that makes type information flow backwards.
     Although the typechecker always infers _some_ type,
     the inferred type can be less precise
     than what backwards inference could find.
-    Forward-only inference keeps the typechecker fast,
+    Forward-only inference keeps the typechecker [fast][swift-slow],
     and tractable for humans.
     After all, RCL tries to be a _reasonable_ configuration language:
     humans should be able to reason about whether a program is well-typed.
@@ -355,7 +356,7 @@ I would love to hear from people who have encountered this problem before.
 
 I mentioned before that inference is _mostly_ bottom-up.
 This means that in the absence of type annotations,
-inference is syntax-driven.
+inference is syntax-directed.
 An integer literal has type `Int`,
 a string literal has type `String`, etc.
 For a list literal,
@@ -363,7 +364,7 @@ the inferred type is the join of the inferred element types,
 for an if-else expression
 the inferred type is the join of the then and else-branches, etc.
 Because values don’t have a unique type,
-we have some freedom here.
+we have some freedom in what we infer.
 What should the inferred type of this dict literal be?
 
 <pre><code class="sourceCode"><span class="kw">let</span> server = {
@@ -375,17 +376,18 @@ What should the inferred type of this dict literal be?
 
 If we had record types,
 we might infer this record type:
-```
-{
-  hostname: String,
-  enable_sshd: Bool,
-  expose_ports: List[Int],
+
+<pre><code class="sourceCode">{
+  hostname: <span class="dt">String</span>,
+  enable_sshd: <span class="dt">Bool</span>,
+  expose_ports: <span class="dt">List[Int]</span>,
 }
-```
+</code></pre>
+
 In fact, this is what TypeScript
 (another language that adds types to a json superset)
 does.
-But it would be equally valid to infer `Dict[String, Any]`.
+But it would be equally valid to infer `Dict[String,` `Any]`.
 This is a less precise type,
 but faster to infer.
 Especially for a list of records,
@@ -401,10 +403,16 @@ Another problem with these inferred record types
 is that they can grow very big,
 which can make error messages unwieldy
 — a problem I have encountered in TypeScript.
+Finally,
+[`rcl` `jq`][rcl-jq] may need to search through a large json file,
+and it would be wasteful to infer a precise type
+when that type never gets used.
 Perhaps my concerns are premature,
 but I decided that RCL will never infer record types.
 So if more complex types can’t be inferred,
 where do they come from?
+
+[rcl-jq]: https://docs.ruuda.nl/rcl/rcl_query/
 
 ## Top-down validation
 
@@ -426,7 +434,7 @@ The result of the fused check-infer can then be one of three cases:
     and we should validate against type `T` where `T` ≤ `U`.
 
 In most cases the expected type `U` is `Any`,
-but for example in the condition of an assertion or if-then-else expression,
+but for example in the condition of an assertion or if-else expression,
 the expected type is `Bool`.
 The other case where the expected type can be different,
 is in let bindings that contain a type annotation.
@@ -441,22 +449,21 @@ and because we don’t have type variables,
 if there is no annotation,
 it has to assume `Any`.
 
-```rcl
-// Inferred as (Any) -> Int, with a runtime check before the
-// multiplication that ensures the argument is an integer.
-let f = x => x * 2;
+<pre><code class="sourceCode"><span class="co">// Inferred as (Any) -> Int, with a runtime check before the</span>
+<span class="co">// multiplication that ensures the argument is an integer.</span>
+<span class="kw">let</span> f = x => x * <span class="dv">2</span>;
 
-// With an explicit annotation, we can get a more precise type,
-// and eliminate the need for a runtime check in the body.
-let g: (Int) -> Int = x => x * 2;
-```
+<span class="co">// With an explicit annotation, we can get a more precise type,</span>
+<span class="co">// and eliminate the need for a runtime check in the body.</span>
+<span class="kw">let</span> g: (<span class="dt">Int</span>) -> <span class="dt">Int</span> = x => x * <span class="dv">2</span>;
+</code></pre>
 
 So far this looks like an acceptable trade-off to make.
 
 ## Referential transparency
 
 One unfortunate consequence of forward-only bottom-up inference,
-is that it can break referential transparency.
+is that it can in a sense break referential transparency.
 Giving a subexpression a name by extracting it into a let-binding
 can change the way errors are reported.
 It does not change the behavior of a well-typed program
@@ -467,43 +474,71 @@ For example,
 in the program below we can report a static type error,
 and pinpoint the source of the problem:
 
-<pre><code class="sourceCode"><span class="kw">let</span> xs: <span class="dt">List</span>[<span class="dt">Int</span>] = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="st">"three"</span>];</code></pre>
+<pre><code class="sourceCode"><span class="kw">let</span> xs: <span class="dt">List</span>[<span class="dt">Int</span>] = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="st">"three"</span>];
+</code></pre>
 
-<pre><code class="sourceCode">stdin:1:28
-  <span class="dt">|</span>
+<pre><code class="sourceCode"><span class="dt">|</span>
 1 <span class="dt">|</span> let xs: List[Int] = [1, 2, "three"];
   <span class="dt">|</span>                            <span class="dt">^~~~~~~</span>
 <span class="dt">Error:</span> Type mismatch. Expected <span class="dt">Int</span> but found <span class="dt">String</span>.
 
-stdin:1:14
   <span class="st">|</span>
 1 <span class="st">|</span> let xs: List[Int] = [1, 2, "three"];
   <span class="st">|</span>              <span class="st">^~~</span>
 <span class="st">Note:</span> Expected Int because of this annotation.
 </code></pre>
 
-However, if we move the type annotation,
+If we move the type annotation,
 then now `xs` is inferred as `List[Any]`,
 and the assignment to `ys` causes a runtime check to be inserted.
 This runtime check
-no longer has access to the source location that produced a value,
+no longer has access to the source location that produced the value,
 only to the value itself,
 so although it still reports a type error,
-the error looks different:
+the error looks different now:
 
-```rcl
-let xs = [1, 2, "three"];
-let ys: List[Int] = xs;
-null
-```
+<pre><code class="sourceCode"><span class="kw">let</span> xs = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="st">"three"</span>];
+<span class="kw">let</span> ys: <span class="dt">List</span>[<span class="dt">Int</span>] = xs;
+</code></pre>
 
-## To do
+<pre><code class="sourceCode">  <span class="dt">|</span>
+2 <span class="dt">|</span> let ys: List[Int] = xs;
+  <span class="dt">|</span>                     <span class="dt">^~</span>
+in value
+at index <span class="dv">2</span>
+<span class="dt">Error:</span> Type mismatch. Expected a value that fits this type:
 
-TODO: Bottom-up inference.
-TODO: Forward inference breaks referential transparency.
-TODO: Sloppy join = fast inference.
+  <span class="dt">Int</span>
+
+But got this value:
+
+  <span class="st">"three"</span>
+
+  <span class="st">|</span>
+2 <span class="st">|</span> let ys: List[Int] = xs;
+  <span class="st">|</span>              <span class="st">^~~</span>
+<span class="st">Note:</span> Expected Int because of this annotation.
+</code></pre>
+
+Having different ways to surface the same type error is unfortunate,
+but I think I can live with it.
+On the one hand it’s hard to justify
+that giving a value a name can affect behavior,
+but on the other hand,
+“inference is forward-only” is a simple rule to explain,
+and I think that making
+“put annotations close to the definition” a best practice
+can help to mitigate this limitation.
+For now this looks like an acceptable trade-off,
+but I’ll have to see how it pans out with record types
+and larger codebases that import types and values from multiple files.
+I would love to hear from people who encountered this trade-off before.
+
+## Conclusion
+
+To do.
+
 TODO: Ref [Cue][cue-lattice].
-TODO: Write no HM, no constraints. [Swift is slow][swift-slow]
 
 [part1]: /2024/a-type-system-for-rcl-part-1-introduction
 [part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
