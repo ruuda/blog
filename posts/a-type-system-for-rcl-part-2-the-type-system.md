@@ -62,13 +62,13 @@ Two major choices affect RCL’s type system:
     Variables that have different types can refer to values that are equal.
  2. **Type inference is forward-only, and mostly bottom-up.**
     The typechecker assigns a concrete type to every bound variable;
-    there are no Hindley–Milner-style constraint propagation
-    that makes type information flow backwards.
+    there is no Hindley–Milner-style unification,
+    or constraint propagation that makes type information flow backwards.
     Although the typechecker always infers _some_ type,
     the inferred type can be less precise
     than what backwards inference could find.
-    Forward-only inference keeps the typechecker [fast][swift-slow],
-    and tractable for humans.
+    Forward-only inference keeps the typechecker
+    [fast and tractable for humans][swift-slow].
     After all, RCL tries to be a _reasonable_ configuration language:
     humans should be able to reason about whether a program is well-typed.
 
@@ -402,7 +402,7 @@ an input could be a data file with thousands of elements
 Another problem with these inferred record types
 is that they can grow very big,
 which can make error messages unwieldy
-— a problem I have encountered in TypeScript.
+— a problem I have encountered first-hand in TypeScript and PureScript.
 Finally,
 [`rcl` `jq`][rcl-jq] may need to search through a large json file,
 and it would be wasteful to infer a precise type
@@ -477,7 +477,7 @@ and pinpoint the source of the problem:
 <pre><code class="sourceCode"><span class="kw">let</span> xs: <span class="dt">List</span>[<span class="dt">Int</span>] = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="st">"three"</span>];
 </code></pre>
 
-<pre><code class="sourceCode"><span class="dt">|</span>
+<pre><code class="sourceCode">  <span class="dt">|</span>
 1 <span class="dt">|</span> let xs: List[Int] = [1, 2, "three"];
   <span class="dt">|</span>                            <span class="dt">^~~~~~~</span>
 <span class="dt">Error:</span> Type mismatch. Expected <span class="dt">Int</span> but found <span class="dt">String</span>.
@@ -545,4 +545,134 @@ TODO: Ref [Cue][cue-lattice].
 [part3]: /2024/a-type-system-for-rcl-part-3-the-typechecker
 
 [swift-slow]:  https://danielchasehooper.com/posts/why-swift-is-slow/
+
+## Appendix: Related work
+
+R<!---->C<!---->L is not the first typed json superset,
+nor the first typed configuration language.
+The type system is inspired by the works below,
+and probably unconsciously by many more of the languages I have been exposed to,
+particularly Haskell and Rust.
+
+[**Python and Mypy**][mypy]<br>
+Mypy is one of the main indirect influences for RCL’s type system.
+It is the most mature typechecker for Python,
+and it is the gradual type system that I have most experience with.
+(I’ve been using it since Python 2,
+back when annotations were still in comments.)
+The type system differs from RCL in important ways
+(in particular, RCL enforces annotations at runtime, unlike Python),
+but the look and feel of RCL is intentionally very Python-like,
+and the square bracket syntax for generic types
+is inspired by Python and Scala.
+
+[mypy]: https://www.mypy-lang.org/
+
+**Monotone frameworks**<br>
+The idea of using a join-semilattice for type inference
+is based on monotone frameworks,
+an approach for inferring types for dynamically typed programs.
+I learned about this from Jurriaan Hage
+in a course taught at Utrecht University.
+In the lab assignment at the time
+I built a lattice-based typechecker for Lua.
+Monotone frameworks
+propagate lattice elements over a control flow graph.
+That part is not relevant
+for a functional language with immutable bindings,
+but the lattice part is useful.
+I can’t find an obvious authoritative source to link to,
+[but I found this slide deck][jhage-uu] that treats the topic.
+
+[jhage-uu]: https://www.macs.hw.ac.uk/~jh2054/downloads/pythonbalancing-talk.pdf
+
+[**Cue**][cue]<br>
+Cue is another typed configuration language,
+and its types [form a lattice as well][cue-lattice].
+In fact, the lattice is very similar to the one in RCL.
+Cue goes a step further by merging the type and value universes,
+and I really like how that approach can be used
+both for constraining values and reducing boilerplate.
+Though the approach is really elegant and powerful,
+it requires a bit of a mental leap.
+For RCL,
+I wanted something that is completely obvious and boring
+to somebody familiar with more traditional imperative languages;
+something that you don’t need to learn because you already know it,
+even when you see it for the first time.
+As a language,
+RCL is more similar to [Jsonnet][jsonnet]
+(very similar actually),
+though Jsonnet does not have static types.
+
+[cue]:         https://cuelang.org/
 [cue-lattice]: https://cuelang.org/docs/concept/the-logic-of-cue/
+[jsonnet]:     https://jsonnet.org/
+
+[**TypeScript**][typescript]<br>
+In a sense,
+TypeScript is to JavaScript what Mypy is to Python.
+It _should_ be very relevant for me,
+because TypeScript is a superset of json,
+so like RCL its type system has to be able to describe arbitrary json data.
+I haven’t studied TypeScript’s type system much though.
+I try hard to avoid the JavaScript and NPM ecosystem,
+so I haven’t used TypeScript much except in a few small applications,
+therefore I can’t really comment on its type system.
+
+[typescript]: https://www.typescriptlang.org/
+
+[**PureScript**][purescript]<br>
+PureScript is another typed functional language.
+It compiles to and interoperates with JavaScript,
+so it has good support for modelling JavaScript objects
+(dicts/records in RCL).
+I’ve written two applications in it
+([a plant watering tracker][sempervivum] and [a music player][musium]),
+and I feel more comfortable with it than TypeScript.
+I haven’t encountered the need for [row polymorphism][rowpoly] though.
+I need to dive into this deeper when I get to adding record types to RCL,
+but my feeling is that row types may be a bit too advanced.
+I want RCL to be obvious to understand
+even for people who don’t have a deep background in typed functional programming.
+
+[purescript]:  https://www.purescript.org/
+[sempervivum]: https://github.com/ruuda/sempervivum
+[musium]:      https://github.com/ruuda/musium
+[rowpoly]:     https://github.com/purescript/documentation/blob/aba17dc1c240d2001f4c747430c46e823fb9987c/language/Types.md#row-polymorphism
+
+**[Dhall][dhall] and [Nickel][nickel]**<br>
+Two other typed configuration languages are Dhall and Nickel.
+I never used either language extensively
+so my opinion of their type systems is based mostly on the documentation,
+and not on experience.
+Dhall is very Haskell-like.
+[Its type system][dhall-types] is more rigid than RCL:
+there is no subtyping,
+and the type system is completely static.
+As such it does not have much in common with RCL
+except for the parts that are inevitable to have a useful type system.
+[Nickel is gradually typed][nickel-types] like RCL,
+but takes a very different approach to the implementation.
+In RCL all code is typechecked.
+Every expression and subexpression has an inferred type (which can be `Any`),
+and the generalized subtype check provides a unified way
+to defer any check that can’t be verified statically to runtime.
+In Nickel,
+the typechecker is only enabled on annotated expressions,
+and there is [a more complex interaction][nickel-mix]
+between statically typed and dynamically typed code
+that also involves Nickel’s contract system.
+I am of course biased and my understanding of Nickel is only superficial,
+but to me it feels a bit ad-hoc
+— I don’t see a simple underlying principle —
+while for Cue and RCL
+there is one simple principle that underlies the entire type system,
+which makes it easier to explain,
+and less likely to contain unexpected interactions.
+
+[dhall]:        https://dhall-lang.org/
+[dhall-types]:  https://docs.dhall-lang.org/tutorials/Language-Tour.html#types
+[nickel]:       https://nickel-lang.org/
+[nickel-types]: https://nickel-lang.org/user-manual/typing
+[nickel-mix]:   https://nickel-lang.org/user-manual/typing#interaction-between-statically-typed-and-dynamically-typed-code
