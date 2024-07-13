@@ -388,7 +388,7 @@ we might infer this record type:
 <pre><code class="sourceCode">{
   hostname: <span class="dt">String</span>,
   enable_sshd: <span class="dt">Bool</span>,
-  expose_ports: <span class="dt">List[Int]</span>,
+  expose_ports: <span class="dt">List</span>[<span class="dt">Int</span>],
 }
 </code></pre>
 
