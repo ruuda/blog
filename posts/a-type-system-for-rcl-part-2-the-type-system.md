@@ -230,7 +230,7 @@ A typechecker that is aware of `isinstance`
 would change the type of `b` from `Any` to `Int` inside the then-branch,
 and then the expression again typechecks.
 R<!---->C<!---->L does not have a user-exposed `isinstance` check,
-but it does have runtime type checks under the hood.
+but it does perform runtime type checks under the hood.
 
 [static]: /2024/a-type-system-for-rcl-part-1-introduction#static-vs.-runtime
 
@@ -276,7 +276,7 @@ What if the typechecker could reach three different conclusions?
 R<!---->C<!---->L implements this generalized subtype check,
 and when the result is inconclusive,
 it inserts a runtime check
-to verify that the value fits the expected type.
+that verifies that the value fits the expected type.
 
 ## Variance
 
@@ -337,7 +337,7 @@ without a strong underlying principle,
 they backfire and cause interactions that don’t make sense.
 For example,
 Javascript defined the `==` operator
-in an ad-hoc way without the principle of transitivity in mind,
+in an ad-hoc way without transitivity in mind,
 and even though the definition might have seemed useful at first,
 it [creates logical inconsistencies][js-trinity]
 that make Javascript difficult to reason about.
@@ -350,6 +350,152 @@ than rejecting an assignment of `List[Int]` to `List[Bool]`.
 I would love to hear from people who have encountered this problem before.
 
 [js-trinity]: https://javascriptwtf.com/wtf/javascript-holy-trinity
+
+## Bottom-up inference
+
+I mentioned before that inference is _mostly_ bottom-up.
+This means that in the absence of type annotations,
+inference is syntax-driven.
+An integer literal has type `Int`,
+a string literal has type `String`, etc.
+For a list literal,
+the inferred type is the join of the inferred element types,
+for an if-else expression
+the inferred type is the join of the then and else-branches, etc.
+Because values don’t have a unique type,
+we have some freedom here.
+What should the inferred type of this dict literal be?
+
+<pre><code class="sourceCode"><span class="kw">let</span> server = {
+  <span class="n">hostname</span> = <span class="st">"webserver"</span>,
+  <span class="n">enable_sshd</span> = <span class="kw">true</span>,
+  <span class="n">expose_ports</span> = [<span class="dv">22</span>, <span class="dv">80</span>, <span class="dv">443</span>],
+};
+</code></pre>
+
+If we had record types,
+we might infer this record type:
+```
+{
+  hostname: String,
+  enable_sshd: Bool,
+  expose_ports: List[Int],
+}
+```
+In fact, this is what TypeScript
+(another language that adds types to a json superset)
+does.
+But it would be equally valid to infer `Dict[String, Any]`.
+This is a less precise type,
+but faster to infer.
+Especially for a list of records,
+incrementally constructing the inferred type
+and then joining those for every element,
+is a lot to churn through and allocate
+— even if algorithmically it can be done in linear time.
+For a general-purpose language like TypeScript that might be acceptable,
+but in a configuration language like RCL,
+an input could be a data file with thousands of elements
+(say, a collection of user accounts or servers).
+Another problem with these inferred record types
+is that they can grow very big,
+which can make error messages unwieldy
+— a problem I have encountered in TypeScript.
+Perhaps my concerns are premature,
+but I decided that RCL will never infer record types.
+So if more complex types can’t be inferred,
+where do they come from?
+
+## Top-down validation
+
+In RCL,
+type checking and type inference are fused together.
+Checking an expression takes two inputs:
+
+ * The expression itself.
+ * An expected type `U`.
+
+The result of the fused check-infer can then be one of three cases:
+
+ 1. The expression is well-typed,
+    and it has inferred type `T` where `T` ≤ `U`.
+ 2. The expression is ill-typed,
+    and here is a type error that explains why `T` !≤ `U`.
+ 3. Inconclusive,
+    we need to insert a runtime check,
+    and we should validate against type `T` where `T` ≤ `U`.
+
+In most cases the expected type `U` is `Any`,
+but for example in the condition of an assertion or if-then-else expression,
+the expected type is `Bool`.
+The other case where the expected type can be different,
+is in let bindings that contain a type annotation.
+This is how record types can enter the type system.
+
+This approach to inference does have limitations
+compared to a constraint-based approach,
+in particular for inference of function types.
+When checking a function body,
+the typechecker needs to have a type for the arguments,
+and because we don’t have type variables,
+if there is no annotation,
+it has to assume `Any`.
+
+```rcl
+// Inferred as (Any) -> Int, with a runtime check before the
+// multiplication that ensures the argument is an integer.
+let f = x => x * 2;
+
+// With an explicit annotation, we can get a more precise type,
+// and eliminate the need for a runtime check in the body.
+let g: (Int) -> Int = x => x * 2;
+```
+
+So far this looks like an acceptable trade-off to make.
+
+## Referential transparency
+
+One unfortunate consequence of forward-only bottom-up inference,
+is that it can break referential transparency.
+Giving a subexpression a name by extracting it into a let-binding
+can change the way errors are reported.
+It does not change the behavior of a well-typed program
+(which would be a cardinal sin for a functional language),
+but it still makes me uneasy.
+
+For example,
+in the program below we can report a static type error,
+and pinpoint the source of the problem:
+
+<pre><code class="sourceCode"><span class="kw">let</span> xs: <span class="dt">List</span>[<span class="dt">Int</span>] = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="st">"three"</span>];</code></pre>
+
+<pre><code class="sourceCode">stdin:1:28
+  <span class="dt">|</span>
+1 <span class="dt">|</span> let xs: List[Int] = [1, 2, "three"];
+  <span class="dt">|</span>                            <span class="dt">^~~~~~~</span>
+<span class="dt">Error:</span> Type mismatch. Expected <span class="dt">Int</span> but found <span class="dt">String</span>.
+
+stdin:1:14
+  <span class="st">|</span>
+1 <span class="st">|</span> let xs: List[Int] = [1, 2, "three"];
+  <span class="st">|</span>              <span class="st">^~~</span>
+<span class="st">Note:</span> Expected Int because of this annotation.
+</code></pre>
+
+However, if we move the type annotation,
+then now `xs` is inferred as `List[Any]`,
+and the assignment to `ys` causes a runtime check to be inserted.
+This runtime check
+no longer has access to the source location that produced a value,
+only to the value itself,
+so although it still reports a type error,
+the error looks different:
+
+```rcl
+let xs = [1, 2, "three"];
+let ys: List[Int] = xs;
+null
+```
 
 ## To do
 
