@@ -20,8 +20,8 @@ and importing types across files are not yet supported —
 but there is enough to fill a few posts.
 This introduction explores RCL
 and what problems a type system for RCL should and should not solve.
-In part two we’ll explore the type system itself,
-and in part three we’ll dive into the internals of the typechecker.
+In part two and three we’ll explore the type system itself and related work,
+and in part four we’ll dive into the internals of the typechecker.
 
 [rcl-intro]: /2024/a-reasonable-configuration-language
 [rcl-lang]:  https://rcl-lang.org/
@@ -45,7 +45,13 @@ In this series:
 
  * [Part <abbr>I</abbr>: Introduction][part1] (this post)
  * [Part <abbr>II</abbr>: The type system][part2]
- * [Part <abbr>III</abbr>: The typechecker][part3]
+ * [Part <abbr>III</abbr>: Related work][part3]
+ * [Part <abbr>IV</abbr>: The typechecker][part4]
+
+[part1]: /2024/a-type-system-for-rcl-part-1-introduction
+[part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
+[part3]: /2024/a-type-system-for-rcl-part-3-related-work
+[part4]: /2024/a-type-system-for-rcl-part-4-the-typechecker
 
 ## What is RCL?
 
@@ -280,8 +286,6 @@ What do I want from the type system?
 In the remainder of this series,
 we’ll see how RCL achieves this.
 In [part two][part2] we will look at the type system,
-and in [part three][part3] we will look at the implementation of the typechecker.
-
-[part1]: /2024/a-type-system-for-rcl-part-1-introduction
-[part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
-[part3]: /2024/a-type-system-for-rcl-part-3-the-typechecker
+and in [part three][part3] at some related type systems that inspired RCL.
+Finally, in [part four][part4]
+we will look at the implementation of the typechecker itself.
