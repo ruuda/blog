@@ -65,6 +65,8 @@ deployment configuration such as Ansible playbooks and Kubernetes manifests,
 and infrastructure-as-code tools like OpenTofu.
 An RCL document consists of a single expression
 and can be exported to json, yaml, or toml.
+Any time somebody contemplates templating yaml,
+they should consider using RCL instead.
 
 [nix-lang]: https://nixos.org/manual/nix/stable/language/index.html
 
@@ -125,7 +127,7 @@ But I want to have them for two reasons:
    a type system can ensure that all construction sites are updated when renaming a field,
    or that a string belongs to a set of allowed values.
  * **To make code more self-documenting.**
-   If you have ever worked in a large untyped Python or Javascript codebase,
+   If you have ever worked in a large untyped Python or JavaScript codebase,
    you might recognize this problem:
    you’re modifying a function that takes an argument named `user`,
    and you need the user’s display name.
@@ -139,7 +141,7 @@ But I want to have them for two reasons:
    It would be nice if there was a type annotation on the function argument
    where your editor’s jump-to-definition can just show you the type and its fields.
 
-It is no surprise that Typescript has largely displaced Javascript,
+It is no surprise that Typescript has largely displaced JavaScript,
 and that Mypy has taken the Python world by storm.
 To keep a large codebase maintainable,
 you need types.
@@ -262,7 +264,7 @@ even if the code path is unreachable.
 
 ## Putting it together
 
-R<!---->C<!---->L is an experimental configuration language
+R<!---->C<!---->L is a new configuration language
 that aims to reduce configuration boilerplate
 by extending json into a simple functional language
 that enables abstraction and reuse.

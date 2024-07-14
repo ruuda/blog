@@ -345,11 +345,11 @@ where if you make ad-hoc decisions
 without a strong underlying principle,
 they backfire and cause interactions that don’t make sense.
 For example,
-Javascript defined the `==` operator
+JavaScript defined the `==` operator
 in an ad-hoc way without transitivity in mind,
 and even though the definition might have seemed useful at first,
 it [creates logical inconsistencies][js-trinity]
-that make Javascript difficult to reason about.
+that make JavaScript difficult to reason about.
 I want RCL to be easy to reason about,
 and using set operations to define the generalized subtype check
 seemed like a strong guiding principle.
@@ -545,3 +545,6 @@ I would love to hear from people who encountered this trade-off before.
 ## Conclusion
 
 To do.
+Generalized subtype check provides uniform approach,
+works for assigning `Any` to a concrete type,
+but the same machinery works for assigning `Union`.

@@ -24,3 +24,5 @@ In this series:
 
 TODO: Write that we track source spans for types and it's helpful.
 TODO: Mention that it took me three attempts, functions are tough.
+TODO: Join impl does not have to be the theoretical best join, can approximate.
+TODO: Question utility, e.g. with dict indexing.
