@@ -47,12 +47,12 @@ and contrast RCL with alternatives in this space.
 
 [Mypy][mypy] is the most mature typechecker for Python,
 and it is the gradual type system that I have most experience with.
-(I’ve been using it since Python 2,
-back when annotations were still in comments.)
-Mypy is one of the main indirect influences for RCL’s type system.
+I’ve been using it since Python 2,
+back when annotations were still in comments.
+Mypy is one of the main influences for RCL’s type system.
 The type system differs from RCL in important ways
 (in particular, RCL enforces annotations at runtime, unlike Python),
-but the look and feel of RCL is intentionally resembles Python,
+but the look and feel of RCL intentionally resembles Python,
 and the square bracket syntax for generic types
 is inspired by Python and Scala.
 
@@ -104,15 +104,16 @@ though Jsonnet does not have static types.
 
 ## TypeScript
 
-In a sense,
-[TypeScript][typescript] is to JavaScript what Mypy is to Python.
+Just as Mypy adds types to Python,
+[TypeScript][typescript] adds types to JavaScript.
 It _should_ be very relevant for me,
 because TypeScript is a superset of json,
 so like RCL its type system has to be able to describe arbitrary json data.
-I haven’t studied TypeScript’s type system much though.
-I try hard to avoid NPM ecosystem,
+TypeScript’s type system solves a harder problem than RCL,
+because it has to type an imperative language with mutable objects.
+I try hard to avoid the NPM ecosystem,
 so I haven’t used TypeScript much except in a few small applications,
-therefore I can’t really comment on its type system.
+and I haven’t studied its type system in detail.
 
 [typescript]: https://www.typescriptlang.org/
 
@@ -120,12 +121,12 @@ therefore I can’t really comment on its type system.
 
 [PureScript][purescript] is a typed functional language similar to Haskell.
 It compiles to and interoperates with JavaScript,
-so it has good support for modelling JavaScript objects
-(dicts/records in RCL).
+so it has good support for modelling JavaScript objects,
+which correspond to dicts in RCL.
 I’ve written two applications in it
 ([a plant watering tracker][sempervivum] and [a music player][musium]),
 and I feel more comfortable with it than TypeScript.
-I haven’t encountered the need for [row polymorphism][rowpoly] though.
+So far I haven’t encountered the need for [row polymorphism][rowpoly].
 I need to dive into this deeper when I get to adding record types to RCL,
 but my feeling is that row types may be a bit too advanced.
 I want RCL to be obvious to understand
@@ -149,10 +150,9 @@ not on experience.
 
 Dhall is very Haskell-like.
 [Its type system][dhall-types] is more rigid than RCL’s:
-there is no subtyping (but the there is polymorphism),
+there is no subtyping (but there is polymorphism),
 and the type system is completely static.
-As such its type system has little in common with RCL
-except for the parts that are inevitable for typing json.
+As such its type system has little in common with RCL.
 
 [Nickel is gradually typed][nickel-types] like RCL,
 but takes a very different approach to achieving that.

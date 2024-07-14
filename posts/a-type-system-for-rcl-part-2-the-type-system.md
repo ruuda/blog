@@ -547,22 +547,23 @@ I would love to hear from people who encountered this trade-off before.
 R<!---->C<!---->L is a new configuration language that I am building.
 As we saw in [part one][part1],
 being a configuration language
-puts constraints on how a type system for RCL should behave.
+puts constraints on how the type system should behave.
 In this post we looked at the type system so far.
 
  * **The type system is gradual, and based on a lattice.**
    There is a subtype relationship between types,
    and the same value can be described by multiple types,
    e.g. `42:` `Int` or `42:` `Any`.
-   The lattice enables RCL to type constructs such as heterogeneous lists
-   (`List[Any]`),
-   that would be disallowed in more rigid static type system,
+   The lattice enables RCL to type constructs
+   that would be disallowed in more rigid static type systems,
    but which may occur in configuration.
+   For example,
+   RCL infers the type `List[Any]` for the heterogeneous list `[1,` `true]`.
  * **Type inference is forward-only and mostly bottom-up.**
    The absence of unification has limitations,
    but it also keeps inference fast and type errors clear.
    The lattice’s _join_ operation is helpful for type inference
-   of e.g. collections and if-else expressions.
+   of collections and if-else expressions.
  * **Typechecking is based on a generalized subtype check.**
    We check expressions against an expected type.
    If the inferred type is a subtype of the expected type,
@@ -572,12 +573,12 @@ In this post we looked at the type system so far.
    When the types overlap but are not subtypes,
    the typechecker inserts a runtime check.
    This core principle
-   enables the type system to handle gradual typing in a uniform way.
+   enables the type system to handle all gradual typing in a uniform way.
 
-The type system is not a new invention,
-it is based directly and indirectly
-on many other ideas that I’ve been exposed to.
+The type system is based directly and indirectly
+on ideas from other languages and systems.
 In [the next part][part3] we’ll look at prior work,
-and contrast RCL’s type system with that of other configuration languages.
+and we will contrast RCL’s type system
+with that of other configuration languages.
 Finally,
 in [part four][part4] we will look at the typechecker itself.
