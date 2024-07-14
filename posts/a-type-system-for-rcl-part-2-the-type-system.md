@@ -544,7 +544,40 @@ I would love to hear from people who encountered this trade-off before.
 
 ## Conclusion
 
-To do.
-Generalized subtype check provides uniform approach,
-works for assigning `Any` to a concrete type,
-but the same machinery works for assigning `Union`.
+R<!---->C<!---->L is a new configuration language that I am building.
+As we saw in [part one][part1],
+being a configuration language
+puts constraints on how a type system for RCL should behave.
+In this post we looked at the type system so far.
+
+ * **The type system is gradual, and based on a lattice.**
+   There is a subtype relationship between types,
+   and the same value can be described by multiple types,
+   e.g. `42:` `Int` or `42:` `Any`.
+   The lattice enables RCL to type constructs such as heterogeneous lists
+   (`List[Any]`),
+   that would be disallowed in more rigid static type system,
+   but which may occur in configuration.
+ * **Type inference is forward-only and mostly bottom-up.**
+   The absence of unification has limitations,
+   but it also keeps inference fast and type errors clear.
+   The lattice’s _join_ operation is helpful for type inference
+   of e.g. collections and if-else expressions.
+ * **Typechecking is based on a generalized subtype check.**
+   We check expressions against an expected type.
+   If the inferred type is a subtype of the expected type,
+   the expression is well-typed.
+   If the types are disjoint,
+   that’s a static error.
+   When the types overlap but are not subtypes,
+   the typechecker inserts a runtime check.
+   This core principle
+   enables the type system to handle gradual typing in a uniform way.
+
+The type system is not a new invention,
+it is based directly and indirectly
+on many other ideas that I’ve been exposed to.
+In [the next part][part3] we’ll look at prior work,
+and contrast RCL’s type system with that of other configuration languages.
+Finally,
+in [part four][part4] we will look at the typechecker itself.
