@@ -333,23 +333,29 @@ For example, in the program below we have `Source::Literal` and
 <span class="st">Note:</span> Found Int because of this value.
 </code></pre>
 
+TODO: Turn this around. Start with this example as a teaser.
+
 Two things are worth highlighting here:
 
  * Like types, `Source` forms a lattice,
    which in turn makes `SourcedType` a lattice.
    When we join types for the sake of inference,
    we also join their sources.
-   This is how `List[Int]` (the inferred type of `xs`)
+   This is how the inferred type of `xs`, `List[Int]`,
    can keep the `Int` pointing at one of the integer literals.
  * Having an expected type passed in top-down
    is what enables blaming the error on the expression `xs[0]`.
    If we did full inference first,
    and only at the end checked that the inferred type matches the annotation,
-   then the error would be much larger,
-   we’d have to report that `Dict[Int,` `Int]`
+   then the error would be much larger.
+   We’d have to report that `Dict[Int,` `Int]`
    does not match the expected type `Dict[Int,` `String]`,
    and users would have to diff that type in their head
-   and try to find the source of the problem.
+   to try and find the source of the problem.
+
+This example is maybe a bit contrived,
+but I expect that this will make a big difference for record types,
+where types can grow big.
 
 ## To do
 
