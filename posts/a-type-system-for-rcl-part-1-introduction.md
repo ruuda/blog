@@ -141,7 +141,7 @@ But I want to have them for two reasons:
    It would be nice if there was a type annotation on the function argument
    where your editor’s jump-to-definition can just show you the type and its fields.
 
-It is no surprise that Typescript has largely displaced JavaScript,
+It is no surprise that TypeScript has largely displaced JavaScript,
 and that Mypy has taken the Python world by storm.
 To keep a large codebase maintainable,
 you need types.
