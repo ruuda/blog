@@ -36,11 +36,6 @@ In part one we looked at what I want from a type system for RCL,
 and in part two we saw what the resulting type system looks like.
 In this part we’ll take a closer look at how the typechecker is implemented.
 
-## Rust
-
-R<!---->C<!---->L is written in Rust.
-TODO: Does it matter?
-
 ## Background
 
 Good ideas appear obvious in hindsight,
@@ -90,11 +85,11 @@ and the implementation became a lot more elegant.
 
 ## The typechecker
 
-The main workhorse of the typechecker is this method
-(slightly simplified for the sake of the post):
+The main workhorse of the typechecker is the `check_expr` method:
 
 ```rust
 struct TypeChecker {
+    // [Lifetimes simplified for the sake of this post.]
     env: Env<SourcedType>,
 }
 
@@ -104,7 +99,9 @@ impl TypeChecker {
         expected: &SourcedType,
         expr_span: Span,
         expr: &mut Expr,
-    ) -> Result<SourcedType>
+    ) -> Result<SourcedType> {
+        // We'll see some of the implementation below.
+    }
 }
 ```
 
@@ -112,13 +109,13 @@ The `TypeChecker` struct itself only carries an `Env`,
 the environment that contains the type for every name in scope.
 To check an expression, we pass in:
 
- * The expected type.
+ * **The expected type.**
    In most cases this will be `Type::Any`,
    but in some cases a syntactic construct prescribes the type.
    For example,
    the condition in an if-else expression must be a boolean.
- * The span (source location) of the expression,
-   used to highlight the offending code in case of a type error.
+ * **The span (source location) of the expression.**
+   This is used to highlight the offending code in case of a type error.
    <!--
    In RCL the span is stored out of band;
    it’s not a property of the expression itself.
@@ -128,16 +125,15 @@ To check an expression, we pass in:
    (like passing in array lengths out of band instead of using a slice),
    though making `Expr` self-descriptive has other issues.
    -->
- * The expression itself.
+ * **The expression itself.**
    It is mutable, because the typechecker
    may wrap the expression in a runtime type check.
 
 The typechecker returns the inferred type on success,
 or an error in case of a static type error.
 The implementation is basically a big match statement
-that handles all expressions.
-For example, these are the arms for an if-else expression,
-or for a variable:
+that matches on the expression.
+For example, this is the check for an if-else expression:
 
 ```rust
 let expr_type = match expr {
@@ -160,24 +156,200 @@ let expr_type = match expr {
         Typed::Type(type_then.join(&type_else))
     }
 
-    Expr::Var { span, ident } => match self.env.lookup(ident) {
-        None => return span.error("Unknown variable.").err(),
-        Some(t) => t.is_subtype_of(expected).check(*span)?,
-    },
-
-    ...
+    // [Other match arms omitted in this snippet.]
 };
 ```
 
-The `Typed` enum helps to distinguish between the two cases the subtype check
-can run into:
+At the end, the typechecker inserts a runtime check if needed:
 
- * `Typed::Type(T)` means that we know statically that the type is `T`.
- * `Typed::Defer(T)` means that we need to insert a runtime check to verify that
+```rust
+match expr_type {
+    // If the type check passed, great, we now know the inferred type.
+    Typed::Type(t) => Ok(t),
 
-## Sourced type
+    // If we couldn't check statically, then we have to insert a runtime
+    // type check around this node. We have to sacrifice a temporary
+    // NullLit to the borrow checker to swap the node into place.
+    Typed::Defer(t) => {
+        let mut tmp = Expr::NullLit;
+        std::mem::swap(&mut tmp, expr);
+        *expr = Expr::CheckType {
+            span: expr_span,
+            type_: expected.clone(),
+            body: Box::new(tmp),
+        };
+        Ok(t)
+    }
+}
+```
 
-TODO: Write that we track source spans for types and it's helpful.
+The `Typed` enum helps to distinguish
+between the two cases that the subtype check can run into.
+`Type(T)` means that we know statically that the type is `T`;
+`Defer(T)` means that we need to insert a runtime check,
+but if the check passes,
+then we have a value of type `T`.
+
+The second workhorse of the typechecker is `is_subtype_of`.
+It is used for example when checking literals
+or variable lookups:
+
+```rust
+let expr_type = match expr {
+    Expr::NullLit => {
+        type_literal(expr_span, Type::Null)
+            .is_subtype_of(expected)
+            .check(expr_span)?
+    }
+    Expr::BoolLit(..) => {
+        type_literal(expr_span, Type::Bool)
+            .is_subtype_of(expected)
+            .check(expr_span)?
+    }
+    Expr::StringLit(..) => {
+        type_literal(expr_span, Type::String)
+            .is_subtype_of(expected)
+            .check(expr_span)?
+    }
+    Expr::Var { span, ident } => match self.env.lookup(ident) {
+        None => return span.error("Unknown variable.").err(),
+        Some(t) => t.is_subtype_of(expected).check(*span)?,
+    }
+    // [Other match arms omitted in this snippet.]
+};
+```
+
+The `is_subtype_of` method is defined as follows:
+
+```rust
+impl SourcedType {
+    pub fn is_subtype_of(
+        &self,
+        other: &SourcedType,
+    ) -> TypeDiff<SourcedType> {
+        match (&self.type_, &other.type_) {
+            // Void is a subtype of everything, Any a supertype
+            // of everything. They are the bottom and top of the
+            // lattice.
+            (Type::Void, _) => TypeDiff::Ok(self.clone()),
+            (_, Type::Any) => TypeDiff::Ok(self.clone()),
+
+            // [Other match arms omitted in this snippet.]
+        }
+    }
+}
+```
+
+It returns a `TypeDiff`, whis is similar to `Result<Typed>`:
+
+```rust
+/// The result of a subtype check `T ≤ U`
+/// where `U` is expected and `T` encountered.
+pub enum TypeDiff<T> {
+    /// Yes, `T ≤ U`, and here is `T`.
+    Ok(T),
+
+    /// For `t: T`, we *might* have `t: U`.
+    /// Here is `V` such that `T ≤ V ≤ U`.
+    Defer(T),
+
+    /// For all `t: T`, we have that `t` is not a value of `U`.
+    ///
+    /// Or, in some cases this is not strictly true, but we want to
+    /// rule out that case because it makes more sense. For example,
+    /// we say that `List[Int]` and `List[String]` are incompatible,
+    /// even though `[]` inhabits both.
+    Error(Mismatch),
+}
+```
+
+The `check` method on `TypeDiff` turns a `TypeDiff` into `Result<Typed>`.
+It formats the structured `Mismatch` into a printable error.
+
+## Sourced types
+
+You might have noticed in the snippets above,
+most places use `SourcedType` rather than `Type`.
+This is used to report helpful errors.
+A sourced type is just a combination of a type and its _source_:
+
+```rust
+pub struct SourcedType {
+    pub type_: Type,
+    pub source: Source,
+}
+```
+
+A source describes where the type came from.
+It contains cases like these:
+
+```rust
+pub enum Source {
+    /// There is no source for this type.
+    ///
+    /// This is the case for `Type::Any` when it is introduced by the
+    /// typechecker for expressions that are not otherwise constrained.
+    None,
+
+    /// The type was inferred from a literal.
+    Literal(Span),
+
+    /// It was a type annotation in the source code.
+    Annotation(Span),
+
+    /// A boolean is required, because it's used as a condition
+    /// in `if` or `assert`.
+    Condition,
+
+    /// The type is the required type of the operator at the span.
+    Operator(Span),
+
+    /// An integer is required due to indexing into a list.
+    IndexList,
+}
+```
+
+R<!---->C<!---->L uses these sources when reporting a type error.
+For example, in the program below we have `Source::Literal` and
+`Source::Annotation`:
+
+<pre><code class="sourceCode"><span class="kw">let</span> xs = [<span class="dv">42</span>, <span class="dv">43</span>, <span class="dv">44</span>];
+<span class="kw">let</span> y: <span class="dt">Dict</span>[<span class="dt">Int</span>, <span class="dt">String</span>] = { <span class="dv">0</span>: xs[<span class="dv">0</span>] };
+</code></pre>
+
+<pre><code class="sourceCode">  <span class="dt">|</span>
+2 <span class="dt">|</span> let y: Dict[Int, String] = { 0: xs[0] };
+  <span class="dt">|</span>                                 <span class="dt">^~~~~</span>
+<span class="dt">Error:</span> Type mismatch. Expected <span class="dt">String</span> but found <span class="dt">Int</span>.
+
+  <span class="st">|</span>
+2 <span class="st">|</span> let y: Dict[Int, String] = { 0: xs[0] };
+  <span class="st">|</span>                  <span class="st">^~~~~~</span>
+<span class="st">Note:</span> Expected String because of this annotation.
+
+  <span class="st">|</span>
+1 <span class="st">|</span> let xs = [42, 43, 44];
+  <span class="st">|</span>           <span class="st">^~</span>
+<span class="st">Note:</span> Found Int because of this value.
+</code></pre>
+
+Two things are worth highlighting here:
+
+ * Like types, `Source` forms a lattice,
+   which in turn makes `SourcedType` a lattice.
+   When we join types for the sake of inference,
+   we also join their sources.
+   This is how `List[Int]` (the inferred type of `xs`)
+   can keep the `Int` pointing at one of the integer literals.
+ * Having an expected type passed in top-down
+   is what enables blaming the error on the expression `xs[0]`.
+   If we did full inference first,
+   and only at the end checked that the inferred type matches the annotation,
+   then the error would be much larger,
+   we’d have to report that `Dict[Int,` `Int]`
+   does not match the expected type `Dict[Int,` `String]`,
+   and users would have to diff that type in their head
+   and try to find the source of the problem.
 
 ## To do
 
