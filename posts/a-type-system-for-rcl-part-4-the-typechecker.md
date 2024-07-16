@@ -35,6 +35,37 @@ or find problems with them.
 In part one we looked at what I want from a type system for RCL,
 and in part two we saw what the resulting type system looks like.
 In this part we’ll take a closer look at how the typechecker is implemented.
+After this post,
+we will understand how RCL is able to report the type error in this program:
+
+<pre><code class="sourceCode"><span class="kw">let</span> ports = [<span class="dv">22</span>, <span class="dv">80</span>, <span class="dv">443</span>];
+
+<span class="co">// Use string keys so we can export as json.</span>
+<span class="kw">let</span> firewall_rules: <span class="dt">Dict</span>[<span class="dt">String</span>, <span class="dt">String</span>] = {
+  <span class="kw">for</span> port <span class="kw">in</span> ports:
+  <span class="n">port</span>: <span class="st">"allow"</span>
+};
+</code></pre>
+
+<pre><code class="sourceCode">  <span class="dt">|</span>
+6 <span class="dt">|</span>   port: "allow"
+  <span class="dt">|</span>   <span class="dt">^~~~</span>
+<span class="dt">Error:</span> Type mismatch. Expected <span class="dt">String</span> but found <span class="dt">Int</span>.
+
+  <span class="st">|</span>
+4 <span class="st">|</span> let firewall_rules: Dict[String, String] = {
+  <span class="st">|</span>                          <span class="st">^~~~~~</span>
+<span class="st">Note:</span> Expected String because of this annotation.
+
+  <span class="st">|</span>
+1 <span class="st">|</span> let ports = [22, 80, 443];
+  <span class="st">|</span>              <span class="st">^~</span>
+<span class="st">Note:</span> Found Int because of this value.
+</code></pre>
+
+(One way to fix the error is to convert the integer to a string
+using string interpolation,
+by writing `f"{port}":` `"allow"` on line 6.)
 
 ## Background
 
@@ -56,8 +87,8 @@ And then one day
 you discover the _right_ way of doing things.
 Suddenly everything becomes simple and elegant,
 and the features fit in naturally.
-
 The generalized subtype check was one of those cases.
+
 I started with a typechecker that could only report a binary
 “well-typed” vs. “type error”.
 To handle gradual typing it had `Type::Dynamic`,
@@ -68,13 +99,16 @@ This worked but it became a mess.
 For the second attempt,
 I tried to represent type expectations differently from inferred types,
 also with error reporting in mind.
+In hindsight,
+checking that the inferred type met the expectation was a subtype check,
+but I didn’t see it that clearly at first.
 I got pretty far,
 it even worked with covariant types like `List`
 ...
 and then it completely failed
 when I got to function types,
 which are contravariant in their arguments.
-Only after going through those iterations,
+Only _after_ going through those iterations,
 I thought of viewing types as sets,
 and treating the subtype check as the subset ordering on sets.
 
@@ -89,7 +123,7 @@ The main workhorse of the typechecker is the `check_expr` method:
 
 ```rust
 struct TypeChecker {
-    // [Lifetimes simplified for the sake of this post.]
+    // Lifetimes simplified for the sake of this post.
     env: Env<SourcedType>,
 }
 
@@ -110,8 +144,10 @@ the environment that contains the type for every name in scope.
 To check an expression, we pass in:
 
  * **The expected type.**
-   In most cases this will be `Type::Any`,
-   but in some cases a syntactic construct prescribes the type.
+   At the top level this is `Type::Any`.
+   In most cases the expected type is passed down,
+   but an expectation can also come from an annotation,
+   and in some cases a syntactic construct prescribes the type.
    For example,
    the condition in an if-else expression must be a boolean.
  * **The span (source location) of the expression.**
@@ -131,8 +167,7 @@ To check an expression, we pass in:
 
 The typechecker returns the inferred type on success,
 or an error in case of a static type error.
-The implementation is basically a big match statement
-that matches on the expression.
+The implementation is a big match statement.
 For example, this is the check for an if-else expression:
 
 ```rust
@@ -201,11 +236,6 @@ let expr_type = match expr {
             .is_subtype_of(expected)
             .check(expr_span)?
     }
-    Expr::BoolLit(..) => {
-        type_literal(expr_span, Type::Bool)
-            .is_subtype_of(expected)
-            .check(expr_span)?
-    }
     Expr::StringLit(..) => {
         type_literal(expr_span, Type::String)
             .is_subtype_of(expected)
@@ -234,7 +264,21 @@ impl SourcedType {
             (Type::Void, _) => TypeDiff::Ok(self.clone()),
             (_, Type::Any) => TypeDiff::Ok(self.clone()),
 
-            // [Other match arms omitted in this snippet.]
+            // [Some match arms omitted in this snippet.]
+
+            // If we take an arbitrary value, is it a member of some
+            // type T, when T is not `Any` (that case is already
+            // covered above)? We don't know, it depends on T.
+            (Type::Any, _) => TypeDiff::Defer(other.clone()),
+
+            // [More match arms omitted here.]
+
+            // If we have any other combination of types,
+            // they are incompatible.
+            _ => TypeDiff::Error(Mismatch::Atom {
+                actual: self.clone(),
+                expected: other.clone(),
+            }),
         }
     }
 }
@@ -270,8 +314,8 @@ It formats the structured `Mismatch` into a printable error.
 
 You might have noticed in the snippets above,
 most places use `SourcedType` rather than `Type`.
-This is used to report helpful errors.
-A sourced type is just a combination of a type and its _source_:
+Sourced types are part of the error reporting machinery.
+A sourced type is a pair of a type and its _source_:
 
 ```rust
 pub struct SourcedType {
@@ -309,57 +353,71 @@ pub enum Source {
 }
 ```
 
-R<!---->C<!---->L uses these sources when reporting a type error.
-For example, in the program below we have `Source::Literal` and
-`Source::Annotation`:
+Like types, `Source` forms a lattice,
+which in turn makes `SourcedType` a lattice.
+When we join types for the sake of inference,
+we also join their sources.
+This is how for the example in the introduction,
+the inferred type `List[Int]` for `ports`
+can keep the `Int` pointing at one of the integer literals,
+so it can explain in the error why `port` has type `Int`.
+Let’s look at that example again:
 
-<pre><code class="sourceCode"><span class="kw">let</span> xs = [<span class="dv">42</span>, <span class="dv">43</span>, <span class="dv">44</span>];
-<span class="kw">let</span> y: <span class="dt">Dict</span>[<span class="dt">Int</span>, <span class="dt">String</span>] = { <span class="dv">0</span>: xs[<span class="dv">0</span>] };
+<pre><code class="sourceCode"><span class="kw">let</span> ports = [<span class="dv">22</span>, <span class="dv">80</span>, <span class="dv">443</span>];
+
+<span class="co">// Use string keys so we can export as json.</span>
+<span class="kw">let</span> firewall_rules: <span class="dt">Dict</span>[<span class="dt">String</span>, <span class="dt">String</span>] = {
+  <span class="kw">for</span> port <span class="kw">in</span> ports:
+  <span class="n">port</span>: <span class="st">"allow"</span>
+};
 </code></pre>
 
 <pre><code class="sourceCode">  <span class="dt">|</span>
-2 <span class="dt">|</span> let y: Dict[Int, String] = { 0: xs[0] };
-  <span class="dt">|</span>                                 <span class="dt">^~~~~</span>
+6 <span class="dt">|</span>   port: "allow"
+  <span class="dt">|</span>   <span class="dt">^~~~</span>
 <span class="dt">Error:</span> Type mismatch. Expected <span class="dt">String</span> but found <span class="dt">Int</span>.
 
   <span class="st">|</span>
-2 <span class="st">|</span> let y: Dict[Int, String] = { 0: xs[0] };
-  <span class="st">|</span>                  <span class="st">^~~~~~</span>
+4 <span class="st">|</span> let firewall_rules: Dict[String, String] = {
+  <span class="st">|</span>                          <span class="st">^~~~~~</span>
 <span class="st">Note:</span> Expected String because of this annotation.
 
   <span class="st">|</span>
-1 <span class="st">|</span> let xs = [42, 43, 44];
-  <span class="st">|</span>           <span class="st">^~</span>
+1 <span class="st">|</span> let ports = [22, 80, 443];
+  <span class="st">|</span>              <span class="st">^~</span>
 <span class="st">Note:</span> Found Int because of this value.
 </code></pre>
 
-TODO: Turn this around. Start with this example as a teaser.
+Notice something else?
+The error points at the dict key `ports` specifically.
+We can do this because typechecking and inference are fused and top-down.
+When the typechecker enters the dict comprehension,
+it already has an expected type `Dict[String,` `String]`.
+The dict comprehension satisfies the `Dict` part,
+so inside the comprehension,
+we have an expected type for the key and value (both `String`).
 
-Two things are worth highlighting here:
+Compare this to an approach where we would infer types bottom-up,
+and check compatibility afterwards.
+Then the typechecker would infer `Dict[Int,` `String]` for the dict comprehension,
+and it would have to report something like this:
 
- * Like types, `Source` forms a lattice,
-   which in turn makes `SourcedType` a lattice.
-   When we join types for the sake of inference,
-   we also join their sources.
-   This is how the inferred type of `xs`, `List[Int]`,
-   can keep the `Int` pointing at one of the integer literals.
- * Having an expected type passed in top-down
-   is what enables blaming the error on the expression `xs[0]`.
-   If we did full inference first,
-   and only at the end checked that the inferred type matches the annotation,
-   then the error would be much larger.
-   We’d have to report that `Dict[Int,` `Int]`
-   does not match the expected type `Dict[Int,` `String]`,
-   and users would have to diff that type in their head
-   to try and find the source of the problem.
+<pre><code class="sourceCode">  <span class="dt">|</span>
+4 <span class="dt">|</span> let firewall_rules: Dict[String, String] = {
+  <span class="dt">|</span>                                            <span class="dt">^</span>
+<span class="dt">Error:</span> Type mismatch. Expected <span class="dt">Dict[String, String]</span>,
+but found <span class="dt">Dict[Int, String]</span>.
+</code></pre>
 
+Now it’s up to the user to diff those types in their head,
+and then search the source code for where the violation happens.
+Pushing the expectation in top-down enables friendlier errors.
 This example is maybe a bit contrived,
 but I expect that this will make a big difference for record types,
 where types can grow big.
 
 ## To do
 
-TODO: Mention that it took me three attempts, functions are tough.
 TODO: Join impl does not have to be the theoretical best join, can approximate.
 TODO: Question utility, e.g. with dict indexing.
 TODO: Pretty-printer was helpful.
