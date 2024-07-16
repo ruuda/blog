@@ -4,7 +4,7 @@ header: A type system for RCL
 subheader: The type system
 part: 2
 lang: en-US
-date: 2024-04-29
+date: 2024-07-18
 synopsis: TODO
 extra-glyphs: Null Int Bool String Any Void List[]
 ---

@@ -4,7 +4,7 @@ header: A type system for RCL
 subheader: The typeche<span class="dlig">ck</span>er
 part: 4
 lang: en-US
-date: 2024-04-29
+date: 2024-07-19
 synopsis: TODO
 ---
 

@@ -4,7 +4,7 @@ header: A type system for RCL
 subheader: Introduction
 part: 1
 lang: en-US
-date: 2024-04-29
+date: 2024-07-17
 synopsis: TODO
 ---
 
