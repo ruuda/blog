@@ -7,3 +7,4 @@ rule scour
 
 build compressed/lattice.svg: scour original/lattice.svg
 build compressed/rectangles.svg: scour original/rectangles.svg
+build compressed/subtypes.svg: scour original/subtypes.svg

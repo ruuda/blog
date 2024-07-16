@@ -280,7 +280,7 @@ What if the typechecker could reach three different conclusions?
  3. **Inconclusive** — There exist a `t0:` `T` that fits `U`,
     and `t1:` `T` that does not fit `U`.
 
-<!-- TODO: Illustration of Venn diagram. -->
+![Venn diagrams that illustrate the three cases.](/images/subtypes.svg)
 
 R<!---->C<!---->L implements this generalized subtype check,
 and when the result is inconclusive,

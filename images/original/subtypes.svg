@@ -10,27 +10,24 @@
 @font-face{font-family:Calluna Sans;src:url(/fonts/r{{sans-roman-hash}}.woff2)format(&quot;woff2&quot;)}
 text{font:19px 'Calluna Sans',sans-serif;fill:#456;text-anchor:middle}
 circle{fill:none;stroke-width:1.4}
-/*.outer{stroke:#789}*/
-.outer{stroke:#567}
-.inner{stroke:#c35}.linner{fill:#c35}
+.outer{stroke:#567}.inner{stroke:#c35}.linner{fill:#c35}
 </style>
-  <rect x="0" y="0" width="684" height="212" fill="#ccc"/>
-  <text x="114" y="200">Static error</text>
+  <text x="114" y="200">Well-typed</text>
   <text x="342" y="200">Inconclusive</text>
-  <text x="570" y="200">Well-typed</text>
+  <text x="570" y="200">Static error</text>
 
-  <text x="570" y="50">U</text>
-  <text x="570" y="118" class="linner">T</text>
-  <circle cx="570" cy="90" r="76" class="outer"/>
-  <circle cx="570" cy="110" r="38" class="inner"/>
+  <text x="114" y="50">U</text>
+  <text x="114" y="118" class="linner">T</text>
+  <circle cx="114" cy="90" r="76" class="outer"/>
+  <circle cx="114" cy="110" r="38" class="inner"/>
 
-  <text x="342" y="40">U</text>
-  <text x="342" y="140" class="linner">T</text>
-  <circle cx="342" cy="70" r="38" class="outer"/>
-  <circle cx="342" cy="110" r="57" class="inner"/>
+  <text x="396" y="102">U</text>
+  <text x="290" y="102" class="linner">T</text>
+  <circle cx="372" cy="95" r="57" class="outer"/>
+  <circle cx="312" cy="95" r="57" class="inner"/>
 
-  <text x="155" y="102">U</text>
-  <text x="75" y="102" class="linner">T</text>
-  <circle cx="155" cy="95" r="35" class="outer"/>
-  <circle cx="75" cy="95" r="35" class="inner"/>
+  <text x="611" y="102">U</text>
+  <text x="531" y="102" class="linner">T</text>
+  <circle cx="611" cy="95" r="35" class="outer"/>
+  <circle cx="531" cy="95" r="35" class="inner"/>
 </svg>
