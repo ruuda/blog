@@ -30,6 +30,8 @@ or find problems with them.
 [part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
 [part3]: /2024/a-type-system-for-rcl-part-3-related-work
 [part4]: /2024/a-type-system-for-rcl-part-4-the-typechecker
+
+[static]: /2024/a-type-system-for-rcl-part-1-introduction/#static-vs.-runtime
 [gsubck]: /2024/a-type-system-for-rcl-part-2-the-type-system#the-generalized-subtype-check
 
 In part one we looked at what I want from a type system for RCL,
@@ -163,7 +165,7 @@ To check an expression, we pass in:
    It is mutable, because the typechecker
    may wrap the expression in a runtime type check.
 
-The typechecker returns the inferred type on success,
+The method returns the inferred type on success,
 or an error in case of a static type error.
 The implementation is a big match statement.
 For example, this is the check for an if-else expression:
@@ -185,7 +187,7 @@ let expr_type = match expr {
         let type_else = self.check_expr(expected, *span_else, body_else)?;
 
         // The inferred type is the join of the two sides, which may be
-        // more specific than the requirement (which they satisfy).
+        // more specific than the requirement (which they both satisfy).
         Typed::Type(type_then.join(&type_else))
     }
 
@@ -220,7 +222,7 @@ The `Typed` enum helps to distinguish
 between the two cases that the subtype check can run into.
 `Type(T)` means that we know statically that the type is `T`;
 `Defer(T)` means that we need to insert a runtime check,
-but if the check passes,
+and if the check passes,
 then we have a value of type `T`.
 
 The second workhorse of the typechecker is `is_subtype_of`.
@@ -266,7 +268,7 @@ impl SourcedType {
 
             // If we take an arbitrary value, is it a member of some
             // type T, when T is not `Any` (that case is already
-            // covered above)? We don't know, it depends on T.
+            // covered above)? We don't know statically.
             (Type::Any, _) => TypeDiff::Defer(other.clone()),
 
             // [More match arms omitted here.]
@@ -444,21 +446,42 @@ and keeping type errors tractable.
 If we inferred union types,
 type errors would quickly grow enormous.
 
-## To do
-
-TODO: Question utility, e.g. with dict indexing.
-
 ## Future work
 
 Although the type system works well,
-it is yet useful for large configuration repositories in the real-world.
-Two major features are needed for that:
+it is not yet useful for large configurations in the real world.
+Three major features are needed for that:
 
- * Record types.
- * Importing types across files.
+ * **Record types.**
+   By now I don’t expect they are hard to implement
+   (function types already carry named arguments, which are similar),
+   I just need to sit down and do it.
+ * **Type aliases.**
+   With record types,
+   you don’t want to spell out the full type everywhere;
+   you write it down once and then refer to it.
+   I have a rough idea of what I want,
+   but there are some unresolved questions.
+   How should scoping work?
+   The same as for expressions,
+   can you have local type definitions?
+   Or should types only be allowed at the top level?
+   Do they need to go before all expressions then,
+   or can you mix let bindings and type definitions?
+   Etc.
+   I think this will be a matter of implementing _something_,
+   getting a feel for it,
+   and then iterating.
+ * **Importing types across files.**
+   Because every RCL document contains a single expression,
+   it is very clear what importing files means on the value level.
+   For types,
+   I don’t think it is feasible to limit them to one exported type per file.
+   The main blocker here is coming up with a syntax
+   that is both legible and not completely hideous.
 
 Aside from those,
-there are less pressing features I want to add:
+there are less important features that I want to add:
 
  * String literal types, so you can use a union of string literals to model enums.
  * Quantification and type variables,
@@ -468,9 +491,51 @@ there are less pressing features I want to add:
    so the typechecker loses track
    of the list element type after passing through `filter`.
 
+Furthermore some parts are just not implemented,
+like method lookups.
+Fortunately the type system implementation is forgiving,
+and RCL is usable and useful right now without them.
+
 [list-filter]: https://docs.ruuda.nl/rcl/type_list/#filter
 
-What is next for the type system?
-One major blocker is record types,
-because it enables typing field lookups.
-Inferring method calls is also still on the table.
+## Conclusion
+
+In this post we looked at the implementation of RCL’s typechecker.
+We saw how the fused typecheck and inference, `check_expr`,
+is the cornerstone of the typechecker,
+with `is_subtype_of` implementing the generalized subtype check.
+On the more practical side,
+passing down an expected type enables
+localizing type errors accurately,
+and tracking the sources of types helps to explain type errors.
+
+This post concludes my series about RCL’s type system.
+One of RCL’s goals is to be obvious and easy to use
+for people who have some background
+in mainstream languages like Python or TypeScript,
+but not necessarily typed functional programming.
+As such,
+the type system is relatively simple,
+and mostly putting together existing ideas.
+The main idea that I haven’t seen implemented elsewhere
+is the generalized subtype check.
+(And to be fair,
+it is of limited use
+— the reason RCL can get away with it,
+is [that runtime errors are static errors][static] in a configuration language.)
+I would love to hear from people more versed in the literature
+if something like this exists in other systems,
+and if there are common practices around it.
+
+If this series got you interested in RCL,
+check out [the type system documentation][rcl-type-docs],
+and [try RCL in your browser][rcl-playground].
+I don’t recommend relying on RCL to generate production configuration yet,
+but I do use it almost daily [as a `jq` replacement][rcl-jq],
+and the new [map and filter methods in v0.4.0][rcl-v04]
+make it even nicer for that.
+
+[rcl-type-docs]:  https://docs.ruuda.nl/rcl/types/
+[rcl-playground]: https://rcl-lang.org/#try-it-yourself
+[rcl-jq]:         /2024/a-reasonable-configuration-language/#an-unexpected-jq-replacement
+[rcl-v04]:        https://docs.ruuda.nl/rcl/changelog/#040
