@@ -98,7 +98,7 @@ This worked but it became a mess.
 
 For the second attempt,
 I tried to represent type expectations differently from inferred types,
-also with error reporting in mind.
+in order to generate better error messages.
 In hindsight,
 checking that the inferred type met the expectation was a subtype check,
 but I didn’t see it that clearly at first.
@@ -108,13 +108,11 @@ it even worked with covariant types like `List`
 and then it completely failed
 when I got to function types,
 which are contravariant in their arguments.
-Only _after_ going through those iterations,
+
+At some point after going through those iterations,
 I thought of viewing types as sets,
 and treating the subtype check as the subset ordering on sets.
-
-TODO: Insert picture again.
-
-With that everything worked out,
+Then everything fell into place,
 and the implementation became a lot more elegant.
 
 ## The typechecker
@@ -405,19 +403,74 @@ and it would have to report something like this:
 <pre><code class="sourceCode">  <span class="dt">|</span>
 4 <span class="dt">|</span> let firewall_rules: Dict[String, String] = {
   <span class="dt">|</span>                                            <span class="dt">^</span>
-<span class="dt">Error:</span> Type mismatch. Expected <span class="dt">Dict[String, String]</span>,
-but found <span class="dt">Dict[Int, String]</span>.
+<span class="dt">Error:</span> Expected <span class="dt">Dict[String, String]</span> but found <span class="dt">Dict[Int, String]</span>.
 </code></pre>
 
 Now it’s up to the user to diff those types in their head,
 and then search the source code for where the violation happens.
 Pushing the expectation in top-down enables friendlier errors.
 This example is maybe a bit contrived,
-but I expect that this will make a big difference for record types,
+but it will make a big difference for record types,
 where types can grow big.
+
+## Incremental implementation
+
+Having an `Any` type makes implementing type inference very forgiving.
+If there is a case where things get too complex,
+we can just return `Any`.
+For example,
+because record types are not yet implemented,
+all field lookups currently infer as `Any`.
+The more precise the inferred type,
+the more errors we can catch statically,
+but because we also have a runtime check,
+returning `Any` is not incorrect.
+
+There is one more place where we can cut some corners:
+in the `join` implementation.
+Mathematically `join` should return the least upper bound,
+but in practice it’s fine if we return _some_ upper bound.
+For example,
+`join` does not produce `Union` if none of the inputs are:
+
+<pre><code class="sourceCode"><span class="co">// If we annotate as List[Union[Int, Bool]] it typechecks,</span>
+<span class="co">// but without annotation the inferred type is List[Any].</span>
+<span class="kw">let</span> xs = [<span class="dv">42</span>, <span class="kw">true</span>];
+</code></pre>
+
+This is partially laziness on my end,
+but also a matter of keeping the typechecker efficient,
+and keeping type errors tractable.
+If we inferred union types,
+type errors would quickly grow enormous.
 
 ## To do
 
-TODO: Join impl does not have to be the theoretical best join, can approximate.
 TODO: Question utility, e.g. with dict indexing.
-TODO: Pretty-printer was helpful.
+
+## Future work
+
+Although the type system works well,
+it is yet useful for large configuration repositories in the real-world.
+Two major features are needed for that:
+
+ * Record types.
+ * Importing types across files.
+
+Aside from those,
+there are less pressing features I want to add:
+
+ * String literal types, so you can use a union of string literals to model enums.
+ * Quantification and type variables,
+   to be able to give a more accurate type to functions such as `filter`.
+   Currently it is [documented][list-filter] with a type variable,
+   but in the implementation all type variables are just `Any`,
+   so the typechecker loses track
+   of the list element type after passing through `filter`.
+
+[list-filter]: https://docs.ruuda.nl/rcl/type_list/#filter
+
+What is next for the type system?
+One major blocker is record types,
+because it enables typing field lookups.
+Inferring method calls is also still on the table.
