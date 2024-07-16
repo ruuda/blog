@@ -5,7 +5,7 @@ subheader: Related work
 part: 3
 lang: en-US
 date: 2024-07-18
-synopsis: TODO
+synopsis: I am adding a type system to RCL, my configuration language. The type system is based on ideas from other systems. In this post I highlight some prior work, and I contrast RCL’s type system with that of other configuration languages.
 ---
 
 <span class="run-in">I am [building][rcl-intro]</span> a new configuration language:

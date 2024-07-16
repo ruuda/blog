@@ -5,7 +5,8 @@ subheader: The typeche<span class="dlig">ck</span>er
 part: 4
 lang: en-US
 date: 2024-07-19
-synopsis: TODO
+synopsis: I am adding a type system to RCL, my configuration language. In this post we look at how the typechecker is implemented in Rust, and at how it is able to generate good error messages.
+teaser: a-language-for-designing-slides
 ---
 
 <span class="run-in">I am [building][rcl-intro]</span> a new configuration language:
