@@ -80,13 +80,16 @@ h1
 
 header > h2
 {
-  font-feature-settings: 'dlig';
   font-size: 1.4em;
   font-style: italic;
   font-weight: normal;
   line-height: 1.4rem;
   margin-bottom: 1.0rem;
   padding-top: 0.4rem;
+}
+
+.dlig {
+  font-feature-settings: 'dlig';
 }
 
 header > p

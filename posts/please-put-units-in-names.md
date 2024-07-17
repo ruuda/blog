@@ -1,7 +1,7 @@
 ---
 title: Please put units in names
 break: put units
-subheader: or use strong types
+subheader: or use <span class="dlig">strong</span> types
 date: 2022-03-20
 lang: en-US
 minutes: 4

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" viewBox="0 0 684 212" xmlns="http://www.w3.org/2000/svg"><style>@font-face{font-family:Calluna Sans;src:url(/fonts/r{{sans-roman-hash}}.woff2)format("woff2")}
+text{font:19px 'Calluna Sans',sans-serif;fill:#456;text-anchor:middle}
+circle{fill:none;stroke-width:1.4}
+.outer{stroke:#567}.inner{stroke:#c35}.linner{fill:#c35}</style><text x="114" y="200">Well-typed</text><text x="342" y="200">Inconclusive</text><text x="570" y="200">Static error</text><text x="114" y="50">U</text><text class="linner" x="114" y="118">T</text><circle class="outer" cx="114" cy="90" r="76"/><circle class="inner" cx="114" cy="110" r="38"/><text x="396" y="102">U</text><text class="linner" x="290" y="102">T</text><circle class="outer" cx="372" cy="95" r="57"/><circle class="inner" cx="312" cy="95" r="57"/><text x="611" y="102">U</text><text class="linner" x="531" y="102">T</text><circle class="outer" cx="611" cy="95" r="35"/><circle class="inner" cx="531" cy="95" r="35"/></svg>

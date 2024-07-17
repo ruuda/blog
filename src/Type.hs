@@ -180,6 +180,7 @@ getGlyphName c = case c of
   '@' -> "at"
   '[' -> "bracketleft"
   ']' -> "bracketright"
+  '^' -> "asciicircum"
   '_' -> "underscore"
   '`' -> "grave"
   '{' -> "braceleft"
@@ -209,6 +210,7 @@ getGlyphName c = case c of
   '…' -> "ellipsis"
   '≈' -> "approxequal"
   '≠' -> "notequal"
+  '≰' -> "notlessnorequal"
   '𝔽' -> "u1D53D"
   _   -> error $ "no postscript glyph name for '" ++ [c] ++ "' " ++
                  "(code point " ++ (show $ ord c) ++ ")"
@@ -247,8 +249,9 @@ getDiscretionaryLigatures = buildList []
           let liga more ligaName = buildList (ligaName : glyphs) more in
           case str of
             -- As with the normal ligatures, the glyph names are inconsistent.
-            -- Calluna also has ip and it ligatures, but I find those too
-            -- excessive for my subheadings.
+            -- I can turn these on and off with a <span class="dlig">, some of
+            -- them are usually too intense for my taste, like the ip and it
+            -- ligatures.
             []             -> glyphs
             'c':'b':xs     -> liga xs "c_b"
             'c':'h':xs     -> liga xs "c_h"
@@ -256,6 +259,7 @@ getDiscretionaryLigatures = buildList []
             'c':'p':xs     -> liga xs "c_p"
             'c':'t':xs     -> liga xs "ct"
             'g':'i':xs     -> liga xs "g_i"
+            'i':'t':xs     -> liga xs "i_t"
             'q':'u':xs     -> liga xs "q_u"
             's':'b':xs     -> liga xs "s_b"
             's':'h':xs     -> liga xs "s_h"

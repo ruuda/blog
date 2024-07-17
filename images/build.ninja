@@ -1,0 +1,10 @@
+rule scour
+  description = Minifying $out
+  command = scour --enable-id-stripping --set-precision=3 --enable-viewboxing --indent=none --no-line-breaks -i $in -o $out
+
+# This file has been compressed through different means.
+# build compressed/build.svg: scour original/build.svg
+
+build compressed/lattice.svg: scour original/lattice.svg
+build compressed/rectangles.svg: scour original/rectangles.svg
+build compressed/subtypes.svg: scour original/subtypes.svg

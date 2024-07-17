@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="684"
+   height="212"
+   viewBox="0 0 684 212"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <style>
+@font-face{font-family:Calluna Sans;src:url(/fonts/r{{sans-roman-hash}}.woff2)format(&quot;woff2&quot;)}
+text{font:19px 'Calluna Sans',sans-serif;fill:#456;text-anchor:middle}
+circle{fill:none;stroke-width:1.4}
+.outer{stroke:#567}.inner{stroke:#c35}.linner{fill:#c35}
+</style>
+  <text x="114" y="200">Well-typed</text>
+  <text x="342" y="200">Inconclusive</text>
+  <text x="570" y="200">Static error</text>
+
+  <text x="114" y="50">U</text>
+  <text x="114" y="118" class="linner">T</text>
+  <circle cx="114" cy="90" r="76" class="outer"/>
+  <circle cx="114" cy="110" r="38" class="inner"/>
+
+  <text x="396" y="102">U</text>
+  <text x="290" y="102" class="linner">T</text>
+  <circle cx="372" cy="95" r="57" class="outer"/>
+  <circle cx="312" cy="95" r="57" class="inner"/>
+
+  <text x="611" y="102">U</text>
+  <text x="531" y="102" class="linner">T</text>
+  <circle cx="611" cy="95" r="35" class="outer"/>
+  <circle cx="531" cy="95" r="35" class="inner"/>
+</svg>

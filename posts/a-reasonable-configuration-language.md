@@ -4,6 +4,7 @@ date: 2024-02-04
 lang: en-US
 minutes: 17
 synopsis: I was fed up with the poor opportunities for abstraction in configuration formats. The many configuration languages that exist already were not invented here, so I wrote my own, at first just for fun. But then it became useful.
+teaser: a-type-system-for-rcl-part-1-introduction
 run-in: About six months ago
 ---
 

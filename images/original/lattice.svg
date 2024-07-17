@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="684"
+   height="212"
+   viewBox="0 0 684 212"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <style>
+@font-face{font-family:Calluna Sans;src:url(/fonts/r{{sans-roman-hash}}.woff2)format(&quot;woff2&quot;)}
+text{font:19px 'Calluna Sans',sans-serif;fill:#456;text-anchor:middle}
+path{stroke:#789;opacity:0.37;stroke-width:1.1}
+</style>
+  <text x="323.26846" y="13" >Any</text>
+  <text x="498.75458" y="63" >List[Any]</text>
+  <text x="90.777527" y="111" >Int</text>
+  <text x="161.50211" y="111" >Bool</text>
+  <text x="244.50127" y="111" >String</text>
+  <text x="22.727213" y="111" >Null</text>
+  <text x="418.0556" y="111" >List[Int]</text>
+  <text x="572.57178" y="111" >List[Bool]</text>
+  <text x="498.75458" y="159" >List[Void]</text>
+  <text x="323.67249" y="208" >Void</text>
+  <path
+     d="M 455.87602,145.0359 430.82463,119.27778"
+     />
+  <path
+     d="m 540.84045,144.65288 28.32587,-23.096"
+     />
+  <path
+     d="M 459.87616,65.658066 430.78575,91.539227"
+     />
+  <path
+     d="m 538.52387,66.588089 30.76951,23.813935"
+     />
+  <path
+     d="m 457.47675,164.01185 -97.31241,34.97411"
+     />
+  <path
+     d="m 245.97264,119.59949 57.09504,62.45599"
+     />
+  <path
+     d="m 163.41353,118.98853 132.58228,68.74731"
+     />
+  <path
+     d="M 92.849137,118.86799 290.77818,194.2972"
+     />
+  <path
+     d="M 23.544482,119.59949 288.43726,202.8071"
+     />
+  <path
+     d="M 246.99249,88.846402 303.57478,24.645216"
+     />
+  <path
+     d="M 163.04482,92.418819 298.60255,19.778088"
+     />
+  <path
+     d="M 93.206026,91.485241 295.53825,13.786503"
+     />
+  <path
+     d="M 25.152837,90.47485 294.34147,7.1845181"
+     />
+  <path
+     d="M 461.68611,42.744658 352.90138,8.4625795"
+     />
+</svg>
