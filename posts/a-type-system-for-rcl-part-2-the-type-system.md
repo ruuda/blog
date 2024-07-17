@@ -4,6 +4,7 @@ header: A type system for RCL
 subheader: The type system
 part: 2
 lang: en-US
+minutes: 19
 date: 2024-07-18
 synopsis: I am adding a type system to RCL, my configuration language. In this post I explain how the type system works. It is based on lattices and features a generalized subtype check.
 extra-glyphs: Null Int Bool String Any Void List[]
@@ -438,8 +439,9 @@ The result of the fused check-infer can then be one of three cases:
  2. The expression is ill-typed,
     and here is a type error that explains why `T` !≤ `U`.
  3. Inconclusive,
-    we need to insert a runtime check,
-    and we should validate against type `T` where `T` ≤ `U`.
+    we need to insert a runtime check to validate against `U`.
+    If the check passes,
+    the value has type `T` where `T` ≤ `U`.
 
 In most cases the expected type `U` is `Any`,
 but for example in the condition of an assertion or if-else expression,

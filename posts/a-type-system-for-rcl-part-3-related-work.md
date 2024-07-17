@@ -4,8 +4,9 @@ header: A type system for RCL
 subheader: Related work
 part: 3
 lang: en-US
+minutes: 9
 date: 2024-07-18
-synopsis: I am adding a type system to RCL, my configuration language. The type system is based on ideas from other systems. In this post I highlight some prior work, and I contrast RCL’s type system with that of other configuration languages.
+synopsis: I am adding a type system to RCL, my configuration language. The type system is based on ideas from other systems. In this post I highlight prior work, and I contrast RCL’s type system with that of other configuration languages.
 ---
 
 <span class="run-in">I am [building][rcl-intro]</span> a new configuration language:
@@ -32,7 +33,7 @@ or find problems with them.
 [part4]: /2024/a-type-system-for-rcl-part-4-the-typechecker
 
 In part one we looked at what I want from a type system for RCL,
-and in part two we saw how RCL tries to achieve those goals.
+and in part two we saw how the type system tries to achieve those goals.
 The resulting type system is not a completely new invention,
 it is based explicitly and implicitly
 on other languages that I’ve worked with,
@@ -229,8 +230,8 @@ a behavior may seem useful
 but it backfires later (now it’s impossible to write generic functions,
 and if you have a deeply nested list that you _want_ to only flatten one level,
 you can’t do that).
-I learned from HCL’s mistake,
-so [`flat_map` in RCL][rcl-flatmap] does not flatten recursively.
+R<!---->C<!---->L does not make this mistake:
+[`flat_map` in RCL][rcl-flatmap] does not flatten recursively.
 
 [hcl-flatten]: https://developer.hashicorp.com/terraform/language/functions/flatten
 [rcl-flatmap]: https://docs.ruuda.nl/rcl/type_list/#flat_map

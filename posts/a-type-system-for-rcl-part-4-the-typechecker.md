@@ -4,6 +4,7 @@ header: A type system for RCL
 subheader: The typeche<span class="dlig">ck</span>er
 part: 4
 lang: en-US
+minutes: 13
 date: 2024-07-19
 synopsis: I am adding a type system to RCL, my configuration language. In this post we look at how the typechecker is implemented in Rust, and at how it is able to generate good error messages.
 teaser: a-language-for-designing-slides
@@ -501,7 +502,12 @@ and RCL is usable and useful right now without them.
 
 ## Conclusion
 
-In this post we looked at the implementation of RCL’s typechecker.
+R<!---->C<!---->L is a new configuration language
+that aims to reduce configuration boilerplate
+by extending json into a simple functional language
+that enables abstraction and reuse.
+I am adding support for type annotations and a typechecker to it,
+and in this post we looked at how that typechecker is implemented.
 We saw how the fused typecheck and inference, `check_expr`,
 is the cornerstone of the typechecker,
 with `is_subtype_of` implementing the generalized subtype check.
