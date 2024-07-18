@@ -44,8 +44,8 @@ My goal with this series is twofold:
 In this series:
 
  * [Part <abbr>I</abbr>: Introduction][part1] (this post)
- * Part <abbr>II</abbr>: The type system — _to be published in the next few days_
- * Part <abbr>III</abbr>: Related work — _to be published in the next few days_
+ * [Part <abbr>II</abbr>: The type system][part2]
+ * [Part <abbr>III</abbr>: Related work][part3]
  * Part <abbr>IV</abbr>: The typechecker — _to be published in the next few days_
 
 [part1]: /2024/a-type-system-for-rcl-part-1-introduction
@@ -287,18 +287,16 @@ What do I want from the type system?
 
 In the remainder of this series,
 we’ll see how RCL achieves this.
-<!--
 In [part two][part2] we will look at the type system,
 and in [part three][part3] at some related type systems that inspired RCL.
+<!--
 Finally, in [part four][part4]
 we will look at the implementation of the typechecker itself.
 -->
-In part two we will look at the type system,
-and in part three at some related type systems that inspired RCL.
 Finally, in part four
 we will look at the implementation of the typechecker itself.
 
-_These next parts will be published in the coming days.
+_The final part will be published in the coming days.
 In the meantime,
 if this post got you interested in RCL,
 check out [the type system documentation][rcl-type-docs],
@@ -306,5 +304,3 @@ and [try RCL in your browser][rcl-playground]!_
 
 [rcl-type-docs]:  https://docs.ruuda.nl/rcl/types/
 [rcl-playground]: https://rcl-lang.org/#try-it-yourself
-[rcl-jq]:         /2024/a-reasonable-configuration-language/#an-unexpected-jq-replacement
-[rcl-v04]:        https://docs.ruuda.nl/rcl/changelog/#040

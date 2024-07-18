@@ -26,7 +26,7 @@ or find problems with them.
  * [Part <abbr>I</abbr>: Introduction][part1]
  * [Part <abbr>II</abbr>: The type system][part2] (this post)
  * [Part <abbr>III</abbr>: Related work][part3]
- * [Part <abbr>IV</abbr>: The typechecker][part4]
+ * Part <abbr>IV</abbr>: The typechecker — _to be published in the next few days_
 
 [part1]: /2024/a-type-system-for-rcl-part-1-introduction
 [part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
@@ -583,4 +583,14 @@ In [the next part][part3] we’ll look at prior work,
 and we will contrast RCL’s type system
 with that of other configuration languages.
 Finally,
-in [part four][part4] we will look at the typechecker itself.
+<!--in [part four][part4] we will look at the typechecker itself.-->
+in part four we will look at the typechecker itself.
+
+_The final part will be published in the coming days.
+In the meantime,
+if this post got you interested in RCL,
+check out [the type system documentation][rcl-type-docs],
+and [try RCL in your browser][rcl-playground]!_
+
+[rcl-type-docs]:  https://docs.ruuda.nl/rcl/types/
+[rcl-playground]: https://rcl-lang.org/#try-it-yourself
