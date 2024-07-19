@@ -46,7 +46,7 @@ In this series:
  * [Part <abbr>I</abbr>: Introduction][part1] (this post)
  * [Part <abbr>II</abbr>: The type system][part2]
  * [Part <abbr>III</abbr>: Related work][part3]
- * Part <abbr>IV</abbr>: The typechecker — _to be published in the next few days_
+ * [Part <abbr>IV</abbr>: The typechecker][part4]
 
 [part1]: /2024/a-type-system-for-rcl-part-1-introduction
 [part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
@@ -289,18 +289,11 @@ In the remainder of this series,
 we’ll see how RCL achieves this.
 In [part two][part2] we will look at the type system,
 and in [part three][part3] at some related type systems that inspired RCL.
-<!--
 Finally, in [part four][part4]
 we will look at the implementation of the typechecker itself.
--->
-Finally, in part four
-we will look at the implementation of the typechecker itself.
-
-_The final part will be published in the coming days.
-In the meantime,
-if this post got you interested in RCL,
+If this post got you interested in RCL,
 check out [the type system documentation][rcl-type-docs],
-and [try RCL in your browser][rcl-playground]!_
+and [try RCL in your browser][rcl-playground]!
 
 [rcl-type-docs]:  https://docs.ruuda.nl/rcl/types/
 [rcl-playground]: https://rcl-lang.org/#try-it-yourself
