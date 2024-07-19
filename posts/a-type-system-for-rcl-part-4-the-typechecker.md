@@ -21,7 +21,7 @@ can help me to validate some of the ideas,
 or find problems with them.
 
 [rcl-intro]: /2024/a-reasonable-configuration-language
-[rcl-lang]:  https://rcl-lang.org/
+[rcl-lang]:  https://github.com/ruuda/rcl
 
  * [Part <abbr>I</abbr>: Introduction][part1]
  * [Part <abbr>II</abbr>: The type system][part2]
