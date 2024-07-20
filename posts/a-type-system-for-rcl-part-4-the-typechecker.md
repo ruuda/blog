@@ -73,7 +73,7 @@ by writing `f"{port}":` `"allow"` on line 6.)
 
 ## Background
 
-Good ideas appear obvious in hindsight,
+Elegant ideas appear obvious in hindsight,
 but that doesn’t mean they were easy to find.
 The current type system with the [generalized subtype check][gsubck]
 is my third attempt at writing a typechecker for RCL.
@@ -465,8 +465,8 @@ Three major features are needed for that:
    I have a rough idea of what I want,
    but there are some unresolved questions.
    How should scoping work?
-   The same as for expressions,
-   can you have local type definitions?
+   The same as for expressions?
+   Does that mean you can have local type definitions?
    Or should types only be allowed at the top level?
    Do they need to go before all expressions then,
    or can you mix let bindings and type definitions?
@@ -536,7 +536,7 @@ and if there are common practices around it.
 
 If this series got you interested in RCL,
 check out [the type system documentation][rcl-type-docs],
-and [try RCL in your browser][rcl-playground].
+and [try RCL in your browser][rcl-playground]!
 I don’t recommend relying on RCL to generate production configuration yet,
 but I do use it almost daily [as a `jq` replacement][rcl-jq],
 and the new [map and filter methods in v0.4.0][rcl-v04]
