@@ -31,7 +31,7 @@ or find problems with them.
 [part1]: /2024/a-type-system-for-rcl-part-1-introduction
 [part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
 [part3]: /2024/a-type-system-for-rcl-part-3-related-work
-[part4]: /2024/a-type-system-for-rcl-part-4-implementing-a-typechecker-in-rust
+[part4]: /2024/implementing-a-typechecker-for-rcl-in-rust
 
 [static]: /2024/a-type-system-for-rcl-part-1-introduction/#static-vs.-runtime
 [gsubck]: /2024/a-type-system-for-rcl-part-2-the-type-system#the-generalized-subtype-check

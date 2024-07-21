@@ -30,7 +30,7 @@ or find problems with them.
 [part1]: /2024/a-type-system-for-rcl-part-1-introduction
 [part2]: /2024/a-type-system-for-rcl-part-2-the-type-system
 [part3]: /2024/a-type-system-for-rcl-part-3-related-work
-[part4]: /2024/a-type-system-for-rcl-part-4-implementing-a-typechecker-in-rust
+[part4]: /2024/implementing-a-typechecker-for-rcl-in-rust
 
 In part one we looked at what I want from a type system for RCL,
 and in part two we saw how the type system tries to achieve those goals.
