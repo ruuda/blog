@@ -1,12 +1,12 @@
 ---
-title: A type system for RCL, part 2: The type system
+title: A type system for RCL: The type system
 header: A type system for RCL
 subheader: The type system
 part: 2
 lang: en-US
 minutes: 19
 date: 2024-07-18
-synopsis: I am adding a type system to RCL, my configuration language. In this post I explain how the type system works. It is based on lattices and features a generalized subtype check.
+synopsis: I am adding a type system to RCL, my configuration language. In part 2, I explain how the type system works. It is based on lattices and features a generalized subtype check.
 extra-glyphs: Null Int Bool String Any Void List[]
 ---
 

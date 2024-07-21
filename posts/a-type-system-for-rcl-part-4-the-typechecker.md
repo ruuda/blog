@@ -1,12 +1,12 @@
 ---
-title: Implementing a typechecker for RCL in Rust
+title: A type system for RCL: Implementing a typechecker in Rust
 header: A type system for RCL
 subheader: Implementing a typeche<span class="dlig">ck</span>er in Rust
 part: 4
 lang: en-US
 minutes: 14
 date: 2024-07-21
-synopsis: I am adding a type system to RCL, my configuration language. In this post we look at how the typechecker is implemented in Rust, and at how it is able to generate good error messages.
+synopsis: I am adding a type system to RCL, my configuration language. In part 4, we look at how the typechecker is implemented in Rust, and at how it is able to generate good error messages.
 teaser: a-language-for-designing-slides
 ---
 
@@ -139,7 +139,7 @@ R<!---->C<!---->L evaluates a document in several stages:
  3. The abstractor turns the CST into an _abstract syntax tree_ (AST).
     The AST drops comments and normalizes constructs.
     For instance, it has only one kind of integer literal,
-    whereas the CST distinguishes between binary, decimal, and hexadecimal iteger literals.
+    whereas the CST distinguishes between binary, decimal, and hexadecimal integer literals.
  4. The typechecker walks the AST,
     inferring and checking types on the fly,
     and inserting nodes for runtime checks where needed.
@@ -151,7 +151,8 @@ R<!---->C<!---->L evaluates a document in several stages:
  5. The evaluator walks the AST again and evaluates the document into a value.
  6. Finally, the pretty-printer formats the value into an output to display.
 
-In the next sections, we’ll dive into step **4**.
+In the remainder of this post,
+we’ll take a closer look at step **4**.
 
 ## The typechecker
 

@@ -1,11 +1,11 @@
 ---
-title: A type system for RCL, part 1: Introduction
+title: A type system for RCL: Introduction
 header: A type system for RCL
 subheader: Introduction
 part: 1
 lang: en-US
 date: 2024-07-17
-synopsis: I am adding a type system to RCL, my configuration language. In this post I explain what I want from the type system.
+synopsis: I am adding a type system to RCL, my configuration language. In part 1, I explain what I want from the type system.
 ---
 
 <span class="run-in">I am [building][rcl-intro]</span> a new configuration language:

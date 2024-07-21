@@ -1,12 +1,12 @@
 ---
-title: A type system for RCL, part 3: Related work
+title: A type system for RCL: Related work
 header: A type system for RCL
 subheader: Related work
 part: 3
 lang: en-US
 minutes: 9
 date: 2024-07-18
-synopsis: I am adding a type system to RCL, my configuration language. The type system is based on ideas from other systems. In this post I highlight prior work, and I contrast RCL’s type system with that of other configuration languages.
+synopsis: I am adding a type system to RCL, my configuration language. The type system is based on ideas from other systems. In part 3, I highlight prior work, and I contrast RCL’s type system with that of other configuration languages.
 ---
 
 <span class="run-in">I am [building][rcl-intro]</span> a new configuration language:
