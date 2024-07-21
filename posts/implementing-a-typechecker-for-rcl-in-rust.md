@@ -4,7 +4,7 @@ header: A type system for RCL
 subheader: Implementing a typeche<span class="dlig">ck</span>er in Rust
 part: 4
 lang: en-US
-minutes: 14
+minutes: 15
 date: 2024-07-21
 synopsis: I am adding a type system to RCL, my configuration language. In part 4, we look at how the typechecker is implemented in Rust, and at how it is able to generate good error messages.
 teaser: a-language-for-designing-slides
@@ -38,8 +38,9 @@ or find problems with them.
 
 In [part one][part1] we looked at what I want from a type system for RCL,
 and in [part two][part2] we saw what the resulting gradual type system looks like.
-The types form a lattice,
-and typechecking involves a generalized notion of the subtype relationship.
+The types form a lattice that is useful for inference,
+and typechecking involves
+a generalized form of checking subtype relationships.
 In this part we’ll take a closer look
 at how the typechecker is implemented in Rust.
 After this post,
@@ -78,7 +79,7 @@ by writing `f"{port}":` `"allow"` on line 6.)
 ## Failed attempts
 
 Elegant ideas appear obvious in hindsight,
-but that doesn’t mean they were easy to find.
+but we don’t often talk about the dead ends we had to explore first.
 The current type system with the [generalized subtype check][gsubck]
 is my third attempt at writing a typechecker for RCL.
 
@@ -119,8 +120,17 @@ which are contravariant in their arguments.
 
 At some point after going through those iterations,
 it occurred to me to view types as sets of values.
-The subset ordering on sets is the subtype relationship.
-Then everything fell into place,
+The subset ordering on sets is the subtype relationship on types.
+For typechecking,
+if the actual type is a subtype of the expected type,
+that is well-typed.
+If the types are disjoint,
+that’s a static error.
+If the types overlap without being subtypes,
+static typechecking is inconclusive,
+and we defer to a runtime check.
+With these three possible outcomes,
+everything fell into place,
 and the implementation became a lot more elegant.
 
 ## The evaluation pipeline
@@ -145,19 +155,27 @@ R<!---->C<!---->L evaluates a document in several stages:
     and inserting nodes for runtime checks where needed.
     Unlike more advanced type systems,
     RCL’s typechecker performs a single pass;
-    it is not based on constraints that need to be solved later.
+    it does not accumulate constraints that need to be solved later.
+    This limits the type system in some ways,
+    but it also [keeps the typechecker fast][swift-slow].
     The typechecker does not store most of the intermediate inferred types,
     they only exist for the sake of typechecking.
  5. The evaluator walks the AST again and evaluates the document into a value.
+    Where the evaluator had to emit runtime type errors
+    before the addition of the typechecker,
+    now in many cases those branches are simply `unreachable!`,
+    and continuous fuzzing helps to build confidence that they really are.
  6. Finally, the pretty-printer formats the value into an output to display.
 
 In the remainder of this post,
 we’ll take a closer look at step **4**.
 
+[swift-slow]:  https://danielchasehooper.com/posts/why-swift-is-slow/
+
 ## The typechecker
 
 The main workhorse of the typechecker is the `check_expr` method.
-It implements both type inference and typechecking:
+It implements both type inference and type checking:
 
 ```rust
 struct TypeChecker {
@@ -263,6 +281,15 @@ between the two cases that the subtype check can run into.
 and if the check passes,
 then we have a value of type `T`.
 
+Rust is a great language for implementing a typechecker like this,
+because it combines the best aspects of a functional language
+with low-level control over performance.
+It has algebraic data types and pattern matching (like e.g. Haskell),
+which make inspecting the AST safe and easy,
+but it also enables us to mutate the AST in place to wrap nodes,
+unlike Haskell where we would need to copy most of the AST
+to wrap an inner node.
+
 The second workhorse of the typechecker is `is_subtype_of`.
 It is used for example when checking literals
 or variable lookups:
@@ -287,7 +314,7 @@ let expr_type = match expr {
 };
 ```
 
-The `is_subtype_of` method is defined as follows:
+The `is_subtype_of` method implements the generalized subtype check:
 
 ```rust
 impl SourcedType {
@@ -332,7 +359,8 @@ pub enum TypeDiff<T> {
     Ok(T),
 
     /// For `t: T`, we *might* have `t: U`.
-    /// Here is `V` such that `T ≤ V ≤ U`.
+    /// Here is `V`, the type of the value if the check passes,
+    /// where `V ≤ T` and `V ≤ U`.
     Defer(T),
 
     /// For all `t: T`, we have that `t` is not a value of `U`.
@@ -523,8 +551,8 @@ Three major features are needed for that:
 Aside from those,
 there are less important features that I want to add:
 
- * String literal types, so you can use a union of string literals to model enums.
- * Quantification and type variables,
+ * **String literal types**, so you can use a union of string literals to model enums.
+ * **Quantification and type variables**,
    to be able to give a more accurate type to functions such as `filter`.
    Currently it is [documented][list-filter] with a type variable,
    but in the implementation all type variables are just `Any`,
@@ -548,7 +576,8 @@ I am adding support for type annotations and a typechecker to it,
 and in this post we looked at how that typechecker is implemented.
 We saw how the fused typecheck and inference, `check_expr`,
 is the cornerstone of the typechecker,
-with `is_subtype_of` implementing the generalized subtype check.
+with `is_subtype_of` implementing the generalized subtype check
+that defers some checks to runtime.
 On the more practical side,
 passing down an expected type enables
 localizing type errors accurately,
