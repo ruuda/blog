@@ -1,10 +1,10 @@
 ---
-title: A type system for RCL, part 4: The typechecker
+title: Implementing a typechecker for RCL in Rust
 header: A type system for RCL
-subheader: The typeche<span class="dlig">ck</span>er
+subheader: Implementing a typeche<span class="dlig">ck</span>er in Rust
 part: 4
 lang: en-US
-minutes: 13
+minutes: 14
 date: 2024-07-21
 synopsis: I am adding a type system to RCL, my configuration language. In this post we look at how the typechecker is implemented in Rust, and at how it is able to generate good error messages.
 teaser: a-language-for-designing-slides
@@ -36,11 +36,15 @@ or find problems with them.
 [static]: /2024/a-type-system-for-rcl-part-1-introduction/#static-vs.-runtime
 [gsubck]: /2024/a-type-system-for-rcl-part-2-the-type-system#the-generalized-subtype-check
 
-In part one we looked at what I want from a type system for RCL,
-and in part two we saw what the resulting type system looks like.
-In this part we’ll take a closer look at how the typechecker is implemented.
+In [part one][part1] we looked at what I want from a type system for RCL,
+and in [part two][part2] we saw what the resulting gradual type system looks like.
+The types form a lattice,
+and typechecking involves a generalized notion of the subtype relationship.
+In this part we’ll take a closer look
+at how the typechecker is implemented in Rust.
 After this post,
-we will understand how RCL is able to report the type error in this program:
+we will understand how RCL identifies the type error in this program,
+and how it is able to localize and explain the error:
 
 <pre><code class="sourceCode"><span class="kw">let</span> ports = [<span class="dv">22</span>, <span class="dv">80</span>, <span class="dv">443</span>];
 
@@ -71,7 +75,7 @@ we will understand how RCL is able to report the type error in this program:
 using string interpolation,
 by writing `f"{port}":` `"allow"` on line 6.)
 
-## Background
+## Failed attempts
 
 Elegant ideas appear obvious in hindsight,
 but that doesn’t mean they were easy to find.
@@ -90,7 +94,7 @@ And then one day
 — and this has happened to me only a handful of times in my career —
 you discover the _right_ way of doing things.
 Suddenly everything becomes simple and elegant,
-and the features fit in naturally.
+and the features fit in naturally without complicating each other.
 The generalized subtype check was one of those cases.
 
 I started with a typechecker that could only report a binary
@@ -114,14 +118,45 @@ when I got to function types,
 which are contravariant in their arguments.
 
 At some point after going through those iterations,
-I thought of viewing types as sets,
-and treating the subtype check as the subset ordering on sets.
+it occurred to me to view types as sets of values.
+Then the subset ordering on sets is the subtype relationship.
 Then everything fell into place,
 and the implementation became a lot more elegant.
 
+## The evaluation pipeline
+
+R<!---->C<!---->L evaluates a document in several stages:
+
+ 1. The lexer produces a sequence of tokens.
+ 2. The parser turns those into a _concrete syntax tree_ (CST).
+    This tree preserves all syntactic constructs,
+    including comments,
+    blank lines,
+    underscores in integer literals,
+    etc.
+    This tree is not only used for the next evaluation stage,
+    it is also used by the autoformatter.
+ 3. The abstractor turns the CST into an _abstract syntax tree_ (AST).
+    The AST drops comments and normalizes constructs.
+    For instance, it has only one kind of integer literal,
+    whereas the CST distinguishes between binary, decimal, and hexadecimal iteger literals.
+ 4. The typechecker walks the AST,
+    inferring and checking types on the fly,
+    and inserting nodes for runtime checks where needed.
+    Unlike more advanced type systems,
+    RCL’s typechecker performs a single pass;
+    it is not based on constraints that need to be solved later.
+    The typechecker does not store most of the intermediate inferred types,
+    they only exist for the sake of typechecking.
+ 5. The evaluator walks the AST again and evaluates the document into a value.
+ 6. Finally, the pretty-printer formats the value into an output to display.
+
+In the next sections, we’ll dive into step **4**.
+
 ## The typechecker
 
-The main workhorse of the typechecker is the `check_expr` method:
+The main workhorse of the typechecker is the `check_expr` method.
+It implements both type inference and typechecking:
 
 ```rust
 struct TypeChecker {
@@ -355,7 +390,7 @@ pub enum Source {
 }
 ```
 
-Like types, `Source` forms a lattice,
+[Like types][lattice], `Source` forms a lattice,
 which in turn makes `SourcedType` a lattice.
 When we join types for the sake of inference,
 we also join their sources.
@@ -416,6 +451,8 @@ Pushing the expectation in top-down enables friendlier errors.
 This example is maybe a bit contrived,
 but it will make a big difference for record types,
 where types can grow big.
+
+[lattice]: /2024/a-type-system-for-rcl-part-2-the-type-system#the-type-lattice
 
 ## Incremental implementation
 
@@ -526,19 +563,20 @@ the type system is relatively simple,
 and mostly putting together existing ideas.
 The main idea that I haven’t seen implemented elsewhere
 is the generalized subtype check.
-(And to be fair,
+And to be fair,
 it is of limited use
 — the reason RCL can get away with it,
-is [that runtime errors are static errors][static] in a configuration language.)
+is [that runtime errors are static errors][static] in a configuration language.
 I would love to hear from people more versed in the literature
 if something like this exists in other systems,
 and if there are common practices around it.
 
 If this series got you interested in RCL,
-check out [the type system documentation][rcl-type-docs],
-and [try RCL in your browser][rcl-playground]!
-I don’t recommend relying on RCL to generate production configuration yet,
-but I do use it almost daily [as a `jq` replacement][rcl-jq],
+[try RCL in your browser][rcl-playground],
+and check out [the type system documentation][rcl-type-docs]!
+I don’t recommend relying on RCL to generate production configuration yet:
+it is a hobby project without statibility promise.
+However, I do use it almost daily [as a `jq` replacement][rcl-jq],
 and the new [map and filter methods in v0.4.0][rcl-v04]
 make it even nicer for that.
 
