@@ -44,7 +44,7 @@ a generalized form of checking subtype relationships.
 In this part we’ll take a closer look
 at how the typechecker is implemented in Rust.
 After this post,
-we will understand how RCL identifies the type error in this program,
+we will understand how RCL identifies the type error in the program below,
 and how it is able to localize and explain the error:
 
 <pre><code class="sourceCode"><span class="kw">let</span> ports = [<span class="dv">22</span>, <span class="dv">80</span>, <span class="dv">443</span>];
@@ -157,7 +157,8 @@ R<!---->C<!---->L evaluates a document in several stages:
     RCL’s typechecker performs a single pass;
     it does not accumulate constraints that need to be solved later.
     This limits the type system in some ways,
-    but it also [keeps the typechecker fast][swift-slow].
+    but it also [keeps the typechecker fast][swift-slow],
+    and it makes type errors easier to explain.
     The typechecker does not store most of the intermediate inferred types,
     they only exist for the sake of typechecking.
  5. The evaluator walks the AST again and evaluates the document into a value.
@@ -284,7 +285,7 @@ then we have a value of type `T`.
 Rust is a great language for implementing a typechecker like this,
 because it combines the best aspects of a functional language
 with low-level control over performance.
-It has algebraic data types and pattern matching (like e.g. Haskell),
+Like Haskell it has algebraic data types and pattern matching,
 which make inspecting the AST safe and easy,
 but it also enables us to mutate the AST in place to wrap nodes,
 unlike Haskell where we would need to copy most of the AST
@@ -314,7 +315,8 @@ let expr_type = match expr {
 };
 ```
 
-The `is_subtype_of` method implements the generalized subtype check:
+The `is_subtype_of` method implements the subtype relationship
+implied by [the type lattice][lattice]:
 
 ```rust
 impl SourcedType {
@@ -349,7 +351,11 @@ impl SourcedType {
 }
 ```
 
-It returns a `TypeDiff`, whis is similar to `Result<Typed>`:
+Because the check is a [generalized check][gsubck],
+it returns one of three cases,
+represented by `TypeDiff`.
+A type diff is a precursor to `Result<Typed>`,
+and can hold a structured diff in case of an error.
 
 ```rust
 /// The result of a subtype check `T ≤ U`
@@ -419,7 +425,7 @@ pub enum Source {
 }
 ```
 
-[Like types][lattice], `Source` forms a lattice,
+Like types, `Source` forms a lattice,
 which in turn makes `SourcedType` a lattice.
 When we join types for the sake of inference,
 we also join their sources.
@@ -477,7 +483,7 @@ and it would have to report something like this:
 Now it’s up to the user to diff those types in their head,
 and then search the source code for where the violation happens.
 Pushing the expectation in top-down enables friendlier errors.
-This example is maybe a bit contrived,
+This example may be a bit contrived,
 but it will make a big difference for record types,
 where types can grow big.
 
@@ -608,7 +614,8 @@ I don’t recommend relying on RCL to generate production configuration yet:
 it is a hobby project without stability promise.
 However, I do use it almost daily [as a `jq` replacement][rcl-jq],
 and the new [map and filter methods in v0.4.0][rcl-v04]
-make it even nicer for that.
+make it even nicer for that,
+so give it a try!
 
 [rcl-type-docs]:  https://docs.ruuda.nl/rcl/types/
 [rcl-playground]: https://rcl-lang.org/#try-it-yourself
