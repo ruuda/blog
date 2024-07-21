@@ -119,7 +119,7 @@ which are contravariant in their arguments.
 
 At some point after going through those iterations,
 it occurred to me to view types as sets of values.
-Then the subset ordering on sets is the subtype relationship.
+The subset ordering on sets is the subtype relationship.
 Then everything fell into place,
 and the implementation became a lot more elegant.
 
@@ -576,7 +576,7 @@ If this series got you interested in RCL,
 [try RCL in your browser][rcl-playground],
 and check out [the type system documentation][rcl-type-docs]!
 I don’t recommend relying on RCL to generate production configuration yet:
-it is a hobby project without statibility promise.
+it is a hobby project without stability promise.
 However, I do use it almost daily [as a `jq` replacement][rcl-jq],
 and the new [map and filter methods in v0.4.0][rcl-v04]
 make it even nicer for that.
