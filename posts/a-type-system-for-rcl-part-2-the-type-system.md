@@ -264,7 +264,7 @@ the inferred type `T` is an upper bound.
 It may be too pessimistic.
 For a language where runtime type errors are fatal,
 the typechecker has to be pessimistic,
-so it reject programs in case **2**.
+so it rejects programs in case **2**.
 But in a configuration language,
 [runtime errors are static errors][static].
 The important thing
