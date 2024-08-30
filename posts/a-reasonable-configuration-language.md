@@ -625,7 +625,7 @@ but I haven’t evaluated it at all.
 — I never properly evaluated Jsonnet, but probably I should.
 Superficially it looks like one of the more mature formats,
 and in many ways it looks similar to RCL.
-Its has [a page][jsonnet-compr]
+It has [a page][jsonnet-compr]
 comparing itself against other configuration languages.
 
 [**KCL**](https://kcl-lang.io/)
