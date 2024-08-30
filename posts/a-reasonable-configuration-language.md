@@ -336,7 +336,7 @@ let buckets = [
 // occurs multiple times, this will fail with an error that reports
 // the offending key and the associated values. The type annotation
 // is for clarification, it is not mandatory.
-let buckets_by_name: Dict[String, Dynamic] = buckets.key_by(b => b.name);
+let buckets_by_name: Dict[String, Any] = buckets.key_by(b => b.name);
 
 // Constructing the mapping is enough for validation, the document still
 // evaluates to the same dict as before. Note, the left "buckets" is the
@@ -351,7 +351,7 @@ let buckets_by_name: Dict[String, Dynamic] = buckets.key_by(b => b.name);
 <span class="co">// occurs multiple times, this will fail with an error that reports</span>
 <span class="co">// the offending key and the associated values. The type annotation</span>
 <span class="co">// is for clarification, it is not mandatory.</span>
-<span class="kw">let</span> <span class="n">buckets_by_name</span>: <span class="dt">Dict</span>[<span class="dt">String</span>, <span class="dt">Dynamic</span>] = <span class="n">buckets</span>.<span class="fu">key_by</span>(<span class="n">b</span> <span class="o">=&gt;</span> <span class="n">b</span>.<span class="n">name</span>);
+<span class="kw">let</span> <span class="n">buckets_by_name</span>: <span class="dt">Dict</span>[<span class="dt">String</span>, <span class="dt">Any</span>] = <span class="n">buckets</span>.<span class="fu">key_by</span>(<span class="n">b</span> <span class="o">=&gt;</span> <span class="n">b</span>.<span class="n">name</span>);
 
 <span class="co">// Constructing the mapping is enough for validation, the document still</span>
 <span class="co">// evaluates to the same dict as before. Note, the left "buckets" is the</span>
@@ -368,7 +368,7 @@ An RCL document is always an expression,
 and you can evaluate it to a json document with the `rcl` command-line tool:
 
 ```
-rcl evaluate --output=json buckets.rcl
+rcl evaluate --format=json buckets.rcl
 ```
 
 The tool can also output in RCL syntax,
@@ -485,7 +485,7 @@ I have a language in which this query is straightforward to express,
 and it can import json!
 
 ```
-$ rcl query --output=raw machines.json '[
+$ rcl query --format=raw machines.json '[
   for m in input:
   if m.get("tags", []).contains("amd"):
   m.name
