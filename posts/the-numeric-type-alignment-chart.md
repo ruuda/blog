@@ -24,6 +24,9 @@ The following alignment chart summarizes this challenge:
 [rcl-lang]: https://rcl-lang.org
 [types]:    /2024/a-type-system-for-rcl-part-1-introduction
 
+<!-- TODO: There should be some axis about whether different types of equality
+are allowed to co-exist and how they interact with types. -->
+
 <div style="overflow-x: auto">
 <div style="overflow: hidden; width: fit-content">
 <table style="border-spacing: 1em; margin: 0 -1em 1em -1em; min-width: 30em">
