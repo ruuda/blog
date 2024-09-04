@@ -11,10 +11,10 @@ I am building a new configuration language, [RCL][rcl-lang].
 It’s a superset of json
 and [it features a gradual type system][types].
 Its main purpose is to generate json, yaml, and toml files,
-but it makes a pretty good json query language as well.
+but it makes a pretty good json query language too.
 (Think `jq`, but without having to ask ChatGPT to write the query for you.)
 It supported integers early on,
-but to deliver on the “json superset” promise,
+but to deliver on the json superset promise,
 the only piece that is still missing are floats;
 numbers that contain a decimal point or exponent.
 Adding those turns out to be a rabbit hole of trade-offs.
