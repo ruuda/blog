@@ -83,6 +83,16 @@ are allowed to co-exist and how they interact with types. -->
 Before we dive in to what this means,
 let’s look at where the challenge comes from.
 
+## Alternative
+
+An alternative chart might be:
+
+ * Equality purist: There is one kind of equality.
+   Value identity must respect numeric equality.
+ * Equality neutral: Values can have non-identifying properties.
+   For example `1.0` and `1.00` are different but equal,
+   just as `{ a = 1, b = 2}` and `{b = 2, a = 1}` are different but equal.
+
 ## Json semantics
 
 The json specification is a _lexical_ one:
