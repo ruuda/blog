@@ -89,9 +89,26 @@ An alternative chart might be:
 
  * Equality purist: There is one kind of equality.
    Value identity must respect numeric equality.
+   Values that have disjoint types cannot be equal.
  * Equality neutral: Values can have non-identifying properties.
+   Value identity must respect numeric equality.
    For example `1.0` and `1.00` are different but equal,
    just as `{ a = 1, b = 2}` and `{b = 2, a = 1}` are different but equal.
+   Values that are different can be equal.
+   `1.0 = 1.00`, `1 = 1.0`.
+ * Equality rebel (or is this purist?):
+   A decimal point is part of a number’s identity.
+   `1 ≠ 1.0`,
+   just like `1 ≠ "1"`.
+ * Equality rebel:
+   Numbers can be equal to strings.
+
+There is precedent that values that look different are equal (dicts),
+and although RCL normalizes them currently,
+it should preserve insertion order instead.
+There is precedent that values with different types can be equal,
+e.g. `[]: List[Bool]` and `[]: List[String]` are equal.
+Though that check should be a type error.
 
 ## Json semantics
 
@@ -124,3 +141,7 @@ and weigh usability above support for applications with uncommon behavior.
 But distinguishing between ints and floats is pretty common,
 so RCL should definitely never insert decimal points,
 and ideally it shouldn’t remove them either.
+
+## Precision
+
+Wat do if input exceeds the range?
