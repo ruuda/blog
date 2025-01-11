@@ -19,8 +19,8 @@ and building deeper connections with them.
 
 LLMs are, in one sense, all the same.
 There is only a handful of foundation models,
-and even those are trained in such a way
-that their default writing styles are very similar.
+and even those are trained in a way
+that makes their default writing styles very similar.
 
 I work a remote job in tech.
 This means that a large part of my interactions with other humans are online,
@@ -34,4 +34,18 @@ The one thing that remains in text
 — the last trace of personality that cannot be stripped away —
 is writing style.
 
-Recognizing somebodies writing style is part of getting to know that person.
+Learning to recognizing somebodies writing style
+is part of getting to know that person,
+just like learning what their taste in food or music is.
+With people I know well,
+I can often identify the author by the writing style.
+For natural language,
+but even for code.
+That we express ourselves in different ways,
+is what makes interacting with other people fun!
+
+So when humans start using <abbr>LLM</abbr>s to write text for them,
+or rewrite text to sound more professional or eloquent,
+that last trace of personality gets lost.
+I can identify LLM use by the writing style as well,
+and it makes me sad when real humans do that.
