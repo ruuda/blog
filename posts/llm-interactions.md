@@ -1,5 +1,5 @@
 ---
-title: L<!---->L<!---->M text makes human interaction less fun
+title: L<!---->L<!---->M text makes human interactions less fun
 date: 2025-01-11
 lang: en-US
 synopsis: Building connections with other people is what makes life fun. When humans communicate through LLM-written text, we lose that.
@@ -23,7 +23,7 @@ and even those are trained in a way
 that makes their default writing styles very similar.
 
 I work a remote job in tech.
-This means that a large part of my interactions with other humans are online,
+This means that a large part of my interactions with other humans happen online,
 through text.
 In text, the things that set us apart are stripped away.
 You don’t hear voices or intonation,
@@ -34,18 +34,40 @@ The one thing that remains in text
 — the last trace of personality that cannot be stripped away —
 is writing style.
 
-Learning to recognizing somebodies writing style
+Learning to recognize somebodies writing style
 is part of getting to know that person,
 just like learning what their taste in food or music is.
 With people I know well,
-I can often identify the author by the writing style.
-For natural language,
-but even for code.
+I can often identify the author by the writing style
+in natural languages that I’m fluent in,
+and sometimes even in code.
 That we express ourselves in different ways,
 is what makes interacting with other people fun!
 
-So when humans start using <abbr>LLM</abbr>s to write text for them,
-or rewrite text to sound more professional or eloquent,
-that last trace of personality gets lost.
-I can identify LLM use by the writing style as well,
+When people start using <abbr>LLM</abbr>s to inflate text for them,
+or to rewrite text to sound more professional or eloquent,
+that last trace of personality is lost.
+I can often spot LLM use by the writing style,
 and it makes me sad when real humans do that.
+It’s the equivalent of turning off your camera in a videocall:
+hiding behind uniformity, erasing all personality.
+
+When <abbr>LLM</abbr>s initially emerged,
+I thought they could bring productivity gains,
+and help less advanced speakers express themselves.
+But as <abbr>LLM</abbr>s get integrated into our daily lives,
+LLM-generated text starts to feel more like a double insult:
+it says “I couldn’t be bothered to spend time writing this myself”,
+yet it makes me waste time reading through the generated fluff!
+It would be more respectful of each other’s time
+to just share the prompt directly.
+As for helping less advanced speakers,
+I now realize that I much prefer to read a piece in broken English,
+than to read something that sounds like AI slop.
+Because then, at least I feel like I’m interacting with a _human_.
+
+All of this is not to say that <abbr>LLM</abbr>s are not useful,
+or that they can’t impersonate different writing styles when prompted.
+It’s just that when I’m interacting with other people,
+I like to interact with those people directly,
+and not through an LLM filter that strips away the last traces of personality.
