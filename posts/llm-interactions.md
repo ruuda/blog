@@ -35,7 +35,7 @@ The one thing that remains in text
 — the last trace of personality that cannot be stripped away —
 is writing style.
 
-Learning to recognize somebodies writing style
+Learning to recognize somebody’s writing style
 is part of getting to know that person,
 just like learning what their taste in food or music is.
 With people I know well,
