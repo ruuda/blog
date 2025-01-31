@@ -500,5 +500,5 @@ toml is a friendly format without yaml’s footguns.
 For cases where you are stuck with yaml,
 generating json from a more suitable language
 can be a viable approach.
-Generating json also opens op the possibility for abstraction and reuse,
+Generating json also opens up the possibility for abstraction and reuse,
 in a way that is difficult to achieve safely by templating yaml.
