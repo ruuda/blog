@@ -1,6 +1,6 @@
 ---
 title: The numeric type alignment chart
-date: 2024-09-01
+date: 2025-02-09
 lang: en-US
 minutes: ?
 synopsis: TODO
@@ -9,14 +9,14 @@ run-in: I am building
 
 I am building a new configuration language, [RCL][rcl-lang].
 It’s a superset of json
-and [it features a gradual type system][types].
+that extends json into a simple functional language
+that enables abstraction and reuse.
 Its main purpose is to generate json, yaml, and toml files,
-but it makes a pretty good json query language too.
-(Think `jq`, but without having to ask ChatGPT to write the query for you.)
-It supported integers early on,
-but to deliver on the json superset promise,
-the only piece that is still missing are floats;
-numbers that contain a decimal point or exponent.
+but it makes a pretty good json query tool too.
+Think `jq`, but without having to ask an LLM to write the query for you.
+While RCL supported integers early on,
+it was missing one piece to deliver on the json superset promise:
+floats — numbers that contain a decimal point or exponent.
 Adding those turns out to be a rabbit hole of trade-offs.
 <!-- TODO: Mention sets. -->
 The following alignment chart summarizes this challenge:
@@ -121,27 +121,28 @@ In some cases,
 all sane applications agree on the semantics.
 For example,
 whitespace is insignificant,
-and `"?"`, `"\u005f"`, and `"\u005F"` all represent the same string
-(the code point <abbr>U+005F</abbr>, a question mark).
+and `"?"`, `"\u005f"`, and `"\u005F"` all represent the same string.
 For numbers, it’s not that clear.
-I think it’s reasonable to expect `1.0` and `1.00` to be interchangeable,
-but what about `1` and `1.0`?
-Some applications reject numbers with a decimal point
-when they expect an integer.
-The converse — _demanding_ a decimal point when expecting a float —
-is less common,
-but still something that an application might reasonably do.
+For example,
+Python’s json module parses `1` and `1.0` as different values
+(an int and string respectively),
+while in JavaScript the two are indistinguishable.
+By default Python parses `1.0` and `1.00` as the same value,
+but with `parse_float=Decimal` it preserves the distinction.
+And many applications reject numbers with a decimal point
+when they expect an integer,
+even if the fractional part is zero.
 
 Because RCL aims to generate configuration
 for any application that accepts json, yaml, or toml,
 it can’t assume that the presence or absence of a decimal point is irrelevant.
-I think it is fair to assume that `1.0` and `1.00` are interchangeable
-— at some point you have to be pragmatic,
-and weigh usability above support for applications with uncommon behavior.
-But distinguishing between ints and floats is pretty common,
-so RCL should definitely never insert decimal points,
-and ideally it shouldn’t remove them either.
+Distin
+RCL should never insert or remove decimal points.
 
 ## Precision
 
 Wat do if input exceeds the range?
+I think it is fair to assume that `1.0` and `1.00` are interchangeable
+— at some point you have to be pragmatic,
+and applications that care about the exact number format
+tend to encode numbers as strings anyway.
