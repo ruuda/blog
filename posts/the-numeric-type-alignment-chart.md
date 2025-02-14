@@ -18,7 +18,68 @@ While RCL supported integers early on,
 it was missing one piece to deliver on the json superset promise:
 floats — numbers that contain a decimal point or exponent.
 Adding those turns out to be a rabbit hole of trade-offs.
-<!-- TODO: Mention sets. -->
+
+## Wishlist
+
+There are several things I want,
+that unfortunately are incompatible.
+
+**Gradual types.**<br>
+[R<!---->C<!---->L is gradually typed.][types]
+We can type 1 as Int and 1.0 as Float,
+but both can be typed as Any as well.
+
+**A separate integer type.**<br>
+While we could go the Javascript route of having only “numbers”,
+many configuration formats distinguish between integers and floats,
+so it is useful for RCL to be able to express that difference
+in the type system.
+
+**Referential transparency.**<br>
+If two values are equal,
+then we should be able to substitute one for the other.
+Suppose we have this:
+
+<pre><code class="sourceCode"><span class="kw">let</span> a: <span class="dt">A</span> = x;
+<span class="kw">let</span> b: <span class="dt">B</span> = y;
+</code></pre>
+
+Then if `x == y`, the following should be well-typed:
+
+<pre><code class="sourceCode"><span class="kw">let</span> a: <span class="dt">A</span> = y;
+<span class="kw">let</span> b: <span class="dt">B</span> = x;
+</code></pre>
+
+**Equality should respect numeric equality.**<br>
+It would be surprising if `1 == 1.0` were false
+— even if `1 == "1"` being false is very natural!
+
+Unfortunately,
+if we have separate types for `Int` and `Float`,
+then referential transparency combined with numeric equality
+leads to the following conclusion:
+
+<pre><code class="sourceCode"><span class="co">// This is all fine and normal.</span>
+<span class="kw">let</span> a1: <span class="dt">Int</span> = <span class="dv">1</span>;
+<span class="kw">let</span> b1: <span class="dt">Float</span> = <span class="dv">1.0</span>;
+
+<span class="co">// This is true.</span>
+a1 == b1
+
+<span class="co">// Therefore, the following must be well-typed!</span>
+<span class="kw">let</span> a1: <span class="dt">Int</span> = <span class="dv">1.0</span>;
+<span class="kw">let</span> b1: <span class="dt">Float</span> = <span class="dv">1</span>;
+</code></pre>
+
+I find this bizarre and counter-productive.
+While 1.0 is numerically an integer,
+in programming, integers are numbers without decimal point.
+That’s what ‘integer’ means in configuration formats,
+and deviating from that common meaning would defeat the point
+of making a distinction between ints and floats.
+
+## The Chart
+
 The following alignment chart summarizes this challenge:
 
 [rcl-lang]: https://rcl-lang.org
