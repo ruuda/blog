@@ -51,8 +51,10 @@ Then if `x == y`, the following should be well-typed:
 </code></pre>
 
 **Equality should respect numeric equality.**<br>
-It would be surprising if `1 == 1.0` were false
-— even if `1 == "1"` being false is very natural!
+Users expect `1 == 1.0` to be true.
+When it’s false,
+that is one of those footguns where you debug for hours
+before realizing that equality doesn’t work as you expected.
 
 Unfortunately,
 if we have separate types for `Int` and `Float`,
@@ -77,6 +79,34 @@ in programming, integers are numbers without decimal point.
 That’s what ‘integer’ means in configuration formats,
 and deviating from that common meaning would defeat the point
 of making a distinction between ints and floats.
+
+And so the wishlist items are incompatible.
+One of them has to go.
+The design space then,
+is to pick which one goes.
+
+**We could give up on the separate integer type**.
+There would be a single numeric type: `Number`.
+This is what TypeScript does.
+
+**We could give up on allowing all values to be compared.**
+We don’t _need_ to assign a truth value to `1 == 1.0`,
+we can say that it’s an error to even attempt the comparison!
+This is what statically typed languages such as Rust and Haskell do.
+
+**We could give up on referential transparency.**
+Value equality would be defined in a way that is incompatible with the type system.
+This makes it hard to reason about generic statements,
+but it’s rarely a problem in practice.
+We could make 1 and 1.0 equal,
+yet make it a type error to use 1.0 as int.
+This is what Cue and Python/Mypy do.
+
+**We could give up on numeric equality.**
+In any sane language, it’s hardly surprising that `1 != "1"`.
+Couldn’t it be acceptable then,
+that `1 != 1.0`?
+This is what I plan to do for RCL.
 
 ## The Chart
 
