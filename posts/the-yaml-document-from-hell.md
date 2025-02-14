@@ -477,17 +477,25 @@ but which deserve to be mentioned:
    the potential for abstraction seemed more limited
    than what you can achieve with e.g. Nix.
 
-[cue]:     https://cuelang.org/
-[dhall]:   https://dhall-lang.org/
-[hcl]:     https://github.com/hashicorp/hcl
-[jsonc]:   https://code.visualstudio.com/docs/languages/json#_json-with-comments
-[jwcc]:    https://nigeltao.github.io/blog/2021/json-with-commas-comments.html
-[nix]:     https://nixos.org/
-[nixlang]: https://nixos.org/manual/nix/stable/language/index.html
-[pydump]:  https://docs.python.org/3/library/json.html?highlight=json%20dump#json.dump
-[python]:  https://www.python.org/
-[tojson]:  https://nixos.org/manual/nix/stable/language/builtins.html#builtins-toJSON
-[toml]:    https://toml.io/en/
+**2025 update:** After having used HCL more in practice,
+I consider it too ad-hoc to seriously recommend.
+My frustration with HCL is what prompted me to create [RCL][rcl].
+It [started as a toy project][reasonable],
+but is now at a point where it is both usable and useful.
+
+[cue]:        https://cuelang.org/
+[dhall]:      https://dhall-lang.org/
+[hcl]:        https://github.com/hashicorp/hcl
+[jsonc]:      https://code.visualstudio.com/docs/languages/json#_json-with-comments
+[jwcc]:       https://nigeltao.github.io/blog/2021/json-with-commas-comments.html
+[nix]:        https://nixos.org/
+[nixlang]:    https://nixos.org/manual/nix/stable/language/index.html
+[pydump]:     https://docs.python.org/3/library/json.html?highlight=json%20dump#json.dump
+[python]:     https://www.python.org/
+[rcl]:        https://rcl-lang.org/
+[reasonable]: /2024/a-reasonable-configuration-language
+[tojson]:     https://nixos.org/manual/nix/stable/language/builtins.html#builtins-toJSON
+[toml]:       https://toml.io/en/
 
 ## Conclusion
 
