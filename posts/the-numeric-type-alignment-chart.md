@@ -160,121 +160,51 @@ One of them has to go.
 The design space then,
 is to pick which one goes.
 
-## Design space
-
-**We could give up on the separate integer type**.
+**We could give up on the separate integer type.**
 There would be a single numeric type: `Number`.
 This is what TypeScript does.
+This is the easiest way forward,
+but I would find it a shame to lose the distinction between `Int` and `Float`.
 
 **We could give up on allowing all values to be compared.**
 We don’t _need_ to assign a truth value to `1 == 1.0`,
 we can say that it’s an error to even attempt the comparison!
 This is what statically typed languages such as Rust and Haskell do.
+In RCL though,
+we can’t do this without throwing out sets and dicts with non-string keys.
 
 **We could give up on referential transparency.**
 Value equality would be defined in a way that is incompatible with the type system.
-This makes it hard to reason about generic statements,
-but it’s rarely a problem in practice.
+This makes it hard to reason about general statements,
+but that is rarely a problem in practice.
 We could make 1 and 1.0 equal,
 yet make it a type error to use 1.0 as int.
-This is what Cue and Python/Mypy do.
+This is what Cue and Python + Mypy do.
+It is perhaps the most practical way forward
+that preserves the separate integer type,
+but somehow it feels deeply unsatisfactory to me to violate referential transparency.
+It’s a core principle that it should be possible to _reason_ about RCL,
+and the expectation that equal values are interchangeable is so fundamental,
+that it’s hard to foresee the full impact when we break that expectation.
 
 **We could give up on numeric equality.**
 In any sane language, it’s hardly surprising that `1 != "1"`.
 Couldn’t it be acceptable then,
 that `1 != 1.0`?
-This is what I plan to do for RCL.
+This is what I would like to explore with RCL.
+It’s not the most obvious and unsurprising choice,
+but it is a coherent one,
+and my gut feeling is that
+uniform rules lead to a simpler
+— [though maybe not easier][simple-easy]
+— language in the end.
 
-## The Chart
-
-The following alignment chart summarizes this challenge:
-
-
-<!-- TODO: There should be some axis about whether different types of equality
-are allowed to co-exist and how they interact with types. -->
-
-<div style="overflow-x: auto">
-<div style="overflow: hidden; width: fit-content">
-<table style="border-spacing: 1em; margin: 0 -1em 1em -1em; min-width: 30em">
-<thead>
-<tr>
-  <td></td>
-  <td>
-    <strong>Value purist</strong>
-    <br>Value identity must respect numeric equality.
-  </td>
-  <td>
-    <strong>Value neutral</strong>
-    <br>A decimal point is part of a number’s identity.
-  </td>
-  <td>
-    <strong>Value rebel</strong>
-    <br>Formatting is part of a number’s identity.</td>
-  </td>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>
-    <strong>Type purist</strong>
-    <br>A number is either an int or a float.
-  </td>
-  <td><code>1 == 1.0</code> and <code>{1, 1.0}</code> are type errors.</td>
-  <td><code>1 ≠ 1.0</code>,<br>just like<br><code>1 ≠ "1"</code>.</td>
-  <td><code>1.0 ≠ 1.00</code>,<br>just like<br><code>"1.0" ≠ "1.00"</code>.</td>
-</tr>
-<tr>
-  <td>
-    <strong>Type neutral</strong>
-    <br>Int is a subtype of float.
-  </td>
-  <td><code>{1, 1.0}</code> has one element.<br><code>1.0</code> is an int.</td>
-  <td><code>{1, 1.0}</code> has two elements.<br><code>1</code> is an int.</td>
-  <td>Ints and floats are strings that match regexes.</td>
-</tr>
-<tr>
-  <td>
-    <strong>Type rebel</strong>
-    <br>All numbers are floats.
-  </td>
-  <td><code>{1, 1.0}</code> has one element.<br><code>1</code> is a float.</td>
-  <td><code>{1, 1.0}</code> has two elements.<br><code>1</code> is a float.</td>
-  <td>Numbers are strings that match a regex.</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
-Before we dive in to what this means,
-let’s look at where the challenge comes from.
-
-## Alternative
-
-An alternative chart might be:
-
- * Equality purist: There is one kind of equality.
-   Value identity must respect numeric equality.
-   Values that have disjoint types cannot be equal.
- * Equality neutral: Values can have non-identifying properties.
-   Value identity must respect numeric equality.
-   For example `1.0` and `1.00` are different but equal,
-   just as `{ a = 1, b = 2}` and `{b = 2, a = 1}` are different but equal.
-   Values that are different can be equal.
-   `1.0 = 1.00`, `1 = 1.0`.
- * Equality rebel (or is this purist?):
-   A decimal point is part of a number’s identity.
-   `1 ≠ 1.0`,
-   just like `1 ≠ "1"`.
- * Equality rebel:
-   Numbers can be equal to strings.
-
-There is precedent that values that look different are equal (dicts),
-and although RCL normalizes them currently,
-it should preserve insertion order instead.
-There is precedent that values with different types can be equal,
-e.g. `[]: List[Bool]` and `[]: List[String]` are equal.
-Though that check should be a type error.
+To limit the footguniness of this choice,
+we can at least disallow comparison operators (`<`, `<=`, `>`, `>=`)
+between values of different types.
+`1 < 2`, `"a" < "b"`, and `0.5 < 2.0` are all true,
+but `0.5 < 2` is an error.
+<!-- TODO: Mention List.sort. -->
 
 ## Precision
 
@@ -284,6 +214,7 @@ I think it is fair to assume that `1.0` and `1.00` are interchangeable
 and applications that care about the exact number format
 tend to encode numbers as strings anyway.
 
-[rcl-lang]: https://rcl-lang.org
-[types]:    /2024/a-type-system-for-rcl-part-1-introduction
-[types-ii]: /2024/a-type-system-for-rcl-part-2-the-type-system
+[rcl-lang]:    https://rcl-lang.org
+[types]:       /2024/a-type-system-for-rcl-part-1-introduction
+[types-ii]:    /2024/a-type-system-for-rcl-part-2-the-type-system
+[simple-easy]: https://www.infoq.com/presentations/Simple-Made-Easy/
