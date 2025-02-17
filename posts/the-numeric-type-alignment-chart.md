@@ -16,7 +16,7 @@ but it makes a pretty good json query tool too.
 Think jq, but without having to ask an LLM to write the query for you.
 While RCL supported integers early on,
 it was missing one piece to deliver on the json superset promise:
-floats — numbers that contain a decimal point or exponent.
+floats — numbers that contain a decimal point.
 Adding floats to RCL was tough,
 because of several conflicting principles.
 In this post we will explore that trade-off.
