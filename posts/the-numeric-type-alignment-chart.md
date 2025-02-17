@@ -1,5 +1,5 @@
 ---
-title: The numeric type alignment chart
+title: A float walks into a gradual type system
 date: 2025-02-09
 lang: en-US
 minutes: ?
@@ -8,7 +8,7 @@ run-in: I am building
 ---
 
 I am building a new configuration language, [RCL][rcl-lang].
-It’s a superset of json
+It’s a gradually typed superset of json
 that extends json into a simple functional language
 that enables abstraction and reuse.
 Its main purpose is to generate json, yaml, and toml files,
