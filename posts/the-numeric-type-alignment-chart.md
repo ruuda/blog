@@ -7,10 +7,10 @@ synopsis: TODO
 run-in: I am building
 ---
 
-I am building a new configuration language, [RCL][rcl-lang].
+I am building a new configuration language: [RCL][rcl-lang].
 It’s a gradually typed superset of json
 that extends json into a simple functional language
-that enables abstraction and reuse.
+to enable abstraction and reuse.
 Its main purpose is to generate json, yaml, and toml files,
 but it makes a pretty good json query tool too.
 Think jq, but without having to ask an LLM to write the query for you.
@@ -19,9 +19,7 @@ it was missing one piece to deliver on the json superset promise:
 floats — numbers that contain a decimal point.
 Adding floats to RCL was tough,
 because of several conflicting principles.
-In this post we will explore that trade-off.
-The primary question we’ll have to answer is:
-what is the relation between 1 and 1.0?
+In this post we will explore the trade-offs involved.
 
 ## Json semantics
 
@@ -29,18 +27,17 @@ As a json superset,
 RCL inherits and extends json’s number syntax.
 The json specification is a _lexical_ one:
 it prescribes what strings are valid json documents,
-but it does not prescribe the _semantics_ of those documents.
+and it names the syntactic elements,
+but it does not prescribe their _semantics_.
 It’s up to the application to interpret the document.
 
 In some cases,
 all sane applications agree on the semantics.
-For example,
-whitespace is insignificant,
-and `"?"`, `"\u003f"`, and `"\u003F"` all represent the same string.
+For example, `"?"`, `"\u003f"`, and `"\u003F"` all represent the same string.
 For numbers, it’s not that clear.
 For example,
 Python’s json module parses `1` and `1.0` as different values
-(an int and string respectively),
+(an int and float respectively),
 while in JavaScript the two are indistinguishable.
 By default Python parses `1.0` and `1.00` as the same value,
 but it can be configured to preserve the distinction.
@@ -53,13 +50,11 @@ for any application that accepts json, yaml, or toml,
 it can’t assume that the presence or absence of a decimal point is irrelevant.
 It should never silently insert or remove decimal points.
 
-## Types
-
 [R<!---->C<!---->L is gradually typed.][types]
 The goal of the type system is to prevent bugs,
 and to make code more self-documenting.
 Because decimal points matter,
-it would be useful to distinguish between ints and floats.
+it would be useful to distinguish between ints and floats in the type system.
 
 ## Wishlist
 
@@ -75,7 +70,7 @@ this is what I would like to see from numbers in RCL:
 
 **A separate integer type.**<br>
 While we could go the Javascript route of having only “numbers”,
-many configuration formats distinguish between integers and floats,
+many configuration schemas distinguish between integers and floats,
 so it is useful for RCL to be able to express that difference
 in the type system.
 
@@ -93,19 +88,19 @@ those should be allowed to be heterogeneous too.
 Users expect `1 == 1.0` to be true.
 When it’s false,
 that is one of those footguns where you debug for hours
-before realizing that equality doesn’t work as you expected.
+before realizing that equality doesn’t work as you assumed.
 
 **Referential transparency.**<br>
 If two values are equal,
 then we should be able to substitute one for the other
 and get the same result.
-Suppose we have this:
+Suppose this is well-typed:
 
 <pre><code class="sourceCode"><span class="kw">let</span> a: <span class="dt">A</span> = x;
 <span class="kw">let</span> b: <span class="dt">B</span> = y;
 </code></pre>
 
-Then if `x == y`, the following should be well-typed:
+Then if `x == y`, the following should be well-typed too:
 
 <pre><code class="sourceCode"><span class="kw">let</span> a: <span class="dt">A</span> = y;
 <span class="kw">let</span> b: <span class="dt">B</span> = x;
@@ -133,11 +128,11 @@ leads to the following conclusion:
 a1 == b1
 
 <span class="co">// Therefore, the following must be well-typed!</span>
-<span class="kw">let</span> a1: <span class="dt">Int</span> = <span class="dv">1.0</span>;
-<span class="kw">let</span> b1: <span class="dt">Float</span> = <span class="dv">1</span>;
+<span class="kw">let</span> a2: <span class="dt">Int</span> = <span class="dv">1.0</span>;
+<span class="kw">let</span> b2: <span class="dt">Float</span> = <span class="dv">1</span>;
 </code></pre>
 
-I find this bizarre and counter-productive.
+I find this bizarre and counter-intuitive.
 While 1.0 is numerically an integer,
 in programming, integers are numbers without decimal point.
 That’s what ‘integer’ means in configuration formats,
@@ -160,20 +155,22 @@ One of them has to go.
 The design space then,
 is to pick which one goes.
 
-**We could give up on the separate integer type.**
+## Exploring the design space
+
+**We could give up on the separate integer type.**<br>
 There would be a single numeric type: `Number`.
 This is what TypeScript does.
 This is the easiest way forward,
 but I would find it a shame to lose the distinction between `Int` and `Float`.
 
-**We could give up on allowing all values to be compared.**
+**We could give up on allowing all values to be compared.**<br>
 We don’t _need_ to assign a truth value to `1 == 1.0`,
 we can say that it’s an error to even attempt the comparison!
 This is what statically typed languages such as Rust and Haskell do.
 In RCL though,
 we can’t do this without throwing out sets and dicts with non-string keys.
 
-**We could give up on referential transparency.**
+**We could give up on referential transparency.**<br>
 Value equality would be defined in a way that is incompatible with the type system.
 This makes it hard to reason about general statements,
 but that is rarely a problem in practice.
@@ -183,11 +180,11 @@ This is what Cue and Python + Mypy do.
 It is perhaps the most practical way forward
 that preserves the separate integer type,
 but somehow it feels deeply unsatisfactory to me to violate referential transparency.
-It’s a core principle that it should be possible to _reason_ about RCL,
-and the expectation that equal values are interchangeable is so fundamental,
-that it’s hard to foresee the full impact when we break that expectation.
+It should be possible to _reason_ about RCL,
+and the principle that equal values are interchangeable is so fundamental,
+that it’s hard to foresee the full impact of breaking that expectation.
 
-**We could give up on numeric equality.**
+**We could give up on numeric equality.**<br>
 In any sane language, it’s hardly surprising that `1 != "1"`.
 Couldn’t it be acceptable then,
 that `1 != 1.0`?
