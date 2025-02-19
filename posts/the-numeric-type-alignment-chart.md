@@ -10,7 +10,7 @@ run-in: I am building
 I am building a new configuration language: [RCL][rcl-lang].
 It’s a gradually typed superset of json
 that extends json into a simple functional language
-to enable abstraction and reuse.
+that enables abstraction and reuse.
 Its main purpose is to generate json, yaml, and toml files,
 but it makes a pretty good json query tool too.
 Think jq, but without having to ask an LLM to write the query for you.
@@ -18,7 +18,7 @@ While RCL supported integers early on,
 it was missing one piece to deliver on the json superset promise:
 floats — numbers that contain a decimal point.
 Adding floats to RCL was tough,
-because of several conflicting principles.
+because several guiding principles are in conflict.
 In this post we will explore the trade-offs involved.
 
 ## Json semantics
@@ -33,12 +33,12 @@ It’s up to the application to interpret the document.
 
 In some cases,
 all sane applications agree on the semantics.
-For example, `"?"`, `"\u003f"`, and `"\u003F"` all represent the same string.
+For instance, `"?"`, `"\u003f"`, and `"\u003F"` all represent the same string.
 For numbers, it’s not that clear.
 For example,
 Python’s json module parses `1` and `1.0` as different values
 (an int and float respectively),
-while in JavaScript the two are indistinguishable.
+while in Javascript the two are indistinguishable.
 By default Python parses `1.0` and `1.00` as the same value,
 but it can be configured to preserve the distinction.
 And many deserializers reject numbers with a decimal point
@@ -48,13 +48,40 @@ even if the fractional part is zero.
 Because RCL aims to generate configuration
 for any application that accepts json, yaml, or toml,
 it can’t assume that the presence or absence of a decimal point is irrelevant.
-It should never silently insert or remove decimal points.
+Like Python,
+and unlike Javascript,
+RCL should never silently insert or remove decimal points.
 
-[R<!---->C<!---->L is gradually typed.][types]
+## Types
+
+[R<!---->C<!---->L features a gradual type system.][types]
 The goal of the type system is to prevent bugs,
 and to make code more self-documenting.
 Because decimal points matter,
-it would be useful to distinguish between ints and floats in the type system.
+it would be useful to distinguish between ints and floats
+in the type system.
+
+Say we’re configuring `CPUSchedulingPriority` for a systemd service.
+It is not obvious from the name that the value has to be integral.
+If we could type the field as `Int`, rather than just `Number`,
+that moves one constraint out of the documentation,
+and into the code where it can be mechanically enforced.
+On the other hand,
+valid scheduling priorities range from 1 through 99,
+and a mere `Int` does not encode _that_.
+
+Where is the boundary between what is useful to model in the type system,
+and what should just be an assertion?
+If there is an integer type,
+should there also be an unsigned integer type?
+Types for integers of various sizes?
+Full-blown refinement types?
+My feeling when I started writing this post
+was that a distinction between int and float would be useful,
+but the more I think about it,
+the less I am convinced that it’s worth the cost.
+Which cost?
+Let’s dive into the trade-offs.
 
 ## Wishlist
 
@@ -159,7 +186,7 @@ is to pick which one goes.
 
 **We could give up on the separate integer type.**<br>
 There would be a single numeric type: `Number`.
-This is what TypeScript does.
+This is what Typescript does.
 This is the easiest way forward,
 but I would find it a shame to lose the distinction between `Int` and `Float`.
 
