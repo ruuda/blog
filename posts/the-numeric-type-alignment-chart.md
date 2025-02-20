@@ -133,8 +133,10 @@ Then if `x == y`, the following should be well-typed too:
 <span class="kw">let</span> b: <span class="dt">B</span> = x;
 </code></pre>
 
-Without referential transparency,
-a language becomes really hard to reason about.
+This substitution property is so fundamental,
+that we rarely realize that we assumed it implicitly.
+This is why a language without referential transparency
+becomes difficult to reason about.
 
 <!--
 (Note that this does not imply that `A = B`,
@@ -159,7 +161,7 @@ a1 == b1
 <span class="kw">let</span> b2: <span class="dt">Float</span> = <span class="dv">1</span>;
 </code></pre>
 
-I find this bizarre and counter-intuitive.
+I find this bizarre and counter-productive.
 While 1.0 is numerically an integer,
 in programming, integers are numbers without decimal point.
 That’s what ‘integer’ means in configuration formats,
@@ -173,16 +175,17 @@ but I want RCL to be simple and boring.
 It’s not a research language
 intended to explore the cutting edge of configuration systems,
 it’s a practical tool
-for people without a background in advanced functional programming.
+that should be readable even by people who haven’t seen it before.
 It should be obvious and unsurprising,
 so 1.0 can’t be an int.
 
 And so the wishlist items are incompatible.
 One of them has to go.
-The design space then,
-is to pick which one goes.
 
 ## Exploring the design space
+
+The design space then,
+is to pick which one goes.
 
 **We could give up on the separate integer type.**<br>
 There would be a single numeric type: `Number`.
@@ -215,28 +218,44 @@ that it’s hard to foresee the full impact of breaking that expectation.
 In any sane language, it’s hardly surprising that `1 != "1"`.
 Couldn’t it be acceptable then,
 that `1 != 1.0`?
-This is what I would like to explore with RCL.
-It’s not the most obvious and unsurprising choice,
-but it is a coherent one,
-and my gut feeling is that
-uniform rules lead to a simpler
-— [though maybe not easier][simple-easy]
-— language in the end.
+Erlang’s `=:=` operator has this behavior,
+though Erlang also features the regular `==` which does respect numeric equality.
+I considered exploring this option with RCL.
+It goes against the “obvious and unsurprising” goal,
+but it is a coherent choice,
+and uniform rules lead to a simpler language in the end
+— [though maybe not easier][simple-easy].
 
-To limit the footguniness of this choice,
-we can at least disallow comparison operators (`<`, `<=`, `>`, `>=`)
-between values of different types.
-`1 < 2`, `"a" < "b"`, and `0.5 < 2.0` are all true,
-but `0.5 < 2` is an error.
-<!-- TODO: Mention List.sort. -->
+## Conclusion
 
-## Precision
+So, how should RCL handle floats?
+I pondered this question for half a year,
+and I went through many iterations of this post before
+discovering the view of the design space that I presented here.
+I was leaning towards giving up on numeric equality,
+but as I wrote this post,
+I changed my mind,
+and I’ll go for a single number type instead.
+Part of the reason is that `Int` and `Float` are somewhat arbitrary.
+What motivates drawing the boundary there,
+vs. adding unsigned integers?
+Another reason is that it’s just simpler.
+Simpler to document and explain to new users,
+but definitely also to implement!
+Scope creep is the enemy of shipping.
+And it’s not like the decision is set in stone.
+As of yet RCL makes no stability promise,
+I can experiment.
+Implement it,
+get a feel for it,
+and if I don’t like it,
+I can just change the implementation!
+With this decision out of the way,
+I can finally return to coding,
+and deliver on the json superset promise.
 
-Wat do if input exceeds the range?
-I think it is fair to assume that `1.0` and `1.00` are interchangeable
-— at some point you have to be pragmatic,
-and applications that care about the exact number format
-tend to encode numbers as strings anyway.
+Now the next dilemma
+— should the type be called `Number`, or `Num`?
 
 [rcl-lang]:    https://rcl-lang.org
 [types]:       /2024/a-type-system-for-rcl-part-1-introduction
