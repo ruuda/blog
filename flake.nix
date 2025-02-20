@@ -63,6 +63,7 @@
             ]))
             pkgs.brotli
             pkgs.guetzli
+            pkgs.hivemind
             pkgs.m4
             pkgs.mozjpeg
             pkgs.optipng
