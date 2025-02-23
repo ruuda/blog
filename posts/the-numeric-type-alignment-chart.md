@@ -73,7 +73,7 @@ If there is an integer type,
 should there also be an unsigned integer type?
 Types for integers of various sizes?
 Full-blown refinement types?
-My feeling when I started writing this post
+My feeling when I started writing this post,
 was that a distinction between int and float would be useful,
 but the more I think about it,
 the less I am convinced that it’s worth the cost.
@@ -134,8 +134,8 @@ Then if `x == y`, the following should be well-typed too:
 
 This substitution property is so fundamental,
 that we rarely realize that we assumed it implicitly.
-This is why a language without referential transparency
-becomes difficult to reason about.
+This is why violating referential transparency
+makes a language more difficult to reason about.
 
 <!--
 (Note that this does not imply that `A = B`,
@@ -237,9 +237,9 @@ a single number type started to feel more and more like the right approach.
 Part of the reason is that `Int` and `Float` are somewhat arbitrary.
 What motivates drawing the boundary there,
 vs. adding unsigned integers?
-Another reason is that it’s just simpler.
-Fewer concepts to document and explain to new users,
-but also to implement!
+Another reason is that it’s simpler:
+fewer concepts to document,
+and explain to new users.
 Scope creep is the enemy of shipping.
 And it’s not like the decision is set in stone.
 As of yet RCL makes no stability promise,
@@ -247,9 +247,7 @@ I can experiment.
 Implement it,
 get a feel for it,
 and if I don’t like it,
-I can just change the implementation.
-So I picked up my draft pull request,
-and changed it to remove `Int` in favor of `Number`.
+I can just change it.
 
 ## Thoughts
 
@@ -260,7 +258,7 @@ that previously were infallible by construction,
 but now need a runtime check to ensure that a number is an integer.
 For example, when indexing into a list.
 
-A runtime check is not so bad in RCL though.
+Fortunately, runtime checks are not so bad in RCL.
 In a general-purpose language where evaluation is separate from typechecking,
 a runtime check makes the type system less effective at preventing crashes.
 But the job of RCL’s type system is not to prevent runtime errors
@@ -269,11 +267,11 @@ But the job of RCL’s type system is not to prevent runtime errors
 
 [static]: /2024/a-type-system-for-rcl-part-1-introduction#static-vs.-runtime
 
-The other thing that bothers me slightly is verbosity.
+One thing that still bothers me slightly is verbosity.
 Compared to the concise `Int`, `Number` is 100% longer!
 This sounds like a superficial complaint,
 and it is,
-but _style matters_.
+but style matters.
 Nobody likes Java’s verbosity.
 Many examples that previously fit on a single line,
 don’t look so neat any more.
@@ -290,9 +288,10 @@ and if I don’t like it,
 I can just change it later.
 
 Finally,
-maybe I’m weighing referential transparency too much.
-Many languages have multiple notions of equality,
-and I expect that even RCL
+maybe I’m weighing referential transparency too heavily.
+Many languages choose to have multiple notions of equality,
+even though that adds complexity.
+I expect that even RCL
 will violate the substitution property at some point.
 For example,
 I want to make dicts preserve their insertion order (like in Python),
@@ -302,15 +301,15 @@ Still, few exceptions are better than many.
 
 ## Conclusion
 
-I’ve been struggling for months to add floats to RCL.
-Not because the implementation is hard
-— it’s easy to implement something ad-hoc —
-but because I want RCL to have strong underlying principles
+It has taken me months to add floats to RCL.
+Not because the implementation is hard,
+but because I don’t want to implement something ad-hoc.
+I want RCL to have strong underlying principles
 that make it possible to reason about its behavior,
 and floats have to respect those.
-In this post we explored the design space,
-and I chose to go with a single numeric type for now.
-R<!---->C<!---->L 0.8.0 is now available, <!-- TODO: Add link. -->
+In this post we explored the design space for that.
+For now, I chose to go with a single numeric type.
+The result of this journey is RCL 0.8.0, <!-- TODO: Add link. -->
 the first version to fully deliver on the json superset promise.
 Give it a spin,
 and let me know what you think!
