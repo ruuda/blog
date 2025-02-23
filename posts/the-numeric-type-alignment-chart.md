@@ -95,24 +95,26 @@ this is what I would like to see from numbers in RCL:
 **A separate integer type.**<br>
 While we could go the Javascript route of having only “numbers”,
 many configuration schemas distinguish between integers and floats,
-so it is useful for RCL to be able to express that difference
-in the type system.
+so it is useful for RCL to be able to express that difference.
+Moreover, some operations in RCL itself,
+such as list indexing,
+accept ints but not floats.
 
 **All values can be compared.**<br>
 Equality is defined between any two values,
 even when they have different types.
-The `==` operator test for equality explicitly,
+The `==` operator tests for equality explicitly,
 but sets and dictionaries rely on equality as well.
 This requirement is a consequence of generalizing json:
-json allows heterogeneous lists,
+json allows heterogeneous lists like `[1,` `"a"]`,
 so if we add sets and allow arbitrary dict keys,
 those should be allowed to be heterogeneous too.
 
 **Equality should respect numeric equality.**<br>
-Users expect `1 == 1.0` to be true.
+People expect `1 == 1.0` to be true.
 When it’s false,
 that is one of those footguns where you debug for hours
-before realizing that equality doesn’t work as you assumed.
+before realizing that equality doesn’t work the way you assumed.
 
 **Referential transparency.**<br>
 If two values are equal,
@@ -172,7 +174,7 @@ but I want RCL to be simple and boring.
 It’s not a research language
 intended to explore the cutting edge of configuration systems,
 it’s a practical tool
-that should be readable even by people who haven’t seen it before.
+that people who haven’t seen it before should be able to pick up quickly.
 It should be obvious and unsurprising,
 so 1.0 can’t be an int.
 
@@ -206,7 +208,7 @@ yet make it a type error to use 1.0 as int.
 This is what Cue and Python + Mypy do.
 It is perhaps the most practical way forward
 that preserves the separate integer type,
-but somehow it feels deeply unsatisfactory to me to violate referential transparency.
+but somehow it feels deeply unsatisfactory to me.
 It should be possible to _reason_ about RCL,
 and the principle that equal values are interchangeable is so fundamental,
 that it’s hard to foresee the full impact of breaking that expectation.
@@ -223,7 +225,7 @@ but it is a coherent choice,
 and uniform rules lead to a simpler language in the end
 — [though maybe not easier][simple-easy].
 
-## Conclusion
+## Decision
 
 So, how should RCL handle floats?
 I pondered this question for half a year,
@@ -231,14 +233,13 @@ and I went through many iterations of this post before
 discovering the view of the design space that I presented here.
 I was leaning towards giving up on numeric equality,
 but as I wrote this post,
-I changed my mind,
-and I’ll go for a single number type instead.
+a single number type started to feel more and more like the right approach.
 Part of the reason is that `Int` and `Float` are somewhat arbitrary.
 What motivates drawing the boundary there,
 vs. adding unsigned integers?
 Another reason is that it’s just simpler.
-Simpler to document and explain to new users,
-but definitely also to implement!
+Fewer concepts to document and explain to new users,
+but also to implement!
 Scope creep is the enemy of shipping.
 And it’s not like the decision is set in stone.
 As of yet RCL makes no stability promise,
@@ -246,28 +247,73 @@ I can experiment.
 Implement it,
 get a feel for it,
 and if I don’t like it,
-I can just change the implementation!
-With this decision out of the way,
-I can finally return to coding,
-and deliver on the json superset promise.
-
-Now the next dilemma
-— should the type be called `Number`, or `Num`?
+I can just change the implementation.
+So I picked up my draft pull request,
+and changed it to remove `Int` in favor of `Number`.
 
 ## Thoughts
 
-Referential transparency would also be broken if preserve insertion order on
-dicts. You can turn the keys into a list,
-so `f = d => [for k, _ in d: k]` can have different outputs for equal inputs.
+As somebody who likes strong static type systems,
+I have to admit that replacing `Int` with `Number` hurt a little.
+There were three places — fewer than I expected! —
+that previously were infallible by construction,
+but now need a runtime check to ensure that a number is an integer.
+For example, when indexing into a list.
 
-When implementing, in 3 places ints mattered: `std.range`,
-list indexing, and the `width` field in the `rcl build` schema.
-A shame, but not that bad.
+A runtime check is not so bad in RCL though.
+In a general-purpose language where evaluation is separate from typechecking,
+a runtime check makes the type system less effective at preventing crashes.
+But the job of RCL’s type system is not to prevent runtime errors
+— in a configuration language,
+[runtime errors are static errors][static].
 
-Verbosity matters.
+[static]: /2024/a-type-system-for-rcl-part-1-introduction#static-vs.-runtime
 
-A number type is okay for the same reason that runtime type checks are:
-runtime errors are static errors.
+The other thing that bothers me slightly is verbosity.
+Compared to the concise `Int`, `Number` is 100% longer!
+This sounds like a superficial complaint,
+and it is,
+but _style matters_.
+Nobody likes Java’s verbosity.
+Many examples that previously fit on a single line,
+don’t look so neat any more.
+I considered calling the type `Num` rather than `Number`,
+but that feels unnecessarily arcane for new users.
+I want RCL to be boring and obvious,
+but I also want it to be a joy to use.
+Fortunately,
+like the design of the type system,
+nothing is set in stone.
+I implemented `Number` for now,
+let’s get a feel for it,
+and if I don’t like it,
+I can just change it later.
+
+Finally,
+maybe I’m weighing referential transparency too much.
+Many languages have multiple notions of equality,
+and I expect that even RCL
+will violate the substitution property at some point.
+For example,
+I want to make dicts preserve their insertion order (like in Python),
+which means that `a == b` no longer implies that `f(a) == f(b)`.
+After all, `f` could iterate a dict and build a list from it.
+Still, few exceptions are better than many.
+
+## Conclusion
+
+I’ve been struggling for months to add floats to RCL.
+Not because the implementation is hard
+— it’s easy to implement something ad-hoc —
+but because I want RCL to have strong underlying principles
+that make it possible to reason about its behavior,
+and floats have to respect those.
+In this post we explored the design space,
+and I chose to go with a single numeric type for now.
+R<!---->C<!---->L 0.8.0 is now available, <!-- TODO: Add link. -->
+the first version to fully deliver on the json superset promise.
+Give it a spin,
+and let me know what you think!
 
 [rcl-lang]:    https://rcl-lang.org
 [types]:       /2024/a-type-system-for-rcl-part-1-introduction
