@@ -3,7 +3,7 @@ title: A float walks into a gradual type system
 date: 2025-02-09
 lang: en-US
 minutes: ?
-synopsis: TODO
+synopsis: In this post I explore the design space of adding floats to RCL, a gradually typed configuration language. With floats in place, RCL is finally a true json superset.
 run-in: I am building
 ---
 
