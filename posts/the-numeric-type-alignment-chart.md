@@ -35,7 +35,6 @@ In some cases,
 all sane applications agree on the semantics.
 For instance, `"?"`, `"\u003f"`, and `"\u003F"` all represent the same string.
 For numbers, it’s not that clear.
-For example,
 Python’s json module parses `1` and `1.0` as different values
 (an int and float respectively),
 while in Javascript the two are indistinguishable.
@@ -48,9 +47,7 @@ even if the fractional part is zero.
 Because RCL aims to generate configuration
 for any application that accepts json, yaml, or toml,
 it can’t assume that the presence or absence of a decimal point is irrelevant.
-Like Python,
-and unlike Javascript,
-RCL should never silently insert or remove decimal points.
+It should never silently insert or remove decimal points.
 
 ## Types
 
@@ -256,6 +253,21 @@ and deliver on the json superset promise.
 
 Now the next dilemma
 — should the type be called `Number`, or `Num`?
+
+## Thoughts
+
+Referential transparency would also be broken if preserve insertion order on
+dicts. You can turn the keys into a list,
+so `f = d => [for k, _ in d: k]` can have different outputs for equal inputs.
+
+When implementing, in 3 places ints mattered: `std.range`,
+list indexing, and the `width` field in the `rcl build` schema.
+A shame, but not that bad.
+
+Verbosity matters.
+
+A number type is okay for the same reason that runtime type checks are:
+runtime errors are static errors.
 
 [rcl-lang]:    https://rcl-lang.org
 [types]:       /2024/a-type-system-for-rcl-part-1-introduction
