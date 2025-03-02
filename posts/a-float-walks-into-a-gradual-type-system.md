@@ -1,8 +1,8 @@
 ---
 title: A float walks into a gradual type system
-date: 2025-02-09
+date: 2025-03-02
 lang: en-US
-minutes: ?
+minutes: 12
 synopsis: In this post I explore the design space of adding floats to RCL, a gradually typed configuration language. With floats in place, RCL is finally a true json superset.
 run-in: I am building
 ---
@@ -40,7 +40,7 @@ Python’s json module parses `1` and `1.0` as different values
 while in Javascript the two are indistinguishable.
 By default Python parses `1.0` and `1.00` as the same value,
 but it can be configured to preserve the distinction.
-And many deserializers reject numbers with a decimal point
+Furthermore, many deserializers reject numbers with a decimal point
 when they expect an integer,
 even if the fractional part is zero.
 
@@ -79,6 +79,8 @@ but the more I think about it,
 the less I am convinced that it’s worth the cost.
 Which cost?
 Let’s dive into the trade-offs.
+
+[types]:       /2024/a-type-system-for-rcl-part-1-introduction
 
 ## Wishlist
 
@@ -140,6 +142,7 @@ makes a language more difficult to reason about.
 <!--
 (Note that this does not imply that `A = B`,
 because in RCL [values do not have unique types][types-ii].)
+[types-ii]:    /2024/a-type-system-for-rcl-part-2-the-type-system
 -->
 
 ## The clash
@@ -169,8 +172,9 @@ of making a distinction between ints and floats.
 
 It is possible to build a coherent type system
 that satisfies all my wishlist items,
-for example with refinement types,
-but I want RCL to be simple and boring.
+but it would have to accept the example above.
+While that would be interesting to explore,
+I want RCL to be simple and boring.
 It’s not a research language
 intended to explore the cutting edge of configuration systems,
 it’s a practical tool
@@ -225,6 +229,8 @@ but it is a coherent choice,
 and uniform rules lead to a simpler language in the end
 — [though maybe not easier][simple-easy].
 
+[simple-easy]: https://www.infoq.com/presentations/Simple-Made-Easy/
+
 ## Decision
 
 So, how should RCL handle floats?
@@ -278,7 +284,7 @@ don’t look so neat any more.
 I considered calling the type `Num` rather than `Number`,
 but that feels unnecessarily arcane for new users.
 I want RCL to be boring and obvious,
-but I also want it to be a joy to use.
+but not to the point where that takes away the joy of using it.
 Fortunately,
 like the design of the type system,
 nothing is set in stone.
@@ -289,8 +295,6 @@ I can just change it later.
 
 Finally,
 maybe I’m weighing referential transparency too heavily.
-Many languages choose to have multiple notions of equality,
-even though that adds complexity.
 I expect that even RCL
 will violate the substitution property at some point.
 For example,
@@ -301,20 +305,18 @@ Still, few exceptions are better than many.
 
 ## Conclusion
 
-It has taken me months to add floats to RCL.
-Not because the implementation is hard,
-but because I don’t want to implement something ad-hoc.
+Adding floats to RCL was challenging.
+Not because the implementation was hard,
+but because I did not want to implement something ad-hoc.
 I want RCL to have strong underlying principles
 that make it possible to reason about its behavior,
 and floats have to respect those.
 In this post we explored the design space for that.
 For now, I chose to go with a single numeric type.
-The result of this journey is RCL 0.8.0, <!-- TODO: Add link. -->
+The result of this journey is [RCL 0.8.0][v080],
 the first version to fully deliver on the json superset promise.
-Give it a spin,
+[Give it a spin][rcl-lang],
 and let me know what you think!
 
-[rcl-lang]:    https://rcl-lang.org
-[types]:       /2024/a-type-system-for-rcl-part-1-introduction
-[types-ii]:    /2024/a-type-system-for-rcl-part-2-the-type-system
-[simple-easy]: https://www.infoq.com/presentations/Simple-Made-Easy/
+[rcl-lang]: https://rcl-lang.org
+[v080]:     https://docs.ruuda.nl/rcl/changelog/#080
