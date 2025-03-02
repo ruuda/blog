@@ -5,6 +5,7 @@ lang: en-US
 synopsis: Building connections with other people is what makes life fun. When humans communicate through LLM-written text, we lose that.
 minutes: 3
 run-in: All humans are unique.
+teaser: ai-alignment-starter-pack
 ---
 
 All humans are unique.
