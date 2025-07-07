@@ -80,7 +80,7 @@ Different fundamentals
 The problem with TikZ and similar systems is twofold.
 Firstly, they are too domain-specific to make automating things viable.
 Macro definitions are no substitute for variables or functions,
-beause they deal with tokens, not values.
+because they deal with tokens, not values.
 It is like C without functions, only preprocessor macros.
 Secondly, all of the drawing DSL<!---->s that I have used manipulate a canvas directly.
 This means that the only available mechanism for reuse is necessarily procedural.
