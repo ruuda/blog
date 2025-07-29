@@ -241,8 +241,9 @@ main = do
   contactCmd <- writeContact globalContext (templates M.! "contact.html")
   archiveCmd <- writeArchive globalContext (templates M.! "archive.html") posts
 
-  copyFile "assets/favicon.png"          "out/favicon.png"
-  copyFile "assets/ruudvanasseldonk.asc" "out/contact/ruudvanasseldonk.asc"
+  copyFile "assets/favicon.png"                        "out/favicon.png"
+  copyFile "assets/ruuda-5F231E540599697D-revoked.asc" "out/contact/ruuda-5F231E540599697D-revoked.asc"
+  copyFile "assets/ruuda-284FE5A783926532.asc"         "out/contact/ruuda-284FE5A783926532.asc"
 
   putStrLn "Writing atom feed..."
   writeFeed (templates M.! "feed.xml") posts
