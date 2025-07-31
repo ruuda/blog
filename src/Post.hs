@@ -4,6 +4,8 @@
 -- it under the terms of the GNU General Public License version 3. See
 -- the licence file in the root of the repository.
 
+{-# LANGUAGE BangPatterns #-}
+
 module Post ( Post (date, part)
             , archiveContext
             , body
@@ -20,6 +22,7 @@ module Post ( Post (date, part)
             , url
             , year ) where
 
+import           Control.DeepSeq (force)
 import           Data.Foldable (find)
 import qualified Data.Map as M
 import           Data.Maybe (fromMaybe, isJust)
@@ -28,6 +31,7 @@ import qualified Data.Text as Text
 import           Data.Time.Format
 import           Data.Time.Calendar (Day, showGregorian, fromGregorian, toGregorian)
 import           GHC.Exts (groupWith, sortWith)
+import           GHC.Stack (HasCallStack)
 import           Text.Pandoc
 import           Text.Pandoc.Highlighting (pygments)
 import           Text.Pandoc.Extensions (enableExtension, pandocExtensions)
@@ -52,23 +56,29 @@ extractFrontMatter = parseFM M.empty . drop 1 . lines
           where (key, delimValue) = break (== ':') line
                 value = drop 2 delimValue -- Drop the colon and space.
 
-data Post = Post { title       :: String
-                 , header      :: String
-                 , subheader   :: Maybe String
-                 , part        :: Maybe Int
-                 , date        :: Day
-                 , slug        :: String
-                 -- Optionally, the slug of the post to display in the teaser.
-                 , teaser      :: Maybe String
-                 , lang        :: String
-                 , synopsis    :: String
-                 , body        :: String
-                 -- As a hack, if we need more glyphs in the body font than
-                 -- detected (because there is an svg image that shares the
-                 -- font), allow specifying more content to be considered for
-                 -- subsetting.
-                 , extraGlyphs :: String
-                 }
+data Post = Post
+  -- Most fields here are strict, we want to read the header data from the post
+  -- before we move on, and don't create huge thunks. That they are Strings and
+  -- not Text doesn't matter much for that.
+  { title       :: !String
+  , header      :: !String
+  , subheader   :: !(Maybe String)
+  , part        :: !(Maybe Int)
+  , date        :: !Day
+  , slug        :: !String
+  -- Optionally, the slug of the post to display in the teaser.
+  , teaser      :: !(Maybe String)
+  , lang        :: !String
+  , synopsis    :: !String
+  -- We keep the body lazy, we don't have to reder the full post
+  -- before we start building the set of pages.
+  , body        :: String
+  -- As a hack, if we need more glyphs in the body font than
+  -- detected (because there is an svg image that shares the
+  -- font), allow specifying more content to be considered for
+  -- subsetting.
+  , extraGlyphs :: !String
+  }
 
 -- Returns the post date, formatted like "17 April, 2015".
 longDate :: Post -> String
@@ -153,7 +163,7 @@ context p = fmap Template.StringValue ctx
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.
-parse :: String -> String -> Post
+parse :: HasCallStack => String -> String -> Post
 parse postSlug contents = let
   (frontMatter, bodyContents) = extractFrontMatter contents
   postTitle     = frontMatter M.! "title"
@@ -175,12 +185,15 @@ parse postSlug contents = let
     , synopsis    = frontMatter M.! "synopsis"
     , extraGlyphs = fromMaybe "" $ M.lookup "extra-glyphs" frontMatter
     , lang        = frontMatter M.! "lang"
-    , body        = refineType
-                  $ Html.cleanTables
-                  $ Html.cleanCodeBlocks
-                  $ Html.cleanOl
-                  $ Html.addAnchors
-                  $ renderMarkdown bodyContents
+      -- When we do access the body, render the full thing at once, don't keep
+      -- it lazy. But we don't force the body yet, it's a lazy field.
+    , body = force
+      $ refineType
+      $ Html.cleanTables
+      $ Html.cleanCodeBlocks
+      $ Html.cleanOl
+      $ Html.addAnchors
+      $ renderMarkdown bodyContents
     }
 
 -- Renders markdown to html using Pandoc with my settings.
