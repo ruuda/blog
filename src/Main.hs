@@ -80,10 +80,13 @@ readPostM4 fname =
 
 -- Reads and renders all posts in the given directory.
 readPosts :: FilePath -> IO [P.Post]
-readPosts = do
-  rawMd <- mapFilesIf ((== ".md") . takeExtension) readPost
-  m4Md  <- mapFilesIf ((== ".m4") . takeExtension) readPostM4
-  pure $ rawMd <> m4Md
+readPosts path = do
+  -- Read all the files, and especially run the m4s, in parallel. Reading the
+  -- files does involve some work to parse the front matter, but the body is
+  -- only rendered lazily, so that's not what is parallelized here.
+  rawMd <- mapFilesIf ((== ".md") . takeExtension) (Async.async . readPost) path
+  m4Md  <- mapFilesIf ((== ".m4") . takeExtension) (Async.async . readPostM4) path
+  mapM Async.wait (rawMd <> m4Md)
 
 -- Copy over bitmap images, render svg images, so they can reference
 -- subsetted fonts. Svgs should be rendered with the font context of their post.
