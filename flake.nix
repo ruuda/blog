@@ -25,19 +25,18 @@
 
         src = ./src;
         
-        # For the run time options, use 4 threads (-N4), and use a heap of
-        # 256 MiB (-H). These settings were found to be optimal by running
-        # ghc-gc-tune.
-        ghcOptions = [
-          "-Wall"
-          "-fwarn-tabs"
-          "-O3"
-          "-threaded"
-          "-rtsopts \"-with-rtsopts=-N4 -A8388608 -H268435456\""
-        ];
-
+        # For the run time options, use 8 threads (-N8), and use an allocation
+        # arena of 256 MiB (-A). These were found optimal after manual tuning.
         buildPhase = ''
-          ${ghc}/bin/ghc -o blog -outputdir . "$ghcOptions" $src/*.hs
+          ${ghc}/bin/ghc -o blog \
+            -outputdir . \
+            -Wall \
+            -fwarn-tabs \
+            -O3 \
+            -threaded \
+            -rtsopts=all \
+            -with-rtsopts="-N8 -A256M" \
+            $src/*.hs
         '';
         installPhase = ''
           mkdir -p $out/bin
