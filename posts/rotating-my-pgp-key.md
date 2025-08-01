@@ -2,6 +2,7 @@
 title: Rotating my PGP key
 date: 2025-08-01
 lang: en-US
+minutes: 5
 synopsis: I revoked my former PGP/GPG key on July 29, 2025.
 run-in: Last Tuesday
 ---

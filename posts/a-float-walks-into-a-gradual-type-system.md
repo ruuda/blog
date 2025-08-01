@@ -4,6 +4,7 @@ date: 2025-03-02
 lang: en-US
 minutes: 12
 synopsis: In this post I explore the design space of adding floats to RCL, a gradually typed configuration language. With floats in place, RCL is finally a true json superset.
+teaser: a-type-system-for-rcl-part-1-introduction
 run-in: I am building
 ---
 
