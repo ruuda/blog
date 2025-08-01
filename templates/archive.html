@@ -6,11 +6,13 @@
       </header>
       <p>Where my thoughts end up if they stay inside my head for too long.</p>
       {{foreach archive-year}}
+        <div>
         <h2>{{year}}</h2>
         {{foreach post}}
           <h3><a href="{{url}}">{{title-html}}</a></h3>
           <p>{{synopsis-html}} <a href="{{url}}" class="smcp">Read full post</a></p>
         {{end}}
+        </div>
       {{end}}
     </div>
     {{include footer.html}}
