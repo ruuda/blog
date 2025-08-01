@@ -104,8 +104,13 @@ def main():
         if not fontfile or not outfile_basename or not glyphs:
             break
 
-        glyph_names = glyphs.strip().split(" ")
-        subset(fontfile.strip(), outfile_basename.strip(), glyph_names)
+        try:
+            glyph_names = glyphs.strip().split(" ")
+            subset(fontfile.strip(), outfile_basename.strip(), glyph_names)
+
+        except Exception:
+            print(f"Failed to subset {fontfile}")
+            raise
 
 
 main()
