@@ -80,9 +80,9 @@ data Post = Post
   , extraGlyphs :: !String
   }
 
--- Returns the post date, formatted like "17 April, 2015".
+-- Returns the post date, formatted like "17 April 2015".
 longDate :: Post -> String
-longDate = formatTime defaultTimeLocale "%e %B, %Y" . date
+longDate = formatTime defaultTimeLocale "%e %B %Y" . date
 
 -- Returns the post date, formatted like "2015-04-17".
 shortDate :: Post -> String
