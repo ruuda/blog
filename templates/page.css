@@ -116,15 +116,23 @@ p, nav
 
 #top-nav
 {
-  word-spacing: 1.5em;
+  text-align: center;
+  word-spacing: 2em;
   padding-top: 1.2em;
-  margin-bottom: 0.8em;
+  margin-bottom: -0.2em;
 }
 
 #top-nav a
 {
-  color: #b4aaaa;
   color: #ccc;
+}
+
+#top-nav a.p2
+{
+  /* We reveal the less important nav items when the viewport is wide enough.
+   * The same items are available in the footer where they are not clipped,
+   * so we don't lose much here. */
+  display: none;
 }
 
 a
@@ -509,10 +517,12 @@ nav a
   * result than what the browser would do. Even though at this size the line
   * width is not yet 36em, titles that need breaking are typically much
   * shorter per line, so this should fit. */
-  h1 > br
-  {
-    display: block;
-  }
+  h1 > br { display: block; }
+
+  /* Reveal the additional top heading navigation that now fits. This does look
+   * better justified. */
+  #top-nav a.p2 { display: inline; }
+  #top-nav { display: flex; justify-content: space-between; }
 
   {{if !light}}
   {{if !archive}}
