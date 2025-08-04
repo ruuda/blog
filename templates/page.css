@@ -455,15 +455,9 @@ footer span
 {{end}} /* !light */
 
 {{if light}}
-nav
+#mid-nav a
 {
-  text-align: center;
-}
-
-nav a
-{
-  margin-left: 1em;
-  margin-right: 1em;
+  display: block;
 }
 {{end}} /* if light */
 
@@ -509,6 +503,16 @@ nav a
     margin-right: 2.8em;
   }
   {{end}}
+
+  {{if light}}
+  /* The nav now fits horizontally. */
+  #mid-nav a { display: inline; }
+  nav
+  {
+    text-align: center;
+    word-spacing: 2em;
+  }
+  {{end}} /* if light */
 }
 
 @media(min-width: 625px)
