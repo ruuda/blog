@@ -176,8 +176,7 @@ writeIndex globalContext = writePage "/" context
       [ Template.stringField "title"     "Ruud van Asseldonk"
       , Template.stringField "bold-font" "true"
       , Template.stringField "light"     "true"
-        -- My intro is in British English
-      , Template.stringField "lang"      "en-GB"
+      , Template.stringField "lang"      "en-US"
       , globalContext
       ]
 

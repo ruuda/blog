@@ -48,7 +48,7 @@ body
   /* For lightweight pages with little content, reduce the maximum width so
    * there are more lines. */
   {{if light}}
-  max-width: 20.4em;
+  max-width: 29em;
   {{end}}
 }
 
@@ -500,6 +500,7 @@ nav a
 {
   html { font-size: 17px; }
 
+  {{if !light}}
   /* Add some margin to the heading to make it line-wrap nicer. Smaller
    * viewports get more room because the words might not fit otherwise. */
   header
@@ -507,6 +508,7 @@ nav a
     margin-left: 2.8em;
     margin-right: 2.8em;
   }
+  {{end}}
 }
 
 @media(min-width: 625px)
