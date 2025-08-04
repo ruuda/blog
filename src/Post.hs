@@ -149,10 +149,12 @@ context p = fmap Template.StringValue ctx
                                , ("part", fmap toRoman $ part p)
                                , ("bold-font", boldFontField)
                                , ("italic-font", italicFontField)
-                               , ("math", mathField)
-                               , ("img", imgField)
+                               , ("serif-italic-font", serifItalicFontField)
                                , ("mono-font", monoFontField)
-                               , ("serif-italic-font", serifItalicFontField) ]
+                               , ("img", imgField)
+                               , ("math", mathField)
+                               , ("en-gb", ukEnglishField)
+                               ]
         usesSerifItalic      = (Type.usesSerifItalicFont $ body p) || (isJust $ subheader p)
         boldFontField        = booleanField $ Type.usesBoldFont $ body p
         italicFontField      = booleanField $ usesItalicFont p
@@ -160,6 +162,7 @@ context p = fmap Template.StringValue ctx
         imgField             = booleanField $ Html.hasImg $ body p
         monoFontField        = booleanField $ usesMonoFont p
         serifItalicFontField = booleanField $ usesSerifItalic
+        ukEnglishField       = booleanField $ "en-GB" == lang p
 
 -- Given a slug and the contents of the post file (markdown with front matter),
 -- renders the body to html and parses the metadata.

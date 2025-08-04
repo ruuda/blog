@@ -1,6 +1,8 @@
 {{include head.html}}
   <body>
-    <article id="content" itemscope>
+    <div id="content">
+    {{include header.html}}
+    <article itemscope>
       <header>
         <h1>{{header}}</h1>
         {{if part}}<p class="smcp">Part {{part}}</p>{{end}}
@@ -12,6 +14,7 @@
       </header>
       {{content}}
     </article>
+    </div>
     <section id="teaser-section">
       <div id="teaser">
         <p class="smcp">More words</p>
