@@ -25,8 +25,8 @@ But json is more data than configuration,
 and it doesn’t have comments.
 As soon as we add comments though,
 regular deserialization/serialization no longer works.
-How can we reconcile keeping files maintainable for humans,
-with enabling automation to update them?
+How can we keep files maintainable for humans,
+while enabling automation to update them?
 We have a few options:
 
 **Split out automation-managed parts.**
@@ -99,44 +99,43 @@ and not a serious solution.
 
 ## Automation-friendly configuration with RCL
 
-[R<!---->C<!---->L](https://rcl-lang.org/) is a new configuration language
+[R<!---->C<!---->L][rcl] is a new configuration language
 that I’m building.
 It extends json into a simple functional language
 that enables abstraction and reuse.
 It’s a more principled approach than templating configuration files,
 and it enables modularity for tools that don’t natively support it.
-
 We can express the example from before as follows in RCL:
 
-```
-{
-  kubernetes = {
-    // Be sure to verify that our fleet is on
-    // a compatible kernel before updating!
-    version = "1.29.0",
+[rcl]: https://rcl-lang.org/
+
+<pre><code class="sourceCode">{
+  <span class="n">kubernetes</span> = {
+    <span class="co">// Be sure to verify that our fleet is on</span>
+    <span class="co">// a compatible kernel before updating!</span>
+    <span class="n">version</span> = <span class="st">"1.29.0"</span>,
   },
-  nginx = { version = "1.29.0" },
+  <span class="n">nginx</span> = { <span class="n">version</span> = <span class="st">"1.29.0"</span> },
 }
-```
+</code></pre>
 
 Running this through `rcl evaluate --format=toml` will produce
 the same toml file as before
 (though without the comment).
 With [imports], we can now split out the automation-managed parts:
 
-```
-// kubernetes_version.json:
-"1.29.0"
+<pre><code class="sourceCode"><span class="co">// kubernetes_version.json:</span>
+<span class="st">"1.29.0"</span>
 
-// nginx_version.json:
-"1.29.0"
+<span class="co">// nginx_version.json:</span>
+<span class="st">"1.29.0"</span>
 
-// config.rcl:
+<span class="co">// config.rcl:</span>
 {
-  kubernetes = { version = import "kubernetes_version.json" },
-  nginx = { version = import "nginx_version.json" },
+  <span class="n">kubernetes</span> = { <span class="n">version</span> = <span class="kw">import</span> <span class="st">"kubernetes_version.json"</span> },
+  <span class="n">nginx</span> = { <span class="n">version</span> = <span class="kw">import</span> <span class="st">"nginx_version.json"</span> },
 }
-```
+</code></pre>
 
 This evaluates to the same toml file as before,
 but now a script can easily rewrite the version files.
@@ -202,12 +201,10 @@ but this approach has caveats.
 The proper way is to use syntax-aware edits,
 but tooling support for that is more limited.
 
-The RCL configuration language supports
-multiple approaches that enable automation
-to update configuration.
+The RCL configuration language supports both approaches.
 With imports,
 it can combine human-managed and machine-managed files
 into a single result,
-and with `rcl patch`,
+and with [`rcl patch`][patch],
 it has a built-in way to safely edit RCL documents
 while preserving comments and formatting.
