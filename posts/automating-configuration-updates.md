@@ -2,8 +2,8 @@
 title: Automating configuration updates with rcl patch
 date: 2025-08-31
 lang: en-US
-synopsis: TODO
-minutes: 999
+synopsis: Configuration formats that humans can read and maintain, are hard for scripts to edit safely. With the new patch feature, RCL now has a principled way to enable safe, automated edits.
+minutes: 6
 run-in: We want automation
 teaser: a-float-walks-into-a-gradual-type-system
 ---
