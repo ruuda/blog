@@ -4,18 +4,18 @@ date: 2025-08-31
 lang: en-US
 synopsis: TODO
 minutes: 999
-run-in: Sometimes we need automation
+run-in: We want automation
 teaser: a-float-walks-into-a-gradual-type-system
 ---
 
-Sometimes we need automation to update configuration files.
+We want automation to update configuration files.
 But formats that humans can read and maintain,
 are hard for scripts to edit safely.
 How do you automatically bump a version number without losing comments,
 breaking formatting,
 or replacing the wrong value?
 
-## Automating configuration edits
+## Scripting edits
 
 Editing a json file from a script is easy:
 deserialize, modify, serialize.
@@ -34,9 +34,9 @@ The automation-managed files don’t need comments,
 and we don’t care about preserving formatting,
 so they are easy to rewrite.
 Some tools natively support splitting configuration across files,
-for others we need to merge the separate files back into a single configuration.
+for others we need to merge the files back into a single file.
 Templating configuration files is usually a mistake,
-but _generating_ them from a more expressive format can work.
+but _serializing_ them from a more expressive format can work.
 Below we’ll see how RCL enables the human-vs-automation split with imports.
 
 **Hack it with text substitution.**
@@ -61,15 +61,15 @@ version = "1.29.0"
 ```
 
 How can we bump Nginx from `1.29.0` to `1.29.1` without touching Kubernetes?
-Building a general patching tool based on string matching is hard,
-but we don’t need to handle _any_ file,
+Building a _general_ patching tool based on string matching is madness.
+Fortunately, we don’t need to handle _any_ file,
 only the configurations that we use in practice,
-which are under our control.
+and those are under our control.
 If locating the right `1.29.0` is too hard,
 we can add an <code>#&nbsp;auto-update: nginx</code> comment
 to the version line to have something to match on.
-Text substitution is a hack,
-but a very practical one.
+Text substitution may be a hack,
+but it’s a very practical one.
 
 **Syntax-aware editing.**
 The correct way to update files is to parse them into a syntax tree,
@@ -78,13 +78,15 @@ In order to preserve comments and formatting,
 that tree needs to be a _concrete syntax tree_.
 Few tools can do this,
 but since v0.10.0,
-RCL supports it natively through `rcl patch`.
+RCL supports it natively through [`rcl patch`][patch].
 We’ll see an example below.
 
 **Throwing an LLM at it.**
-In 2025, there is a fourth option:
-prompting an LLM to edit the configuration file.
-This adds even more failure modes
+The 2025 solution:
+make an API call to ask Claude to edit the file.
+This _can_ work surprisingly well,
+<abbr>LLM</abbr>s handle context better than a regex.
+They also also add even more failure modes
 to the safety and reliability problems of text substitution,
 while using orders of magnitude more compute.
 It will work most of the time,
@@ -114,7 +116,7 @@ Our earlier example, now in RCL:
 
 Running this through `rcl evaluate --format=toml` will produce
 the same toml as before, minus the comment.
-With [imports], we can now split out the automation-managed parts:
+With [imports], we can split out the automation-managed parts:
 
 <pre><code class="sourceCode"><span class="co">// kubernetes_version.json:</span>
 <span class="st">"1.29.0"</span>
@@ -130,10 +132,10 @@ With [imports], we can now split out the automation-managed parts:
 </code></pre>
 
 This evaluates to the same toml,
-but now a script can easily rewrite the version files.
+and now a script can easily rewrite the version files.
 It’s powerful,
 but the downsides show even in this simple example:
-the main configuration is more complex,
+the main configuration grows more complex,
 there is a sprawl of small files,
 and it’s impossible to see at a glance what versions we are running.
 The additional indirection makes `grep` less useful,
@@ -147,7 +149,7 @@ To keep the configuration simple
 while still enabling automation to edit it,
 RCL now features [`rcl patch`][patch],
 a built-in way to do syntax-aware editing.
-Tho bump the Nginx version in the original file:
+To bump the Nginx version in the original file:
 
     rcl patch --in-place config.rcl nginx.version '"1.29.1"'
 
@@ -164,7 +166,7 @@ And most of all,
 we can pinpoint precisely which value to replace.
 
 The patch feature is new in yesterday’s 0.10.0 release,
-as part of the command-line program.
+and is included in the command-line program.
 For deeper integration into scripts,
 RCL also features a Python module.
 I plan to expose the patch functionality there in a future version.
@@ -174,7 +176,7 @@ I plan to expose the patch functionality there in a future version.
 
 ## Conclusion
 
-Sometimes we need automation to update configuration files.
+We want automation to update configuration files.
 Doing that safely and reliably is hard for conventional configuration formats.
 Splitting configuration into a human-managed and automation-managed part helps,
 but adds complexity.
