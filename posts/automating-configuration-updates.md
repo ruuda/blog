@@ -114,7 +114,7 @@ Our earlier example, now in RCL:
 }
 </code></pre>
 
-Running this through `rcl evaluate --format=toml` will produce
+Running this through <code>rcl evaluate -&NoBreak;-&NoBreak;format=toml</code> will produce
 the same toml as before, minus the comment.
 With [imports], we can split out the automation-managed parts:
 
