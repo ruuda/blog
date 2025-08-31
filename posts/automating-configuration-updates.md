@@ -27,7 +27,7 @@ naive deserialization/serialization breaks.
 How can we keep files maintainable for humans,
 while enabling automation to update them?
 
-**Split out automation-managed parts.**
+**Splitting out automation-managed parts.**
 One option is to keep the main configuration in a human-friendly format,
 and put automation-managed values in separate files.
 The automation-managed files don’t need comments,
@@ -39,7 +39,7 @@ Templating configuration files is usually a mistake,
 but _serializing_ them from a more expressive format can work.
 Below we’ll see how RCL enables the human-vs-automation split with imports.
 
-**Hack it with text substitution.**
+**Hacking it with text substitution.**
 A little `sed` goes a long way:
 regex-match on the old value and replace it.
 Because this works on text,
@@ -86,7 +86,7 @@ The 2025 solution:
 make an API call to ask Claude to edit the file.
 This _can_ work surprisingly well,
 <abbr>LLM</abbr>s handle context better than a regex.
-They also also add even more failure modes
+They also add even more failure modes
 to the safety and reliability problems of text substitution,
 while using orders of magnitude more compute.
 It will work most of the time,
