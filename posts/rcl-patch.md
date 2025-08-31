@@ -11,7 +11,7 @@ teaser: a-float-walks-into-a-gradual-type-system
 Software needs configuration.
 Software is not static, and configurations change over time.
 For example,
-when we configure a webserver machine,
+when we configure a machine as webserver,
 we may specify the version of Nginx to run,
 and bump that when a security update is released.
 
@@ -54,7 +54,9 @@ and more importantly,
 _read by humans_.
 Comments and formatting matter!
 
-We can resolve the tension in three ways:
+How can we reconcile keeping files readable to humans,
+with enabling automation to update them?
+There are three ways:
 
 **Split out automation-managed parts.**
 Keep the main configuration in a human-friendly format,
@@ -62,7 +64,7 @@ and put automation-managed values in separate files.
 The automation-managed files don’t need comments,
 and we don’t care about preserving formatting,
 so they are easy to rewrite.
-Some tools natively support multiple configuration files,
+While some tools natively support multiple configuration files,
 for others we need a way to merge the separate files
 back into a single configuration.
 Templating configuration files is rarely a good idea,
@@ -105,24 +107,25 @@ So while text substitution is a hack,
 it is a very practical one.
 
 **Syntax-aware editing.**
-If text substitution is a hack,
+Where text substitution is a hack,
 the proper way to update files is to parse them into a syntax tree,
 and perform the edit there.
 In order to preserve comments and formatting,
 that tree needs to be a _concrete syntax tree_.
 There are not many tools that can do this,
 but since v0.10.0,
-RCL supports this through `rcl patch`.
+RCL supports this natively through `rcl patch`.
 We’ll see how below.
 
 **Throwing an LLM at it.**
 In 2025, there is a fourth option:
 prompting an LLM to edit the configuration file.
-This combines the safety and reliability problems of text substitution
-with the complexity of syntax-aware editing,
-while using thousands of times more compute resources.
-I expect it would work well enough in practice,
-but I consider this bad engineering.
+This exacerbates the safety and reliability problems of text substitution,
+introduces even more complexity than syntax-aware editing,
+and uses thousands of times more compute resources.
+I expect it to work well enough in practice,
+but I consider this bad engineering,
+and not a serious solution.
 
 ## Automation-friendly configuration with RCL
 
@@ -146,8 +149,8 @@ We can express the example from before as follows in RCL:
 ```
 
 Running this through `rcl evaluate --format=toml` will produce
-the same toml file as before.
-
+the same toml file as before
+(though without the comment).
 With [imports], we can split out the automation-managed parts:
 
 ```
@@ -171,12 +174,12 @@ but the downsides are apparent even in this simple example:
 the main configuration becomes more difficult to read,
 there is a sprawl of small files,
 and it’s hard to see at a glance what versions we are running.
-Also, we have no good place to put the warning comment any more.
-We can put it in the version file,
-which makes it more difficult to update,
+The additional indirection makes `grep` less directly useful too.
+Finally, we have no good place to put the warning comment any more.
+If we put it in the version file,
+that makes the file more difficult to update,
 but if we put it in the main configuration,
-it would not even show up in a diff to remind the reviewer!
-Finally, the additional indirection makes `grep` less directly useful.
+it would not show up in a version bump diff to remind the reviewer!
 
 To keep the configuration simple
 while still enabling automation to edit it,
@@ -221,4 +224,31 @@ I plan to expose the patch functionality there in a future version.
 
 ## Conclusion
 
-TODO: Summarize.
+Software needs configuration.
+Software is not static, and configurations change over time.
+Automation can help
+to make routine configuration edits such as version bumps
+less tedious and error-prone.
+Configuration however,
+is usually designed to be pleasant for humans to read and write,
+not to be easy for automation to modify.
+We can solve this by splitting the automation
+into a machine-managed and a human-managed part,
+but that makes the configuration more complex.
+Alternatively,
+we can move the complexity into the automation.
+The generic and pragmatic way to update config files
+is using text substitution with tools like `sed`,
+but this approach has caveats.
+The proper way is to use syntax-aware edits,
+but tooling support for that is more limited.
+
+The RCL configuration language supports
+all the above approaches that enable automation
+to update configuration.
+With imports,
+it can combine human-managed and machine-managed files
+into a single result,
+and with `rcl patch`,
+it has a built-in way to safely edit RCL documents
+while preserving comments.
