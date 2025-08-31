@@ -4,59 +4,30 @@ date: 2025-08-31
 lang: en-US
 synopsis: TODO
 minutes: 999
-run-in: Software needs configuration.
+run-in: Sometimes we need automation
 teaser: a-float-walks-into-a-gradual-type-system
 ---
 
-Software needs configuration.
-Software is not static, and configurations change over time.
-For example,
-when we configure a machine as webserver,
-we may specify the version of Nginx to run,
-and bump that when a security update is released.
+Sometimes we need automation to update configuration files.
+But formats that humans can read and maintain,
+are hard for scripts to edit safely.
+How do you automatically bump a version number without losing comments,
+breaking formatting,
+or replacing the wrong value?
 
-Initially we write configurations by hand.
-When updates are infrequent,
-modifying config files by hand is not too bad.
-As the number of configurations to manage grows,
-and updates become more frequent,
-manually opening configuration files in an editor to update them,
-becomes tedious and error-prone.
-At this point, automation starts to make sense.
-For example,
-a periodic background job can check for new Nginx releases,
-and update the configuration file when a new version is available.
-That doesn’t mean _autonomous_ updates
-— there can still be a human in the loop.
-For example,
-if we store the config file an infrastructure-as-code repository,
-automation can prepare a pull request to bump the version,
-but a human still has to review and accept the change.
+## Automating configuration edits
 
-## Automating edits
-
-When automation has to update configuration,
-we face a challenge:
-formats that are pleasant for humans to read and write,
-are hard for automation to modify,
-and formats that are easy for automation to process,
-limit expressivity.
-Safely updating a json file is easy enough:
+Editing a json file from a script is easy enough:
 deserialize it,
 modify the data structure,
 and serialize it again.
-But json is more data than configuration:
-it doesn’t have comments,
-and it has more line noise than e.g. toml.
-Even with automation,
-most of the configuration will still be written by humans,
-and more importantly,
-_read by humans_.
-Comments and formatting matter!
-
-How can we reconcile keeping files readable to humans,
+But json is more data than configuration,
+and it doesn’t have comments.
+As soon as we add comments though,
+regular deserialization/serialization no longer works.
+How can we reconcile keeping files maintainable for humans,
 with enabling automation to update them?
-There are three ways:
+We have a few options:
 
 **Split out automation-managed parts.**
 Keep the main configuration in a human-friendly format,
@@ -64,7 +35,7 @@ and put automation-managed values in separate files.
 The automation-managed files don’t need comments,
 and we don’t care about preserving formatting,
 so they are easy to rewrite.
-While some tools natively support multiple configuration files,
+While some tools natively support splitting configuration across files,
 for others we need a way to merge the separate files
 back into a single configuration.
 Templating configuration files is rarely a good idea,
@@ -79,7 +50,7 @@ Because we operate on text,
 this in principle works for any format,
 though it’s generally unsafe.
 As with templating configuration files,
-it can be susceptible to injection and escaping problems.
+it suffers from injection and escaping problems.
 Furthermore,
 reliably locating the value to substitute can be tricky.
 Consider the following file:
@@ -94,12 +65,11 @@ version = "1.29.0"
 version = "1.29.0"
 ```
 
-How can we bump Nginx from `1.29.0` to `1.29.1`
-without accidentally updating Kubernetes instead?
+How can we bump Nginx from `1.29.0` to `1.29.1` without touching Kubernetes?
 Building a general patching tool based on string matching is hard,
 but usually we don’t need to handle _any_ file,
-just the configurations in our repository,
-that we control anyway.
+only the configurations that we use in practice,
+which are under our control.
 If locating the right `1.29.0` is too hard,
 we can add an <code>#&nbsp;auto-update: nginx</code> comment
 to the version line to have something to match on.
@@ -133,7 +103,8 @@ and not a serious solution.
 that I’m building.
 It extends json into a simple functional language
 that enables abstraction and reuse.
-It also enables modularity for tools that don’t natively support it.
+It’s a more principled approach than templating configuration files,
+and it enables modularity for tools that don’t natively support it.
 
 We can express the example from before as follows in RCL:
 
@@ -151,7 +122,7 @@ We can express the example from before as follows in RCL:
 Running this through `rcl evaluate --format=toml` will produce
 the same toml file as before
 (though without the comment).
-With [imports], we can split out the automation-managed parts:
+With [imports], we can now split out the automation-managed parts:
 
 ```
 // kubernetes_version.json:
@@ -185,33 +156,21 @@ To keep the configuration simple
 while still enabling automation to edit it,
 RCL now features [`rcl patch`][patch],
 a built-in way to do syntax-aware editing.
-We can use it to bump the Nginx version like so:
+We can use it to bump the Nginx version in the original file like so:
 
     rcl patch --in-place config.rcl nginx.version '"1.29.1"'
-
-This will rewrite the above file to
-
-```
-{
-  kubernetes = {
-    // Be sure to verify that our fleet is on
-    // a compatible kernel before updating!
-    version = "1.29.0",
-  },
-  nginx = { version = "1.29.1" },
-}
-```
 
 This update is safe:
 because `rcl patch` operates on syntax trees,
 the result is guaranteed to parse correctly,
-and to not alter the shape of the tree except in the intended location.
+and the edit can’t affect the tree except in the intended location.
+Because the edit acts on the concrete syntax tree,
+it preserves comments and core formatting.
 Because RCL is a functional language,
 we can be sure that replacing an expression
 does not cause unintended side effects elsewhere in the document.
 Finally,
-we can pinpoint precisely which value to replace,
-and the edit preserves comments.
+we can pinpoint precisely which value to replace.
 
 As of the recently released v0.10.0,
 `rcl patch` is available as part of the command-line program.
@@ -244,11 +203,11 @@ The proper way is to use syntax-aware edits,
 but tooling support for that is more limited.
 
 The RCL configuration language supports
-all the above approaches that enable automation
+multiple approaches that enable automation
 to update configuration.
 With imports,
 it can combine human-managed and machine-managed files
 into a single result,
 and with `rcl patch`,
 it has a built-in way to safely edit RCL documents
-while preserving comments.
+while preserving comments and formatting.
