@@ -174,29 +174,10 @@ I plan to expose the patch functionality there in a future version.
 
 ## Conclusion
 
-Software needs configuration.
-Software is not static, and configurations change over time.
-Automation can help
-to make routine configuration edits such as version bumps
-less tedious and error-prone.
-Configuration however,
-is usually designed to be pleasant for humans to read and write,
-not to be easy for automation to modify.
-We can solve this by splitting the automation
-into a machine-managed and a human-managed part,
-but that makes the configuration more complex.
-Alternatively,
-we can move the complexity into the automation.
-The generic and pragmatic way to update config files
-is using text substitution with tools like `sed`,
-but this approach has caveats.
-The proper way is to use syntax-aware edits,
-but tooling support for that is more limited.
-
-The RCL configuration language supports both approaches.
-With imports,
-it can combine human-managed and machine-managed files
-into a single result,
-and with [`rcl patch`][patch],
-it has a built-in way to safely edit RCL documents
-while preserving comments and formatting.
+Sometimes we need automation to update configuration files.
+Doing that safely and reliably is hard for conventional configuration formats.
+Splitting configuration into a human-managed and automation-managed part helps,
+but adds complexity.
+It’s a valid option that RCL supports using imports.
+With `rcl patch`,
+we can safely automate the rest.
