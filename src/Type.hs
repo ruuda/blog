@@ -131,8 +131,9 @@ makeAbbrs = Html.renderTags . Html.concatMapTagsWhere isBodyTag mkAbbr . Html.pa
 
 -- Returns whether Calluna or Inconsolata has a glyph for the character. This
 -- function is optimistic, so getGlyphName still fails for unexpected glyphs.
+-- U+2060 WORD JOINER is invisible and needs no glyph.
 isGlyphSupported :: Char -> Bool
-isGlyphSupported c = not $ c `elem` ['\n', 'φ', 'ψ', '≡']
+isGlyphSupported c = not $ c `elem` ['\n', 'φ', 'ψ', '≡', '\x2060']
 
 -- Convert a unicode character to its postscript glyph name.
 getGlyphName :: Char -> String
