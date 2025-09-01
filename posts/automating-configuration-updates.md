@@ -24,7 +24,7 @@ For any serious configuration format,
 comments are not optional,
 and as soon as we add them,
 naive deserialization/serialization breaks.
-How can we keep files maintainable for humans,
+How can we keep config files maintainable for humans,
 while enabling automation to update them?
 
 **Splitting out automation-managed parts.**
@@ -61,11 +61,11 @@ version = "1.29.0"
 ```
 
 How can we bump Nginx from `1.29.0` to `1.29.1` without touching Kubernetes?
-Building a _general_ patching tool based on string matching is madness.
+Building a _general_ patching tool based on string matching is hard.
 Fortunately, we don’t need to handle _any_ file,
 only the configurations that we use in practice,
 and those are under our control.
-If locating the right `1.29.0` is too hard,
+If locating the right `1.29.0` is too difficult,
 we can add an <code>#&nbsp;auto-update: nginx</code> comment
 to the version line to have something to match on.
 Text substitution may be a hack,
@@ -82,15 +82,14 @@ RCL supports it natively through [`rcl patch`][patch].
 We’ll see an example below.
 
 **Throwing an LLM at it.**
-The 2025 solution:
-make an API call to ask Claude to edit the file.
-This _can_ work surprisingly well,
+It’s 2025, it’s tempting to make an API call to ask Claude to edit the file.
+This can work surprisingly well,
 <abbr>LLM</abbr>s handle context better than a regex.
 They also add even more failure modes
 to the safety and reliability problems of text substitution,
 while using orders of magnitude more compute.
 It will work most of the time,
-but it’s bad engineering,
+but I consider this bad engineering,
 not a real solution.
 
 ## Automation-friendly configuration with RCL
@@ -165,7 +164,7 @@ replacing an expression does not cause unintended side effects elsewhere in the 
 And most of all,
 we can pinpoint precisely which value to replace.
 
-The patch feature is new in yesterday’s 0.10.0 release,
+The patch feature is new in yesterday’s [0.10.0] release,
 and is included in the command-line program.
 For deeper integration into scripts,
 RCL also features a Python module.
@@ -173,6 +172,7 @@ I plan to expose the patch functionality there in a future version.
 
 [imports]: https://docs.ruuda.nl/rcl/imports/
 [patch]:   https://docs.ruuda.nl/rcl/rcl_patch/
+[0.10.0]:  https://docs.ruuda.nl/rcl/changelog/#0100
 
 ## Conclusion
 
