@@ -24,9 +24,9 @@ For example, there is no way to pause or stop playback yet.
 
 [Musium][musium] is my ultimate yak shave,
 and it’s NIH’d across the stack.
-I wrote [the FLAC decoder][claxon],
+I wrote [the flac decoder][claxon],
 [loudness analysis][bs1770] and normalization,
-and high-pass filter.
+and equalizer.
 The core data structures to index and search the library are custom,
 including a specialized hash table.
 It persists data to SQLite,
@@ -49,3 +49,45 @@ This is its story.
 [musium]:   https://github.com/ruuda/musium
 [squiller]: https://github.com/ruuda/squiller
 
+## Claxon the flac decoder
+
+Back in 2014,
+Rust started to regularly show up in my news feed.
+It got many things right that frustrated me in other languages at the time,
+and I was eager to learn.
+I started by [porting a path tracer][path-tracer],
+but what was a good next project?
+What’s a good fit for a low-level memory-safe language?
+Codecs.
+ClusterFuzz did not exist,
+and I regularly had media players segfaulting on corrupted files.
+I figured that a video codec would be too ambitious,
+but audio should be feasible.
+So I wrote [Claxon][claxon],
+a decoder for the flac codec.
+In order to test it and actually play back the result,
+I also had to write [Hound][hound],
+a library to read and write wav files.
+<!--
+(It’s called ‘hound’ because ‘waf’ is the sound a dog makes in Dutch,
+but ‘dog’ is not a cool name,
+so I called it ‘hound’.)
+-->
+This was the early days of the Rust ecosystem,
+and no library for that existed at the time!
+It was also pre-1.0,
+and just before Rust did
+an invasive refactor of IO in the standard library
+— a move that Zig would go on to popularize 10 years later.
+
+So I had my flac decoder,
+but I didn’t have a _goal_ for it.
+
+[claxon]:      https://github.com/ruuda/claxon
+[hound]:       https://github.com/ruuda/hound
+[path-tracer]: /2014/08/10/writing-a-path-tracer-in-rust-part-1/
+[zero]:        /2016/11/30/zero-cost-abstractions/
+
+## Mindec the metadata index
+
+X
