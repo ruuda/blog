@@ -12,7 +12,8 @@ It runs on a Raspberri Pi,
 and I can control it from my local network using a webinterface.
 I’ve been using it on a daily basis for years,
 but it’s still far from complete.
-For example, there is no way to pause or stop playback yet.
+It’s extremely polished in some areas,
+but implementing pause and skip are still on my to do list.
 
 <p style="text-align: center">
 <img
@@ -63,9 +64,16 @@ ClusterFuzz did not exist,
 and I regularly had media players segfaulting on corrupted files.
 I figured that a video codec would be too ambitious,
 but audio should be feasible.
-So I wrote [Claxon][claxon],
+
+I already had a collection of flac files,
+so I wrote [Claxon][claxon],
 a decoder for the flac codec.
-In order to test it and actually play back the result,
+In a world where content can disappear from streaming services at any time,
+I find it reassuring to have files on a disk that I control,
+and to maintain my own software that can decode them.
+Nobody can take that away from me.
+
+In order to test Claxon and actually play back the decoded samples,
 I also had to write [Hound][hound],
 a library to read and write wav files.
 <!--
@@ -81,7 +89,9 @@ an invasive refactor of IO in the standard library
 — a move that Zig would go on to popularize 10 years later.
 
 So I had my flac decoder,
-but I didn’t have a _goal_ for it.
+but aside from the fun of writing it,
+I didn’t have a use case for it.
+At that time, I wasn’t planning to write a music player yet.
 
 [claxon]:      https://github.com/ruuda/claxon
 [hound]:       https://github.com/ruuda/hound
@@ -90,8 +100,7 @@ but I didn’t have a _goal_ for it.
 
 ## Chromecast and the metadata index
 
-In 2017,
-I was subletting a furnished apartment,
+In 2017 I temporarily rented a furnished apartment,
 and it came with a multi-room Sonos system.
 Until then,
 at home I mostly listened to music from my PC.

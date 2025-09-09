@@ -200,6 +200,7 @@ getGlyphName c = case c of
   'à' -> "agrave"
   'é' -> "eacute"
   'ë' -> "edieresis"
+  'ü' -> "udieresis"
   'μ' -> "mu" -- For some reason called  uni03C2 in Minion, but I just call it mu.
   'σ' -> "sigma"
   '√' -> "radical"
