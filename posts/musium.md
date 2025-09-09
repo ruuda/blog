@@ -88,6 +88,56 @@ but I didn’t have a _goal_ for it.
 [path-tracer]: /2014/08/10/writing-a-path-tracer-in-rust-part-1/
 [zero]:        /2016/11/30/zero-cost-abstractions/
 
-## Mindec the metadata index
+## Chromecast and the metadata index
 
-X
+In 2017,
+I was subletting a furnished apartment,
+and it came with a multi-room Sonos system.
+Until then,
+at home I mostly listened to music from my PC.
+Having music _in every room_ was an amazing new experience,
+and I _needed_ to have this at home when I moved back.
+Sonos was expensive though,
+and the app was unreliable.
+
+Then there was Chromecast Audio.
+In theory, it was perfect.
+It played flac,
+supported multi-room audio,
+and I could control it from my phone.
+I could even get an employer discount on it,
+so I bought three of them.
+Chromecast was not a full solution though.
+It streams media over http,
+but something external needs to trigger playback.
+It doesn’t come with a library browser itself.
+
+So that’s what I set out to build:
+an http server that could serve my flac files,
+with a library browser that would enqueue tracks on the Chromecast.
+I had Claxon that could parse tags from flac files,
+and I built an application on top of it that would
+traverse my flac files at startup,
+read their metadata,
+and build an in-memory index that it would serve as json.
+I intended to run this on a Raspberry Pi,
+so I wanted my code to be efficient
+— before generation 3, these things were _slow_,
+and memory was counted in megabytes.
+All of this was of course a premature optimization,
+but it was a lot of fun to build.
+
+I couldn’t afford an SSD that could fit my library,
+so I kept it on a spinning disk.
+Optimizing disk access patterns was a fun journey.
+By bumping `/queue/nr_requests` in `/sys/block`,
+and reading with hundreds of threads,
+the IO scheduler can do a _much_ better job,
+and I could index 16k files in 70 seconds with a cold page cache,
+down from 130s before optimization.
+
+## Adding a webinterface
+
+## Chromecast is the most unreliable software ever
+
+
