@@ -149,8 +149,136 @@ the IO scheduler can do a _much_ better job,
 and I could index 16k files in 70 seconds with a cold page cache,
 down from 130s before optimization.
 
+Now I had a server that could serve my library,
+and I could start tracks with [rust-cast],
+but that’s still not a full music player.
+
+[rust-cast]: https://github.com/azasypkin/rust-cast
+
 ## Adding a webinterface
 
+<!-- Context for this part:
+-->
+
+I wanted a library browser that I could use from my phone,
+as well as desktop.
+How hard could it be in 2018?
+I considered various ways to build an Android app,
+as well as a web app.
+None of them were great.
+A native Android app would not run easily on my desktop.
+Flutter’s opinionated tooling was incompatible with Nix,
+and looked like I’d spend more time
+fixing my development environment every few months,
+than writing code.
+JavaScript is unsuitable for anything over a few hundred lines of code,
+and TypeScript had a dependency on the NPM and nodejs ecosystem
+for which I have a zero-tolerance policy in my personal projects.
+(I’m excited for [typescript-go], but it did not exist at the time.)
+I started out with Elm,
+but I found it too constraining in how it interacts with JavaScript,
+which I needed to use Cast.
+So in 2019, I switched to PureScript,
+and that one stuck.
+
+I did really like Elm’s approach to defining DOM nodes,
+similar to blaze-html in Haskell.
+The PureScript counterpart of that was [Halogen][halogen],
+so that’s what I started out with.
+In July 2019,
+for the first time I was able to cast a track from my app,
+using the Cast API that Chromium exposes.
+
+## An imperative frontend framework
+
+I quickly found myself constrained by Halogen.
+It’s model where an application is a pure fuction `State -> Html` works well
+when all changes are instant,
+but I found it unsuitable for what I wanted to do.
+In the browser,
+DOM nodes have state like selections and CSS animations.
+It’s not enough to give a declarative specification of the desired DOM tree,
+and let a library apply the diff between the current and new tree.
+I need control over the nodes.
+Maybe I was holding Halogen wrong,
+but I wrote my own DOM manipulation library instead,
+and I’ve been quite pleased with it it ever since.
+I later used it in [my plant watering tracker][sempervivum] as well.
+Here’s the function that renders the volume slider:
+
+```purescript
+type Slider =
+  { bar :: Element
+  , label :: Element
+  , buttonDec :: Element
+  , buttonInc :: Element
+  }
+
+addSlider :: String -> String -> Html Slider
+addSlider textDec textInc = Html.div $ do
+  Html.addClass "volume-control"
+  elements <- Html.div $ do
+    Html.addClass "indicator"
+    Html.div $ do
+      label <- Html.div $ do
+        Html.addClass "volume-label"
+        ask
+      bar <- ask
+      pure $ { bar, label }
+
+  buttonDec <- Html.button $ do
+    Html.addClass "volume-down"
+    Html.text textDec
+    ask
+
+  buttonInc <- Html.button $ do
+    Html.addClass "volume-up"
+    Html.text textInc
+    ask
+
+  pure { bar: elements.bar, label: elements.label, buttonDec, buttonInc }
+```
+
+It looks almost declarative,
+and it preserves this workflow where rendering
+is a pure function from state to DOM nodes.
+If you look closely though, it’s imperative.
+`Html` is a reader monad that exposes the surrounding node.
+Functions like `div` and `li` construct a new node,
+run the body with that node as context,
+and finally call `appendChild`
+to add the new node to its parent.
+We _can_ use this approach to rebuild the entire tree,
+but with `ask` we can also store the node,
+and later make more targeted mutations inside it:
+
+```purescript
+updateSlider :: Slider -> Number -> String -> Effect Unit
+updateSlider slider percentage label = do
+  Dom.setWidth (show percentage <> "%") slider.bar
+  Html.withElement slider.label $ do
+    Html.clear
+    Html.text label
+```
+
+This way of building the UI is now six years old,
+and every time I need to edit the UI,
+I’m surprised by how easy it is to change.
+
+[typescript-go]: https://github.com/microsoft/typescript-go
+[halogen]:       https://github.com/purescript-halogen/purescript-halogen
+[sempervivum]:   https://github.com/ruuda/sempervivum
+
+<!--
+PureScript:        https://github.com/ruuda/musium/commit/df557220d32ffd2bd3cca44676e7a51760188f55
+First cast:        https://github.com/ruuda/musium/commit/ccc52128a7db721c1dec53f25b73c40211fcf324
+Halogen to custom: https://github.com/ruuda/musium/commit/bfefa8008e5e1d2ee20c2cb5cf737cea2f452159
+-->
+
 ## Chromecast is the most unreliable software ever
+
+Cast from inside app or server-side.
+Aside from the UI,
+it needed to support the Cast protocol.
 
 
