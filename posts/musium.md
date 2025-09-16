@@ -11,9 +11,9 @@ Musium is the music player that I built for myself.
 It runs on a Raspberri Pi,
 and I can control it from my local network using a webinterface.
 I’ve been using it on a daily basis for years,
-but it’s still far from complete.
-It’s extremely polished in some areas,
-but implementing pause and skip are still on my to do list.
+but it’s far from finished.
+It’s polished in many areas,
+but implementing pause and skip is something I haven’t gotten to yet.
 
 <p style="text-align: center">
 <img
@@ -23,19 +23,21 @@ but implementing pause and skip are still on my to do list.
   />
 </p>
 
-[Musium][musium] is my ultimate yak shave,
-and it’s NIH’d across the stack.
-I wrote [the flac decoder][claxon],
-[loudness analysis][bs1770] and normalization,
-and equalizer.
-The core data structures to index and search the library are custom,
-including a specialized hash table.
+
+[Musium][musium] is my ultimate yak shave.
+It’s NIH’d across the stack.
+It uses [my flac decoder][claxon],
+and I implemented the [loudness analysis][bs1770],
+normalization,
+and high pass filter.
+The application is built around a custom in-memory index.
 It persists data to SQLite,
 for which I wrote [a code generator][squiller]
-that generates Rust bindings for SQL queries.
-The frontend is written in PureScript,
-for which I wrote a custom web framework.
-The seek bar is not just a line, it renders a waveform,
+that generates Rust bindings for SQL queries,
+and the frontend is written in PureScript
+using a homegrown DOM builder library.
+I like polishing it:
+the seek bar is not just a line, it renders a waveform,
 and the UI is animated throughout.
 Musium tracks fairly elaborate statistics about playcounts,
 so it can surface interesting music at the right time,
@@ -44,13 +46,14 @@ Musium does _exactly_ what I want it to do,
 and that’s very satisfying.
 This is its story.
 
+[carnival]: https://lobste.rs/s/0nstyk/join_lobsters_blog_carnival
 [claxon]:   https://github.com/ruuda/claxon
 [bs1770]:   https://github.com/ruuda/bs1770
 [shuffle]:  /2023/an-algorithm-for-shuffling-playlists
 [musium]:   https://github.com/ruuda/musium
 [squiller]: https://github.com/ruuda/squiller
 
-## Claxon the flac decoder
+## The flac decoder
 
 Back in 2014,
 Rust started to regularly show up in my news feed.
@@ -67,13 +70,13 @@ but audio should be feasible.
 
 I already had a collection of flac files,
 so I wrote [Claxon][claxon],
-a decoder for the flac codec.
+a decoder for the codec.
 In a world where content can disappear from streaming services at any time,
 I find it reassuring to have files on a disk that I control,
 and to maintain my own software that can decode them.
-Nobody can take that away from me.
+Nobody can take that away.
 
-In order to test Claxon and actually play back the decoded samples,
+In order to test Claxon and play back the decoded samples,
 I also had to write [Hound][hound],
 a library to read and write wav files.
 <!--
@@ -83,14 +86,14 @@ so I called it ‘hound’.)
 -->
 This was the early days of the Rust ecosystem,
 and no library for that existed at the time!
-It was also pre-1.0,
+It was pre-1.0,
 and just before Rust did
 an invasive refactor of IO in the standard library
 — a move that Zig would go on to popularize 10 years later.
 
 So I had my flac decoder,
 but aside from the fun of writing it,
-I didn’t have a use case for it.
+I didn’t have a direct use case for it.
 At that time, I wasn’t planning to write a music player yet.
 
 [claxon]:      https://github.com/ruuda/claxon
@@ -100,7 +103,8 @@ At that time, I wasn’t planning to write a music player yet.
 
 ## Chromecast and the metadata index
 
-In 2017 I temporarily rented a furnished apartment,
+A few years later,
+I temporarily rented a furnished apartment,
 and it came with a multi-room Sonos system.
 Until then,
 at home I mostly listened to music from my PC.
@@ -116,10 +120,10 @@ supported multi-room audio,
 and I could control it from my phone.
 I could even get an employer discount on it,
 so I bought three of them.
-Chromecast was not a full solution though.
+But Chromecast was not a full solution.
 It streams media over http,
-but something external needs to trigger playback.
-It doesn’t come with a library browser itself.
+but something external needs to trigger playback;
+it doesn’t come with a library browser itself.
 
 So that’s what I set out to build:
 an http server that could serve my flac files,
@@ -131,13 +135,13 @@ read their metadata,
 and build an in-memory index that it would serve as json.
 I intended to run this on a Raspberry Pi,
 so I wanted my code to be efficient
-— before generation 3, these things were _slow_,
+— before generation 3 these things were _slow_,
 and memory was counted in megabytes.
 All of this was of course a premature optimization,
-but it was a lot of fun to build.
+but it was a lot of fun to build!
 
-I couldn’t afford an SSD that could fit my library,
-so I kept it on a spinning disk.
+At the time <abbr>SSD</abbr>s were still quite expensive,
+so I kept my collection on a spinning disk.
 Optimizing disk access patterns was a fun journey.
 By bumping `/queue/nr_requests` in `/sys/block`,
 and reading with hundreds of threads,
