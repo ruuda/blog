@@ -197,72 +197,53 @@ when all changes are instant,
 but I found it unsuitable for what I wanted to do.
 In the browser,
 DOM nodes have state like selections and CSS animations.
-It’s not enough to give a declarative specification of the desired DOM tree,
+It was not enough to give a declarative specification of the desired DOM tree,
 and let a library apply the diff between the current and new tree.
-I need control over the nodes.
+I needed control over the nodes.
 Maybe I was holding Halogen wrong,
 but I wrote my own DOM manipulation library instead,
-and I’ve been quite pleased with it it ever since.
+and I’ve been quite pleased with it ever since.
 I later used it in [my plant watering tracker][sempervivum] as well.
-Here’s the function that renders the volume slider:
+Here’s a small example,
+simplified from the way the volume slider is built:
 
 ```purescript
-type Slider =
-  { bar :: Element
-  , label :: Element
-  , buttonDec :: Element
-  , buttonInc :: Element
-  }
+type VolumeControl = { value :: Element }
 
-addSlider :: String -> String -> Html Slider
-addSlider textDec textInc = Html.div $ do
+volumeControl :: Decibel -> Html VolumeControl
+volumeControl (Decibel currentVolume) = Html.div $ do
   Html.addClass "volume-control"
-  elements <- Html.div $ do
-    Html.addClass "indicator"
-    Html.div $ do
-      label <- Html.div $ do
-        Html.addClass "volume-label"
-        ask
-      bar <- ask
-      pure $ { bar, label }
-
-  buttonDec <- Html.button $ do
-    Html.addClass "volume-down"
-    Html.text textDec
+  Html.text "Volume: "
+  value <- Html.span $ do
+    Html.text $ show currentVolume <> " dB"
     ask
-
-  buttonInc <- Html.button $ do
-    Html.addClass "volume-up"
-    Html.text textInc
-    ask
-
-  pure { bar: elements.bar, label: elements.label, buttonDec, buttonInc }
+  pure { value }
 ```
 
-It looks almost declarative,
+It feels declarative,
 and it preserves this workflow where rendering
 is a pure function from state to DOM nodes.
 If you look closely though, it’s imperative.
-`Html` is a reader monad that exposes the surrounding node.
-Functions like `div` and `li` construct a new node,
+`Html` is a reader monad that stores the surrounding node.
+Functions like `div` and `span` construct a new node,
 run the body with that node as context,
 and finally call `appendChild`
 to add the new node to its parent.
 We _can_ use this approach to rebuild the entire tree,
 but with `ask` we can also store the node,
-and later make more targeted mutations inside it:
+and apply more targeted mutations later:
 
 ```purescript
-updateSlider :: Slider -> Number -> String -> Effect Unit
-updateSlider slider percentage label = do
-  Dom.setWidth (show percentage <> "%") slider.bar
-  Html.withElement slider.label $ do
+updateVolume :: VolumeControl -> Decibel -> Effect Unit
+updateVolume control (Decibel currentVolume) =
+  Html.withElement control.value $ do
     Html.clear
-    Html.text label
+    Html.text $ show currentVolume <> " dB"
 ```
 
-This way of building the UI is now six years old,
-and every time I need to edit the UI,
+Even after six years,
+I’m still quite happy with this approach.
+Every time I need to edit the UI,
 I’m surprised by how easy it is to change.
 
 [typescript-go]: https://github.com/microsoft/typescript-go
