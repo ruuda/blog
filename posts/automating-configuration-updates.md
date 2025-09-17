@@ -19,11 +19,11 @@ or replacing the wrong value?
 
 Editing a json file from a script is easy:
 deserialize, modify, serialize.
-But json is not configuration, it’s data.
+But json alone is not configuration, it’s data.
 For any serious configuration format,
 comments are not optional,
 and as soon as we add them,
-naive deserialization/serialization breaks.
+naive deserialization and serialization breaks.
 How can we keep config files maintainable for humans,
 while enabling automation to update them?
 
@@ -68,11 +68,11 @@ and those are under our control.
 If locating the right `1.29.0` is too difficult,
 we can add an <code>#&nbsp;auto-update: nginx</code> comment
 to the version line to have something to match on.
-Text substitution may be a hack,
+Text substitution is a hack,
 but it’s a very practical one.
 
 **Syntax-aware editing.**
-The correct way to update files is to parse them into a syntax tree,
+The correct way to update files is to parse them into a syntax tree
 and perform the edit there.
 In order to preserve comments and formatting,
 that tree needs to be a _concrete syntax tree_.
@@ -99,7 +99,7 @@ It extends json into a simple functional language
 that enables abstraction and reuse.
 It’s a principled alternative to templating configuration files,
 and enables modularity for tools that don’t natively support it.
-Our earlier example, now in RCL:
+We can rewrite the earlier example in RCL:
 
 [rcl]: https://rcl-lang.org/
 
@@ -113,7 +113,7 @@ Our earlier example, now in RCL:
 }
 </code></pre>
 
-Running this through <code>rcl evaluate -&NoBreak;-&NoBreak;format=toml</code> will produce
+Running this through <code>rcl evaluate -&NoBreak;-&NoBreak;format=toml</code> produces
 the same toml as before, minus the comment.
 With [imports], we can split out the automation-managed parts:
 
