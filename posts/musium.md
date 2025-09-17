@@ -183,13 +183,24 @@ which I needed to use Cast.
 So I switched to PureScript,
 and that one stuck.
 
-I did really like Elm’s approach to defining DOM nodes,
+I did really like Elm’s approach to defining DOM trees,
 similar to blaze-html in Haskell.
 The PureScript counterpart of that was [Halogen][halogen],
 so that’s what I started out with.
+
+<p style="text-align: center">
+<img
+  class="img-right"
+  src="/images/musium2019.jpg"
+  alt="Casting from my webapp."
+  style="max-width: 16em"
+/>
+</p>
+
 In July 2019,
-for the first time I was able to cast a track from my app,
+for the first time I was able to cast a track from my web app,
 using the Cast API that Chromium exposes.
+Above is a frame from a video I took at the time.
 
 ## An imperative frontend framework
 
@@ -210,21 +221,21 @@ Here’s a small example,
 simplified from the way the volume slider is built:
 
 ```purescript
-type VolumeControl = { value :: Element }
+type VolumeControl = { valueSpan :: Element }
 
 volumeControl :: Decibel -> Html VolumeControl
 volumeControl (Decibel currentVolume) = Html.div $ do
   Html.addClass "volume-control"
   Html.text "Volume: "
-  value <- Html.span $ do
+  valueSpan <- Html.span $ do
     Html.text $ show currentVolume <> " dB"
     ask
-  pure { value }
+  pure { valueSpan }
 ```
 
 It feels declarative,
 and it preserves this workflow where rendering
-is a pure function from state to DOM nodes.
+is a function from state to DOM nodes.
 If you look closely though, it’s imperative.
 `Html` is a reader monad that stores the surrounding node.
 Functions like `div` and `span` construct a new node,
@@ -238,7 +249,7 @@ and apply more targeted mutations later:
 ```purescript
 updateVolume :: VolumeControl -> Decibel -> Effect Unit
 updateVolume control (Decibel currentVolume) =
-  Html.withElement control.value $ do
+  Html.withElement control.valueSpan $ do
     Html.clear
     Html.text $ show currentVolume <> " dB"
 ```
