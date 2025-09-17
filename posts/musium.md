@@ -8,11 +8,12 @@ run-in: Musium is the music player
 ---
 
 Musium is the music player that I built for myself.
-It runs on a Raspberri Pi,
+It runs on a Raspberri Pi
+that connects to the speakers in my living room,
 and I can control it from my local network using a webinterface.
 I’ve been using it on a daily basis for years,
 but it’s far from finished.
-It’s polished in many areas,
+It’s very polished in some areas,
 but implementing pause and skip is something I haven’t gotten to yet.
 
 <p style="text-align: center">
@@ -35,7 +36,7 @@ It persists data to SQLite,
 for which I wrote [a code generator][squiller]
 that generates Rust bindings for SQL queries,
 and the frontend is written in PureScript
-using a homegrown DOM builder library.
+using my own html builder library.
 I like polishing it:
 the seek bar is not just a line, it renders a waveform,
 and the UI is animated throughout.
@@ -104,7 +105,7 @@ At that time, I wasn’t planning to write a music player yet.
 ## Chromecast and the metadata index
 
 A few years later,
-I temporarily rented a furnished apartment,
+I was temporarily renting a furnished apartment,
 and it came with a multi-room Sonos system.
 Until then,
 at home I mostly listened to music from my PC.
@@ -130,28 +131,29 @@ an http server that could serve my flac files,
 with a library browser that would enqueue tracks on the Chromecast.
 I had Claxon that could parse tags from flac files,
 and I built an application on top of it that would
-traverse my flac files at startup,
+traverse my files at startup,
 read their metadata,
 and build an in-memory index that it would serve as json.
 I intended to run this on a Raspberry Pi,
 so I wanted my code to be efficient
 — before generation 3 these things were _slow_,
 and memory was counted in megabytes.
-All of this was of course a premature optimization,
-but it was a lot of fun to build!
+All of this was a premature optimization,
+but it was fun to build!
 
 At the time <abbr>SSD</abbr>s were still quite expensive,
-so I kept my collection on a spinning disk.
+so I kept my library on a spinning disk.
 Optimizing disk access patterns was a fun journey.
+Reading a few kilobytes of 16k files benefits enormously from a deep IO queue,
+because the arm can sweep across the disk and serve many reads along the way.
 By bumping `/queue/nr_requests` in `/sys/block`,
 and reading with hundreds of threads,
-the IO scheduler can do a _much_ better job,
-and I could index 16k files in 70 seconds with a cold page cache,
-down from 130s before optimization.
+indexing 16k files with a cold page cache went down from 130s to 70s.
 
 Now I had a server that could serve my library,
 and I could start tracks with [rust-cast],
-but that’s still not a full music player.
+but that’s still not a music player.
+I needed a UI.
 
 [rust-cast]: https://github.com/azasypkin/rust-cast
 
@@ -162,13 +164,13 @@ but that’s still not a full music player.
 
 I wanted a library browser that I could use from my phone,
 as well as desktop.
-How hard could it be in 2018?
 I considered various ways to build an Android app,
 as well as a web app.
 None of them were great.
-A native Android app would not run easily on my desktop.
-Flutter’s opinionated tooling was incompatible with Nix,
-and looked like I’d spend more time
+A native Android app would not easily run on my desktop.
+Flutter was the new hot thing,
+but its opinionated tooling was incompatible with Nix,
+and it looked like I’d spend more time
 fixing my development environment every few months,
 than writing code.
 JavaScript is unsuitable for anything over a few hundred lines of code,
@@ -178,7 +180,7 @@ for which I have a zero-tolerance policy in my personal projects.
 I started out with Elm,
 but I found it too constraining in how it interacts with JavaScript,
 which I needed to use Cast.
-So in 2019, I switched to PureScript,
+So I switched to PureScript,
 and that one stuck.
 
 I did really like Elm’s approach to defining DOM nodes,
