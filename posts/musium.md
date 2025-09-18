@@ -272,8 +272,138 @@ Halogen to custom: https://github.com/ruuda/musium/commit/bfefa8008e5e1d2ee20c2c
 
 ## Chromecast is the most unreliable software ever
 
-Cast from inside app or server-side.
-Aside from the UI,
-it needed to support the Cast protocol.
+I was using Google Cast using the Web Sender API in Chromium,
+but it was very clear that this API was severely neglected.
+Many features were missing compared to the Android API,
+or outright broken.
+On top of that, the Chromecast would randomly disconnect
+or disappear from my network.
+I occasionally use a radio app on my phone to cast to my speakers,
+and sometimes it just stops playing,
+or suddenly switches from casting to playing on the phone speaker.
 
+At that point, I decided to just play sound from the daemon instead.
+I bought a USB audio interface,
+connected it to the Raspberri Pi,
+and that one to my speakers.
+It’s not multi-room audio,
+but at least it works.
+At this point
+my server was no longer serving just files and metadata,
+it was a mediaserver,
+similar to MPD and Mopidy.
+I did not plan for it from the start, it happened!
 
+## Quirks
+
+The nice thing about building your own software,
+is that you understand completely how it works,
+and you can add exactly the features that you want.
+Some of the unusual features that I added to Musium:
+
+**A pre/post playback hook.**
+Musium can execute a program before starting playback,
+and after a period of silence.
+I use this with Ikea Trådfri outlets and `coap-client`
+to turn on my speakers when I start playback,
+and turn them off afterwards.
+
+**Last.fm scrobbling.**
+Last.fm has my full listening history since 2007.
+Arguably that’s before I even developed any taste in music.
+It helps me discover new music,
+and I find it interesting to look at trends over time.
+This couldn’t stop now,
+so it’s one of the first features I added.
+Later I also added importing.
+This ensures that I have a backup of the data in a place that I control.
+It also enables Musium to import playcounts
+from other devices,
+though that part has been sitting in an unmerged branch for a while.
+
+**A high-pass filter.**
+My speakers can reproduce fairly low frequencies,
+and my living room is almost square,
+which means bass notes start to resonate.
+Especially with 2020s music,
+if I turn up the volume,
+it quickly starts sounding dense,
+and I worry that I’m disturbing the neighbors.
+At some point I want to properly measure the room response,
+and correct for it with a DSP.
+Until then, a high-pass filter at 55 Hz does wonders.
+
+**Dominant color extraction.**
+When you search,
+or scroll through the library quickly,
+cover art thumbnails suddenly become visible.
+Even when those images are cached locally,
+the browser has to decode them.
+This takes time, which causes flicker.
+To mitigate that,
+I compute a dominant color for every album cover,
+which is used as a fallback.
+This makes the flicker much less jarring,
+[see a comparison here][dominant-color].
+
+[dominant-color]: https://fosstodon.org/@ruuda/114437762369230042
+
+## Playcounts and sorting
+
+When I was younger,
+I could just remember which tracks on an album were the good ones.
+I’m not at an age any more where my brain just remembers anything I feed it,
+and as my library slowly grows,
+I increasingly struggle to find the right tracks.
+I added the ability to rate tracks,
+which helps to pick tracks from an album,
+but it doesn’t help me find albums in the first place.
+To help with that,
+I added various sorting modes to the album list.
+
+Musium tracks exponentially decaying playcounts
+for every track, album, and artist.
+It does this at multiple time scales,
+to get a sense of what’s popular in the past weeks,
+months,
+and years.
+This powers a “discover” sorting mode,
+which surfaces albums that were popular in the past,
+but not played recently.
+The counters are rate-limited:
+if I listen to a full album with 10 tracks,
+and then a full album with 12 tracks,
+that second one should not be 20% more popular.
+
+Music is very seasonal for me.
+Warm summer nights call for Com Truise or Roosevelt,
+on rainy autumn days I listen to A Moon Shaped Pool.
+On Saturday mornings I want chillout and jazz,
+on Friday evenings I want energetic drum and bass.
+To capture that,
+Musium tracks a _time vector_ for every album:
+a 6-dimensional embedding that encodes
+the time of the day,
+day of the week,
+and day of the year at which listens happened.
+It uses this to rank albums in a “for now” sorting mode,
+and it’s weighed into the discover mode as well.
+This feature works _amazingly_ well in practice.
+
+Something I’m currently working on
+is learning embedding vectors from my listening history,
+similar to word2vec.
+My hope is that it learns to cluster music that goes well together,
+so it can suggest related albums when I’m building a playlist.
+I’m not sure if just my own listening history is sufficient for that,
+but one thing I find remarkable
+is that with an embedding dimension of just 35,
+it overfits,
+and memorizes the entire 40k-track history I trained it on.
+There is no neural network here!
+This is just minimizing the cosine distance
+between a weighted sum of the past 100 listens,
+and the 12k distinct tracks in the history!
+With a lower dimension,
+it looks like it mostly learns to cluster music
+that I listened to in the same time period,

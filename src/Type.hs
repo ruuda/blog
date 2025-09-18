@@ -198,6 +198,7 @@ getGlyphName c = case c of
   '·' -> "periodcentered"
   '»' -> "guillemotright" -- A typo in the postscript specification.
   'à' -> "agrave"
+  'å' -> "aring"
   'é' -> "eacute"
   'ë' -> "edieresis"
   'ü' -> "udieresis"
