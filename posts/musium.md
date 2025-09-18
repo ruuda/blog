@@ -180,13 +180,10 @@ for which I have a zero-tolerance policy in my personal projects.
 I started out with Elm,
 but I found it too constraining in how it interacts with JavaScript,
 which I needed to use Cast.
-So I switched to PureScript,
-and that one stuck.
-
-I did really like Elm’s approach to defining DOM trees,
-similar to blaze-html in Haskell.
-The PureScript counterpart of that was [Halogen][halogen],
-so that’s what I started out with.
+So I switched to PureScript.
+Where Elm is Haskell for frontend developers,
+PureScript is frontend for Haskell developers.
+PureScript stuck.
 
 <p style="text-align: center">
 <img
@@ -204,14 +201,18 @@ Above is a frame from a video I took at the time.
 
 ## An imperative frontend framework
 
-I quickly found myself constrained by Halogen.
-It’s model where an application is a pure fuction `State -> Html` works well
+I did really like Elm’s approach to defining DOM trees,
+similar to blaze-html in Haskell.
+The PureScript counterpart of that was [Halogen][halogen],
+so that’s what I started out with.
+However, I quickly found myself constrained by Halogen.
+It’s model where an application is a pure function `State -> Html` works well
 when all changes are instant,
 but I found it unsuitable for what I wanted to do.
 In the browser,
 DOM nodes have state like selections and CSS animations.
 It was not enough to give a declarative specification of the desired DOM tree,
-and let a library apply the diff between the current and new tree.
+and let a library apply the diff between the current and new tree,
 I needed control over the nodes.
 Maybe I was holding Halogen wrong,
 but I wrote my own DOM manipulation library instead,
