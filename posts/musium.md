@@ -173,7 +173,8 @@ but its opinionated tooling was incompatible with Nix,
 and it looked like I’d spend more time
 fixing my development environment every few months,
 than writing code.
-JavaScript is unsuitable for anything over a few hundred lines of code,
+I gravitated back to web after all,
+but JavaScript is unsuitable for anything over a few hundred lines of code,
 and TypeScript had a dependency on the NPM and nodejs ecosystem
 for which I have a zero-tolerance policy in my personal projects.
 (I’m excited for [typescript-go], but it did not exist at the time.)
@@ -181,7 +182,7 @@ I started out with Elm,
 but I found it too constraining in how it interacts with JavaScript,
 which I needed to use Cast.
 So I switched to PureScript.
-Where Elm is Haskell for frontend developers,
+If Elm is Haskell for frontend developers,
 PureScript is frontend for Haskell developers.
 PureScript stuck.
 
@@ -199,24 +200,24 @@ for the first time I was able to cast a track from my web app,
 using the Cast API that Chromium exposes.
 Above is a frame from a video I took at the time.
 
-## An imperative frontend framework
+## I’ll build my own frontend framework
 
 I did really like Elm’s approach to defining DOM trees,
 similar to blaze-html in Haskell.
 The PureScript counterpart of that was [Halogen][halogen],
-so that’s what I started out with.
-However, I quickly found myself constrained by Halogen.
-It’s model where an application is a pure function `State -> Html` works well
-when all changes are instant,
-but I found it unsuitable for what I wanted to do.
+so that’s what I started out with,
+but I struggled to build what I wanted.
+Halogen’s model where an application is a pure function `State -> Html`
+works well when all changes are instant,
+but that’s not what I wanted to do.
 In the browser,
-DOM nodes have state like selections and CSS animations.
-It was not enough to give a declarative specification of the desired DOM tree,
+DOM nodes have state like selections and CSS transitions.
+It was not enough to give a declarative specification of the DOM tree,
 and let a library apply the diff between the current and new tree,
 I needed control over the nodes.
 Maybe I was holding Halogen wrong,
-but I wrote my own DOM manipulation library instead,
-and I’ve been quite pleased with it ever since.
+but I decided to write my own DOM manipulation library instead,
+and I’ve been very pleased with it ever since.
 I later used it in [my plant watering tracker][sempervivum] as well.
 Here’s a small example,
 simplified from the way the volume slider is built:
@@ -255,8 +256,8 @@ updateVolume control (Decibel currentVolume) =
     Html.text $ show currentVolume <> " dB"
 ```
 
-Even after six years,
-I’m still quite happy with this approach.
+This library is now six years old,
+and I’m still very happy with the approach.
 Every time I need to edit the UI,
 I’m surprised by how easy it is to change.
 
@@ -270,43 +271,50 @@ First cast:        https://github.com/ruuda/musium/commit/ccc52128a7db721c1dec53
 Halogen to custom: https://github.com/ruuda/musium/commit/bfefa8008e5e1d2ee20c2cb5cf737cea2f452159
 -->
 
-## Chromecast is the most unreliable software ever
+## Friendship ended with Chromecast
 
 I was using Google Cast using the Web Sender API in Chromium,
 but it was very clear that this API was severely neglected.
-Many features were missing compared to the Android API,
+Many features were missing compared to the Android version,
 or outright broken.
 On top of that, the Chromecast would randomly disconnect
 or disappear from my network.
-I occasionally use a radio app on my phone to cast to my speakers,
+I occasionally use apps on my phone to cast to my speakers,
 and sometimes it just stops playing,
-or suddenly switches from casting to playing on the phone speaker.
+or suddenly switches from cast playback to the phone speaker.
+Chromecast is possibly the most unreliable software I’ve ever used.
+Building a music player on top of it was not going to work.
 
 At that point, I decided to just play sound from the daemon instead.
 I bought a USB audio interface,
-connected it to the Raspberri Pi,
-and that one to my speakers.
+connected it to the Raspberry,
+and my speakers to the audio interface.
 It’s not multi-room audio,
 but at least it works.
-At this point
-my server was no longer serving just files and metadata,
-it was a mediaserver,
-similar to MPD and Mopidy.
-I did not plan for it from the start, it happened!
+It wasn’t my intention from the start,
+but now my server was no longer serving just files and metadata,
+it had become a mediaserver similar to MPD and Mopidy.
 
-## Quirks
+## Toying around
 
-The nice thing about building your own software,
-is that you understand completely how it works,
-and you can add exactly the features that you want.
-Some of the unusual features that I added to Musium:
+Mopidy exists, why continue to build a music player?
+Well, it’s a lot of fun,
+and a good way to learn and experiment.
+But most of all,
+when you build your own software,
+you understand completely how it works,
+and you can add exactly the features you want,
+and make them work exactly the way you like.
+Some of the features that I added to Musium:
 
 **A pre/post playback hook.**
 Musium can execute a program before starting playback,
 and after a period of silence.
-I use this with Ikea Trådfri outlets and `coap-client`
-to turn on my speakers when I start playback,
+I use this with Ikea Trådfri outlets and [`coap-client`][libcoap]
+to turn my speakers on when I start playback,
 and turn them off afterwards.
+
+[libcoap]: https://libcoap.net/
 
 **Last.fm scrobbling.**
 Last.fm has my full listening history since 2007.
@@ -315,30 +323,49 @@ It helps me discover new music,
 and I find it interesting to look at trends over time.
 This couldn’t stop now,
 so it’s one of the first features I added.
-Later I also added importing.
+Later I added importing as well.
 This ensures that I have a backup of the data in a place that I control.
 It also enables Musium to import playcounts
 from other devices,
 though that part has been sitting in an unmerged branch for a while.
 
 **A high-pass filter.**
-My speakers can reproduce fairly low frequencies,
+My speakers can reproduce low frequencies,
 and my living room is almost square,
 which means bass notes start to resonate.
 Especially with 2020s music,
 if I turn up the volume,
 it quickly starts sounding dense,
 and I worry that I’m disturbing the neighbors.
-At some point I want to properly measure the room response,
-and correct for it with a DSP.
+At some point I want to properly [measure the room response][rew]
+and correct for it.
 Until then, a high-pass filter at 55 Hz does wonders.
+
+[rew]: https://www.roomeqwizard.com/
+
+**Search as you type.**
+Musium keeps multiple indices that contain the words that occur
+in artist names, album titles, and track titles.
+I normalize the words,
+so I can type ‘royksopp’ or ‘dadi’ and find Röyksopp and Daði Freyr.
+Search searches all these indices for prefix matches,
+so with a single search box I can search for artists, albums and tracks.
+It ranks the results based on match properties
+(the length of the prefix for prefix matches,
+but also how common the word is in the library,
+the position of the word in the title,
+and a few others).
+This works extremely well:
+I can usually find what I’m looking for in just a few keystrokes,
+and a query runs in milliseconds,
+so search as you type feels instant.
 
 **Dominant color extraction.**
 When you search,
 or scroll through the library quickly,
 cover art thumbnails suddenly become visible.
-Even when those images are cached locally,
-the browser has to decode them.
+Even when those images are cached by the browser,
+it has to decode them.
 This takes time, which causes flicker.
 To mitigate that,
 I compute a dominant color for every album cover,
