@@ -198,8 +198,12 @@ getGlyphName c = case c of
   '·' -> "periodcentered"
   '»' -> "guillemotright" -- A typo in the postscript specification.
   'à' -> "agrave"
+  'å' -> "aring"
   'é' -> "eacute"
   'ë' -> "edieresis"
+  'ö' -> "odieresis"
+  'ü' -> "udieresis"
+  'ð' -> "eth"
   'μ' -> "mu" -- For some reason called  uni03C2 in Minion, but I just call it mu.
   'σ' -> "sigma"
   '√' -> "radical"

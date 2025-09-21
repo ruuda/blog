@@ -10,7 +10,10 @@
 # jpeg.
 
 # Fail as soon as any command fails.
-set -e
+set -euo pipefail
+
+cjpegli --distance=2.0 original/musium2019.png compressed/musium2019.jpg
+exit 0
 
 # Verify that we really have Mozjpeg and not regular libjpeg-turbo, as they
 # share the same binary name. Mozjpeg prints its version to stderr.
