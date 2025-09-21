@@ -97,7 +97,7 @@ an invasive refactor of IO in the standard library
 So I had my flac decoder,
 but aside from the fun of writing it,
 I didn’t have a direct use case for it.
-At that time, I wasn’t planning to write a music player yet.
+At that time, I wasn’t planning to write a music player.
 
 [claxon]:      https://github.com/ruuda/claxon
 [hound]:       https://github.com/ruuda/hound
@@ -106,7 +106,7 @@ At that time, I wasn’t planning to write a music player yet.
 
 ## Chromecast and the metadata index
 
-A few years later,
+A few years later
 I was temporarily renting a furnished apartment,
 and it came with a multi-room Sonos system.
 Until then,
@@ -147,13 +147,13 @@ At the time <abbr>SSD</abbr>s were still quite expensive,
 so I kept my library on a spinning disk.
 Optimizing disk access patterns was a fun journey.
 Reading a few kilobytes of 16k files benefits enormously from a deep IO queue,
-because the arm can sweep across the disk and serve many reads along the way.
+because the head can sweep across the disk and serve many reads along the way.
 By bumping `/queue/nr_requests` in `/sys/block`,
 and reading with hundreds of threads,
 indexing 16k files with a cold page cache went down from 130s to 70s.
 
 Now I had a server that could serve my library,
-and I could start tracks with [rust-cast],
+and I could even start tracks with [rust-cast],
 but that’s still not a music player.
 I needed a UI.
 
@@ -172,7 +172,7 @@ None of them were great.
 A native Android app would not easily run on my desktop.
 Flutter was the new hot thing,
 but its opinionated tooling was incompatible with Nix,
-and it looked like I’d spend more time
+and I didn’t want to spend more time
 fixing my development environment every few months,
 than writing code.
 I gravitated back to web after all,
@@ -180,9 +180,10 @@ but JavaScript is unsuitable for anything over a few hundred lines of code,
 and TypeScript had a dependency on the NPM and nodejs ecosystem
 for which I have a zero-tolerance policy in my personal projects.
 (I’m excited for [typescript-go], but it did not exist at the time.)
-I started out with Elm,
+Fortunately, Elm and PureScript required no NPM or nodejs.
+I started with Elm,
 but I found it too constraining in how it interacts with JavaScript,
-which I needed to use Cast.
+which I needed to do to use Cast.
 So I switched to PureScript.
 If Elm is Haskell for frontend developers,
 PureScript is frontend for Haskell developers.
@@ -198,7 +199,7 @@ PureScript stuck.
 </p>
 
 In July 2019,
-for the first time I was able to cast a track from my web app,
+for the first time I was able to cast a track from my web app
 using the Cast API that Chromium exposes.
 Above is a frame from a video I took at the time.
 
@@ -430,14 +431,21 @@ My hope is that it learns to cluster music that goes well together,
 so it can suggest related albums when I’m building a playlist.
 I’m not sure if just my own listening history is sufficient for that,
 but the power of gradient descent is remarkable.
-With an embedding dimension of just 35,
-the model overfits,
-and memorizes the entire 40k-track history I train it on.
+I tried this idea back in 2018,
+but couldn’t get it to work,
+and abandoned it.
+Now that transformers have demonstrated their power
+I wanted to try those,
+but I didn’t even need to.
+This time,
+with an embedding dimension of just 35,
+my much simpler model overfitted,
+and memorized the entire 40k-track history I trained it on.
 There is no neural network here!
 This is just minimizing the cosine distance
 between a weighted sum of the past 300 listens,
 and the 12k distinct tracks in the history!
-With a dimension around 15,
+With a dimension around 10–15,
 so far it mostly learns to cluster music
 that I listened to in the same time period,
 which makes sense,
