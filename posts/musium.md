@@ -344,7 +344,7 @@ Until then, a high-pass filter at 55 Hz does wonders.
 [rew]: https://www.roomeqwizard.com/
 
 **Search as you type.**
-Musium keeps multiple indices that contain the words that occur
+Musium keeps indices that contain the words that occur
 in artist names, album titles, and track titles.
 I normalize the words,
 so I can type ‘royksopp’ or ‘dadi’ and find Röyksopp and Daði Freyr.
@@ -361,25 +361,29 @@ and a query runs in milliseconds,
 so search as you type feels instant.
 
 **Dominant color extraction.**
-When you search,
-or scroll through the library quickly,
-cover art thumbnails suddenly become visible.
+When you search or scroll through the library,
+that causes different cover art thumbnails to become visible.
 Even when those images are cached by the browser,
-it has to decode them.
-This takes time, which causes flicker.
+it has to decode them,
+and this takes time,
+which causes flicker.
+For scrolling I solve this by creating the `<img>` nodes
+already for thumbnails that will soon scroll into view,
+but for search we can’t predict what will be visible next.
 To mitigate that,
 I compute a dominant color for every album cover,
 which is used as a fallback.
-This makes the flicker much less jarring,
+This makes the flicker much less jarring:
 [see a comparison here][dominant-color].
 
 [dominant-color]: https://fosstodon.org/@ruuda/114437762369230042
 
-## Playcounts and sorting
+## Playcounts, discovery, and recommenders
 
 When I was younger,
 I could just remember which tracks on an album were the good ones.
-I’m not at an age any more where my brain just remembers anything I feed it,
+Unfortunately I’m not at an age any more
+where my brain just remembers anything I feed it,
 and as my library slowly grows,
 I increasingly struggle to find the right tracks.
 I added the ability to rate tracks,
@@ -417,20 +421,66 @@ It uses this to rank albums in a “for now” sorting mode,
 and it’s weighed into the discover mode as well.
 This feature works _amazingly_ well in practice.
 
-Something I’m currently working on
+Something I’m currently playing with
 is learning embedding vectors from my listening history,
 similar to word2vec.
 My hope is that it learns to cluster music that goes well together,
 so it can suggest related albums when I’m building a playlist.
 I’m not sure if just my own listening history is sufficient for that,
-but one thing I find remarkable
-is that with an embedding dimension of just 35,
-it overfits,
-and memorizes the entire 40k-track history I trained it on.
+but the power of gradient descent is remarkable.
+With an embedding dimension of just 35,
+the model overfits,
+and memorizes the entire 40k-track history I train it on.
 There is no neural network here!
 This is just minimizing the cosine distance
-between a weighted sum of the past 100 listens,
+between a weighted sum of the past 300 listens,
 and the 12k distinct tracks in the history!
-With a lower dimension,
-it looks like it mostly learns to cluster music
+With a dimension around 15,
+so far it mostly learns to cluster music
 that I listened to in the same time period,
+which makes sense,
+but it’s not learning genres like I hoped.
+I have more ideas I want to try here,
+and bringing in more data from other ListenBrainz and Last.fm users
+is also an option.
+Either way,
+it’s a nice problem to build more intuition for machine learning.
+
+## Inventing wheels is fun!
+
+I didn’t plan for it from the start,
+but over the past 11 years,
+I ended up building my own music player.
+It’s a great side project because it’s so diverse.
+I get to work with audio and digital signal processing.
+I get to implement database-like components
+like index data structures and full text search.
+There are opportunities for low-level optimization,
+but also to work on user interfaces and design.
+There are interesting math and machine learning problems.
+
+Musium is also a great source of inspiration and test bed for other tools I build.
+The tediousness of using SQLite from Rust
+was the driving motivation behind [Squiller][squiller],
+my tool that generates bindings for SQL queries.
+I now use it in several other projects too,
+and although it’s beta quality at best,
+I’m very pleased with the experience.
+The lexer and parser in Squiller
+were a refinement of the one I wrote for [Pris][pris],
+so by the time I built [RCL][rcl],
+I was pretty fluent in writing lexers and parsers.
+The frontend library came in handy for [Sempervivum][sempervivum]
+— my plant watering tracker that I use on a daily basis —
+and improvements I made there fed back into Musium.
+And although Musium persists its data in SQLite,
+the library and queries were a great dataset
+to test [Noblit][noblit],
+my toy database.
+
+And if I ever get bored with all that,
+there is still the pause feature I need to implement.
+
+[pris]:   /2017/04/27/a-language-for-designing-slides
+[rcl]:    https://github.com/ruuda/rcl
+[noblit]: https://github.com/ruuda/noblit
