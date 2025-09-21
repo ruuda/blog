@@ -2,8 +2,8 @@
 title: The story of Musium
 date: 2025-09-09
 lang: en-US
-minutes: ?
-synopsis: TODO
+minutes: 18
+synopsis: One of my longest running side projects is Musium, the music player I built for myself. In this post I explain why I built it, and I highlight some interesting parts of the process.
 run-in: Musium is the music player
 ---
 
@@ -13,7 +13,7 @@ that connects to the speakers in my living room,
 and I can control it from my local network using a webinterface.
 I’ve been using it on a daily basis for years,
 but it’s far from finished.
-It’s very polished in some areas,
+In some areas it’s very polished,
 but implementing pause and skip is something I haven’t gotten to yet.
 
 <p style="text-align: center">
@@ -37,15 +37,17 @@ for which I wrote [a code generator][squiller]
 that generates Rust bindings for SQL queries,
 and the frontend is written in PureScript
 using my own html builder library.
-I like polishing it:
+I take joy in getting the details right:
 the seek bar is not just a line, it renders a waveform,
 and the UI is animated throughout.
 Musium tracks fairly elaborate statistics about playcounts,
 so it can surface interesting music at the right time,
 and I developed [a new shuffling algorithm][shuffle] for it.
+Not only is it a lot of fun to build,
 Musium does _exactly_ what I want it to do,
 and that’s very satisfying.
-This is its story.
+As an entry for the [Lobsters blog carnival][carnival],
+this is its story.
 
 [carnival]: https://lobste.rs/s/0nstyk/join_lobsters_blog_carnival
 [claxon]:   https://github.com/ruuda/claxon
@@ -444,13 +446,14 @@ I have more ideas I want to try here,
 and bringing in more data from other ListenBrainz and Last.fm users
 is also an option.
 Either way,
-it’s a nice problem to build more intuition for machine learning.
+it’s a nice problem for building more intuition for machine learning.
 
 ## Inventing wheels is fun!
 
 I didn’t plan for it from the start,
 but over the past 11 years,
-I ended up building my own music player.
+I ended up building my own music player,
+that works exactly the way I want.
 It’s a great side project because it’s so diverse.
 I get to work with audio and digital signal processing.
 I get to implement database-like components
@@ -467,7 +470,7 @@ I now use it in several other projects too,
 and although it’s beta quality at best,
 I’m very pleased with the experience.
 The lexer and parser in Squiller
-were a refinement of the one I wrote for [Pris][pris],
+were a refinement of the ones I wrote for [Pris][pris],
 so by the time I built [RCL][rcl],
 I was pretty fluent in writing lexers and parsers.
 The frontend library came in handy for [Sempervivum][sempervivum]
