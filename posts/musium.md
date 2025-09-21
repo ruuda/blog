@@ -1,6 +1,6 @@
 ---
 title: The story of Musium
-date: 2025-09-09
+date: 2025-09-21
 lang: en-US
 minutes: 18
 synopsis: One of my longest running side projects is Musium, the music player I built for myself. In this post I explain why I built it, and I highlight some interesting parts of the process.
