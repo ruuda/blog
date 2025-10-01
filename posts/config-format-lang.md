@@ -94,14 +94,13 @@ using the following hypothetical configuration file:
 }
 ```
 
-Sure, there is line noise,
-and this file would be friendlier on the eye in a different format.
+Sure, this file would be friendlier on the eye in a different format.
 But the file also contains two bugs,
 and switching formats is not going to catch those.
 Can you spot them?
 To avoid spoilers,
 here’s some yaml to pad the page.
-I’ll even throw in some comments for clarity:
+I’ll even throw in a few comments for clarity:
 
 ```yaml
 buckets:
@@ -140,7 +139,8 @@ What's wrong?
    instead of the intended 30.
 
 Would you have caught those in review?
-And it gets worse:
+
+It gets worse:
 suppose we need to add a third database, Charlie.
 A perfect task for the intern,
 who is going to copy three stanzas
@@ -174,18 +174,61 @@ This is what that same configuration looks like in [RCL]:
 It’s a bit more to take in at first,
 but if you’ve ever seen Python, Rust or TypeScript,
 you can read this file.
-(For a gentle introduction,
+(For a more gentle introduction,
 check out [the tutorial][rcl-tutorial].)
 We can’t mix up regions,
-because the region is only defined _once_,
-and instead of a comment that promises
+because the region is only defined _once_.
+Instead of a comment that promises
 that there are usually 31536000 seconds in a year,
 we now have a _formula_ that computes it.
+And if we need to add `charlie`,
+that’s a 1-line diff.
 
 [RCL]:          https://rcl-lang.org/
 [rcl-tutorial]: https://docs.ruuda.nl/rcl/tutorial/
 
-## How to apply this in your application
+## Configuration languages
+
+Let’s clarify the terminology:
+
+* A **configuration format** specifies _data_,
+  with limited or no abilities for abstraction.
+* A **configuration language** is a
+  domain-specific programming language
+  optimized for expressing repetitive configurations.
+  It’s _code_ as much as it is data.
+
+As with formats,
+there is no shortage of configuration languages.
+Because there is more to a full language than there is to a format,
+their differences are less superficial.
+For example,
+[Dhall] has a static type system,
+RCL has a gradual type system,
+and [Jsonnet] is dynamically typed.
+All three are functional languages with user-defined functions.
+[Cue] takes a very different approach,
+but nonetheless enables abstraction.
+
+[Dhall]:   https://dhall-lang.org/
+[Jsonnet]: https://jsonnet.org/
+[Cue]:     https://cuelang.org/
+
+Configuration languages are a bikeshed magnet.
+Which syntax looks more pleasant?
+Which language has better tooling?
+Does it have enough stars on GitHub?
+After how many duplicated lines
+does the power of a configuration language
+outweigh the simplicity of plain data?
+Do we need a new language at all,
+or can we just write some Python or Nix?
+I don’t want to spark that discussion right now,
+that’s beside the point.
+The point is to start doing abstraction at all.
+_Real_ abstraction, not string templating.
+
+## How to configure your applications
 
 Foobar
 
