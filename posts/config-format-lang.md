@@ -10,7 +10,7 @@ teaser: automating-configuration-updates
 
 The world is growing tired of yaml.
 Alternative configuration formats are making the rounds.
-Toml has been steadily gaining ground,
+Toml has steadily been gaining traction,
 in part due to tools like Cargo
 and adoption in the Python standard library.
 Json supersets
@@ -33,12 +33,11 @@ any other format is basically fine,
 and their differences are mostly superficial.
 The one real difference is in their data models.
 Most formats adopt the json data model of objects and arrays,
-while KDL (like [HCL], and e.g. [Nginx][nginx] config) adopts
+while KDL (like [HCL], and e.g. [Nginx][nginx]) adopts
 the XML data model of named nodes with attributes and children.
 The rest is just syntax.
 And yes, syntax _does_ matter,
-but it doesn’t matter _that_ much.
-Line noise is not the real problem here!
+but line noise is not the real problem here!
 
 [nginx]:    https://nginx.org/en/docs/beginners_guide.html#conf_structure
 [HCL]:      https://opentofu.org/docs/language/syntax/configuration/
@@ -49,7 +48,7 @@ Line noise is not the real problem here!
 To give a concrete example of a more important problem,
 suppose we need to define cloud storage buckets to store backups.
 We want to back up two databases: Alpha and Bravo.
-For both of them we need three buckets:
+For each we need three buckets:
 one for hourly, daily, and monthly backups.
 They should have a lifecycle policy
 that deletes backups after 4, 30, and 365 days.
@@ -94,13 +93,13 @@ using the following hypothetical configuration file:
 }
 ```
 
-Sure, this file would be friendlier on the eye in a different format.
+Yes, this file would be friendlier on the eye in a different format.
 But the file also contains two bugs,
 and switching formats is not going to catch those.
 Can you spot them?
 To avoid spoilers,
-here’s some yaml to pad the page.
-I’ll even throw in a few comments for clarity:
+here’s a bit of yaml to pad the page.
+I’ll even throw in some comments for clarity:
 
 ```yaml
 buckets:
@@ -140,17 +139,16 @@ What's wrong?
 
 Would you have caught those in review?
 
-It gets worse:
-suppose we need to add a third database, Charlie.
+Now suppose we need to add a third database, Charlie.
 A perfect task for the intern,
 who is going to copy three stanzas
 and change `bravo` to `charlie`.
 Congrats, we now copied the bugs!
 
-While line noise matters,
+While line noise matters to some extent,
 the real problem is that we have no tools for abstraction.
-We can bikeshed about formats,
-but what we really need is a _language_.
+We can bikeshed about trailing commas,
+but what we really need is a _programming language_.
 This is what that same configuration looks like in [RCL]:
 
 <pre><code class="sourceCode">{
@@ -176,20 +174,23 @@ but if you’ve ever seen Python, Rust or TypeScript,
 you can read this file.
 (For a more gentle introduction,
 check out [the tutorial][rcl-tutorial].)
-We can’t mix up regions,
-because the region is only defined _once_.
-Instead of a comment that promises
-that there are usually 31536000 seconds in a year,
-we now have a _formula_ that computes it.
-And if we need to add `charlie`,
-that’s a 1-line diff.
+Note how we eliminated two categories of bugs:
+
+* We can’t mix up regions,
+  because the region is only defined _once_.
+* Instead of a comment that promises
+  that there are usually 31,536,000 seconds in a year,
+  we now have an obvious _formula_ that computes it.
+* If we ever need to add `charlie`, that’s a 1-line diff.
+
+_This_ is where the real win is!
 
 [RCL]:          https://rcl-lang.org/
 [rcl-tutorial]: https://docs.ruuda.nl/rcl/tutorial/
 
 ## Configuration languages
 
-Let’s clarify the terminology:
+Let’s introduce some terminology.
 
 * A **configuration format** specifies _data_,
   with limited or no abilities for abstraction.
@@ -201,10 +202,10 @@ Let’s clarify the terminology:
 As with formats,
 there is no shortage of configuration languages.
 Because there is more to a full language than there is to a format,
-their differences are less superficial.
+their differences are not as superficial.
 For example,
-[Dhall] has a static type system,
-RCL has a gradual type system,
+[Dhall] has a rigid static type system,
+[RCL] has a gradual type system,
 and [Jsonnet] is dynamically typed.
 All three are functional languages with user-defined functions.
 [Cue] takes a very different approach,
@@ -214,19 +215,20 @@ but nonetheless enables abstraction.
 [Jsonnet]: https://jsonnet.org/
 [Cue]:     https://cuelang.org/
 
-Configuration languages are a bikeshed magnet.
-Which syntax looks more pleasant?
-Which language has better tooling?
-Does it have enough stars on GitHub?
+Abstracting configuration seems to be a bikeshed magnet.
 After how many duplicated lines
 does the power of a configuration language
 outweigh the simplicity of plain data?
-Do we need a new language at all,
+Is the syntax sufficiently pleasant?
+Does it have enough stars on GitHub?
+What about tooling?
+Do we need a domain-specific language at all,
 or can we just write some Python or Nix?
-I don’t want to spark that discussion right now,
-that’s beside the point.
-The point is to start doing abstraction at all.
-_Real_ abstraction, not string templating.
+These are fair questions,
+but my point is not to start a discussion
+about tool preferences.
+The point is to _start doing abstraction at all_.
+Real abstraction, not string templating.
 
 ## How to configure your applications
 
