@@ -230,7 +230,115 @@ about tool preferences.
 The point is to _start doing abstraction at all_.
 Real abstraction, not string templating.
 
-## How to configure your applications
+## How to configure your application
+
+I’m advocating for configuration languages.
+Does that mean that applications need to pick and embed one?
+No!
+We can have the best of all worlds!
+Almost, at least.
+
+ * We can have small hand-written configurations in a friendly format.
+ * We can generate larger configurations using your favorite tool.
+
+Here’s how:
+
+ 1. Define configuration as a data structure in your program.
+ 2. Ensure you can deserialize the data structure from json and toml,
+    and if you like, yaml or a json dialect.
+
+Now we can start simple,
+and write a toml file by hand.
+Once the configuration grows more complex,
+or we need to configure multiple similar instances,
+we can generate configuration using any tool
+— whether that’s a configuration language, Nix, or just Python —
+and export that as json.
+Do you prefer a different syntax?
+Sure, use your favorite tool, and export to json.
+If we put generated files under source control along with their source
+(heresy, I know)
+they even remain greppable,
+and the full impact of changes can be inspected and reviewed.
+
+This is easy to do.
+For example, in Rust we get deserialization from json and toml
+almost for free with a few Serde derive annotations.
+In Python we have dataclasses, json, and toml right in the standard library,
+and Pydantic to make it easier to work with nested types.
+In about 10 lines of code,
+you can accept both json and toml.
+
+Applications don’t need to force
+a configuration language or exotic format onto users;
+json is already the universal data format.
+
+
+## Appendix: Rust example
+
+```rust
+#[derive(Debug, Deserialize)]
+struct Config {
+    app: AppConfig,
+    server: ServerConfig,
+    database: DatabaseConfig,
+}
+
+#[derive(Debug, Deserialize)]
+struct ServerConfig {
+    /// The address and port to listen on, e.g. `127.0.0.1:8000`.
+    listen: String,
+
+    /// The number of http handler threads to start.
+    num_threads: u32,
+}
+
+// Other structs omitted for brevity.
+
+fn load_config(fname: &Path) -> Result<Config> {
+    let data = std::fs::read_to_string(fname)?;
+    let config = match () {
+      _ if fname.ends_with(".toml") => toml::from_str(&data)?,
+      _ if fname.ends_with(".json") => serde_json::from_str(&data)?,
+      _ => return Err(anyhow!("Unrecognized config format.")),
+    };
+    Ok(config)
+}
+```
+
+## Appendix: Python example
+
+In Python we have dataclasses, json, and tomllib right in the standard library.
+For more ergonomic conversion of nested types,
+we can use Pydantic:
+
+```python
+class Config(BaseModel):
+    app: AppConfig
+    server: ServerConfig
+    database: DatabaseConfig
+
+
+class ServerConfig(BaseModel):
+    # The address and port to listen on, e.g. `127.0.0.1:8000`.
+    listen: str
+
+    # The number of http handler threads to start.
+    num_threads: int
+
+
+def load_config(fname: str) -> Config:
+    data_str = open(fname, "r", encoding="utf-8").read()
+
+    if fname.endswith(".toml"):
+        data = toml.loads(data_str)
+    elif fname.endswith(".json"):
+        data = json.loads(data_str)
+    else:
+        raise Exception("Unexpected config format.")
+
+    return Config(**data)
+```
 
 Foobar
 
