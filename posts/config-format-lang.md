@@ -174,7 +174,8 @@ but if you’ve ever seen Python, Rust or TypeScript,
 you can read this file.
 (For a more gentle introduction,
 check out [the tutorial][rcl-tutorial].)
-Note how we eliminated two categories of bugs:
+Note how we eliminated two categories of bugs,
+and made the file more maintainable:
 
 * We can’t mix up regions,
   because the region is only defined _once_.
@@ -219,7 +220,7 @@ Abstracting configuration seems to be a bikeshed magnet.
 After how many duplicated lines
 does the power of a configuration language
 outweigh the simplicity of plain data?
-Is the syntax sufficiently pleasant?
+Is the syntax sufficiently lightweight?
 Does it have enough stars on GitHub?
 What about tooling?
 Do we need a domain-specific language at all,
@@ -273,8 +274,15 @@ Applications don’t need to force
 a configuration language or exotic format onto users;
 json is already the universal data format.
 
+Todo meh something something build step.
 
-## Appendix: Rust example
+## Conclusion
+
+Configuration format is not configuration language.
+
+## Appendix: Example
+
+In Rust, we can use `serde`, `serde_json`, and `toml`:
 
 ```rust
 #[derive(Debug, Deserialize)]
@@ -306,11 +314,7 @@ fn load_config(fname: &Path) -> Result<Config> {
 }
 ```
 
-## Appendix: Python example
-
-In Python we have dataclasses, json, and tomllib right in the standard library.
-For more ergonomic conversion of nested types,
-we can use Pydantic:
+In Python we can use `pydantic`, `json`, and `tomllib`:
 
 ```python
 class Config(BaseModel):
@@ -331,7 +335,7 @@ def load_config(fname: str) -> Config:
     data_str = open(fname, "r", encoding="utf-8").read()
 
     if fname.endswith(".toml"):
-        data = toml.loads(data_str)
+        data = tomllib.loads(data_str)
     elif fname.endswith(".json"):
         data = json.loads(data_str)
     else:
@@ -339,13 +343,3 @@ def load_config(fname: str) -> Config:
 
     return Config(**data)
 ```
-
-Foobar
-
- * Deserialize struct.
- * Accept toml or json, and if you like, yaml or a json dialect.
- * Check in the end result, so we can grep.
-
-## Conclusion
-
-Configuration format is not configuration language.
