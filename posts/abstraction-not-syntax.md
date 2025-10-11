@@ -29,11 +29,11 @@ between friendly and simple.
 [maml]:  https://maml.dev/
 
 While [I do believe that yaml is harmful][yamlhell],
-any other format is basically fine,
+all of the simpler formats are basically fine,
 and their differences are mostly superficial.
 The one real difference is in their data models.
 Most formats adopt the json data model of objects and arrays,
-while KDL (like [HCL], and e.g. [Nginx][nginx]) adopts
+while KDL, [HCL], and e.g. [Nginx][nginx] adopt
 the XML data model of named nodes with attributes and children.
 The rest is just syntax.
 And yes, syntax _does_ matter,
@@ -152,7 +152,7 @@ and therefore it doesn’t address the real problem.
 While line noise matters to some extent,
 the real problem is that we have no tools for abstraction.
 We can bikeshed about quote styles and trailing commas,
-but what we really need is a _programming language_.
+but what we really need is a _for loop_.
 This is what that same configuration looks like in [RCL]:
 
 <pre><code class="sourceCode">{
@@ -183,10 +183,10 @@ and made the file more maintainable:
 
 * We can’t mix up regions,
   because the region is only defined _once_.
-* Instead of a comment that promises
-  that there are usually 31,536,000 seconds in a year,
-  we now have a _formula_ that computes it.
-  A big magic number is meaningless,
+* Instead of a comment that solemny swears
+  that there are 31,536,000 seconds in 365 days,
+  we have a _formula_ that computes this.
+  A large magic number is meaningless,
   but most people will recognize 3600 as the number of seconds in an hour,
   and 24 as the number of hours in a day.
 * If we ever need to add `charlie`, that’s a 1-line diff.
@@ -230,8 +230,8 @@ but also how it impacts generated files.
 
 ## Tools
 
-Configuration languages such as [Cue], [Dhall], [Jsonnet], or [RCL]
-are designed to eliminate boilerplate in repetitive configuration,
+Configuration languages like [Cue], [Dhall], [Jsonnet], or [RCL]
+are designed specifically to eliminate boilerplate in repetitive configuration,
 but you don’t necessarily have to introduce new tools.
 A bit of Python or Nix that outputs json or toml can go a long way.
 Remember that yaml
