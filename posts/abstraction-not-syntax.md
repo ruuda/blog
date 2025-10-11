@@ -234,7 +234,14 @@ Configuration languages such as [Cue], [Dhall], [Jsonnet], or [RCL]
 are designed to eliminate boilerplate in repetitive configuration,
 but you don’t necessarily have to introduce new tools.
 A bit of Python or Nix that outputs json or toml can go a long way.
-Remember that yaml is a json superset,
+Remember that yaml
+<span
+  style="text-decoration: underline dotted #c36; text-underline-offset: 2pt"
+  title="As of yaml 1.2, but even if the target is different,
+the pathological edge cases don’t matter in practice
+when we control the generated json."
+>is</span>
+a json superset,
 so anything that takes yaml accepts json!
 Deduplication beats copy-pasting,
 and manipulating data structures is safer than string templating.
