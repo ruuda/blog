@@ -14,14 +14,14 @@ Toml has steadily been gaining traction,
 in part due to tools like Cargo
 and adoption in the Python standard library.
 Json supersets
-(with [comments][jcma],
+(with [comments][jsnc],
 [commas][jwcc],
 and [the digit 5][json5])
 are flourishing,
 while [KDL], [kson] and now [maml] promise to hit the sweet spot
 between friendly and simple.
 
-[jcma]:  https://code.visualstudio.com/docs/languages/json#_json-with-comments
+[jsnc]:  https://jsonc.org/
 [jwcc]:  https://nigeltao.github.io/blog/2021/json-with-commas-comments.html
 [json5]: https://json5.org/
 [KDL]:   https://kdl.dev/
@@ -249,7 +249,7 @@ The world is growing tired of yaml,
 and alternative configuration formats are making the rounds.
 While I applaud replacing yaml with simpler formats like toml,
 and I prefer working with pretty code over working with ugly code,
-I also think that arguing over which multi-line string syntax is superior
+I also think that arguing over which multi-line string syntax is superior,
 is missing a deeper issue.
 
 When configurations grow more complex,
