@@ -1,5 +1,5 @@
 ---
-title: Don’t confuse configuration formats with configuration languages
+title: Abstraction, not syntax
 date: 2025-10-01
 lang: en-US
 synopsis: Bikeshed about configuration formats is beside the point. Alternative formats solve superficial problems, languages solve the real ones.
@@ -43,9 +43,10 @@ but line noise is not the real problem here!
 [HCL]:      https://opentofu.org/docs/language/syntax/configuration/
 [yamlhell]: /2023/01/11/the-yaml-document-from-hell
 
-## Abstraction, not syntax
+## Syntax is superficial
 
-To give a concrete example of a more important problem,
+The real problem is the inability to do safe abstraction.
+Let’s look at an example:
 suppose we need to define cloud storage buckets to store backups.
 We want to back up two databases: Alpha and Bravo.
 For each we need three buckets:
@@ -95,7 +96,7 @@ using the following hypothetical configuration file:
 
 Yes, this file would be friendlier on the eye in a different format.
 But the file also contains two bugs,
-and switching formats is not going to catch those.
+and switching formats is not going to fix those.
 Can you spot them?
 To avoid spoilers,
 here’s a bit of yaml to pad the page.
@@ -129,25 +130,28 @@ buckets:
       delete_after_seconds: 31536000  # 365 days
 ```
 
-What's wrong?
+What’s wrong?
 
  * `bravo-hourly` is located in the US,
-   while the other buckets are in the EU.
+   while the other buckets are in Europe.
  * `bravo-daily` is missing a zero on the expiration time,
    and keeps backups for only 3 days,
    instead of the intended 30.
 
 Would you have caught those in review?
-
 Now suppose we need to add a third database, Charlie.
-A perfect task for the intern,
-who is going to copy three stanzas
+We copy-paste the three stanzas,
 and change `bravo` to `charlie`.
 Congrats, we now copied the bugs!
+Adopting a different format might make the file easier on the eye,
+but it doesn’t reduce repetition,
+and therefore doesn’t address the real problem.
+
+## Abstraction
 
 While line noise matters to some extent,
 the real problem is that we have no tools for abstraction.
-We can bikeshed about trailing commas,
+We can bikeshed about quote styles and trailing commas,
 but what we really need is a _programming language_.
 This is what that same configuration looks like in [RCL]:
 
@@ -189,6 +193,50 @@ _This_ is where the real win is!
 [RCL]:          https://rcl-lang.org/
 [rcl-tutorial]: https://docs.ruuda.nl/rcl/tutorial/
 
+## Trade-offs
+
+While generating configuration solves problems,
+it also introduces new problems:
+
+ * The applications we need to configure probably don’t
+   natively accept config in your favorite language.
+   This means we need to introduce
+   an intermediate build step to generate the final configuation files.
+ * [Greppability] suffers.
+   For example, the full names of the buckets
+   no longer occur directly in the source code.
+ * There is a fine line between tasteful abstraction and overcomplication.
+   After how many lines of duplicated code
+   does the power of a configuration language
+   outweigh the simplicity of plain data?
+
+When we have configuration files under source control,
+we can mitigate these points somewhat
+by checking in the generated files.
+(Heresy, I know!)
+This restores the ability to search,
+and we can now review changes from both sides:
+we can see the diff in the generator,
+but also how it impacts generated files.
+
+[Greppability]: https://morizbuesing.com/blog/greppability-code-metric/
+
+## Conclusion
+
+How to navigate the balance between code and data
+remains a matter of applying good judgment,
+but for large enough configurations,
+the right balance is unlikely to be at 100% data.
+
+## Conclusion
+
+Configuration languages such as [Cue], [Dhall], [Jsonnet], or [RCL]
+are designed for this,
+but you don’t necessarily have to introduce new tools.
+A bit of Python or Nix that outputs json or toml can go a long way.
+Deduplication beats copy-pasting,
+and manipulating data structures is safer than string templating.
+
 ## Configuration languages
 
 Let’s introduce some terminology.
@@ -203,7 +251,7 @@ Let’s introduce some terminology.
 As with formats,
 there is no shortage of configuration languages.
 Because there is more to a full language than there is to a format,
-their differences are not as superficial.
+their differences are less superficial.
 For example,
 [Dhall] has a rigid static type system,
 [RCL] has a gradual type system,
