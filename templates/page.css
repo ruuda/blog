@@ -348,7 +348,7 @@ code.sourceCode
 
 /* Syntax highlighting colors, adapted from the default prism.js theme. */
 .kw, .cf           { color: #07a; } /* Keyword, control flow */
-.dt, .at           { color: #d56; } /* Data type, function, attribute */
+.dt, .at, .bu      { color: #d56; } /* Data type, function, attribute */
 .fu                { color: #690; } /* Function */
 .dv, .bn, .fl, .er { color: #905; } /* Decimal, base N, float, decimal part */
 .ch, .st           { color: #d80; } /* Character, string */
