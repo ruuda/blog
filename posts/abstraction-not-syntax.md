@@ -1,9 +1,9 @@
 ---
 title: Abstraction, not syntax
-date: 2025-10-01
+date: 2025-10-12
 lang: en-US
-synopsis: Bikeshed about configuration formats is beside the point. Alternative formats solve superficial problems, languages solve the real ones.
-minutes: ?
+synopsis: Alternative configuration formats solve superficial problems. Configuration languages solve the deeper problem: the need for abstraction.
+minutes: 7
 run-in: The world is growing tired of yaml.
 teaser: automating-configuration-updates
 ---
@@ -141,7 +141,9 @@ Would you have caught those in review?
 Now suppose we need to add a third database, Charlie.
 We copy-paste the three stanzas,
 and change `bravo` to `charlie`.
-Congrats, we now copied the bugs!
+Congrats, we now copied the bugs.
+And now that <abbr>LLM</abbr>s are catching on,
+we don’t even have to copy the bugs manually any more!
 
 Adopting a different format might make the file easier on the eye,
 but it doesn’t reduce repetition,
@@ -149,8 +151,8 @@ and therefore it doesn’t address the real problem.
 
 ## Abstraction
 
-While line noise matters to some extent,
-the real problem is that we have no tools for abstraction.
+While reducing line noise is a noble goal,
+enabling abstraction is a more impactful feature.
 We can bikeshed about quote styles and trailing commas,
 but what we really need is a _for loop_.
 This is what that same configuration looks like in [RCL]:
@@ -254,8 +256,9 @@ and manipulating data structures is safer than string templating.
 
 The world is growing tired of yaml,
 and alternative configuration formats are making the rounds.
-While I applaud replacing yaml with simpler formats like toml,
-and I prefer working with pretty code over working with ugly code,
+I applaud replacing yaml with simpler formats like toml,
+and I sure prefer working with pretty code over working with ugly code.
+However,
 I also think that arguing over which multi-line string syntax is superior,
 is missing a deeper issue.
 
