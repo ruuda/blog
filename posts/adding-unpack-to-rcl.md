@@ -21,17 +21,16 @@ After more than two years,
 [v0.11.0][v0110] finally adds this feature,
 and you can now use `..` and `...` to unpack lists and dicts:
 
-```rcl
-let xs = [3, 4];
-let ys = [1, 2, ..xs, 5, 6];
+<pre><code class="sourceCode"><span class="kw">let</span> xs = [<span class="dv">3</span>, <span class="dv">4</span>];
+<span class="kw">let</span> ys = [<span class="dv">1</span>, <span class="dv">2</span>, ..xs, <span class="dv">5</span>, <span class="dv">6</span>];
 
-// TODO: Less contrived example.
-let defaults = { kind = "fruit", tasty = true };
-let fruits = [
-  { ...defaults, name = "banana" },
-  { ...defaults, name = "grapefruit", tasty = false },
+<span class="co">// TODO: Less contrived example.</span>
+<span class="kw">let</span> defaults = { <span class="n">kind</span> = <span class="st">"fruit"</span>, <span class="n">tasty</span> = <span class="kw">true</span> };
+<span class="kw">let</span> fruits = [
+  { ...defaults, <span class="n">name</span> = <span class="st">"banana"</span> },
+  { ...defaults, <span class="n">name</span> = <span class="st">"grapefruit"</span>, <span class="n">tasty</span> = <span class="kw">false</span> },
 ];
-```
+</code></pre>
 
 In this post we’ll explore the trade-offs involved in adding this feature.
 
@@ -41,25 +40,23 @@ Unpack does not add new technical capabilities to RCL.
 What unpack can do, was already possible with comprehensions.
 This list unpack and comprehension are equivalent:
 
-```rcl
-[1, 2, ..xs]
-[1, 2, for x in xs: x]
-```
+<pre><code class="sourceCode">[<span class="dv">1</span>, <span class="dv">2</span>, ..xs]
+[<span class="dv">1</span>, <span class="dv">2</span>, <span class="kw">for</span> x <span class="kw">in</span> xs: x]
+</code></pre>
+
 
 And this dict unpack and comprehension are equivalent:
 
-```rcl
-{ id = 42, ...opts }
-{ id = 42, for k, v in opts: k: v }
-```
+<pre><code class="sourceCode">{ <span class="n">id</span> = <span class="dv">42</span>, ...opts }
+{ <span class="n">id</span> = <span class="dv">42</span>, <span class="kw">for</span> k, v <span class="kw">in</span> opts: <span class="n">k</span>: v }
+</code></pre>
 
 Furthermore, the union operator `|`
 could be used for dict and set unions.
 With that, the above dict could be written as:
 
-```rcl
-{ id = 42 } | opts
-```
+<pre><code class="sourceCode">{ <span class="n">id</span> = <span class="dv">42</span> } | opts
+</code></pre>
 
 There are two problems with those options.
 Comprehensions are too verbose,
@@ -87,24 +84,23 @@ Once we express unions with unpack,
 everything becomes completely uniform.
 Compare:
 
-```rcl
-// With union operator:
-let widget =
+<pre><code class="sourceCode"><span class="co">// With union operator:</span>
+<span class="kw">let</span> widget =
   widget_default_opts
   | turbo_encabulator_opts
   | {
-    id = 42,
-    bearings = "spurving",
+    <span class="n">id</span> = <span class="dv">42</span>,
+    <span class="n">bearings</span> = <span class="st">"spurving"</span>,
   };
 
-// With unpack:
-let widget = {
+<span class="co">// With unpack:</span>
+<span class="kw">let</span> widget = {
   ...widget_default_opts,
   ...turbo_encabulator_opts,
-  id = 42,
-  bearings = "spurving",
+  <span class="n">id</span> = <span class="dv">42</span>,
+  <span class="n">bearings</span> = <span class="st">"spurving"</span>,
 };
-```
+</code></pre>
 
 Sure,
 the difference is superficial,
