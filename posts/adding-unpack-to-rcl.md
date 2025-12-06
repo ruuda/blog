@@ -17,8 +17,7 @@ out of other lists and dicts.
 While RCL had several ways to do this,
 I wasn’t satisfied with them.
 I wanted _unpack_.
-After more than two years,
-[v0.11.0][v0110] finally adds this feature,
+In [v0.11.0][v0110] I finally implemented this feature,
 and you can now use `..` and `...` to unpack lists and dicts:
 
 <pre><code class="sourceCode"><span class="kw">let</span> xs = [<span class="dv">3</span>, <span class="dv">4</span>];
@@ -73,7 +72,7 @@ and they obscure a simple operation
 (splice a list, set, or dict into another one)
 behind syntactic noise
 (keywords, punctuation, and additional variables).
-Even the `...` is a bit verbose for my taste,
+Even the triple dot is a bit verbose for my taste,
 but we’ll get to why it exists below.
 
 The union operator doesn’t suffer from verbosity,
@@ -102,15 +101,15 @@ Compare:
 };
 </code></pre>
 
-Sure,
-the difference is superficial,
+The difference is superficial,
 but it is one of those difference between a tool
 that technically does what you need,
 and one that’s a joy to use.
 Moreover,
-I expect the unpack version to be more self-explanatory to newcomers as well.
+I expect the unpack version to be more self-explanatory to newcomers.
 Aside from the formatting challenge,
-the union operator had a fairly complex implementation in the type system.
+the union operator has a fairly complex implementation in the type system,
+and removing it would be a welcome simplification.
 
 Unpack solves all these problems neatly,
 so for a long time it was clear to me that RCL needed unpack.
@@ -125,6 +124,26 @@ Why did it take so long to add?
 ## Do we really need sets?
 
 Maybe ... not?
+
+## Unpack in other languages
+
+While unpack does not increase expressivity,
+it greatly improves ergonomics.
+I was pretty sure I wanted it in RCL,
+and now that it exists,
+it works well and feels natural.
+This is no surprise:
+unpack is not exactly a new idea.
+Python is a big source of inspiration for RCL,
+and it has unpack (written `*` and `**` rather than `..` and `...`).
+Even Javascript has it nowadays (called ‘spread’ there).
+Among other configuration languages though,
+none of
+Cue,
+Dhall,
+Jsonnet,
+or Nickel feature unpack.
+And then how to conclude this paragraph?
 
 ## Conclusion
 
