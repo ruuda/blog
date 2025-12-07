@@ -113,33 +113,36 @@ and more pleasant to read.
 For a long time it was clear to me that RCL needed unpack.
 Why did it take so long to add?
 
-## Dead ends
+## Set, the troublemaker
 
-Before landing on the current implementation,
-I struggled with two aspects.
+It turns out that [as with number types][float],
+my wishlist had incompatible items,
+and one of them had to go.
+I wanted:
 
- * I would like to use `..` for every unpack.
- * How should the typechecker deal with “things that can be unpacked”?
+ * A set data type.
+ * That is written with curly braces just like dicts.
+ * That is always syntactically distinguishable from dicts.
+ * A single syntax, `..`, for all types of unpack.
 
-The complicating factor behind both is that RCL has sets,
-in addition to lists and dicts.
+It turns out, sets cause trouble.
 As in Python,
-both sets and dicts are written with curly braces.
+both sets and dicts are written with curly braces in RCL.
 This causes some implementation complexity,
 but at least it was always possible to tell dicts and sets apart syntactically:
 dicts contain key-value pairs,
 whereas sets contain single values.
 (The one exception is the empty collection `{}`,
-but json compatibility forces this to be a dict.
+which for json compatibility has to be a dict.
 The empty set is written `std.empty_set`.)
-These are clear:
+These are unambiguous:
 
 ```rcl
-let set1 = { 1, 2, 3 };
-let set2 = { for x in set: x };
+let set1 = {1, 2, 3};
+let set2 = {for x in xs: x};
 
 let dict1 = { a = 1, b = 2 };
-let dict2 = { for k, v in  dict: k: v };
+let dict2 = { for k, v in dict: k: v };
 ```
 
 But if `..` unpacked both sets and dicts,
@@ -161,26 +164,94 @@ the definitions of variables that may be far away.
 [float]:       /2025/a-float-walks-into-a-gradual-type-system
 [typechecker]: /2024/a-type-system-for-rcl-part-2-the-type-system
 
-The solution is to use a different syntax for dict unpack,
-than for list/set unpack.
-In one sense,
-this makes RCL more complex:
-there is now _more_ syntax,
-_more_ constructs.
-But in [the Hickeyan sense][simple-easy],
-reusing `..` for two different purposes complects them,
-and the separate `..` and `...` are each simple.
-Something something many cases to report errors.
+And so the wishlist items are incompatible.
+One of them has to go.
+
+**Removing sets.**<br>
+Without sets,
+all these problems go away.
+Many other problems _also_ go away:
+duplication between list and set methods,
+having to write “list or set” in places that accept both,
+and having only bad options for typing such cases
+(unions exist but are verbose and may be confusing to newcomers,
+but a dedicated collection type brings even more complexity).
+Do we really need sets?
+As with unsigned integers,
+they fill a niche where they encode constraints that are sometimes useful,
+but in priciple we could just use lists
+and add e.g. a `unique` method that removes duplicates.
+If your collections are so large that algorithmic complexity matters,
+RCL is probably not the right language for your problem anyway.
+So I tried it.
+I deleted sets.
+I played around with the stripped-down version,
+but ultimately,
+sets _are_ useful,
+and I didn’t want to give up on them yet.
+
+**Give sets a different syntax.**<br>
+Using a single unpack syntax only creates an ambiguity
+when dicts and sets are both written with curly braces.
+What if sets used different symbols?
+The problem here is that there aren’t that many symmetric pairs in ASCII.
+`()`, `[]`, and `{}` are already in use,
+and `<>` create ambiguities with the comparison operators.
+(This is what makes C++ notoriously difficult to parse,
+and why Rust features the [turbofish].)
+We could go for a digraph,
+maybe `{||}`, `@{}`, or a keyword like `set {}`,
+but they add visual noise,
+and are less obvious to newcomers.
+To me,
+being _reasonable_ also means avoiding surprise,
+respecting established conventions,
+and being readable even to people who haven’t seen the language before.
+The braces have to stay.
+
+[turbofish]: https://doc.rust-lang.org/reference/glossary.html#turbofish
+
+**Embrace ambiguity.**<br>
+Is it really so bad
+that we can’t tell whether `{ ..xs }` is a dict or set?
+After all,
+we can’t tell the type of just `xs` from the syntax tree either.
+Even if it’s not clear from the syntax,
+the typechecker can usually infer it,
+and otherwise we can deal with it at runtime.
+I did not try implementing this option,
+partly because I was afraid it would be an invasive change,
+and partly because I feel
+the type of collection literals _should_ be obvious from a glance at the code.
+I might revisit this option later.
+We can always desugar `...` to `..` in a future version,
+and the formatter could automatically upgrade documents.
+The other direction
+— going from one kind of unpack to two
+— would be much harder.
+
+**Use `...` for dict unpack.**</br>
+This is what I settled on for now:
+use `..` to unpack lists and sets,
+and `...` to unpack dicts.
+There is precedent for such a distinction:
+Python uses `*` and `**`.
+Having just one type of unpack is in one sense simpler:
+there is less syntax to learn and memorize.
+It’s also more discoverable:
+what you know about list unpack
+transfers to dicts.
+However,
+reusing `..` for both kinds of unpack
+is _not_ simpler in [the Hickeyan sense][simple-easy],
+and we can address discoverability
+with helpful error messages.
+Those turned out to be more complex than I expected
+because of the many possible cases,
+but in the end I handled them all,
+and so far I’m happy with the result.
 
 [simple-easy]: https://www.infoq.com/presentations/Simple-Made-Easy/
-
- * Sensible type system.
- * Syntactic distinction between dict and set.
- * `..` only.
-
-## Do we really need sets?
-
-Maybe ... not?
 
 ## Unpack in other languages
 
