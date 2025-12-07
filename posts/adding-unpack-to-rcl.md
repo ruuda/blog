@@ -4,7 +4,7 @@ break: unpack syntax
 date: 2025-11-13
 lang: en-US
 minutes: ??
-synopsis: ??
+synopsis: In this post I explore the design space of adding unpack syntax to RCL. Due to RCL having sets, there are interesting trade-offs here.
 run-in: I am building
 ---
 
