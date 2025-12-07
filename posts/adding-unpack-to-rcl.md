@@ -1,7 +1,7 @@
 ---
 title: Adding unpack syntax to RCL
 break: unpack syntax
-date: 2025-11-13
+date: 2025-12-07
 lang: en-US
 minutes: ??
 synopsis: In this post I explore the design space of adding unpack syntax to RCL. Due to RCL having sets, there are interesting trade-offs here.
