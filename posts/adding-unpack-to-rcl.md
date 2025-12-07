@@ -3,7 +3,7 @@ title: Adding unpack syntax to RCL
 break: unpack syntax
 date: 2025-12-07
 lang: en-US
-minutes: ??
+minutes: 10
 synopsis: In this post I explore the design space of adding unpack syntax to RCL. Due to RCL having sets, there are interesting trade-offs here.
 run-in: I am building
 ---
@@ -32,7 +32,7 @@ and you can now use `..` and `...` to unpack lists and dicts:
 ];
 </code></pre>
 
-In this post we’ll explore the trade-offs involved in designing this feature.
+In this post we’ll explore the trade-offs involved in adding this feature.
 
 ## Why unpack?
 
@@ -111,8 +111,8 @@ and removing it would be a welcome simplification.
 Unpack solves these problems with a single mechanism.
 It makes RCL more coherent,
 and more pleasant to read.
-For a long time it was clear to me that RCL needed unpack.
-Why did it take so long to add?
+For a long time it was clear to me that RCL needed unpack,
+but it took me some time to work out the details.
 
 ## Meet Set, the troublemaker
 
@@ -176,12 +176,12 @@ having to write “list or set” in places that accept both,
 and having only bad options for typing such cases
 (unions exist but are verbose and may be confusing to newcomers,
 but a dedicated collection type brings even more complexity).
-Do we really need sets?
+Do we really _need_ sets?
 As with unsigned integers,
 they fill a niche where they encode constraints that are sometimes useful,
 but in priciple we could just use lists
 and add e.g. a `unique` method that removes duplicates.
-If your collections are so large that algorithmic complexity matters,
+And if your collections are so large that algorithmic complexity matters,
 RCL is probably not the right language for your problem anyway.
 So I tried it.
 I deleted sets.
@@ -194,18 +194,19 @@ and I didn’t want to give up on them yet.
 Using a single unpack syntax only creates an ambiguity
 when dicts and sets are both written with curly braces.
 What if sets used different symbols?
-The problem here is that there aren’t that many symmetric pairs in ASCII.
+Which ones though?
+There aren’t that many symmetric pairs in ASCII.
 `()`, `[]`, and `{}` are already in use,
 and `<>` create ambiguities with the comparison operators.
 (This is what makes C++ notoriously difficult to parse,
 and it’s why Rust features the [turbofish].)
 We could go for a digraph,
 maybe `{||}`, `@{}`, or a keyword like `set {}`,
-but they add visual noise,
-and are less obvious to newcomers.
+but they are less obvious to newcomers,
+and add visual noise.
 To me,
 being _reasonable_ also means avoiding surprise,
-respecting established conventions,
+respecting established conventions if possible,
 and being readable even to people who haven’t seen the language before.
 The braces have to stay.
 
