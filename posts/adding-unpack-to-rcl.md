@@ -137,20 +137,19 @@ which for json compatibility has to be a dict.
 The empty set is written `std.empty_set`.)
 These are unambiguous:
 
-```rcl
-let set1 = {1, 2, 3};
-let set2 = {for x in xs: x};
+<pre><code class="sourceCode"><span class="kw">let</span> set1 = {<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>};
+<span class="kw">let</span> set2 = {<span class="kw">for</span> x <span class="kw">in</span> xs: x};
 
-let dict1 = { a = 1, b = 2 };
-let dict2 = { for k, v in dict: k: v };
-```
+<span class="kw">let</span> dict1 = { <span class="n">a</span> = <span class="dv">1</span>, <span class="n">b</span> = <span class="dv">2</span> };
+<span class="kw">let</span> dict2 = { <span class="kw">for</span> k, v <span class="kw">in</span> dict: <span class="n">k</span>: v };
+</code></pre>
+
 
 But if `..` unpacked both sets and dicts,
 then what is this?
 
-```rcl
-let unknown = { ..xs };
-```
+<pre><code class="sourceCode"><span class="kw">let</span> unknown = { ..xs };
+</code></pre>
 
 It depends on whether `xs` is a dict or set,
 we can’t tell from just the syntax tree.
