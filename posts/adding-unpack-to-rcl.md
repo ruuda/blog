@@ -5,13 +5,14 @@ date: 2025-11-13
 lang: en-US
 minutes: ??
 synopsis: ??
-run-in: R<!---->C<!---->L is a new configuration language
+run-in: I am building
 ---
 
-R<!---->C<!---->L is a new configuration language and json query tool.
+I am building a new configuration language
+and json query tool: [RCL](https://rcl-lang.org).
 It extends json into a simple functional language
 that enables abstraction and reuse.
-In a sense, it enables templating structured data.
+It enables templating structured data.
 A common operation here is to build lists and dicts
 out of other lists and dicts.
 While RCL had several ways to do this,
@@ -23,7 +24,6 @@ and you can now use `..` and `...` to unpack lists and dicts:
 <pre><code class="sourceCode"><span class="kw">let</span> xs = [<span class="dv">3</span>, <span class="dv">4</span>];
 <span class="kw">let</span> ys = [<span class="dv">1</span>, <span class="dv">2</span>, ..xs, <span class="dv">5</span>, <span class="dv">6</span>];
 
-<span class="co">// TODO: Less contrived example.</span>
 <span class="kw">let</span> defaults = { <span class="n">kind</span> = <span class="st">"fruit"</span>, <span class="n">tasty</span> = <span class="kw">true</span> };
 <span class="kw">let</span> fruits = [
   { ...defaults, <span class="n">name</span> = <span class="st">"banana"</span> },
@@ -35,7 +35,7 @@ In this post we’ll explore the trade-offs involved in adding this feature.
 
 ## Why unpack?
 
-Unpack does not add new technical capabilities to RCL.
+Unpack does not make RCL more expressive.
 What unpack can do, was already possible with comprehensions.
 This list unpack and comprehension are equivalent:
 
@@ -58,13 +58,9 @@ With that, the above dict could be written as:
 </code></pre>
 
 There are two problems with those options.
-Comprehensions are too verbose,
-and binary operators are awkward to format.
 
-<!--
  * Comprehensions are too verbose.
  * Binary operators are awkward to format.
--->
 
 The comprehensions aren’t even _that_ verbose,
 but it’s enough friction that I dreaded writing them out every time,
@@ -102,7 +98,7 @@ Compare:
 </code></pre>
 
 The difference is superficial,
-but it is one of those difference between a tool
+but it is one of those differences between a tool
 that technically does what you need,
 and one that’s a joy to use.
 Moreover,
@@ -111,11 +107,72 @@ Aside from the formatting challenge,
 the union operator has a fairly complex implementation in the type system,
 and removing it would be a welcome simplification.
 
-Unpack solves all these problems neatly,
-so for a long time it was clear to me that RCL needed unpack.
+Unpack solves these problems with a single mechanism.
+It makes RCL more coherent,
+and more pleasant to read.
+For a long time it was clear to me that RCL needed unpack.
 Why did it take so long to add?
 
-## Wishlist
+## Dead ends
+
+Before landing on the current implementation,
+I struggled with two aspects.
+
+ * I would like to use `..` for every unpack.
+ * How should the typechecker deal with “things that can be unpacked”?
+
+The complicating factor behind both is that RCL has sets,
+in addition to lists and dicts.
+As in Python,
+both sets and dicts are written with curly braces.
+This causes some implementation complexity,
+but at least it was always possible to tell dicts and sets apart syntactically:
+dicts contain key-value pairs,
+whereas sets contain single values.
+(The one exception is the empty collection `{}`,
+but json compatibility forces this to be a dict.
+The empty set is written `std.empty_set`.)
+These are clear:
+
+```rcl
+let set1 = { 1, 2, 3 };
+let set2 = { for x in set: x };
+
+let dict1 = { a = 1, b = 2 };
+let dict2 = { for k, v in  dict: k: v };
+```
+
+But if `..` unpacked both sets and dicts,
+then what is this?
+
+```rcl
+let unknown = { ..xs };
+```
+
+It depends on whether `xs` is a dict or set,
+we can’t tell from just the syntax tree.
+It would be possible to deal with this at runtime
+and in [the typechecker][typechecker],
+but RCL aims to be a _reasonable_ configuration language,
+and one thing that means to me is that you can reason about what a program does,
+ideally without having to consult
+the definitions of variables that may be far away.
+
+[float]:       /2025/a-float-walks-into-a-gradual-type-system
+[typechecker]: /2024/a-type-system-for-rcl-part-2-the-type-system
+
+The solution is to use a different syntax for dict unpack,
+than for list/set unpack.
+In one sense,
+this makes RCL more complex:
+there is now _more_ syntax,
+_more_ constructs.
+But in [the Hickeyan sense][simple-easy],
+reusing `..` for two different purposes complects them,
+and the separate `..` and `...` are each simple.
+Something something many cases to report errors.
+
+[simple-easy]: https://www.infoq.com/presentations/Simple-Made-Easy/
 
  * Sensible type system.
  * Syntactic distinction between dict and set.
