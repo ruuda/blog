@@ -12,7 +12,8 @@ I am building a new configuration language
 and json query tool: [RCL](https://rcl-lang.org).
 It extends json into a simple functional language
 that enables abstraction and reuse.
-It enables templating structured data.
+Rather than string templating serialized data,
+RCL enables you to template data structures directly.
 A common operation here is to build lists and dicts
 out of other lists and dicts.
 While RCL had several ways to do this,
@@ -31,12 +32,12 @@ and you can now use `..` and `...` to unpack lists and dicts:
 ];
 </code></pre>
 
-In this post we’ll explore the trade-offs involved in adding this feature.
+In this post we’ll explore the trade-offs involved in designing this feature.
 
 ## Why unpack?
 
 Unpack does not make RCL more expressive.
-What unpack can do, was already possible with comprehensions.
+Anything unpack can do, was already possible with comprehensions.
 This list unpack and comprehension are equivalent:
 
 <pre><code class="sourceCode">[<span class="dv">1</span>, <span class="dv">2</span>, ..xs]
@@ -113,7 +114,7 @@ and more pleasant to read.
 For a long time it was clear to me that RCL needed unpack.
 Why did it take so long to add?
 
-## Set, the troublemaker
+## Meet Set, the troublemaker
 
 It turns out that [as with number types][float],
 my wishlist had incompatible items,
@@ -197,7 +198,7 @@ The problem here is that there aren’t that many symmetric pairs in ASCII.
 `()`, `[]`, and `{}` are already in use,
 and `<>` create ambiguities with the comparison operators.
 (This is what makes C++ notoriously difficult to parse,
-and why Rust features the [turbofish].)
+and it’s why Rust features the [turbofish].)
 We could go for a digraph,
 maybe `{||}`, `@{}`, or a keyword like `set {}`,
 but they add visual noise,
@@ -252,29 +253,28 @@ and so far I’m happy with the result.
 
 [simple-easy]: https://www.infoq.com/presentations/Simple-Made-Easy/
 
-## Unpack in other languages
-
-While unpack does not increase expressivity,
-it greatly improves ergonomics.
-I was pretty sure I wanted it in RCL,
-and now that it exists,
-it works well and feels natural.
-This is no surprise:
-unpack is not exactly a new idea.
-Python is a big source of inspiration for RCL,
-and it has unpack (written `*` and `**` rather than `..` and `...`).
-Even Javascript has it nowadays (called ‘spread’ there).
-Among other configuration languages though,
-none of
-Cue,
-Dhall,
-Jsonnet,
-or Nickel feature unpack.
-And then how to conclude this paragraph?
-
 ## Conclusion
 
-Need to write a conclusion here.
+R<!---->C<!---->L is a new configuration language and json query tool
+that extends json into a simple functional language
+that enables abstraction and reuse.
+Common operations in RCL documents
+are to splice one list into another,
+to fill a dict with default values,
+or to take the union of multiple sets.
+While RCL supported this through comprehensions,
+for simple cases they were too verbose to be ergonomic.
+The union operator does not suffer from verbosity,
+but its meaning is less obvious to newcomers,
+and it can be awkward to format.
+Unpack solves both problems elegantly,
+and is now available in [RCL v0.11.0][v0110].
+
+If this post piqued your interest,
+try out RCL in [the online playgroud][play],
+or jump straight to [the manual][manual].
 
 [rcl-lang]: https://rcl-lang.org
 [v0110]:    https://docs.ruuda.nl/rcl/changelog/#0110
+[play]:     https://rcl-lang.org/#try-it-yourself
+[manual]:   https://docs.ruuda.nl/rcl/
