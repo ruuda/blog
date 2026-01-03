@@ -8,7 +8,7 @@ run-in: Musium is the music player
 ---
 
 Musium is the music player that I built for myself.
-It runs on a Raspberri Pi
+It runs on a Raspberry Pi
 that connects to the speakers in my living room,
 and I can control it from my local network using a webinterface.
 I’ve been using it on a daily basis for years,
