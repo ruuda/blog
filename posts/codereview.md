@@ -101,8 +101,10 @@ and then the account replies with
 Even if it’s an LLM-generated contribution and I correctly notice that,
 it still wasted my time,
 and I probably disappoint the person who submitted it thinking it was helpful.
-Disappointing people feels bad too!
-The only good outcome is when it was fully human after all,
+It feels bad to disappoint somebody who had good intentions,
+even if it’s just an anonymous person on the Internet.
+The only good outcome here
+is when the contribution was fully human after all,
 and that’s increasingly rare in today’s landscape.
 
 ## Now what?
@@ -112,29 +114,33 @@ If something I built can help somebody,
 that’s very fulfilling,
 and so is helping others grow.
 Receiving a contribution used to be a source of pride:
-recognition that something I made was useful to somebody,
-and even worth enough for them to spend some time trying to improve it.
+recognition that something I made was useful,
+and even worth enough for somebody to spend time trying to improve it.
 That still is the case to some extent.
-But if every new issue or pull request causes me stress
-because I’m afraid of offending or disappointing real humans,
-even when I suspect it’s AI wasting my time …
-is it still worth it?
+But if every new issue or pull request causes me
+to stress about whether AI is wasting my time
+or whether I’m offending a human
+… is it still worth it?
 
-This friction is not entirely new.
+This feeling is not entirely new.
 Already before the rise of <abbr>LLM</abbr>s
 I occasionally received well-intentioned but low-quality contributions,
 where helping the author get them into a good state
 takes me far more effort than I can spend,
 but rejecting a well-intentioned contribution also makes me feel bad.
-This was already a source of maintainer fatigue for me,
+This was a source of maintainer fatigue for me already,
 but I with the rise of <abbr>LLM</abbr>s,
 it’s taking on new levels.
 More often than not,
 a contribution now leaves me with mixed feelings.
 
-I’m not sure what to do now.
-I added a no-<abbr>LLM</abbr>s rule to the `CONTRIBUTING.md` in all my projects
-precisely to try and prevent disappointment,
-but what if people ignore it?
-Daniel Stenberg tried mandatory disclosure of AI use in the Curl bug bounty,
-but submitters just started lying.
+I don’t know what to do now.
+I added a no-<abbr>LLM</abbr>s rule to the `CONTRIBUTING.md` in my projects
+precisely to try and prevent disappointing people who use such tools,
+but I still regularly wonder whether I’m dealing with a human or not,
+and it’s taking a toll on me.
+It’s easy to say that volunteers don’t owe anybody anything,
+but being a maintainer of somewhat widely used projects
+does come with a feeling of responsibility,
+and I don’t want to close the door
+for people who genuinely want to improve things.
