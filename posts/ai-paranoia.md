@@ -151,6 +151,8 @@ The reply sounded likely human to me,
 so I left the review,
 the author addressed the comments,
 and I merged it.
+My initial suspicion was wrong,
+I think this was a human all along.
 I fretted about bad outcomes for nothing,
 it went as well as it could have!
 And yet,
