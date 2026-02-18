@@ -1,10 +1,9 @@
 ---
-titlez: Contributions, code review, and A<!---->I
 title: A<!---->I is making me paranoid about contributions
-date: 2026-02-02
+date: 2026-02-18
 lang: en-US
 synopsis: A<!---->I has gotten to a point where I can no longer tell to what extent I’m dealing with a human online, and it’s taking a toll on my mental health.
-minutes: ?
+minutes: 7
 run-in: I maintain several
 teaser: llm-interactions
 ---
@@ -13,8 +12,8 @@ I maintain several open source projects.
 Some of them are somewhat popular,
 and attract contributions.
 In the age of <abbr>LLM</abbr>s
-this is taking a toll on my mental health,
-and I increasingly doubt whether I should continue accepting them.
+I increasingly doubt whether I’m dealing with a human on the other side,
+and this is taking a toll on my mental health.
 
 ## An example
 
