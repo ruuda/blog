@@ -1,5 +1,6 @@
 ---
-title: Contributions, code review, and A<!---->I
+titlez: Contributions, code review, and A<!---->I
+title: A<!---->I is making me paranoid about contributions
 date: 2026-02-02
 lang: en-US
 synopsis: A<!---->I has gotten to a point where I can no longer tell to what extent I’m dealing with a human online, and it’s taking a toll on my mental health.
@@ -11,8 +12,9 @@ teaser: llm-interactions
 I maintain several open source projects.
 Some of them are somewhat popular,
 and attract contributions.
-In the age of <abbr>LLM</abbr>s,
-I increasingly doubt whether I should continue accepting them.
+In the age of <abbr>LLM</abbr>s
+this is taking a toll on my mental health,
+and I increasingly doubt whether I should continue accepting them.
 
 ## An example
 
@@ -31,7 +33,7 @@ I make my way through the diff,
 and near the end I notice a pattern
 that I often see in LLM-generated code:
 a comment that announces what the next few lines do,
-even though that’s already very clear from the code.
+even though that’s already very clear from the code itself.
 I start to doubt.
 Was this code written by a human or an LLM?
 Upon closer inspection,
@@ -126,7 +128,7 @@ This feeling is not entirely new.
 Already before the rise of <abbr>LLM</abbr>s
 I occasionally received well-intentioned but low-quality contributions,
 where helping the author get them into a good state
-takes me far more effort than I can spend,
+takes me more energy than I can spend,
 but rejecting a well-intentioned contribution also makes me feel bad.
 This was a source of maintainer fatigue for me already,
 but with the rise of <abbr>LLM</abbr>s it’s taking on new levels.
