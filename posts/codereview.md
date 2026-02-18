@@ -12,7 +12,7 @@ I maintain several open source projects.
 Some of them are somewhat popular,
 and attract contributions.
 In the age of <abbr>LLM</abbr>s,
-I increasingly doubt whether they are worth responding to.
+I increasingly doubt whether I should continue accepting them.
 
 ## An example
 
@@ -53,20 +53,20 @@ without also having to explain why that way is better.
 I think the real reason I’m reviewing this is:
 somebody spent time and effort to try and help,
 and I feel that I owe them a response.
-I’m not bikeshedding about preferences,
-the code can be made simpler and more efficient at the same time.
+My review is not bikeshedding,
+the code can be made simpler and more efficient.
 The author could learn something general here,
 not just what the conventions of my project are.
-And I’m happy to teach!
+And I’m happy to teach,
 I actually enjoy doing that!
 
 But I start to wonder, who _is_ the author of this code?
-If it’s a junior programmer,
+If it’s a real programmer,
 I would be very happy to review.
 To show how the code can be improved,
 and help the author grow.
 I think that’s a good use of my evening,
-and helping others brings me fulfilment.
+and helping others brings me fulfillment.
 But what if the author is an LLM,
 and the human behind the account is merely going to forward my comments
 to their Claude Code subscription?
@@ -84,7 +84,7 @@ I don’t think this case is an AI agent acting entirely autonomously,
 but I’ve been in other situations where I suspect that was the case.
 I do have a line in my `CONTRIBUTING.md`
 that says LLM-generated code is not allowed,
-but would the author have read that?
+but do people who rely heavily on <abbr>LLM</abbr>s actually read the docs?
 
 ## Mostly bad outcomes
 
@@ -102,10 +102,10 @@ Even if it’s an LLM-generated contribution and I correctly notice that,
 it still wasted my time,
 and I probably disappoint the person who submitted it thinking it was helpful.
 It feels bad to disappoint somebody who had good intentions,
-even if it’s just an anonymous person on the Internet.
+even if it’s an anonymous person on the Internet.
 The only good outcome here
 is when the contribution was fully human after all,
-and that’s increasingly rare in today’s landscape.
+and that seems increasingly rare.
 
 ## Now what?
 
@@ -116,7 +116,7 @@ and so is helping others grow.
 Receiving a contribution used to be a source of pride:
 recognition that something I made was useful,
 and even worth enough for somebody to spend time trying to improve it.
-That still is the case to some extent.
+All of this is still true of course.
 But if every new issue or pull request causes me
 to stress about whether AI is wasting my time
 or whether I’m offending a human
@@ -129,12 +129,9 @@ where helping the author get them into a good state
 takes me far more effort than I can spend,
 but rejecting a well-intentioned contribution also makes me feel bad.
 This was a source of maintainer fatigue for me already,
-but I with the rise of <abbr>LLM</abbr>s,
-it’s taking on new levels.
-More often than not,
-a contribution now leaves me with mixed feelings.
+but with the rise of <abbr>LLM</abbr>s it’s taking on new levels.
 
-I don’t know what to do now.
+I don’t know what to do about this.
 I added a no-<abbr>LLM</abbr>s rule to the `CONTRIBUTING.md` in my projects
 precisely to try and prevent disappointing people who use such tools,
 but I still regularly wonder whether I’m dealing with a human or not,
@@ -144,3 +141,20 @@ but being a maintainer of somewhat widely used projects
 does come with a feeling of responsibility,
 and I don’t want to close the door
 for people who genuinely want to improve things.
+
+## It was fine, this time
+
+What happened to the pull request?
+I asked the author to confirm that the code was written without AI involvement.
+The reply sounded likely human to me,
+so I left the review,
+the author addressed the comments,
+and I merged it.
+I fretted about bad outcomes for nothing,
+it went as well as it could have!
+And yet,
+I feel a bit sad that an interaction
+that would have been overwhelmingly positive five years ago
+<!-- (my project has users! we’re improving it together!), -->
+now mostly caused me stress,
+through no fault of anybody involved.
