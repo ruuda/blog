@@ -1,5 +1,6 @@
 ---
-title: Building the <br> deployment tool <br> I wish I had
+title: Building the deployment tool I wish I had
+break: deployment tool
 date: 2026-04-19
 lang: en-US
 synopsis: TODO write a synopsis
@@ -9,10 +10,12 @@ run-in: It is 00:43 at night.
 
 It is 00:43 at night.
 I look at the plan and press y.
-“s4.ruuda.nl: connecting, …, done” flashes through my terminal window.
+“s4.ruuda.nl: connecting.”
+I hold my breath as the status changes in my terminal window.
+“applying … done.”
 It worked.
 Now the real work can start.
-_Pop a stack frame._
+_Pop stack frame._
 What was I doing again?
 
 People who have worked with me for a while
@@ -29,8 +32,7 @@ on a blog hosted in the US,
 with a US-controlled hyperscaler.
 So let’s move that to Europe, easy enough.
 _Push stack frame._
-Spawn a new VM, point the DNS records at … oh, DNS.
-Right.
+Spawn a new VM, point the DNS records at … oh, right, DNS.
 I use Cloudflare for that.
 Another entity that Trump can order to stop providing services here when shit hits the fan.
 Maybe I should self-host my DNS servers then.
@@ -38,8 +40,7 @@ _Push another stack frame._
 
 My webserver is a tiny VM that runs Nginx,
 plus Lego to renew certificates.
-That Nginx configuration grew somewhat complex
-as I acquired domains throughout the years,
+The Nginx configuration grew somewhat complex over the years,
 but I generate it with Nix so it’s fine,
 just two configuration files.
 I wrote a small Python script
@@ -48,10 +49,8 @@ that copies the files to the server and restarts Nginx.
 The script served me well for the past years.
 But now I want to start running NSD.
 I need at least _two_ servers now.
-And even more systemd units,
-a configuration file,
-zonefiles …
-That script is not going to cut it any more.
+And more systemd units, configuration files, zonefiles …
+The script is not going to cut it any more.
 
 “NixOS”
 I hear [Arian](https://functional.cafe/@arianvp)’s voice whisper in my head.
@@ -61,9 +60,10 @@ It’s only one line to configure,
 He’s right of course.
 I already use Nix to build minimal EROFS images for Nginx and Lego,
 that’s how I run them on Flatcar.
-But I like Flatcar as the OS,
+But I like the idea of a minimal base OS,
 and I prefer running my services in minimal readonly chroots.
-Let’s not switch distros right now.
+Let’s not scope-creep this into switching distros right now,
+I tell myself.
 Let’s build a new deployment tool instead.
 _Push stack frame_.
 
