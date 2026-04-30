@@ -67,6 +67,64 @@ I tell myself.
 Let’s build a new deployment tool instead.
 _Push stack frame_.
 
+## We can have nice things
+
+So, if I’m going to build my own tool …
+what would an actually _nice_ configuration management tool look like?
+Here we can look to Ansible for guidance:
+it made all the mistakes so we don’t have to.
+I want my tool to:
+
+**Be fast.**
+A configuration update should be sub-second.
+There’s no _fundamental_ reason for it to be slower than that,
+even a transatlantic ping is only 100ms.
+
+**Be safe and predictable.**
+The tool should show me what it’s going to do,
+and then do exactly that.
+Like OpenTofu, with a separate _plan_ and _apply_ phase.
+Not like Ansible,
+where check mode is useless
+because every imperative step can trigger
+a cascade of changes that are only known after executing the step.
+And where nothing prevents the host from changing
+between the check and the real run,
+making the check more of a vibe check
+than something you can depend on.
+
+**Be simple.**
+I just need to copy configuration files
+from my laptop to my servers,
+and then restart a few systemd units.
+I don’t need arbitrary code execution.
+I do need to be able template
+— excuse me, [_generate_][rcl-post]
+— configuration files,
+but a [separate tool][rcl-build] can do that.
+
+**Be declarative.**
+If I remove a file or application from my config,
+they should be removed from the server.
+I don’t want to end up with drift and lingering files
+if I forget to add an explicit cleanup step.
+
+So how about this:
+
+ * We pre-render config files for the entire cluster,
+   and store them in a directory on disk.
+ * This directory tree is two levels deep:
+   a directory per target host at the top level;
+   a directory per application below that.
+ * We put that in a Git repository.
+   Now we can diff one version against another,
+   and see _exactly_ what changed.
+
+[rcl-post]:  /2024/a-reasonable-configuration-language/
+[rcl-build]: https://docs.ruuda.nl/rcl/rcl_build/
+
+[neindanke]: https://social.hackerspace.pl/@q3k/110598898979332486
+
 ## Building the agent
 
 My webserver runs Flatcar Linux,
@@ -171,11 +229,20 @@ So, what did we gain?
    so we sidestep any escaping issues.
 
 [mitogen]:   https://mitogen.networkgenomics.com/ansible_detailed.html
-[neindanke]: https://social.hackerspace.pl/@q3k/110598898979332486
 
 ## The store
 
-Git repo, directory per host, generated externally through RCL.
+Okay, so we have an agent on the remote host.
+What should it do?
+What’s a _nice_ configuration management workflow?
+For sure, it needs to be declarative.
+Here too we can learn from Ansible’s mistakes.
+If I remove a file from my config
+I want it to just disappear from the managed host,
+I don’t want to have to add an explicit cleanup step as well!
+<!-- TODO: Host/machine, be consistent! -->
+I don’t want explicit cleanup steps.
+
 
 ## Running a deployment
 
