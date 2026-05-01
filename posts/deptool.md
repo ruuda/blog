@@ -45,12 +45,13 @@ but I generate it with Nix so it’s fine,
 just two configuration files.
 I wrote a small Python script
 that copies the files to the server and restarts Nginx.
-The script served me well for the past years.
-But now I want to start running NSD.
+The script served me well for the past years,
+but now I want to start running DNS servers.
 I need at least _two_ servers now.
 And more systemd units, configuration files, zonefiles …
-The script is not going to cut it any more.
-
+The script is not going to cut it any more,
+I need serious cluster configuration management.
+_Push stack frame._
 
 “NixOS”
 I hear [Arian](https://functional.cafe/@arianvp)’s voice whisper in my head.
@@ -58,21 +59,23 @@ I hear [Arian](https://functional.cafe/@arianvp)’s voice whisper in my head.
 It’s only one line to configure,
 `services.nsd.enable = true`.”
 He’s right of course.
-I already use Nix to build minimal EROFS images for Nginx and Lego,
-that’s how I run them on Flatcar.
+I already use Nix to [build][miniserver] minimal EROFS images for Nginx and Lego.
+That’s how I run them on Flatcar.
 But I like the idea of a minimal base OS,
-and running my services from readonly chroots with no unneeded binaries.
+and running my services from readonly chroots with no more binaries than needed.
 “Let’s not scope-creep this into switching distros right now,”
 I tell myself.
-Let’s build a new deployment tool instead.
-_Push stack frame_.
+“Let’s build a new deployment tool instead.”
+_Push stack frame._
+
+[miniserver]: https://codeberg.org/ruuda/miniserver
 
 ## We can have nice things
 
 So, if I’m going to build my own tool …
 what would an actually _nice_ configuration management tool look like?
 Here we can look to Ansible for guidance:
-it made all the mistakes so we don’t have to.
+it made all the mistakes so others can learn from them.
 I want my tool to be:
 
 **Fast.**
@@ -82,7 +85,7 @@ even a transatlantic ping is only 100ms.
 
 **Safe and predictable.**
 The tool should show me what it’s going to do,
-and then do exactly that.
+and then do it.
 Like OpenTofu, with a separate _plan_ and _apply_ phase.
 Not like Ansible,
 where check mode is useless
@@ -95,8 +98,8 @@ than something you can depend on.
 
 **Simple.**
 I just need to copy configuration files
-from my laptop to my servers,
-and then restart a few systemd units.
+from my laptop to my servers
+and restart a few systemd units.
 I don’t need to solve every deployment problem for everybody;
 I don’t need control flow or arbitrary code execution.
 I do need to be able to template
@@ -110,13 +113,13 @@ but a [separate tool][rcl-build] can do that.
 
 **Declarative.**
 If I remove a file or application from my config,
-they should be removed from the server.
-I don’t want to end up with drift and lingering files
-if I forget to add an explicit cleanup step.
+it should be removed from the server.
+I don’t want to have to add explicit cleanup steps,
+and end up with drift and lingering files when I inevitably forget to do so.
 
-**Installation-free.**
+**Zero-setup.**
 I want to use this tool to manage my servers right after provisioning them.
-I don’t want to manually install agents or daemons,
+I don’t want to manually install agents, daemons, or their dependencies,
 and I don’t want to have to enroll or register the host anywhere,
 because then I’d have the new problem of automating _that_.
 
