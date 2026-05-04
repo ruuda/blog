@@ -259,9 +259,13 @@ is that you can optimize them for exactly your own use case!
 
 ## Building the agent
 
+We have the design,
+we know on a high level what to do.
+But how do we make it happen on the managed host?
 My webserver runs Flatcar Linux,
-an image-based OS with very minimal userspace and no package manager.
-It has coreutils and Bash, but not even Python.
+an image-based OS with a very minimal userspace.
+It has coreutils and Bash,
+but no package manager and no Python.
 This is great for reducing attack surface.
 It’s not so great for installing things.
 I want to use my tool to manage my servers,
@@ -270,56 +274,65 @@ If I need to install something for the tool to work,
 then I’d have the new problem of automating _that_ installation process!
 
 So we need to manage the fresh host from the outside.
-I can SSH into it, and use passwordless sudo thore.
-Can we just execute commands over SSH?
+I can SSH into it, and use passwordless sudo there.
+Maybe we can just execute commands over SSH?
 If you have ever tried to automate anything mildly nontrivial that way,
 you will have quickly learned the hard way
-that the argv doesn’t cross the SSH boundary unscathed.
-I want to spend my time configuring my server,
-not figuring out the subtleties of
-word splitting and escaping in shell-over-SSH.
+that this is not just slow
+— the argv also doesn’t cross the SSH boundary unscathed.
+I want a fast tool and I don’t want to deal with the subtleties
+of word splitting and escaping shell-over-SSH.
 So let’s sidestep this minefield.
 How about we run _one_ simple command?
 A program that takes zero args, at a predictable location.
 This is the _agent_.
 The agent reads messages from stdin, and responds on stdout.
-We use SSH as if it’s a socket.
-A json per line is not the most efficient, but it will do for now.
-Now we can send whatever input we want,
+We use SSH only for transport, as a socket.
+Now we have code execution on the host,
+and we can send whatever input we want,
 without ever having to worry about escaping!
 
-So, we just need to start the agent …
+Now we just need to start the agent …
 But how did the agent get there?
 This is a fresh host!
-Also, how do we build this agent?
+And how do we even build this agent?
+Here too we can look to Ansible for mistakes to avoid.
+After you [mitigate][mitogen] its worst flaws,
+Ansible still sends over megabytes of Python modules
+_every single time it connects_ to a host.
+Needless to say, this is slow.
+Excruciatingly slow.
+The one nice thing about this design
+is that you know exactly what’s running on the remote end,
+you never have version mixups.
+In theory, at least.
+In practice I’ve wasted more hours than I dare to admit
+staring at Python module errors,
+because Ansible still has requirements about the host,
+it’s not _fully_ self-contained.
+That creates a compatibility nightmare.
+We don’t even _have_ Python on Flatcar.
+So how about this instead?
 
-Here we can look to Ansible for guidance:
-it made all the mistakes so we don’t have to.
-Making assumptions about the host,
-especially about Python versions and available modules,
-creates a compatibility nightmare.
-Sending over megabytes of dependency modules
-_every single time we connect_
-makes things excruciatingly slow,
-especially if a deployment involves doing that repeatedly against the same host,
-and paying the Python startup overhead every time.
-Even with [a third-party plugin][mitogen]
-that mitigates the worst mistakes,
+**We build a static binary.**
+No assumptions about what’s available except the kernel,
+and no interpreter that has to parse megabytes of code
+before it can execute anything.
 
+**We put it at a location named after the commit it was built from.**
+This ensures that both ends of the connection run the same version,
+so there are never any issues with wire format compatibility.
+If we managed to start the binary, it speaks the right protocol.
+We’ll put it at `/var/lib/deptool/bin/deptool-<version>-<commit>`.
 
-So how about this:
-
- 1. We build a static binary.
-    No assumptions about what’s available except the kernel.
-    No interpreter startup overhead.
- 2. We put it at a location named after the commit it was built from,
-    so there are never any issues with wire format compatibility.
-    If we managed to start the binary, it speaks the right protocol.
-    We’ll put it at `/var/lib/deptool/bin/deptool-<commit>`.
- 3. We optimistically assume the binary is already there:
-    SSH handshakes are expensive,
-    so let’s not waste any on probing
-    or on idempotent installation steps.
+**We optimistically assume the binary is already there.**
+An SSH handshakes is fairly expensive.
+Let’s not waste any on probing or on idempotent installation steps.
+The binary is about 1.6 MB.
+Not prohibitively slow to send,
+but not free either,
+and cluster configuration changes far more frequently than Deptool;
+the common case is that the binary exists.
 
 If we fail to start the binary, then we need to install it.
 We connect over SSH a second time,
@@ -331,43 +344,53 @@ now with this command:
     && sudo chmod +x <remote_bin_path>
     && sudo sha256sum <remote_bin_path>
 
-We drive this session as follows:
+We drive that like so:
+First, we read one line from stdout to get the `uname` output.
+This tells us the machine’s OS and CPU architecture,
+so we can send the appropriate agent binary for that platform.
+We write that binary to stdin;
+`dd` writes it to disk on the remote end.
+Finally, we read one more line from stdout:
+the remotely computed shasum.
+This confirms that the transfer was successful.
+When we retry starting the agent now, it should succeed.
+The agent cleans up old versions to avoid filling up the disk.
 
- * Read one line from stdout to get the `uname` output.
-   This tells us the machine’s OS and CPU architecture,
-   so we can send the appropriate agent binary for that platform.
- * Write the binary to stdin, `dd` writes it to disk on the remote end.
- * Read one more line from stdout,
-   the remotely computed shasum,
-   to confirm that the transfer was successful.
+Let’s recap.
+What do we have?
 
-After that,
-we retry starting the agent,
-which should suceed now.
-
-So, what did we gain?
-
- * A way to execute a program on a remote host,
-   and communicate with it pretty much like a socket.
+ * A way to execute an agent on a remote host
+   and communicate with it over a socket.
+ * All user-controlled input goes over our SSH-backed socket,
+   it never enters SSH or shell commands,
+   so we sidestep any escaping issues.
+ * Both sides run the same version,
+   the protocol is compatible by construction.
  * This costs only a single SSH handshake in the common case,
    so latency is minimal.
  * In the uncommon case
    (deploying against a new machine, or after updating the tool)
-   it’s 2 additional connects plus a one-time 1.6 MB transfer,
-   though with `ControlMaster` we can skip most of the overhead
-   on the later connections.
- * All user-controlled input goes over our SSH-backed socket,
-   it never enters SSH or shell commands,
-   so we sidestep any escaping issues.
+   it’s two additional connects plus a one-time 1.6 MB transfer.
+   With `ControlMaster` we can skip most of the overhead on the later connections,
+   so overall it costs a few seconds.
+   No sub-second deploy in this case,
+   but still better than Ansible.
+ * Automatic installation that requires nothing beyond coreutils
+   on the remote host.
+
+This approach has been working out great for me
+even as I was building Deptool,
+and the uncommon case of having to copy the binary was quite common.
+Especially for the case where I deploy a configuration,
+tweak it a bit,
+and deploy again,
+SSH can preserve the underlying connection,
+so it really feels instant.
 
 [mitogen]:   https://mitogen.networkgenomics.com/ansible_detailed.html
-
-<!-- TODO: Mention Git packfile transport hack. -->
-
-## Running a deployment
-
-Connect, lock, push, apply, report systemctl status output back.
 
 ## Conclusion
 
 It works, its very nice to use.
+Write about how sub-second deploy is a game-changer,
+no temptation to edit files in prod.
