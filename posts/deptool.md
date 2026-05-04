@@ -82,9 +82,9 @@ A configuration update should be sub-second.
 There’s no _fundamental_ reason for it to be slower than that,
 even a transatlantic ping is only 100ms.
 
-**Safe and predictable.**
+**Predictable.**
 The tool should show me what it’s going to do,
-and then do it.
+and then do just that.
 Like OpenTofu, with a separate _plan_ and _apply_ phase.
 Not like Ansible,
 where check mode is useless
@@ -94,6 +94,16 @@ And where nothing prevents the host from changing
 between the check and the real run,
 making the check more of a vibe check
 than something you can depend on.
+
+**Safe.**
+If I break my Nginx configuration,
+I don’t want my webserver to be down for minutes
+while I frantically try to fix it.
+(Me: “Ah, only a small typo,
+faster to just fix it than to try and restore the previous version.”
+Narrator: “If only that typo were the _only_ problem …”)
+No, I want the tool to automatically roll back for me.
+In milliseconds.
 
 **Simple.**
 I just need to copy configuration files
@@ -116,6 +126,7 @@ it should be removed from the server.
 I don’t want to have to add explicit cleanup steps,
 and end up with drift and lingering files when I inevitably forget that.
 
+
 **Zero-setup.**
 I want to use this tool to manage my servers right after provisioning them.
 I don’t want to manually install agents, daemons, or their dependencies,
@@ -124,6 +135,8 @@ because then I’d have the new problem of automating _that_.
 
 ## Decouple distribution
 
+The core idea feels obvious in hindsight,
+but it was inspired by lots of prior art.
 At work, [David][david] had recently built [Unsible][unsible],
 a tool that takes Ansible playbooks,
 but instead of executing them step by step,
@@ -131,23 +144,23 @@ it locally builds a tarball and ships it to the host,
 where it mostly just needs to put the files in place.
 I like this idea of decoupling configuration generation from distribution.
 In a sense this is also what NixOS does.
-We can learn more from NixOS:
+[NixOps][nixops] applied it to clusters.
+We can learn more from Nix:
 store generated artifacts in a place where different versions can coexist,
 and limit the imperative parts of system administration
 to a small activation step that swaps a few symlinks.
-Systems I worked on invariably gravitate towards that design,
-because it works well.
-Whether it’s for package management or system configuration.
+This design works well both for package management and system configuration.
 
 [unsible]: https://github.com/ChorusOne/unsible
 [david]:   https://davidv.dev/
+[nixops]:  https://github.com/NixOS/nixops
 
 ## Hello Deptool
 
 With the scope reduced
 to distributing small files and running a simple activation step,
 deployment becomes a tractable problem to solve.
-I called my take on it _Deptool_.
+I call my take on it [Deptool][deptool].
 Here’s how it works.
 
 **Pre-render config files for the entire cluster.**
@@ -203,9 +216,25 @@ and we abort.
 We update our local refs,
 and the next run will show an up to date plan.
 
+**Restart systemd units.**
+I run all my services as systemd units,
+and they are quick to start,
+so I can err on the side of restarting them when in doubt.
+After an application’s configuration changed,
+we restart the affected systemd units.
+If the unit fails to start,
+we can point the symlink back at the previous known-good version,
+and restart again.
+Automatic rollback in milliseconds.
+
 So this is the core idea behind Deptool.
 Cluster configuration is just a directory tree tracked in a Git repository,
-and on each host we check out the relevant files into isolated directories.
+and on each host we check out the relevant files into isolated directories,
+change a few symlinks,
+and restart systemd units.
+That’s it!
+
+[deptool]: https://docs.ruuda.nl/deptool/
 
 ## Optimistic concurrency
 
@@ -218,7 +247,7 @@ This means it’s very fast when there is no contention
 at the cost of performing abysmally under contention
 (a team of people all trying to deploy constantly,
 where only one can win and everybody else has to retry).
-It’s the same model as `git push`.
+This is the same model as `git push`.
 It’s not going to scale to hundreds of people or thousands of servers,
 but that’s okay.
 I’m the only person managing my personal infra,
