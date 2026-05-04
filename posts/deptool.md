@@ -26,7 +26,7 @@ that mediocre tools inflict on you,
 when you can build your _own_ tools that are actually _nice_ to use?
 Anyway. What was I doing again?
 
-Right, I wanted to write a blog post about digital sovereignty.
+Right, I wanted to write a blog post about European digital sovereignty.
 It would be hypocritical to publish that
 on a blog hosted in the US,
 with a US-controlled hyperscaler.
@@ -34,13 +34,13 @@ So let’s move that to Europe, easy enough.
 _Push stack frame._
 Spawn a new VM, point the DNS records at … oh, right, DNS.
 I use Cloudflare for that.
-Another entity that Trump can order to stop providing services here when shit hits the fan.
+Another entity that Trump can order to stop providing services when shit hits the fan.
 Maybe I should self-host my DNS servers then.
 _Push stack frame._
 
 My webserver is a tiny VM that runs Nginx,
 plus Lego to renew certificates.
-The Nginx configuration grew somewhat complex over the years,
+The Nginx configuration grew somewhat complicated over the years,
 but I generate it with Nix so it’s fine,
 just two configuration files.
 I wrote a small Python script
@@ -66,11 +66,10 @@ and running my services from readonly chroots with no more binaries than needed.
 “Let’s not scope-creep this into switching distros right now,”
 I tell myself.
 “Let’s build a new deployment tool instead.”
-_Push stack frame._
 
 [miniserver]: https://codeberg.org/ruuda/miniserver
 
-## We can have nice things
+## Wishlist
 
 So, if I’m going to build my own tool …
 what would an actually _nice_ configuration management tool look like?
@@ -115,7 +114,7 @@ but a [separate tool][rcl-build] can do that.
 If I remove a file or application from my config,
 it should be removed from the server.
 I don’t want to have to add explicit cleanup steps,
-and end up with drift and lingering files when I inevitably forget to do so.
+and end up with drift and lingering files when I inevitably forget that.
 
 **Zero-setup.**
 I want to use this tool to manage my servers right after provisioning them.
@@ -123,10 +122,8 @@ I don’t want to manually install agents, daemons, or their dependencies,
 and I don’t want to have to enroll or register the host anywhere,
 because then I’d have the new problem of automating _that_.
 
-## Decoupling generation from distribution
+## Decouple distribution
 
-I’ve been thinking about and tinkering with deployment systems
-for a long time in different settings.
 At work, [David][david] had recently built [Unsible][unsible],
 a tool that takes Ansible playbooks,
 but instead of executing them step by step,
@@ -135,26 +132,28 @@ where it mostly just needs to put the files in place.
 I like this idea of decoupling configuration generation from distribution.
 In a sense this is also what NixOS does.
 We can learn more from NixOS:
-store generated artifacts in a store where different versions can coexist,
+store generated artifacts in a place where different versions can coexist,
 and limit the imperative parts of system administration
 to a small activation step that swaps a few symlinks.
-Good deployment tools invariably gravitate towards this design.
+Systems I worked on invariably gravitate towards that design,
+because it works well.
+Whether it’s for package management or system configuration.
 
 [unsible]: https://github.com/ChorusOne/unsible
 [david]:   https://davidv.dev/
 
-## Enter Deptool
+## Hello Deptool
 
 With the scope reduced
 to distributing small files and running a simple activation step,
 deployment becomes a tractable problem to solve.
-I called my deployment tool _Deptool_.
+I called my take on it _Deptool_.
 Here’s how it works.
 
 **Pre-render config files for the entire cluster.**
-We store them in a directory on disk.
+Store them in a directory on disk.
 This directory tree is two levels deep:
-a directory per target host at the top level;
+a directory per target host at the top level,
 a directory per application below that.
 
 **Put that in a Git repository.**
@@ -167,18 +166,20 @@ and for every config file we have a precise diff.
 **Materialize files in an isolated directory on the hosts.**
 We put everything in `/var/lib/deptool`
 where it doesn’t interfere with anything.
-In there we create a directory per application
-and name it after the commit.
+In there we create a directory named after the commit to deploy.
 Now multiple versions can coexist on disk.
 Then we point a `current` symlink at the deployed version.
 Now we can swap versions atomically,
 and we never have lingering files.
 Deleted files are simply not materialized in a next version.
 For applications that demand files in particular locations,
-we can create symlinks to `/var/lib/deptool`.
-If we deploy a later version that does not have this symlink,
-we know from the diff that we need to delete it;
-nothing lingers.
+we can create symlinks to `/var/lib/deptool` anywhere on the filesystem.
+That step is not atomic,
+but it only has to happen when adding or removing symlinks,
+not when we edit the files they point to.
+And if we later deploy a version that no longer includes the symlink,
+we know from the diff that we need to delete it.
+Nothing lingers.
 
 **Track what is deployed with remote-tracking refs.**
 Back on the operator laptop,
@@ -187,14 +188,14 @@ Now we can compute the cluster diff offline.
 This diff is the deployment plan,
 and we can present it in _milliseconds_.
 
-**To deploy, we connect to the target host and try to take a lock there.**
-In the lock request
-we include the commit that we think is deployed on that host.
+**To deploy, first try to take a lock at the target host.**
+We connect over SSH and send a lock request.
+In the request we include the commit that we think is deployed on that host.
 If we get the lock,
 then our plan was valid,
 and nothing else can be deployed on that host until we release the lock,
 so the plan _remains_ valid.
-Deployment can only proceed
+Deployment only proceeds
 if we hold the lock for all hosts affected by a change.
 If any ref was outdated and something else is deployed on a host,
 that means the plan is _stale_,
@@ -202,21 +203,28 @@ and we abort.
 We update our local refs,
 and the next run will show an up to date plan.
 
+So this is the core idea behind Deptool.
+Cluster configuration is just a directory tree tracked in a Git repository,
+and on each host we check out the relevant files into isolated directories.
+
+## Optimistic concurrency
+
 A Deptool deployment has elements of optimistic concurrency.
-As with optimistic concurrency in other systems,
-this means it’s very fast when there is no contention
+We assume that we know the current cluster state
+and plan based on that.
+If the assumption turned out wrong, we have to retry.
+This means it’s very fast when there is no contention
 (when I’m the only person deploying, always from the same laptop),
 at the cost of performing abysmally under contention
 (a team of people all trying to deploy constantly,
 where only one can win and everybody else has to retry).
-It don’t expect it to scale to hundreds of people or thousands of servers,
+It’s the same model as `git push`.
+It’s not going to scale to hundreds of people or thousands of servers,
 but that’s okay.
 I’m the only person managing my personal infra,
 and I don’t have thousands of servers.
-
-So this is the core idea behind Deptool.
-Cluster configuration is just a directory tree tracked in a Git repository,
-and on each host we check out the relevant files into isolated directories.
+The nice thing about building your own tools
+is that you can optimize them for exactly your own use case!
 
 [neindanke]: https://social.hackerspace.pl/@q3k/110598898979332486
 
