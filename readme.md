@@ -13,7 +13,7 @@ describes itself as “lightweight footprint”). That includes webfonts.
 This is version three of my blog. Previously I used [Hakyll][hakyll] (available
 in the `archived-hakyll` branch), and before that I used [Jekyll][jekyll].
 
-[ruudva]: https://ruudvanasseldonk.com
+[ruudva]: https://ruuda.nl
 [hakyll]: http://jaspervdj.be/hakyll/
 [jekyll]: http://jekyllrb.com/
 
