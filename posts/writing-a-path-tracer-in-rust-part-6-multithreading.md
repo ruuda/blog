@@ -68,7 +68,7 @@ Depending the on the number of units in every queue,
 and the time since the image was last tonemapped,
 the task scheduler will either hand out trace tasks, plot tasks, gather tasks, or tonemap tasks.
 
-[prev]: /2014/08/24/writing-a-path-tracer-in-rust-part-5-tonemapping
+[prev]: /2014/writing-a-path-tracer-in-rust-part-5-tonemapping
 
 In C++, the task scheduler has a vector of units.
 The queues are then queues of integers, which contain indices into the vector.

@@ -6,7 +6,7 @@ synopsis: Observables are a different take on asynchronous programming that can 
 run-in: A while ago
 ---
 
-A while ago I wrote about how `Task<T>` [is a monad](/2013/05/01/the-task-monad-in-csharp),
+A while ago I wrote about how `Task<T>` [is a monad](/2013/the-task-monad-in-csharp),
 and about how that simplifies composition. Today, I want to look at observables,
 and how they can be used as a replacement for tasks.
 
@@ -112,7 +112,7 @@ task.Wait();
 Again, tasks lack a composition operation, the current solution does not scale
 well. What if I wanted to call `M1` ... `M7` sequentially (but the methods applied
 to the instances in parallel)? Furthermore, the continuation blocks, which wastes
-a thread. Let’s try that again, using the `Then` method from the [previous post](/2013/05/01/the-task-monad-in-csharp):
+a thread. Let’s try that again, using the `Then` method from the [previous post](/2013/the-task-monad-in-csharp):
 
 ```cs
 Func<IEnumerable<A>, Action<A>, Task> doParallel = (xs, action) =>

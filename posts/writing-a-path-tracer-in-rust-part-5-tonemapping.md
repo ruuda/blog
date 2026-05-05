@@ -56,7 +56,7 @@ are then used to determine the intensity of the given ray.
 The trace unit does this a fixed number of times, and stores the screen position,
 wavelength, and intensity (together a _mapped photon_) in a buffer.
 
-[prev]: /2014/08/19/writing-a-path-tracer-in-rust-part-4-tracing-rays
+[prev]: /2014/writing-a-path-tracer-in-rust-part-4-tracing-rays
 
 In C++, it is done as follows:
 

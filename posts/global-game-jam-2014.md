@@ -29,7 +29,7 @@ This makes for some interesting gameplay,
 where you can chase the other players, hide and wait,
 or strategically reveal an egg to encourage other players to make a move.
 
-We [again](/2012/01/30/global-game-jam-2012) made it to the top-three with our game,
+We [again](/2012/global-game-jam-2012) made it to the top-three with our game,
 the third place this time.
 
 This was my first time using [Unity](http://unity3d.com),

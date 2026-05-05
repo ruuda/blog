@@ -7,7 +7,7 @@ synopsis: When writing asynchronous code in C# with the await keyword, the emerg
 run-in: As a follow-up
 ---
 
-As a follow-up to the [task monad](/2013/05/01/the-task-monad-in-csharp),
+As a follow-up to the [task monad](/2013/the-task-monad-in-csharp),
 let’s make a comparison between the new `async` and `await` syntax in C# 5,
 and the do notation in Haskell. Two constructs that might seem unrelated at
 first, allow code to be written in a form that is _exactly_ the same.

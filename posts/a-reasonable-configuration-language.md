@@ -42,8 +42,8 @@ for a long time:
    the parameter data is difficult to share between Ansible and other tools.
 
 [rcl-loop]: https://github.com/ruuda/rcl/blob/bedbd3eea1129ba6053427d67b77a955240ceca8/examples/buckets.rcl#L9-L10
-[template-yaml]: /2023/01/11/the-yaml-document-from-hell#templating-yaml-is-a-terrible-terrible-idea
-[yaml-hell]: /2023/01/11/the-yaml-document-from-hell
+[template-yaml]: /2023/the-yaml-document-from-hell#templating-yaml-is-a-terrible-terrible-idea
+[yaml-hell]: /2023/the-yaml-document-from-hell
 
 So that day,
 when I was in a particularly defiant mood,
@@ -220,7 +220,7 @@ maybe it’s useful to others,
 so that’s why I’m writing about it today.
 
 [appendix]: #appendix-a-non-exhaustive-list-of-configuration-languages
-[pris]:     /2017/04/27/a-language-for-designing-slides
+[pris]:     /2017/a-language-for-designing-slides
 
 ## Ruud’s Configuration Language
 

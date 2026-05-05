@@ -24,8 +24,8 @@ This year Maarten Crefcoeur joined us for audio,
 so the game features original music as well.
 
 For the
-[third](/2012/01/30/global-game-jam-2012)
-[year](/2014/01/28/global-game-jam-2014)
+[third](/2012/global-game-jam-2012)
+[year](/2014/global-game-jam-2014)
 we made it into the top three with our game,
 finishing third out of the 32 games that were built in Breda this year.
 If you would like to play the game,

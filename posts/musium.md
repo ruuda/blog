@@ -101,8 +101,8 @@ At that time, I wasn’t planning to write a music player.
 
 [claxon]:      https://github.com/ruuda/claxon
 [hound]:       https://github.com/ruuda/hound
-[path-tracer]: /2014/08/10/writing-a-path-tracer-in-rust-part-1/
-[zero]:        /2016/11/30/zero-cost-abstractions/
+[path-tracer]: /2014/writing-a-path-tracer-in-rust-part-1/
+[zero]:        /2016/zero-cost-abstractions/
 
 ## Chromecast and the metadata index
 
@@ -492,6 +492,6 @@ my toy database.
 And if I ever get bored with all that,
 there is still the pause feature I need to implement.
 
-[pris]:   /2017/04/27/a-language-for-designing-slides
+[pris]:   /2017/a-language-for-designing-slides
 [rcl]:    https://github.com/ruuda/rcl
 [noblit]: https://github.com/ruuda/noblit

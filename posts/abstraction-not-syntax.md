@@ -41,7 +41,7 @@ but line noise is not the real problem here!
 
 [nginx]:    https://nginx.org/en/docs/beginners_guide.html#conf_structure
 [HCL]:      https://opentofu.org/docs/language/syntax/configuration/
-[yamlhell]: /2023/01/11/the-yaml-document-from-hell
+[yamlhell]: /2023/the-yaml-document-from-hell
 
 ## Syntax is superficial
 

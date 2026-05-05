@@ -46,7 +46,7 @@ This is something that happens a lot during decoding,
 and this particular loop makes up roughly 20% of the total decoding time.
 It had better be efficient.
 
-[error-model]: /2015/06/17/exceptional-results-error-handling-in-csharp-and-rust
+[error-model]: /2015/exceptional-results-error-handling-in-csharp-and-rust
 [claxon]:      https://github.com/ruuda/claxon
 
 Ingredients
