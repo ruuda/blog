@@ -3,7 +3,8 @@ title: Building the deployment tool I wish I had
 break: deployment tool
 date: 2026-04-19
 lang: en-US
-synopsis: TODO write a synopsis
+synopsis: Deptool is a new declarative configuration deployment tool that I built for myself. In this post I describe the design, and I explain what problems it solves.
+teaser: abstraction-not-syntax
 minutes: ?
 run-in: It is 00:43 at night.
 ---
@@ -162,7 +163,7 @@ This design works well for both package management and system configuration.
 With the scope reduced
 to distributing small files and running a simple activation step,
 deployment becomes a tractable problem to solve.
-I call my take on it [Deptool][deptool].
+I call my take on it [Deptool][_deptool_].
 Here’s how it works.
 
 **Pre-render config files for the entire cluster.**
@@ -397,6 +398,38 @@ so deployment really feels instant.
 
 ## Conclusion
 
-It works, its very nice to use.
-Write about how sub-second deploy is a game-changer,
-no temptation to edit files in prod.
+I’ve been using Deptool to manage my personal infra for the past month,
+and I’m very pleased with it.
+Instant diffs,
+sub-second deploys,
+and automatic rollback,
+are really a game-changer.
+When the proper way to deploy takes minutes,
+I’m always tempted to edit files directly on the server
+to shorten the feedback loop.
+With Deptool,
+it’s _faster_ to make the edit locally and deploy,
+than to SSH into the server and open an editor there.
+The proper way is the one with least friction.
+Every applied edit gets recorded in the Git history,
+and if I break something,
+Deptool rolls back before I even realize it was broken.
+It’s been refreshing to use a tool that gets out of the way,
+rather than one I dread running.
+
+I built Deptool for myself,
+to solve exactly my problem.
+The fact that it doesn’t try to solve
+every deployment problem for everybody
+is also what enables it to shine for my use case.
+Still,
+I think it’s too good not to share,
+and I hope others may find it useful,
+especially for working with image-based operating systems.
+Deptool is now available from
+[Codeberg][codeberg] and [GitHub][codeberg],
+and it has an extensive [manual][manual].
+
+[manual]:   https://docs.ruuda.nl/deptool/
+[codeberg]: https://codeberg.org/ruuda/deptool
+[github]:   https://github.com/ruuda/deptool
