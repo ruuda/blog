@@ -70,9 +70,39 @@ I tell myself.
 
 [miniserver]: https://codeberg.org/ruuda/miniserver
 
+## How it looks
+
+It is now one month later,
+and [Deptool][deptool] exists.
+This is me updating my DNS records:
+
+<div class="sourceCode"><pre class="sourceCode"><code class="sourceCode"><span class="dt">$</span> deptool deploy
+s4.ruuda.nl
+    <span class="st">update</span> nsd
+        <span class="st">~</span> zones/ruuda.nl.zone
+        <span class="st">restart unit</span> nsd.service
+
+s5.ruuda.nl
+    <span class="st">update</span> nsd
+        <span class="st">~</span> zones/ruuda.nl.zone
+        <span class="st">restart unit</span> nsd.service
+
+Auto-rollback if deploy fails.
+Apply to 2 hosts in cluster 'prod'? [y/N/d] y
+
+  s4.ruuda.nl: <span class="fu">done</span>
+  s5.ruuda.nl: <span class="fu">done</span>
+
+Changes deployed successfully to 2 hosts in 0.99s.
+</code></pre></div>
+
+In this post we’ll walk through how it works,
+but let’s not run ahead.
+How did I get here?
+
 ## Wishlist
 
-So, if I’m going to build my own tool …
+If I’m going to build my own tool …
 what would an actually _nice_ configuration management tool look like?
 Here we can look to Ansible for guidance:
 it made all the mistakes so others can learn from them.
@@ -127,7 +157,6 @@ it should be removed from the server.
 I don’t want to have to add explicit cleanup steps,
 and end up with drift and lingering files when I inevitably forget that.
 
-
 **Zero-setup.**
 I want to use this tool to manage my servers right after provisioning them.
 I don’t want to manually install agents, daemons, or dependencies,
@@ -163,7 +192,7 @@ This design works well for both package management and system configuration.
 With the scope reduced
 to distributing small files and running a simple activation step,
 deployment becomes a tractable problem to solve.
-I call my take on it [Deptool][_deptool_].
+I call my take on it [_Deptool_][deptool].
 Here’s how it works.
 
 **Pre-render config files for the entire cluster.**
