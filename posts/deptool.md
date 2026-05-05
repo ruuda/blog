@@ -129,27 +129,29 @@ and end up with drift and lingering files when I inevitably forget that.
 
 **Zero-setup.**
 I want to use this tool to manage my servers right after provisioning them.
-I don’t want to manually install agents, daemons, or their dependencies,
+I don’t want to manually install agents, daemons, or dependencies,
 and I don’t want to have to enroll or register the host anywhere,
 because then I’d have the new problem of automating _that_.
 
 ## Decouple distribution
 
 The core idea feels obvious in hindsight,
-but it was inspired by lots of prior art.
+which is maybe why it appears everywhere.
 At work, [David][david] had recently built [Unsible][unsible],
 a tool that takes Ansible playbooks,
 but instead of executing them step by step,
 it locally builds a tarball and ships it to the host,
 where it mostly just needs to put the files in place.
 I like this idea of decoupling configuration generation from distribution.
-In a sense this is also what NixOS does.
-[NixOps][nixops] applied it to clusters.
+It’s how my barebones deploy script worked too:
+build the configuration externally,
+and the script is just a dumb file copier.
+In a sense, NixOS is this idea applied to the local system.
 We can learn more from Nix:
 store generated artifacts in a place where different versions can coexist,
 and limit the imperative parts of system administration
 to a small activation step that swaps a few symlinks.
-This design works well both for package management and system configuration.
+This design works well for both package management and system configuration.
 
 [unsible]: https://github.com/ChorusOne/unsible
 [david]:   https://davidv.dev/
@@ -197,6 +199,9 @@ Nothing lingers.
 **Track what is deployed with remote-tracking refs.**
 Back on the operator laptop,
 we track the commit we deployed to each host.
+(This is a per-host property rather than a cluster-wide property,
+because if a change doesn’t affect a host,
+we don’t need to deploy the new commit there.)
 Now we can compute the cluster diff offline.
 This diff is the deployment plan,
 and we can present it in _milliseconds_.
@@ -261,7 +266,7 @@ is that you can optimize them for exactly your own use case!
 
 We have the design,
 we know on a high level what to do.
-But how do we make it happen on the managed host?
+How do we make it happen on a managed host?
 My webserver runs Flatcar Linux,
 an image-based OS with a very minimal userspace.
 It has coreutils and Bash,
@@ -307,21 +312,20 @@ is that you know exactly what’s running on the remote end,
 you never have version mixups.
 In theory, at least.
 In practice I’ve wasted more hours than I dare to admit
-staring at Python module errors,
-because Ansible still has requirements about the host,
-it’s not _fully_ self-contained.
+staring at cryptic Python errors,
+because Ansible is not _fully_ self-contained.
 That creates a compatibility nightmare.
-We don’t even _have_ Python on Flatcar.
+Besides, we don’t even _have_ Python on Flatcar.
 So how about this instead?
 
 **We build a static binary.**
 No assumptions about what’s available except the kernel,
-and no interpreter that has to parse megabytes of code
-before it can execute anything.
+and no interpreter that has to parse through megabytes of code
+before it can start doing anything useful.
 
 **We put it at a location named after the commit it was built from.**
 This ensures that both ends of the connection run the same version,
-so there are never any issues with wire format compatibility.
+so there are never any compatibility issues.
 If we managed to start the binary, it speaks the right protocol.
 We’ll put it at `/var/lib/deptool/bin/deptool-<version>-<commit>`.
 
@@ -331,10 +335,10 @@ Let’s not waste any on probing or on idempotent installation steps.
 The binary is about 1.6 MB.
 Not prohibitively slow to send,
 but not free either,
-and cluster configuration changes far more frequently than Deptool;
+and cluster configuration changes far more frequently than Deptool updates;
 the common case is that the binary exists.
 
-If we fail to start the binary, then we need to install it.
+**If we failed to start the binary, then we need to install it.**
 We connect over SSH a second time,
 now with this command:
 
@@ -344,7 +348,7 @@ now with this command:
     && sudo chmod +x <remote_bin_path>
     && sudo sha256sum <remote_bin_path>
 
-We drive that like so:
+We drive that like so.
 First, we read one line from stdout to get the `uname` output.
 This tells us the machine’s OS and CPU architecture,
 so we can send the appropriate agent binary for that platform.
@@ -353,41 +357,43 @@ We write that binary to stdin;
 Finally, we read one more line from stdout:
 the remotely computed shasum.
 This confirms that the transfer was successful.
-When we retry starting the agent now, it should succeed.
-The agent cleans up old versions to avoid filling up the disk.
+The entire process depends only on standardized coreutils programs.
+When we retry starting the agent now,
+it should succeed,
+and the agent cleans up old versions to avoid filling up the disk.
 
-Let’s recap.
-What do we have?
+What did we gain?
 
- * A way to execute an agent on a remote host
-   and communicate with it over a socket.
+ * A way to execute an agent on a remote host and communicate with it.
+ * Automatic installation that requires nothing beyond coreutils
+   on the remote host.
+ * Both sides run the same version,
+   the protocol is compatible by construction.
  * All user-controlled input goes over our SSH-backed socket,
    it never enters SSH or shell commands,
    so we sidestep any escaping issues.
- * Both sides run the same version,
-   the protocol is compatible by construction.
- * This costs only a single SSH handshake in the common case,
+ * It costs only a single SSH handshake in the common case,
    so latency is minimal.
  * In the uncommon case
    (deploying against a new machine, or after updating the tool)
    it’s two additional connects plus a one-time 1.6 MB transfer.
-   With `ControlMaster` we can skip most of the overhead on the later connections,
+   With [`ControlMaster`][controlmaster]
+   we can skip most of the overhead on the later connections,
    so overall it costs a few seconds.
    No sub-second deploy in this case,
    but still better than Ansible.
- * Automatic installation that requires nothing beyond coreutils
-   on the remote host.
 
 This approach has been working out great for me
 even as I was building Deptool,
-and the uncommon case of having to copy the binary was quite common.
-Especially for the case where I deploy a configuration,
+and the case of having to copy the binary was relatively more common.
+Especially for the flow where I deploy a configuration,
 tweak it a bit,
 and deploy again,
-SSH can preserve the underlying connection,
-so it really feels instant.
+SSH can keep the underlying connection alive,
+so deployment really feels instant.
 
-[mitogen]:   https://mitogen.networkgenomics.com/ansible_detailed.html
+[mitogen]:       https://mitogen.networkgenomics.com/ansible_detailed.html
+[controlmaster]: https://man.openbsd.org/ssh_config#ControlMaster
 
 ## Conclusion
 
