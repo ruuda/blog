@@ -96,13 +96,11 @@ year post = y where (y, _m, _d) = toGregorian $ date post
 url :: Post -> String
 url post =
   let
-    datePath = formatTime defaultTimeLocale "%Y/%m/%d" $ date post
-    yearPath = formatTime defaultTimeLocale "%Y" $ date post
-    --  For more recent posts, I started using only the year in the url,
-    --  for older posts they still include the month and day. Maybe in the
-    --  future I'll add redirects for them or something, but for now I don't
-    --  want to break existing urls.
-    prefix = if (date post) >= (fromGregorian 2023 6 1) then yearPath else datePath
+    -- Posts before 2023-06-01 used `/YYYY/mm/dd/slug` as their url, then at
+    -- some point I switched to only the year. Now in 2026-05, I'm switching
+    -- the domain from ruudvanasseldonk.com to ruuda.nl, and if we do a redirect
+    -- anyway here, we might as well switch all posts to the new format.
+    prefix = formatTime defaultTimeLocale "%Y" $ date post
   in
     "/" <> prefix <> "/" <> (slug post)
 
