@@ -25,7 +25,7 @@ I prefer to call it “having higher standards.”
 Why subject yourself to endless frustration
 that mediocre tools inflict on you,
 when you can build your _own_ tools that are actually _nice_ to use?
-Anyway. What was I doing again?
+Anyway, what was I doing again?
 
 Right, I wanted to write a blog post about European digital sovereignty.
 It would be hypocritical to publish that
@@ -56,7 +56,7 @@ _Push stack frame._
 
 “NixOS”
 I hear [Arian](https://functional.cafe/@arianvp)’s voice whisper in my head.
-“Just use NixOS.
+“[Just use NixOS][neindanke].
 It’s only one line to configure,
 `services.nsd.enable = true`.”
 He’s right of course.
@@ -68,6 +68,7 @@ and running my services from readonly chroots with no more binaries than needed.
 I tell myself.
 “Let’s build a new deployment tool instead.”
 
+[neindanke]:  https://social.hackerspace.pl/@q3k/110598898979332486
 [miniserver]: https://codeberg.org/ruuda/miniserver
 
 ## How it looks
@@ -105,7 +106,7 @@ How did I get here?
 If I’m going to build my own tool …
 what would an actually _nice_ configuration management tool look like?
 Here we can look to Ansible for guidance:
-it made all the mistakes so others can learn from them.
+it made all the mistakes so that others can learn from them.
 I want my tool to be:
 
 **Fast.**
@@ -148,7 +149,7 @@ I do need to be able to template
 but a [separate tool][rcl-build] can do that.
 
 [rcl-post]:      /2024/a-reasonable-configuration-language/
-[yaml-generate]: /2023/01/11/the-yaml-document-from-hell/#templating-yaml-is-a-terrible-terrible-idea
+[yaml-generate]: /2023/the-yaml-document-from-hell/#templating-yaml-is-a-terrible-terrible-idea
 [rcl-build]:     https://docs.ruuda.nl/rcl/generating_files/
 
 **Declarative.**
@@ -166,7 +167,7 @@ because then I’d have the new problem of automating _that_.
 ## Decouple distribution
 
 The core idea feels obvious in hindsight,
-which is maybe why it appears everywhere.
+which is maybe why it keeps appearing everywhere.
 At work, [David][david] had recently built [Unsible][unsible],
 a tool that takes Ansible playbooks,
 but instead of executing them step by step,
@@ -175,7 +176,7 @@ where it mostly just needs to put the files in place.
 I like this idea of decoupling configuration generation from distribution.
 It’s how my barebones deploy script worked too:
 build the configuration externally,
-and the script is just a dumb file copier.
+and the script is mostly a dumb file copier.
 In a sense, NixOS is this idea applied to the local system.
 We can learn more from Nix:
 store generated artifacts in a place where different versions can coexist,
@@ -229,9 +230,9 @@ Nothing lingers.
 **Track what is deployed with remote-tracking refs.**
 Back on the operator laptop,
 we track the commit we deployed to each host.
-(This is a per-host property rather than a cluster-wide property,
+This is a per-host property rather than a cluster-wide property,
 because if a change doesn’t affect a host,
-we don’t need to deploy the new commit there.)
+we don’t need to deploy the new commit there.
 Now we can compute the cluster diff offline.
 This diff is the deployment plan,
 and we can present it in _milliseconds_.
@@ -290,14 +291,12 @@ and I don’t have thousands of servers.
 The nice thing about building your own tools
 is that you can optimize them for exactly your own use case!
 
-[neindanke]: https://social.hackerspace.pl/@q3k/110598898979332486
-
 ## Building the agent
 
 We have the design,
 we know on a high level what to do.
 How do we make it happen on a managed host?
-My webserver runs Flatcar Linux,
+My webserver runs [Flatcar Linux][flatcar],
 an image-based OS with a very minimal userspace.
 It has coreutils and Bash,
 but no package manager and no Python.
@@ -308,12 +307,14 @@ so it needs to be compatible with Flatcar out of the box.
 If I need to install something for the tool to work,
 then I’d have the new problem of automating _that_ installation process!
 
+[flatcar]: https://www.flatcar.org/
+
 So we need to manage the fresh host from the outside.
 I can SSH into it, and use passwordless sudo there.
 Maybe we can just execute commands over SSH?
 If you have ever tried to automate anything mildly nontrivial that way,
 you will have quickly learned the hard way
-that this is not just slow
+that the handshake is not just slow
 — the argv also doesn’t cross the SSH boundary unscathed.
 I want a fast tool and I don’t want to deal with the subtleties
 of word splitting and escaping shell-over-SSH.
@@ -339,7 +340,7 @@ Needless to say, this is slow.
 Excruciatingly slow.
 The one nice thing about this design
 is that you know exactly what’s running on the remote end,
-you never have version mixups.
+so you never have version mixups.
 In theory, at least.
 In practice I’ve wasted more hours than I dare to admit
 staring at cryptic Python errors,
@@ -401,7 +402,7 @@ What did we gain?
    the protocol is compatible by construction.
  * All user-controlled input goes over our SSH-backed socket,
    it never enters SSH or shell commands,
-   so we sidestep any escaping issues.
+   so we sidestep any escaping issues and length limits.
  * It costs only a single SSH handshake in the common case,
    so latency is minimal.
  * In the uncommon case
@@ -429,10 +430,9 @@ so deployment really feels instant.
 
 I’ve been using Deptool to manage my personal infra for the past month,
 and I’m very pleased with it.
-Instant diffs,
-sub-second deploys,
-and automatic rollback,
-are really a game-changer.
+It’s super nice to instantly see an accurate plan before connecting,
+and to have automatic rollback,
+but sub-second deploys are the real game-changer.
 When the proper way to deploy takes minutes,
 I’m always tempted to edit files directly on the server
 to shorten the feedback loop.
