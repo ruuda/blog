@@ -456,7 +456,7 @@ I think it’s too good not to share,
 and I hope others may find it useful,
 especially for working with image-based operating systems.
 Deptool is now available from
-[Codeberg][codeberg] and [GitHub][codeberg],
+[Codeberg][codeberg] and [GitHub][github],
 and it has an extensive [manual][manual].
 
 [manual]:   https://docs.ruuda.nl/deptool/
