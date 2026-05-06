@@ -1,11 +1,11 @@
 ---
 title: Building the deployment tool I wish I had
 break: deployment tool
-date: 2026-04-19
+date: 2026-05-06
 lang: en-US
 synopsis: Deptool is a new declarative configuration deployment tool that I built for myself. In this post I describe the design, and I explain what problems it solves.
 teaser: abstraction-not-syntax
-minutes: ?
+minutes: 16
 run-in: It is 00:43 at night.
 ---
 
@@ -361,7 +361,7 @@ If we managed to start the binary, it speaks the right protocol.
 We’ll put it at `/var/lib/deptool/bin/deptool-<version>-<commit>`.
 
 **We optimistically assume the binary is already there.**
-An SSH handshakes is fairly expensive.
+An SSH handshake is fairly expensive.
 Let’s not waste any on probing or on idempotent installation steps.
 The binary is about 1.6 MB.
 Not prohibitively slow to send,
