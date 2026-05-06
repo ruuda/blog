@@ -1,5 +1,9 @@
 # All my repositories that have a documentation site.
 
+[Deptool]
+slug = "deptool"
+description = "A declarative configuration deployment tool."
+
 [Hanson]
 slug = "hanson"
 description = "Self-hosted prediction market app."
