@@ -41,8 +41,8 @@ def render_project_card(repo: Repo) -> str:
       <h3><a href="{repo.slug}/">{repo.title}</a></h3>
       <p class="desc">{repo.description}</p>
       <p class="src"><span class="stars">★ {repo.stars}</span>
-      ⋅ <a href="https://github.com/ruuda/{repo.slug}">GitHub</a>
       ⋅ <a href="https://codeberg.org/ruuda/{repo.slug}">Codeberg</a>
+      ⋅ <a href="https://github.com/ruuda/{repo.slug}">GitHub</a>
       </p>
     </div>
     """
