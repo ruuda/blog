@@ -16,7 +16,30 @@ import urllib.request
 from build import load_repos
 
 
-def count_stars(client: HTTPSConnection, owner: str, repo: str) -> int:
+def count_stars_forgejo(client: HTTPSConnection, owner: str, repo: str) -> int:
+    n = 0
+    page = 0
+
+    while True:
+        page += 1
+        client.request(
+            "GET",
+            f"/api/v1/repos/{owner}/{repo}/stargazers?limit=30&page={page}",
+            headers={
+                "User-Agent": "Ruud's Star Counting Script <dev@ruuda.nl>",
+            },
+        )
+        with client.getresponse() as response:
+            assert response.status == 200
+            data = json.load(response)
+            n += len(data)
+            if len(data) < 30:
+                break
+
+    return n
+
+
+def count_stars_github(client: HTTPSConnection, owner: str, repo: str) -> int:
     n = 0
     page = 0
 
@@ -30,7 +53,7 @@ def count_stars(client: HTTPSConnection, owner: str, repo: str) -> int:
             f"/repos/{owner}/{repo}/stargazers?per_page=30&page={page}",
             headers={
                 "Accept": "application/vnd.github+json",
-                "User-Agent": "Ruud's Star Counting Script <dev@veniogames.com>",
+                "User-Agent": "Ruud's Star Counting Script <dev@ruuda.nl>",
                 "X-GitHub-Api-Version": "2022-11-28",
             },
         )
@@ -49,10 +72,13 @@ def main() -> None:
     result: Dict[str, int] = {}
 
     timeout_seconds = 9.1
-    client = HTTPSConnection("api.github.com", timeout=timeout_seconds)
+    client_gh = HTTPSConnection("api.github.com", timeout=timeout_seconds)
+    client_cb = HTTPSConnection("codeberg.org", timeout=timeout_seconds)
 
     for repo in load_repos():
-        result[repo.slug] = count_stars(client, "ruuda", repo.slug)
+        count_gh = count_stars_github(client_gh, "ruuda", repo.slug)
+        count_cb = count_stars_forgejo(client_cb, "ruuda", repo.slug)
+        result[repo.slug] = count_gh + count_cb
 
     data = {
         "generated_at": now.isoformat(),
