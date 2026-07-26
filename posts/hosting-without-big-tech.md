@@ -22,7 +22,7 @@ A year later I rewrote the website in PHP.
 What can I say, we were all young once.
 
 Fast-forward to 2011.
-I was studying at university,
+I was studying at university
 and working a side job as a C# programmer.
 <!-- TODO
 for a company that built software that ran on-prem.
@@ -33,7 +33,7 @@ and I wanted one too.
 So in 2012 I bought ruudvanasseldonk.com,
 and I put a Jekyll blog on it.
 By now I was comfortable with Linux and Apache,
-but shared hosting worked fine for my static site.
+but shared hosting still worked fine for my static site.
 
 [Octopress]: https://octopress.org/
 
@@ -71,7 +71,7 @@ You can serve a _lot_ of static pages with half a CPU core.
 I considered adding Cloudflare,
 but then I would again not be in control of my HTTP server.
 They would also be able to MITM my readers,
-and I estimated that for my traffic volume,
+and I estimated that for my regular traffic volume,
 cache misses would be common,
 so I might as well serve my site directly.
 I did adopt Cloudflare as my DNS server.
@@ -87,7 +87,7 @@ talks at conferences …
 cloud was the way.
 If you were still on-prem or colocating, you were a dinosaur.
 
-## Nothing but the cloud
+## Everything else disappeared
 
 By 2024,
 something funny had happened.
@@ -119,7 +119,7 @@ three weeks into the new year,
 Trump had already abducted a foreign head of state
 and threatened military action against a NATO ally.
 Two days after the article, he started another war.
-Not just government and public sector are feeling the heat:
+Government and the public sector are not the only ones feeling the heat:
 business are dealing with unpredictable tariffs,
 and lately Trump has taken up the liberty
 to decide who gets access to Anthropic’s latest models.
@@ -145,3 +145,59 @@ with an American hyperscaler.
 [nu-board]:    https://www.nu.nl/blog/6382843/journalistiek-moet-amerikaanse-dreiging-serieus-nemen.html
 
 ## Hosting on European infrastructure
+
+The webserver itself was easy enough to move.
+You can get virtual machines anywhere,
+and it has no special requirements.
+I ended up running the webserver on [Exoscale],
+but I also use <abbr>VM</abbr>s from [Upcloud] and [Cherry Servers].
+They are for sure not as mature as GCP and AWS:
+none of them even support 2FA using a Yubikey.
+For <abbr>VM</abbr>s they work fine though,
+and in the four months so far
+I haven’t had any reliability issues.
+As a bonus,
+I now also support IPv6,
+something that was not available on Google Cloud when I first set things up there.
+
+For DNS I was still dependent on Cloudflare.
+By now I had acquired enough domains
+that I didn’t want to manage DNS
+in the various webinterfaces of the different registrars I used.
+<!-- I could have gone with [Bunny](https://bunny.net/dns/), -->
+Fortunately by now I was now confident enough
+in platforms engineering to run my own DNS servers,
+so I set up two [NSD] instances.
+I also built a [new deployment tool](/2026/deptool/)
+to manage this tiny cluster of virtual machines,
+because there is no way I’m using Ansible when nobody is paying me for it.
+
+When you host a nameserver for your own domain,
+there is a circular dependency:
+if the nameserver for `ruuda.nl` is `ns1.ruuda.nl`,
+then who do you ask for the address of `ns1.ruuda.nl`?
+The answer to this is: the nameserver for `.nl`.
+It serves not just `NS` records for you,
+but also `A` and `AAAA` records.
+These are called _glue records_,
+and the boutique registrars do not have a self-serve way to configure them.
+I ended up migrating ruuda.nl
+to exactly the hosting company we abandoned for Google Cloud 10 years ago,
+and I have to admit that their DNS control panel is pretty good.
+It automatically detects when you need glue records,
+and allows you to set them.
+
+My blog has one remaining dependency on an American service: Let’s Encrypt.
+That’s a concerning one,
+because as they clarified in the revised subscriber agreement from June 2026,
+they have to comply with US sanctions,
+and a certificate authority would be an effective way to target an organization,
+or even an entire country.
+For my personal blog I’m okay with this for now,
+but …
+No actually, maybe I can just fix this right now?
+
+[Exoscale]:       https://www.exoscale.com/
+[Upcloud]:        https://upcloud.com/
+[Cherry Servers]: https://www.cherryservers.com/
+[NSD]:            https://nlnetlabs.nl/projects/nsd/about/
