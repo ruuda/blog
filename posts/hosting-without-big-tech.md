@@ -197,6 +197,10 @@ For my personal blog I’m okay with this for now,
 but …
 No actually, maybe I can just fix this right now?
 
+ZeroSSL and GlobalSign.
+Actalis not looking very good, [keymatch].
+[keymatch]: https://extwebra.actalis.it/portal/uapub/tools/keymatch
+
 [Exoscale]:       https://www.exoscale.com/
 [Upcloud]:        https://upcloud.com/
 [Cherry Servers]: https://www.cherryservers.com/
