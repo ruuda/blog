@@ -201,6 +201,11 @@ ZeroSSL and GlobalSign.
 Actalis not looking very good, [keymatch].
 [keymatch]: https://extwebra.actalis.it/portal/uapub/tools/keymatch
 
+ - CAA record is not documented anywhere.
+ - Website has random connection aborts on Firefox.
+ - No support for altnames.
+ - They have a page where you can upload private keys?
+
 [Exoscale]:       https://www.exoscale.com/
 [Upcloud]:        https://upcloud.com/
 [Cherry Servers]: https://www.cherryservers.com/
