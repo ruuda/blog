@@ -15,18 +15,28 @@ through an ad in the computer magazine he subscribed to.
 I put a website on it
 about the games I was building with a program called _Game Maker_,
 the gateway drug that got me into programming.
-Little did I know about how the web worked under the hood,
+Little did I understand about how the web worked under the hood,
 but I could write a website in HTML and CSS,
 and copy the files to the server over FTP.
-A year later I rewrote the website in PHP.
-What can I say, we were all young once.
+Later I added some PHP.
+That’s just how you built a website back then.
+
+Today,
+20 years later,
+the web no longer works likes this.
+Shared hosting still exists
+— my original website is still online! —
+but it feels like a relic of a different time.
+Instead of local companies that advertise in paper magazines,
+we have a few giants that almost everybody depends on.
+The _hyperscalers_.
+
+<!-- Meh where is this post going? -->
 
 Fast-forward to 2011.
 I was studying at university
 and working a side job as a C# programmer.
-<!-- TODO
-for a company that built software that ran on-prem.
--->
+The software we built ran on-prem, on our customer’s servers and <abbr>PCs</abbr>.
 /r/programming was blooming.
 It was full of interesting blogs,
 and I wanted one too.
@@ -39,9 +49,8 @@ but shared hosting still worked fine for my static site.
 
 ## Everything moves to the cloud
 
-Fast-forward to 2015.
-After an internship at Google,
-I returned to The Netherlands to do a master’s degree.
+After I graduated I did an internship at a large tech company,
+and then I returned to The Netherlands for a master’s degree.
 As a side job I joined a local SaaS startup.
 We were hosting our software on virtual machines
 with a Dutch hosting company,
@@ -55,17 +64,17 @@ we were pleased.
 
 [channable-cloud]: https://www.channable.com/tech/how-we-moved-to-google-cloud-using-consul-and-zero-tier
 
-At Google I worked on Chromium,
+During my internship I worked on a web browser,
 and I learned a lot about improving page load times.
 I wanted to optimize my blog,
 but for that I needed to be able to configure my webserver myself.
 I set one up with the tools I was familiar with:
 Ubuntu, Nginx, and Google Cloud.
-They offered this `f1-micro` instance for free in the their US regions,
-and the majority of my visitors were from the United States,
+They offered this `f1-micro` instance for free in the their US regions.
+The majority of my visitors were from the United States,
 so hosting there optimized for the common case.
-The `f1-micro` served me well
-even as some of my posts made it to the Hacker News frontpage.
+Occasionally a post would make it to the Hacker News frontpage,
+and the `f1-micro` didn’t break a sweat as the crowd tried to hug it to death.
 You can serve a _lot_ of static pages with half a CPU core.
 
 I considered adding Cloudflare,
