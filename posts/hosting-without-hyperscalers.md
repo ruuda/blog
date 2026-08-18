@@ -74,7 +74,7 @@ They offered this `f1-micro` instance for free in the their US regions.
 The majority of my visitors were from the United States,
 so hosting there optimized for the common case.
 Occasionally a post would make it to the Hacker News frontpage,
-and the `f1-micro` didn’t break a sweat as the crowd tried to hug it to death.
+but the `f1-micro` didn’t break a sweat as the crowd tried to hug it to death.
 You can serve a _lot_ of static pages with half a CPU core.
 
 I considered adding Cloudflare,
@@ -100,15 +100,16 @@ If you were still on-prem or colocating, you were a dinosaur.
 
 By 2024,
 something funny had happened.
-Nobody knew how the lower levels of the stack worked any more.
+Everybody had forgotten how the lower levels of the stack worked.
 Clouds had expanded beyond simple virtual machines to container managers,
 and then serverless.
 Everything became managed.
 At that time I was working for a company
 that was doing platforms engineering work,
 primarily on bare metal,
-and we found it difficult to hire good engineers.
-<!-- -->
+and we found it difficult
+to hire engineers who understood the lower levels of the stack.
+Platforms engineering had become synonymous with writing yaml.
 
 ## Friendship ended with United States
 
@@ -122,13 +123,13 @@ which [disrupted][icc-disrupt] the court’s operations for months.
 
 This was a wake-up call.
 By January 2026,
-nu.nl’s editorial board [wrote][nu-board]
+the editorial board of a popular Dutch news site [wrote][nu-board]
 that journalism needs to start taking the American threat seriously:
 three weeks into the new year,
 Trump had already abducted a foreign head of state
 and threatened military action against a NATO ally.
 Two days after the article, he started another war.
-Government and the public sector are not the only ones feeling the heat:
+Goverment is not the only sector under pressure:
 business are dealing with unpredictable tariffs,
 and lately Trump has taken up the liberty
 to decide who gets access to Anthropic’s latest models.
@@ -137,7 +138,7 @@ American corporations are simply no longer a reliable business partner.
 This new distrust for the United States is a big challenge for Europe.
 We’re finding our entire society completely dependent on American big tech,
 scrambling to break free
-before Trump starts using that dependency as political leverage.
+before Trump starts exploiting that dependency for political leverage.
 At the same time,
 this is a great opportunity for European tech companies
 — an opportunity that I’m going to jump on.
@@ -160,17 +161,16 @@ You can get virtual machines anywhere,
 and it has no special requirements.
 I ended up running the webserver on [Exoscale],
 but I also use <abbr>VM</abbr>s from [Upcloud] and [Cherry Servers].
-They are for sure not as mature as GCP and AWS:
-none of them even support 2FA using a Yubikey.
-For <abbr>VM</abbr>s they work fine though,
-and in the four months so far
+They are not as mature as GCP and AWS,
+but for <abbr>VM</abbr>s they work fine,
+and in the five months so far
 I haven’t had any reliability issues.
 As a bonus,
-I now also support IPv6,
+my blog now also supports IPv6,
 something that was not available on Google Cloud when I first set things up there.
 
 For DNS I was still dependent on Cloudflare.
-By now I had acquired enough domains
+Throughout the years I had acquired enough domains
 that I didn’t want to manage DNS
 in the various webinterfaces of the different registrars I used.
 <!-- I could have gone with [Bunny](https://bunny.net/dns/), -->
@@ -180,7 +180,15 @@ so I set up two [NSD] instances.
 I also built a [new deployment tool](/2026/deptool/)
 to manage this tiny cluster of virtual machines,
 because there is no way I’m using Ansible when nobody is paying me for it.
+After some initial hurdles around getting my registrar to add glue records,
+running my own nameservers has been pretty uneventful.
 
+[Exoscale]:       https://www.exoscale.com/
+[Upcloud]:        https://upcloud.com/
+[Cherry Servers]: https://www.cherryservers.com/
+[NSD]:            https://nlnetlabs.nl/projects/nsd/about/
+
+<!--
 When you host a nameserver for your own domain,
 there is a circular dependency:
 if the nameserver for `ruuda.nl` is `ns1.ruuda.nl`,
@@ -195,27 +203,57 @@ to exactly the hosting company we abandoned for Google Cloud 10 years ago,
 and I have to admit that their DNS control panel is pretty good.
 It automatically detects when you need glue records,
 and allows you to set them.
+-->
 
-My blog has one remaining dependency on an American service: Let’s Encrypt.
-That’s a concerning one,
-because as they clarified in the revised subscriber agreement from June 2026,
-they have to comply with US sanctions,
-and a certificate authority would be an effective way to target an organization,
-or even an entire country.
-For my personal blog I’m okay with this for now,
-but …
-No actually, maybe I can just fix this right now?
+## Let’s Encrypt
 
-ZeroSSL and GlobalSign.
-Actalis not looking very good, [keymatch].
+My blog had one remaining dependency on an American service: Let’s Encrypt.
+To be clear,
+I have nothing but respect for Let’s Encrypt.
+It would be an overstatement to say that they singlehandedly
+made encryption on the web commonplace,
+but not _much_ of an overstatement.
+Unfortunately,
+ISRG — the organization behind Let’s Encrypt —
+is registered in the United States,
+and as they clarified in the June 2026 subscriber agreement update,
+that means they have to comply with US sanctions.
+A certificate authority would be an effective way to target an organization,
+or even an entire country,
+especially now that so much software
+takes the availability of Let’s Encrypt for granted.
+So even though I love Let’s Encrypt,
+it’s becoming too risky to not have a plan&nbsp;B.
+
+There are other certificate authorities that offer ACME,
+but I could find only one that is unambiguously outside of US jurisdiction:
+[Actalis][actalis], based in Italy.
+Where Let’s Encrypt radiates competence,
+Actalis makes me question theirs.
+Let’s Encrypt maintains an interesting engineering blog.
+Actalis’ website fails Firefox’ TLS handshake half of the time.
+<!-- with a `PR_END_OF_FILE_ERROR`. -->
+Let’s Encrypt has [stellar documentation][le-docs].
+Actalis fails to mention
+that you’re supposed to set your CAA record to actalis.it
+despite the ACME API being on their .com domain.
+Let’s Encrypt is always pushing to make things more secure.
+Actalis encourages you to paste your private key into
+[a form protected by a captcha][keymatch].
+(It verifies locally in the browser,
+but it also makes a request to Google when you submit.)
+So I’m not impressed, but in the end I did get it to work.
+I now use Actalis for some of my domains,
+and I can easily change my config to switch the other domains if I ever need to.
+That’s enough:
+I don’t need to abandon Let’s Encrypt completely,
+I just need to make sure that I can quickly switch
+if it ever becomes unavailable to me.
+
+[actalis]:  https://www.actalis.com/
 [keymatch]: https://extwebra.actalis.it/portal/uapub/tools/keymatch
+[le-docs]:  https://letsencrypt.org/docs/caa/
 
- - CAA record is not documented anywhere.
- - Website has random connection aborts on Firefox.
- - No support for altnames.
- - They have a page where you can upload private keys?
+## Conclusion
 
-[Exoscale]:       https://www.exoscale.com/
-[Upcloud]:        https://upcloud.com/
-[Cherry Servers]: https://www.cherryservers.com/
-[NSD]:            https://nlnetlabs.nl/projects/nsd/about/
+Todo, write some conclusion.
