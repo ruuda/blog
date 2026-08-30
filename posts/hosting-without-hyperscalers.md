@@ -19,33 +19,50 @@ Little did I understand about how the web worked under the hood,
 but I could write a website in HTML and CSS,
 and copy the files to the server over FTP.
 Later I added some PHP.
-That’s just how you built a website back then.
+That’s how you built a website back then.
 
 Today,
 20 years later,
 the web no longer works likes this.
 Shared hosting still exists
 — my original website is still online! —
-but it feels like a relic of a different time.
+but like PHP,
+it feels like a relic of a different time.
 Instead of local companies that advertise in paper magazines,
-we have a few giants that almost everybody depends on.
-The _hyperscalers_.
+we ended up with a small number of giants
+that almost everybody depends on:
+the _hyperscalers_.
 
-<!-- Meh where is this post going? -->
+The hyperscalers gained traction for understandable reasons,
+but as our society grew dependent on the web and the internet,
+this monoculture has created a dangerous situation.
+So after 10 years of hosting my blog on Google Cloud,
+I’m now back hosting on European infrastructure.
+How and why?
+Let’s dive in!
 
-Fast-forward to 2011.
-I was studying at university
-and working a side job as a C# programmer.
-The software we built ran on-prem, on our customer’s servers and <abbr>PCs</abbr>.
-/r/programming was blooming.
+## Starting a blog
+
+Five years later,
+in 2011 I was studying at university
+and working a side job as a <abbr>C#</abbr> <abbr>.NET</abbr> programmer.
+The software we built ran on-prem,
+on our customers’ servers and <abbr>PCs</abbr>.
+Reddit was still browsable without an account,
+and /r/programming was booming.
 It was full of interesting blogs,
 and I wanted one too.
-So in 2012 I bought ruudvanasseldonk.com,
-and I put a Jekyll blog on it.
+So in 2012 I bought ruudvanasseldonk.com
+and put a Jekyll blog on it.
+<!-- with a theme inspired by the lovely [Octopress]. -->
 By now I was comfortable with Linux and Apache,
 but shared hosting still worked fine for my static site.
+In 2015 I [bought][https] a TLS certificate
+(Let’s Encrypt did not yet exist),
+but all still on shared hosting.
 
 [Octopress]: https://octopress.org/
+[https]: /2015/encryption-by-default
 
 ## Everything moves to the cloud
 
@@ -54,7 +71,7 @@ and then I returned to The Netherlands for a master’s degree.
 As a side job I joined a local SaaS startup.
 We were hosting our software on virtual machines
 with a Dutch hosting company,
-but they were unreliable.
+but their <abbr>VMs</abbr> were unreliable.
 At the same time,
 Google offered startups free credits on Google Cloud.
 [So we moved everything][channable-cloud].
@@ -64,28 +81,30 @@ we were pleased.
 
 [channable-cloud]: https://www.channable.com/tech/how-we-moved-to-google-cloud-using-consul-and-zero-tier
 
-During my internship I worked on a web browser,
-and I learned a lot about improving page load times.
+During my internship I had worked on a web browser,
+and through that I learned a lot about improving page load times.
 I wanted to optimize my blog,
 but for that I needed to be able to configure my webserver myself.
 I set one up with the tools I was familiar with:
 Ubuntu, Nginx, and Google Cloud.
-They offered this `f1-micro` instance for free in the their US regions.
+They offered an `f1-micro` instance for free in the US regions.
 The majority of my visitors were from the United States,
 so hosting there optimized for the common case.
 Occasionally a post would make it to the Hacker News frontpage,
-but the `f1-micro` didn’t break a sweat as the crowd tried to hug it to death.
-You can serve a _lot_ of static pages with half a CPU core.
+but the `f1-micro` never broke a sweat.
+You can serve a _lot_ of static pages with half a CPU core!
 
+<!--
 I considered adding Cloudflare,
-but then I would again not be in control of my HTTP server.
+but then I would again not be in control of my http server.
 They would also be able to MITM my readers,
 and I estimated that for my regular traffic volume,
 cache misses would be common,
 so I might as well serve my site directly.
 I did adopt Cloudflare as my DNS server.
 It felt more professional
-than these Dutch hosting companies with their 2007-era control panels.
+than the local registrars with their 2007-era control panels.
+-->
 
 It was not just me,
 or the startup I worked for.
@@ -93,23 +112,23 @@ _Everyone_ around me was already in, or moving to the cloud.
 People I spoke with at meetups,
 blog posts,
 talks at conferences …
-cloud was the way.
+cloud was the future.
 If you were still on-prem or colocating, you were a dinosaur.
 
 ## Everything else disappeared
 
-By 2024,
+By 2025,
 something funny had happened.
-Everybody had forgotten how the lower levels of the stack worked.
-Clouds had expanded beyond simple virtual machines to container managers,
+It seems like everybody had forgotten how the lower levels of the stack worked.
+By now clouds had expanded beyond basic virtual machines to container managers,
 and then serverless.
 Everything became managed.
 At that time I was working for a company
 that was doing platforms engineering work,
 primarily on bare metal,
 and we found it difficult
-to hire engineers who understood the lower levels of the stack.
-Platforms engineering had become synonymous with writing yaml.
+to find engineers who understood the lower levels of the stack.
+Everybody took the existence of the cloud for granted.
 
 ## Friendship ended with United States
 
@@ -123,14 +142,18 @@ which [disrupted][icc-disrupt] the court’s operations for months.
 
 This was a wake-up call.
 By January 2026,
-the editorial board of a popular Dutch news site [wrote][nu-board]
+the editorial board of a major Dutch news site [wrote][nu-board]
 that journalism needs to start taking the American threat seriously:
-three weeks into the new year,
-Trump had already abducted a foreign head of state
-and threatened military action against a NATO ally.
-Two days after the article, he started another war.
+the country is rapidly devolving into an autocratic regime,
+and that will not just blow over.
+Three weeks into the new year,
+Trump had already threatened military action against a NATO ally
+and abducted a foreign head of state,
+violating international law.
+<!--
+Two days after the article, he started a war in the Middle East. -->
 Goverment is not the only sector under pressure:
-business are dealing with unpredictable tariffs,
+businesses have been dealing with unpredictable tariffs,
 and lately Trump has taken up the liberty
 to decide who gets access to Anthropic’s latest models.
 American corporations are simply no longer a reliable business partner.
@@ -138,11 +161,11 @@ American corporations are simply no longer a reliable business partner.
 This new distrust for the United States is a big challenge for Europe.
 We’re finding our entire society completely dependent on American big tech,
 scrambling to break free
-before Trump starts exploiting that dependency for political leverage.
+before Trump starts exploiting that dependency harder.
 At the same time,
 this is a great opportunity for European tech companies
 — an opportunity that I’m going to jump on.
-Before I can share more about that though,
+Before I share more about that though,
 there is something I need to fix:
 it would be hypocritical
 to share such an announcement
@@ -158,12 +181,12 @@ with an American hyperscaler.
 
 The webserver itself was easy enough to move.
 You can get virtual machines anywhere,
-and it has no special requirements.
+and Nginx serving a small site consumes virtually zero resources.
 I ended up running the webserver on [Exoscale],
 but I also use <abbr>VM</abbr>s from [Upcloud] and [Cherry Servers].
 They are not as mature as GCP and AWS,
 but for <abbr>VM</abbr>s they work fine,
-and in the five months so far
+and in the six months so far
 I haven’t had any reliability issues.
 As a bonus,
 my blog now also supports IPv6,
@@ -172,7 +195,8 @@ something that was not available on Google Cloud when I first set things up ther
 For DNS I was still dependent on Cloudflare.
 Throughout the years I had acquired enough domains
 that I didn’t want to manage DNS
-in the various webinterfaces of the different registrars I used.
+in the various webinterfaces of the different registrars I used,
+and Cloudflare was convenient.
 <!-- I could have gone with [Bunny](https://bunny.net/dns/), -->
 Fortunately by now I was now confident enough
 in platforms engineering to run my own DNS servers,
@@ -181,7 +205,7 @@ I also built a [new deployment tool](/2026/deptool/)
 to manage this tiny cluster of virtual machines,
 because there is no way I’m using Ansible when nobody is paying me for it.
 After some initial hurdles around getting my registrar to add glue records,
-running my own nameservers has been pretty uneventful.
+running my own nameservers has been completely uneventful.
 
 [Exoscale]:       https://www.exoscale.com/
 [Upcloud]:        https://upcloud.com/
@@ -214,7 +238,7 @@ It would be an overstatement to say that they singlehandedly
 made encryption on the web commonplace,
 but not _much_ of an overstatement.
 Unfortunately,
-ISRG — the organization behind Let’s Encrypt —
+the organization behind Let’s Encrypt
 is registered in the United States,
 and as they clarified in the June 2026 subscriber agreement update,
 that means they have to comply with US sanctions.
@@ -236,12 +260,12 @@ Actalis’ website fails Firefox’ TLS handshake half of the time.
 Let’s Encrypt has [stellar documentation][le-docs].
 Actalis fails to mention
 that you’re supposed to set your CAA record to actalis.it
-despite the ACME API being on their .com domain.
+despite their ACME API being on the .com domain.
 Let’s Encrypt is always pushing to make things more secure.
 Actalis encourages you to paste your private key into
 [a form protected by a captcha][keymatch].
 (It verifies locally in the browser,
-but it also makes a request to Google when you submit.)
+but for some reason it also makes a request to Google when you submit.)
 So I’m not impressed, but in the end I did get it to work.
 I now use Actalis for some of my domains,
 and I can easily change my config to switch the other domains if I ever need to.
