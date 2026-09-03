@@ -63,22 +63,23 @@ But even that ran fine on shared hosting.
 
 ## Everything moves to the cloud
 
-After I graduated I did an internship at a large tech company,
+After I graduated
+I did an internship at a large tech company,
 and then I returned to The Netherlands for a master’s degree.
 As a side job I joined a local SaaS startup.
 We were hosting our software on virtual machines
 with a Dutch hosting company,
 but their <abbr>VMs</abbr> were unreliable.
 Meanwhile,
-Google offered startups free credits on Google Cloud.
+Google Cloud offered startups free credits.
 [So we moved everything][channable-cloud].
-It worked well.
-The virtual machines were stable,
-we were pleased.
+It worked well:
+the virtual machines were stable
+and we were pleased.
 
 [channable-cloud]: https://www.channable.com/tech/how-we-moved-to-google-cloud-using-consul-and-zero-tier
 
-During my internship I had worked on a web browser,
+For my internship earlier I worked on a web browser,
 and through that I learned a lot about page load times.
 I wanted to optimize my blog,
 but for that I needed to be able to configure my webserver myself.
@@ -117,8 +118,8 @@ If you were still on-prem or colocating, you were a dinosaur.
 By 2024,
 something funny had happened.
 It seems like everybody had forgotten how the lower levels of the stack worked.
-By now clouds had moved well beyond basic virtual machines to container managers,
-and then serverless.
+By now clouds had moved well beyond basic virtual machines to container managers
+and serverless.
 Everything became managed, and metered.
 I worked for a company
 that was doing platforms engineering work primarily on bare metal,
@@ -156,7 +157,8 @@ and lately Trump has taken up the liberty
 to decide who gets access to Anthropic’s latest models.
 American corporations are simply no longer a reliable business partner.
 
-This newfound distrust for the United States is a big challenge for Europe.
+This newfound distrust for the United States
+is an immense challenge for Europe.
 We’re finding our entire society _completely_ dependent on American big tech,
 scrambling to break free
 before Trump starts exploiting the situation harder.
@@ -276,4 +278,15 @@ if it ever becomes unavailable to me.
 
 ## Conclusion
 
-Todo, write some conclusion.
+Times change,
+and technology changes with it.
+For the first 10 years of my online presence,
+I hosted my websites on shared hosting with a local provider.
+Cloud took over,
+and for the next 10 years,
+I hosted in the cloud,
+with an American hyperscaler.
+I feel that pendulum was starting to swing back a little
+already a few years ago,
+primarily due to cost,
+but now Trump has tied a rocket to it.
