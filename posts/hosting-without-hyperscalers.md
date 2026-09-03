@@ -17,38 +17,35 @@ about the games I was building with a program called _Game Maker_,
 the gateway drug that got me into programming.
 Little did I understand about how the web worked under the hood,
 but I could write a website in HTML and CSS,
-and copy the files to the server over FTP.
+and use FTP to copy the files to the server.
 Later I added some PHP.
 That’s how you built a website back then.
 
 Today,
 20 years later,
 the web no longer works likes this.
-Shared hosting still exists
-— my original website is still online! —
+Shared hosting still exists,
 but like PHP,
 it feels like a relic of a different time.
 Instead of local companies that advertise in paper magazines,
 we ended up with a small number of giants
 that almost everybody depends on:
 the _hyperscalers_.
-
-The hyperscalers gained traction for understandable reasons,
-but as our society grew dependent on the web and the internet,
-this monoculture has created a dangerous situation.
+And somehow, they are all based in the United States.
+As our society grew dependent on the web and the internet,
+this hosting monoculture has created a precarious situation.
 So after 10 years of hosting my blog on Google Cloud,
 I’m now back hosting on European infrastructure.
-How and why?
-Let’s dive in!
+Let’s dive in.
 
 ## Starting a blog
 
-Five years later,
-in 2011 I was studying at university
+Five years after I bought that first domain,
+I was studying at university
 and working a side job as a <abbr>C#</abbr> <abbr>.NET</abbr> programmer.
 The software we built ran on-prem,
 on our customers’ servers and <abbr>PCs</abbr>.
-Reddit was still browsable without an account,
+Reddit was browsable without an account,
 and /r/programming was booming.
 It was full of interesting blogs,
 and I wanted one too.
@@ -57,9 +54,9 @@ and put a Jekyll blog on it.
 <!-- with a theme inspired by the lovely [Octopress]. -->
 By now I was comfortable with Linux and Apache,
 but shared hosting still worked fine for my static site.
-In 2015 I [bought][https] a TLS certificate
-(Let’s Encrypt did not yet exist),
-but all still on shared hosting.
+A few years later I [added][https] a TLS certificate.
+I even paid for it, because Let’s Encrypt did not exist yet.
+But even that ran fine on shared hosting.
 
 [Octopress]: https://octopress.org/
 [https]: /2015/encryption-by-default
@@ -72,7 +69,7 @@ As a side job I joined a local SaaS startup.
 We were hosting our software on virtual machines
 with a Dutch hosting company,
 but their <abbr>VMs</abbr> were unreliable.
-At the same time,
+Meanwhile,
 Google offered startups free credits on Google Cloud.
 [So we moved everything][channable-cloud].
 It worked well.
@@ -82,17 +79,17 @@ we were pleased.
 [channable-cloud]: https://www.channable.com/tech/how-we-moved-to-google-cloud-using-consul-and-zero-tier
 
 During my internship I had worked on a web browser,
-and through that I learned a lot about improving page load times.
+and through that I learned a lot about page load times.
 I wanted to optimize my blog,
 but for that I needed to be able to configure my webserver myself.
 I set one up with the tools I was familiar with:
 Ubuntu, Nginx, and Google Cloud.
-They offered an `f1-micro` instance for free in the US regions.
+Google offered one `f1-micro` instance for free in their US regions.
 The majority of my visitors were from the United States,
 so hosting there optimized for the common case.
 Occasionally a post would make it to the Hacker News frontpage,
 but the `f1-micro` never broke a sweat.
-You can serve a _lot_ of static pages with half a CPU core!
+You can serve a _lot_ of simple http requests on a fifth of a CPU core!
 
 <!--
 I considered adding Cloudflare,
@@ -117,18 +114,19 @@ If you were still on-prem or colocating, you were a dinosaur.
 
 ## Everything else disappeared
 
-By 2025,
+By 2024,
 something funny had happened.
 It seems like everybody had forgotten how the lower levels of the stack worked.
-By now clouds had expanded beyond basic virtual machines to container managers,
+By now clouds had moved well beyond basic virtual machines to container managers,
 and then serverless.
-Everything became managed.
-At that time I was working for a company
-that was doing platforms engineering work,
-primarily on bare metal,
-and we found it difficult
-to find engineers who understood the lower levels of the stack.
-Everybody took the existence of the cloud for granted.
+Everything became managed, and metered.
+I worked for a company
+that was doing platforms engineering work primarily on bare metal,
+which felt rare.
+We found it difficult
+to find people who still understood
+what was below the managed services.
+Everybody took the existence of the hyperscaler cloud for granted.
 
 ## Friendship ended with United States
 
@@ -144,27 +142,27 @@ This was a wake-up call.
 By January 2026,
 the editorial board of a major Dutch news site [wrote][nu-board]
 that journalism needs to start taking the American threat seriously:
-the country is rapidly devolving into an autocratic regime,
-and that will not just blow over.
+that country is rapidly devolving into an autocratic regime,
+and this will not just blow over.
 Three weeks into the new year,
 Trump had already threatened military action against a NATO ally
 and abducted a foreign head of state,
 violating international law.
-<!--
-Two days after the article, he started a war in the Middle East. -->
-Goverment is not the only sector under pressure:
-businesses have been dealing with unpredictable tariffs,
+European governments got nervous
+about their dependence on US-based big tech,
+but businesses are feeling the effects too.
+They’ve been dealing with unpredictable tariffs,
 and lately Trump has taken up the liberty
 to decide who gets access to Anthropic’s latest models.
 American corporations are simply no longer a reliable business partner.
 
-This new distrust for the United States is a big challenge for Europe.
-We’re finding our entire society completely dependent on American big tech,
+This newfound distrust for the United States is a big challenge for Europe.
+We’re finding our entire society _completely_ dependent on American big tech,
 scrambling to break free
-before Trump starts exploiting that dependency harder.
+before Trump starts exploiting the situation harder.
 At the same time,
-this is a great opportunity for European tech companies
-— an opportunity that I’m going to jump on.
+this is a great opportunity for European tech companies.
+**An opportunity that I’m going to jump on.**
 Before I share more about that though,
 there is something I need to fix:
 it would be hypocritical
@@ -184,28 +182,29 @@ You can get virtual machines anywhere,
 and Nginx serving a small site consumes virtually zero resources.
 I ended up running the webserver on [Exoscale],
 but I also use <abbr>VM</abbr>s from [Upcloud] and [Cherry Servers].
-They are not as mature as GCP and AWS,
-but for <abbr>VM</abbr>s they work fine,
+They are not as advanced as GCP and AWS
+(none of them support hardware security keys for 2FA for example),
+but the <abbr>VM</abbr>s work fine,
 and in the six months so far
 I haven’t had any reliability issues.
 As a bonus,
 my blog now also supports IPv6,
 something that was not available on Google Cloud when I first set things up there.
 
-For DNS I was still dependent on Cloudflare.
+For DNS I used to use Cloudflare.
 Throughout the years I had acquired enough domains
 that I didn’t want to manage DNS
 in the various webinterfaces of the different registrars I used,
-and Cloudflare was convenient.
-<!-- I could have gone with [Bunny](https://bunny.net/dns/), -->
+and Cloudflare was solid.
+But they fall under US jurisdiction, so they had to go.
 Fortunately by now I was now confident enough
 in platforms engineering to run my own DNS servers,
 so I set up two [NSD] instances.
-I also built a [new deployment tool](/2026/deptool/)
-to manage this tiny cluster of virtual machines,
-because there is no way I’m using Ansible when nobody is paying me for it.
+(And I built a [new deployment tool](/2026/deptool/) to manage them,
+because there is no way I’m using Ansible when nobody is paying me for it.)
 After some initial hurdles around getting my registrar to add glue records,
 running my own nameservers has been completely uneventful.
+I was _almost_ free of American services.
 
 [Exoscale]:       https://www.exoscale.com/
 [Upcloud]:        https://upcloud.com/
@@ -231,7 +230,7 @@ and allows you to set them.
 
 ## Let’s Encrypt
 
-My blog had one remaining dependency on an American service: Let’s Encrypt.
+My blog depended on one remaining American service: Let’s Encrypt.
 To be clear,
 I have nothing but respect for Let’s Encrypt.
 It would be an overstatement to say that they singlehandedly
@@ -241,42 +240,39 @@ Unfortunately,
 the organization behind Let’s Encrypt
 is registered in the United States,
 and as they clarified in the June 2026 subscriber agreement update,
-that means they have to comply with US sanctions.
-A certificate authority would be an effective way to target an organization,
+that means they have to comply with US-imposed sanctions.
+A certificate authority is an effective way to target an organization,
 or even an entire country,
 especially now that so much software
 takes the availability of Let’s Encrypt for granted.
-So even though I love Let’s Encrypt,
-it’s becoming too risky to not have a plan&nbsp;B.
+So even though I deeply respect Let’s Encrypt,
+I need a plan&nbsp;B.
 
 There are other certificate authorities that offer ACME,
-but I could find only one that is unambiguously outside of US jurisdiction:
+but I could find only one that is unambiguously outside of US control:
 [Actalis][actalis], based in Italy.
-Where Let’s Encrypt radiates competence,
-Actalis makes me question theirs.
-Let’s Encrypt maintains an interesting engineering blog.
-Actalis’ website fails Firefox’ TLS handshake half of the time.
+I have very mixed feelings about Actalis.
+Their website fails Firefox’ TLS handshake half of the time,
 <!-- with a `PR_END_OF_FILE_ERROR`. -->
-Let’s Encrypt has [stellar documentation][le-docs].
-Actalis fails to mention
-that you’re supposed to set your CAA record to actalis.it
-despite their ACME API being on the .com domain.
-Let’s Encrypt is always pushing to make things more secure.
-Actalis encourages you to paste your private key into
+they don’t support altnames,
+they don’t document the correct value for your [CAA records][caa] anywhere
+(turns out the identifying domain is actalis.it, not .com),
+and they encourage you to paste your private key into
 [a form protected by a captcha][keymatch].
-(It verifies locally in the browser,
-but for some reason it also makes a request to Google when you submit.)
+(Which, after diving into it,
+turns out to handle the cryptography locally in the browser,
+but _also_ makes a request to Google every time you submit!)
 So I’m not impressed, but in the end I did get it to work.
 I now use Actalis for some of my domains,
 and I can easily change my config to switch the other domains if I ever need to.
-That’s enough:
-I don’t need to abandon Let’s Encrypt completely,
+That’s sufficient:
+I don’t need to abandon Let’s Encrypt entirely,
 I just need to make sure that I can quickly switch
 if it ever becomes unavailable to me.
 
 [actalis]:  https://www.actalis.com/
 [keymatch]: https://extwebra.actalis.it/portal/uapub/tools/keymatch
-[le-docs]:  https://letsencrypt.org/docs/caa/
+[caa]:      https://letsencrypt.org/docs/caa/
 
 ## Conclusion
 
