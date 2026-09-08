@@ -118,9 +118,10 @@ If you were still on-prem or colocating, you were a dinosaur.
 By 2024,
 something funny had happened.
 It seems like everybody had forgotten how the lower levels of the stack worked.
-By now clouds had moved well beyond basic virtual machines to container managers
-and serverless.
-Everything became managed, and metered.
+Clouds dominated.
+They had moved well beyond basic virtual machines
+to container managers and serverless.
+Everything became managed and metered.
 I worked for a company
 that was doing platforms engineering work primarily on bare metal,
 which felt rare.
@@ -149,13 +150,14 @@ Three weeks into the new year,
 Trump had already threatened military action against a NATO ally
 and abducted a foreign head of state,
 violating international law.
-European governments got nervous
-about their dependence on US-based big tech,
-but businesses are feeling the effects too.
+European governments have become nervous
+about their dependence on US-based big tech.
+<!--The Dutch government now has a state secretary for digital sovereignty.-->
+Businesses are feeling the effects too.
 They’ve been dealing with unpredictable tariffs,
 and lately Trump has taken up the liberty
 to decide who gets access to Anthropic’s latest models.
-American corporations are simply no longer a reliable business partner.
+American corporations are simply no longer reliable business partners.
 
 This newfound distrust for the United States
 is an immense challenge for Europe.
@@ -163,8 +165,8 @@ We’re finding our entire society _completely_ dependent on American big tech,
 scrambling to break free
 before Trump starts exploiting the situation harder.
 At the same time,
-this is a great opportunity for European tech companies.
-**An opportunity that I’m going to jump on.**
+this presents a great opportunity for European tech companies.
+An opportunity that I’m going to jump on.
 Before I share more about that though,
 there is something I need to fix:
 it would be hypocritical
@@ -184,7 +186,7 @@ You can get virtual machines anywhere,
 and Nginx serving a small site consumes virtually zero resources.
 I ended up running the webserver on [Exoscale],
 but I also use <abbr>VM</abbr>s from [Upcloud] and [Cherry Servers].
-They are not as advanced as GCP and AWS
+Their platforms are not as advanced as GCP and AWS
 (none of them support hardware security keys for 2FA for example),
 but the <abbr>VM</abbr>s work fine,
 and in the six months so far
@@ -202,11 +204,14 @@ But they fall under US jurisdiction, so they had to go.
 Fortunately by now I was now confident enough
 in platforms engineering to run my own DNS servers,
 so I set up two [NSD] instances.
-(And I built a [new deployment tool](/2026/deptool/) to manage them,
+(And I [built a new deployment tool](/2026/deptool/) to manage them,
 because there is no way I’m using Ansible when nobody is paying me for it.)
 After some initial hurdles around getting my registrar to add glue records,
 running my own nameservers has been completely uneventful.
-I was _almost_ free of American services.
+While at it,
+I also changed the canonical domain of my blog from a .com domain to ruuda.nl.
+Now I was almost free of American services.
+_Almost._
 
 [Exoscale]:       https://www.exoscale.com/
 [Upcloud]:        https://upcloud.com/
@@ -232,7 +237,7 @@ and allows you to set them.
 
 ## Let’s Encrypt
 
-My blog depended on one remaining American service: Let’s Encrypt.
+My blog still depended on one American service: Let’s Encrypt.
 To be clear,
 I have nothing but respect for Let’s Encrypt.
 It would be an overstatement to say that they singlehandedly
@@ -248,7 +253,7 @@ or even an entire country,
 especially now that so much software
 takes the availability of Let’s Encrypt for granted.
 So even though I deeply respect Let’s Encrypt,
-I need a plan&nbsp;B.
+I needed a plan&nbsp;B.
 
 There are other certificate authorities that offer ACME,
 but I could find only one that is unambiguously outside of US control:
@@ -264,11 +269,11 @@ and they encourage you to paste your private key into
 (Which, after diving into it,
 turns out to handle the cryptography locally in the browser,
 but _also_ makes a request to Google every time you submit!)
-So I’m not impressed, but in the end I did get it to work.
+I’m not impressed, but I did get it to work.
 I now use Actalis for some of my domains,
 and I can easily change my config to switch the other domains if I ever need to.
 That’s sufficient:
-I don’t need to abandon Let’s Encrypt entirely,
+digital autonomy does not mean that I need to abandon Let’s Encrypt entirely.
 I just need to make sure that I can quickly switch
 if it ever becomes unavailable to me.
 
@@ -276,17 +281,36 @@ if it ever becomes unavailable to me.
 [keymatch]: https://extwebra.actalis.it/portal/uapub/tools/keymatch
 [caa]:      https://letsencrypt.org/docs/caa/
 
-## Conclusion
+## Towards digital autonomy
 
-Times change,
-and technology changes with it.
+It’s been 20 years since I started my own website,
+and many things have changed in those 20 years.
 For the first 10 years of my online presence,
 I hosted my websites on shared hosting with a local provider.
-Cloud took over,
-and for the next 10 years,
+Then cloud took over,
+and for the next 10 years
 I hosted in the cloud,
 with an American hyperscaler.
-I feel that pendulum was starting to swing back a little
-already a few years ago,
-primarily due to cost,
-but now Trump has tied a rocket to it.
+In Europe,
+that age is now coming to an end too.
+As Trump is forcing us to face
+the risks of depending on a foreign monoculture,
+we are entering the age of digital autonomy and sovereignty.
+
+A simple blog is easy enough to move.
+More complex digital infrastructure will be more challenging,
+but not impossible.
+There is no shortage of raw compute in Europe,
+but the providers haven’t quite reached _hyper_ scale,
+and they don’t offer such a vast array of vertically integrated services
+as the hyperscalers do.
+I hope things stay this way.
+Centralization has advantages,
+but it also creates fragility.
+Rather, I want to see a future where many hardware providers can thrive,
+with open source software on top.
+That way,
+we stay in control of the digital infrastructure we depend on.
+[That’s what I am building towards.][Soverity]
+
+[Soverity]: https://soverity.eu
