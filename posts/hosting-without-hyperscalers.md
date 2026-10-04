@@ -42,29 +42,29 @@ Let’s dive in.
 
 Five years after I bought that first domain,
 I was studying at university
-and working a side job as a <abbr>C#</abbr> <abbr>.NET</abbr> programmer.
+and working a side job as a <abbr>.NET</abbr> programmer.
 The software we built ran on-prem,
 on our customers’ servers and <abbr>PCs</abbr>.
 Reddit was browsable without an account,
 and /r/programming was booming.
 It was full of interesting blogs,
 and I wanted one too.
-So in 2012 I bought ruudvanasseldonk.com
+So a year later I bought ruudvanasseldonk.com
 and put a Jekyll blog on it.
 <!-- with a theme inspired by the lovely [Octopress]. -->
 By now I was comfortable with Linux and Apache,
 but shared hosting still worked fine for my static site.
-A few years later I [added][https] a TLS certificate.
-I even paid for it, because Let’s Encrypt did not exist yet.
-But even that ran fine on shared hosting.
+In 2015 I [added][https] a TLS certificate.
+I paid for it, because Let’s Encrypt did not exist yet.
+But even TLS worked fine on shared hosting.
 
 [Octopress]: https://octopress.org/
 [https]: /2015/encryption-by-default
 
 ## Everything moves to the cloud
 
-After I graduated
-I did an internship at a large tech company,
+After my graduation
+I did an internship at the London office of a large tech company,
 and then I returned to The Netherlands for a master’s degree.
 As a side job I joined a local SaaS startup.
 We were hosting our software on virtual machines
@@ -79,16 +79,16 @@ and we were pleased.
 
 [channable-cloud]: https://www.channable.com/tech/how-we-moved-to-google-cloud-using-consul-and-zero-tier
 
-For my internship earlier I worked on a web browser,
+During my internship earlier I worked on a web browser,
 and through that I learned a lot about page load times.
 I wanted to optimize my blog,
-but for that I needed to be able to configure my webserver myself.
-I set one up with the tools I was familiar with:
+but for that I needed more control over my webserver.
+So I set one up with the tools I was now familiar with:
 Ubuntu, Nginx, and Google Cloud.
 Google offered one `f1-micro` instance for free in their US regions.
 The majority of my visitors were from the United States,
 so hosting there optimized for the common case.
-Occasionally a post would make it to the Hacker News frontpage,
+Sometimes a post would make it to the Hacker News frontpage,
 but the `f1-micro` never broke a sweat.
 You can serve a _lot_ of simple http requests on a fifth of a CPU core!
 
@@ -117,9 +117,9 @@ If you were still on-prem or colocating, you were a dinosaur.
 
 By 2024,
 something funny had happened.
-It seems like everybody had forgotten how the lower levels of the stack worked.
+It seems like people had forgotten how the lower levels of the stack worked.
 Clouds dominated.
-They had moved well beyond basic virtual machines
+They had moved well beyond virtual machines
 to container managers and serverless.
 Everything became managed and metered.
 I worked for a company
@@ -127,7 +127,7 @@ that was doing platforms engineering work primarily on bare metal,
 which felt rare.
 We found it difficult
 to find people who still understood
-what was below the managed services.
+how to make things run without managed services.
 Everybody took the existence of the hyperscaler cloud for granted.
 
 ## Friendship ended with United States
@@ -137,19 +137,18 @@ Trump ordered [sanctions] against Karim Khan,
 chief prosecutor at the International Criminal Court in The Hague.
 The court was a customer of Microsoft.
 Microsoft complied with the order by blocking the prosecutor’s account.
-Khan and others lost access to their email,
-which [disrupted][icc-disrupt] the court’s operations for months.
+The ban [disrupted][icc-disrupt] the court’s operations for months.
 
 This was a wake-up call.
 By January 2026,
 the editorial board of a major Dutch news site [wrote][nu-board]
 that journalism needs to start taking the American threat seriously:
-that country is rapidly devolving into an autocratic regime,
-and this will not just blow over.
+that country’s rapid devolution into an autocratic regime
+is not going to just blow over.
 Three weeks into the new year,
 Trump had already threatened military action against a NATO ally
 and abducted a foreign head of state,
-violating international law.
+violating international law in the process.
 European governments have become nervous
 about their dependence on US-based big tech.
 <!--The Dutch government now has a state secretary for digital sovereignty.-->
@@ -163,7 +162,7 @@ This newfound distrust for the United States
 is an immense challenge for Europe.
 We’re finding our entire society _completely_ dependent on American big tech,
 scrambling to break free
-before Trump starts exploiting the situation harder.
+before Trump starts pushing harder.
 At the same time,
 this presents a great opportunity for European tech companies.
 An opportunity that I’m going to jump on.
@@ -181,7 +180,7 @@ with an American hyperscaler.
 
 ## Hosting on European infrastructure
 
-The webserver itself was easy enough to move.
+The webserver itself was easy to move.
 You can get virtual machines anywhere,
 and Nginx serving a small site consumes virtually zero resources.
 I ended up running the webserver on [Exoscale],
@@ -189,7 +188,7 @@ but I also use <abbr>VM</abbr>s from [Upcloud] and [Cherry Servers].
 Their platforms are not as advanced as GCP and AWS
 (none of them support hardware security keys for 2FA for example),
 but the <abbr>VM</abbr>s work fine,
-and in the six months so far
+and in the seven months so far
 I haven’t had any reliability issues.
 As a bonus,
 my blog now also supports IPv6,
@@ -199,7 +198,7 @@ For DNS I used to use Cloudflare.
 Throughout the years I had acquired enough domains
 that I didn’t want to manage DNS
 in the various webinterfaces of the different registrars I used,
-and Cloudflare was solid.
+and Cloudflare was convenient.
 But they fall under US jurisdiction, so they had to go.
 Fortunately by now I was now confident enough
 in platforms engineering to run my own DNS servers,
@@ -243,7 +242,7 @@ I have nothing but respect for Let’s Encrypt.
 It would be an overstatement to say that they singlehandedly
 made encryption on the web commonplace,
 but not _much_ of an overstatement.
-Unfortunately,
+But alas,
 the organization behind Let’s Encrypt
 is registered in the United States,
 and as they clarified in the June 2026 subscriber agreement update,
@@ -261,21 +260,22 @@ but I could find only one that is unambiguously outside of US control:
 I have very mixed feelings about Actalis.
 Their website fails Firefox’ TLS handshake half of the time,
 <!-- with a `PR_END_OF_FILE_ERROR`. -->
-they don’t support altnames,
+<!-- they don’t support altnames, -->
 they don’t document the correct value for your [CAA records][caa] anywhere
 (turns out the identifying domain is actalis.it, not .com),
+they send me notifications in Italian,
 and they encourage you to paste your private key into
 [a form protected by a captcha][keymatch].
 (Which, after diving into it,
 turns out to handle the cryptography locally in the browser,
-but _also_ makes a request to Google every time you submit!)
-I’m not impressed, but I did get it to work.
+but _also_ makes a request to Google every time you submit!?)
+I’m not impressed, but it does work.
 I now use Actalis for some of my domains,
-and I can easily change my config to switch the other domains if I ever need to.
+and I can easily change my config to switch the other domains should I ever need to.
 That’s sufficient:
-digital autonomy does not mean that I need to abandon Let’s Encrypt entirely.
+digital autonomy does not mean abandoning US-based services entirely.
 I just need to make sure that I can quickly switch
-if it ever becomes unavailable to me.
+if Let’s Encrypt ever becomes unavailable to me.
 
 [actalis]:  https://www.actalis.com/
 [keymatch]: https://extwebra.actalis.it/portal/uapub/tools/keymatch
@@ -283,7 +283,7 @@ if it ever becomes unavailable to me.
 
 ## Towards digital autonomy
 
-It’s been 20 years since I started my own website,
+It’s been 20 years since I built my first website,
 and many things have changed in those 20 years.
 For the first 10 years of my online presence,
 I hosted my websites on shared hosting with a local provider.
@@ -294,8 +294,8 @@ with an American hyperscaler.
 In Europe,
 that age is now coming to an end too.
 As Trump is forcing us to face
-the risks of depending on a foreign monoculture,
-we are entering the age of digital autonomy and sovereignty.
+the risks of a monoculture of dependencies on foreign big tech,
+we are entering the age of digital sovereignty and autonomy.
 
 A simple blog is easy enough to move.
 More complex digital infrastructure will be more challenging,
@@ -304,11 +304,11 @@ There is no shortage of raw compute in Europe,
 but the providers haven’t quite reached _hyper_ scale,
 and they don’t offer such a vast array of vertically integrated services
 as the hyperscalers do.
-I hope things stay this way.
+Secretly, I hope things can mostly stay that way.
 Centralization has advantages,
 but it also creates fragility.
 Rather, I want to see a future where many hardware providers can thrive,
-with open source software on top.
+with the services managed by open source software on top.
 That way,
 we stay in control of the digital infrastructure we depend on.
 [That’s what I am building towards.][Soverity]
