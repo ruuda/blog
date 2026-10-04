@@ -1,6 +1,6 @@
 ---
 title: Hosting without hyperscalers
-date: 2026-06-25
+date: 2026-10-06
 lang: en-US
 synopsis: TODO
 minutes: ??
