@@ -2,8 +2,8 @@
 title: Hosting without hyperscalers
 date: 2026-10-06
 lang: en-US
-synopsis: TODO
-minutes: ??
+synopsis: How I host my blog has evolved throughout the years. In this post I explain how and why I moved my blog from American hyperscalers to European infrastructure.
+minutes: 10
 run-in: I bought my first domain in 2006
 ---
 
@@ -137,13 +137,13 @@ Trump ordered [sanctions] against Karim Khan,
 chief prosecutor at the International Criminal Court in The Hague.
 The court was a customer of Microsoft.
 Microsoft complied with the order by blocking the prosecutor’s account.
-The ban [disrupted][icc-disrupt] the court’s operations for months.
+The block [disrupted][icc-disrupt] the court’s operations for months.
 
 This was a wake-up call.
 By January 2026,
 the editorial board of a major Dutch news site [wrote][nu-board]
 that journalism needs to start taking the American threat seriously:
-that country’s rapid devolution into an autocratic regime
+the country’s rapid devolution into an autocratic regime
 is not going to just blow over.
 Three weeks into the new year,
 Trump had already threatened military action against a NATO ally
@@ -263,13 +263,13 @@ Their website fails Firefox’ TLS handshake half of the time,
 <!-- they don’t support altnames, -->
 they don’t document the correct value for your [CAA records][caa] anywhere
 (turns out the identifying domain is actalis.it, not .com),
-they send me notifications in Italian,
+they send notifications in Italian,
 and they encourage you to paste your private key into
 [a form protected by a captcha][keymatch].
 (Which, after diving into it,
 turns out to handle the cryptography locally in the browser,
 but _also_ makes a request to Google every time you submit!?)
-I’m not impressed, but it does work.
+I’m not impressed, but hey, it works.
 I now use Actalis for some of my domains,
 and I can easily change my config to switch the other domains should I ever need to.
 That’s sufficient:
@@ -294,7 +294,7 @@ with an American hyperscaler.
 In Europe,
 that age is now coming to an end too.
 As Trump is forcing us to face
-the risks of a monoculture of dependencies on foreign big tech,
+the risks of depending on foreign big tech,
 we are entering the age of digital sovereignty and autonomy.
 
 A simple blog is easy enough to move.
@@ -304,7 +304,7 @@ There is no shortage of raw compute in Europe,
 but the providers haven’t quite reached _hyper_ scale,
 and they don’t offer such a vast array of vertically integrated services
 as the hyperscalers do.
-Secretly, I hope things can mostly stay that way.
+Secretly, I hope things mostly stay that way.
 Centralization has advantages,
 but it also creates fragility.
 Rather, I want to see a future where many hardware providers can thrive,
