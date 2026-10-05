@@ -51,7 +51,6 @@ It was full of interesting blogs,
 and I wanted one too.
 So a year later I bought ruudvanasseldonk.com
 and put a Jekyll blog on it.
-<!-- with a theme inspired by the lovely [Octopress]. -->
 By now I was comfortable with Linux and Apache,
 but shared hosting still worked fine for my static site.
 In 2015 I [added][https] a TLS certificate.
@@ -91,18 +90,6 @@ so hosting there optimized for the common case.
 Sometimes a post would make it to the Hacker News frontpage,
 but the `f1-micro` never broke a sweat.
 You can serve a _lot_ of simple http requests on a fifth of a CPU core!
-
-<!--
-I considered adding Cloudflare,
-but then I would again not be in control of my http server.
-They would also be able to MITM my readers,
-and I estimated that for my regular traffic volume,
-cache misses would be common,
-so I might as well serve my site directly.
-I did adopt Cloudflare as my DNS server.
-It felt more professional
-than the local registrars with their 2007-era control panels.
--->
 
 It was not just me,
 or the startup I worked for.
@@ -151,7 +138,6 @@ and abducted a foreign head of state,
 violating international law in the process.
 European governments have become nervous
 about their dependence on US-based big tech.
-<!--The Dutch government now has a state secretary for digital sovereignty.-->
 Businesses are feeling the effects too.
 They’ve been dealing with unpredictable tariffs,
 and lately Trump has taken up the liberty
@@ -217,23 +203,6 @@ _Almost._
 [Cherry Servers]: https://www.cherryservers.com/
 [NSD]:            https://nlnetlabs.nl/projects/nsd/about/
 
-<!--
-When you host a nameserver for your own domain,
-there is a circular dependency:
-if the nameserver for `ruuda.nl` is `ns1.ruuda.nl`,
-then who do you ask for the address of `ns1.ruuda.nl`?
-The answer to this is: the nameserver for `.nl`.
-It serves not just `NS` records for you,
-but also `A` and `AAAA` records.
-These are called _glue records_,
-and the boutique registrars do not have a self-serve way to configure them.
-I ended up migrating ruuda.nl
-to exactly the hosting company we abandoned for Google Cloud 10 years ago,
-and I have to admit that their DNS control panel is pretty good.
-It automatically detects when you need glue records,
-and allows you to set them.
--->
-
 ## Let’s Encrypt
 
 My blog still depended on one American service: Let’s Encrypt.
@@ -260,7 +229,6 @@ but I could find only one that is unambiguously outside of US control:
 I have very mixed feelings about Actalis.
 Their website fails Firefox’ TLS handshake half of the time,
 <!-- with a `PR_END_OF_FILE_ERROR`. -->
-<!-- they don’t support altnames, -->
 they don’t document the correct value for your [CAA records][caa] anywhere
 (turns out the identifying domain is actalis.it, not .com),
 they send notifications in Italian,
