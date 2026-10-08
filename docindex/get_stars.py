@@ -30,7 +30,7 @@ def count_stars_forgejo(client: HTTPSConnection, owner: str, repo: str) -> int:
             },
         )
         with client.getresponse() as response:
-            assert response.status == 200
+            assert response.status == 200, response.read()
             data = json.load(response)
             n += len(data)
             if len(data) < 30:
@@ -58,7 +58,7 @@ def count_stars_github(client: HTTPSConnection, owner: str, repo: str) -> int:
             },
         )
         with client.getresponse() as response:
-            assert response.status == 200
+            assert response.status == 200, response.read()
             data = json.load(response)
             n += len(data)
             if len(data) < 30:
